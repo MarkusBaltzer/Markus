@@ -18,12 +18,13 @@
     .project{border:1px solid #e6e6e6;border-radius:8px;padding:24px;margin-bottom:24px}
     .project h2{font-size:18px;margin:0 0 8px 0;color:#111}
     .project p{margin:0;color:#444}
+    .note {font-size: 14px; color: #666; margin-top: 8px; font-style: italic;}
     
     /* Tech stack chips */
     .tech-stack{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap}
     .chip{font-size:12px;padding:4px 8px;border-radius:4px;background:#f3f7ff;color:var(--accent)}
     
-    /* The new Download hyperlink styling */
+    /* The Download hyperlink styling */
     .download-link {
       display: inline-block;
       margin-top: 16px;
@@ -58,11 +59,13 @@
     <div class="project">
       <h2>Tax Reporting Automation Tool</h2>
       <p>Developed a Python tool that corrected errors in reported tax numbers, reducing inaccuracies by 90%.</p>
+      <p class="note">Featured in an internal P+ SharePoint article written by HR highlighting the impact of this automation.</p>
       <div class="tech-stack">
         <span class="chip">Python</span>
         <span class="chip">Pandas</span>
         <span class="chip">Automation</span>
       </div>
+      <a href="article.pdf" class="download-link" target="_blank">Download Article (PDF)</a>
     </div>
 
     <div class="project">
