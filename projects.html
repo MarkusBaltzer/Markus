@@ -10,21 +10,17 @@
     .container{max-width:800px;margin:0 auto}
     h1{font-size:28px;margin-bottom:8px}
     
-
     .back-link{font-size:14px;color:var(--muted);text-decoration:none;margin-bottom:32px;display:inline-block}
     .back-link:hover{color:var(--accent)}
     
-
     .project{border:1px solid #e6e6e6;border-radius:8px;padding:24px;margin-bottom:24px}
     .project h2{font-size:18px;margin:0 0 8px 0;color:#111}
     .project p{margin:0;color:#444}
     .note {font-size: 14px; color: #666; margin-top: 8px; font-style: italic;}
     
-
     .tech-stack{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap}
     .chip{font-size:12px;padding:4px 8px;border-radius:4px;background:#f3f7ff;color:var(--accent)}
     
-
     .download-link {
       display: inline-block;
       margin-top: 16px;
@@ -44,6 +40,18 @@
     <h1>Project Portfolio</h1>
     <p>A collection of my work in Actuarial Science, Data Science, and Mathematics.</p>
     <hr style="border:0;border-top:1px solid #e6e6e6;margin:24px 0">
+
+    <div class="project">
+      <h2>Stochastic Facility Network Optimization</h2>
+      [cite_start]<p>Architected a Mixed-Integer Linear Program (MILP) using Python and Gurobi to optimize facility allocation under stochastic demand[cite: 1, 55]. [cite_start]Implemented Sample Average Approximation (SAA) and CVaR constraints to minimize tail loss magnitude, demonstrating superiority over standard chance constraints[cite: 21, 298]. [cite_start]Derived conservative bounds on tail dependence using Minkowski’s Inequality to ensure stability against systemic correlation shocks[cite: 93, 101].</p>
+      <div class="tech-stack">
+        <span class="chip">Python (Gurobi)</span>
+        <span class="chip">MILP</span>
+        <span class="chip">Stochastic Programming</span>
+        <span class="chip">CVaR</span>
+      </div>
+      <a href="risky.pdf" class="download-link" target="_blank">View Analysis (PDF)</a>
+    </div>
 
     <div class="project">
       <h2>Tax Reporting Automation Tool</h2>
