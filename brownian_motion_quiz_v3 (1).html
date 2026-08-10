@@ -1,0 +1,1886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brownian Motion — Quiz Exam Practice (105 Questions)</title>
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
+    svg: { fontCache: 'global' },
+    startup: { typeset: false }
+  };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js" id="MathJax-script" async></script>
+<style>
+  :root{
+    --ink:#152a45;          /* fountain-pen navy */
+    --ink-soft:#3a5170;
+    --paper:#f6f3ec;        /* warm exam paper */
+    --paper-2:#fbf9f4;
+    --line:#d9d2c4;         /* graph rule */
+    --amber:#b5762a;        /* marker accent */
+    --amber-soft:#e7b55f;
+    --good:#1f7a4d;
+    --good-bg:#e4f2e8;
+    --bad:#b23b3b;
+    --bad-bg:#f6e3e1;
+    --shadow:0 1px 0 rgba(21,42,69,.05), 0 12px 34px -18px rgba(21,42,69,.35);
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; color:var(--ink); background:var(--paper);
+    font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+    line-height:1.55;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size:26px 26px;
+    background-position:-1px -1px;
+  }
+  .wrap{max-width:920px;margin:0 auto;padding:0 18px 80px}
+  a{color:var(--amber)}
+
+  /* ---- Header with Brownian path ---- */
+  header{position:relative;margin:0 -18px 26px;padding:26px 18px 20px;
+    background:var(--ink);color:var(--paper);overflow:hidden;border-bottom:3px solid var(--amber)}
+  header .path-svg{position:absolute;inset:0;width:100%;height:100%;opacity:.5}
+  header .h-inner{position:relative;max-width:920px;margin:0 auto}
+  .eyebrow{font-family:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+    letter-spacing:.28em;text-transform:uppercase;font-size:11px;color:var(--amber-soft);margin:0 0 6px}
+  header h1{margin:0;font-size:clamp(22px,4.4vw,34px);font-weight:600;letter-spacing:.2px;line-height:1.1}
+  header p.sub{margin:8px 0 0;color:#c9d3e0;font-size:14px;max-width:60ch}
+
+  /* ---- Status bar ---- */
+  .statusbar{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:center;
+    background:var(--paper-2);border:1px solid var(--line);border-radius:10px;
+    padding:12px 16px;margin-bottom:20px;box-shadow:var(--shadow)}
+  .stat{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;color:var(--ink-soft)}
+  .stat b{color:var(--ink);font-size:15px}
+  .stat .good{color:var(--good)} .stat .bad{color:var(--bad)}
+  .progress-track{flex:1 1 160px;height:8px;background:#e8e2d5;border-radius:99px;overflow:hidden;min-width:120px}
+  .progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--amber),var(--amber-soft));transition:width .35s ease}
+  .btn{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;letter-spacing:.04em;
+    cursor:pointer;border:1px solid var(--ink);background:transparent;color:var(--ink);
+    padding:7px 12px;border-radius:8px;transition:background .15s,color .15s}
+  .btn:hover{background:var(--ink);color:var(--paper)}
+  .btn:focus-visible{outline:3px solid var(--amber-soft);outline-offset:2px}
+
+  /* ---- Question card ---- */
+  .card{background:var(--paper-2);border:1px solid var(--line);border-radius:12px;
+    box-shadow:var(--shadow);overflow:hidden;margin-bottom:18px}
+  .card-top{display:flex;justify-content:space-between;align-items:center;gap:10px;
+    padding:12px 18px;background:var(--ink);color:var(--paper)}
+  .qtag{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;letter-spacing:.05em}
+  .qtag .num{background:var(--amber);color:#fff;padding:2px 9px;border-radius:6px;margin-right:10px;font-weight:700}
+  .topic{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;
+    color:#d7c39a;text-transform:uppercase;letter-spacing:.12em}
+  .card-body{display:grid;grid-template-columns:1fr 240px;gap:0}
+  .qmain{padding:22px 20px}
+  .prompt{font-size:18px;margin:0 0 18px}
+  .side{border-left:1px dashed var(--line);padding:20px 18px;background:#fdfcf9;font-size:13px;color:var(--ink-soft)}
+  .side h4{margin:0 0 8px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:10.5px;
+    letter-spacing:.16em;text-transform:uppercase;color:var(--amber)}
+  .side p{margin:0 0 10px}
+
+  /* ---- Options ---- */
+  .opts{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+  .opt{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line);
+    border-radius:9px;background:#fff;cursor:pointer;transition:border-color .12s,background .12s,box-shadow .12s}
+  .opt:hover{border-color:var(--amber);box-shadow:0 2px 10px -6px rgba(181,118,42,.6)}
+  .opt.sel{border-color:var(--ink);background:#fbf7ee}
+  .opt .mark{flex:0 0 26px;height:26px;border-radius:50%;border:2px solid var(--ink-soft);
+    display:grid;place-items:center;font-family:ui-monospace,monospace;font-size:12px;color:var(--ink-soft)}
+  .opt.sel .mark{background:var(--ink);border-color:var(--ink);color:#fff}
+  .opt .txt{flex:1}
+  .locked .opt{cursor:default}
+  .locked .opt:hover{border-color:var(--line);box-shadow:none}
+  .opt.correct{border-color:var(--good);background:var(--good-bg)}
+  .opt.correct .mark{background:var(--good);border-color:var(--good);color:#fff}
+  .opt.wrong{border-color:var(--bad);background:var(--bad-bg)}
+  .opt.wrong .mark{background:var(--bad);border-color:var(--bad);color:#fff}
+  .opt.correct:hover,.opt.wrong:hover{box-shadow:none}
+
+  .actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:18px}
+  .check{background:var(--amber);border-color:var(--amber);color:#fff}
+  .check:hover{background:#9c6321;border-color:#9c6321;color:#fff}
+  .check:disabled{opacity:.45;cursor:not-allowed}
+  .hint{font-size:13px;color:var(--ink-soft);font-family:ui-monospace,monospace}
+
+  /* ---- Solution ---- */
+  .sol{margin:0;border-top:1px solid var(--line);background:#fcfaf4;
+    max-height:0;overflow:hidden;transition:max-height .4s ease}
+  .sol.open{max-height:6000px}
+  .sol-inner{padding:20px 22px 24px}
+
+  /* ---- Math overflow handling ----
+     Wide display equations used to be clipped by the card / solution
+     overflow:hidden. Instead, cap them at 100% width and let them scroll
+     horizontally inside their own box so nothing gets cut off mid-formula. */
+  mjx-container[display="true"]{
+    overflow-x:auto;overflow-y:hidden;max-width:100%;
+    padding:2px 0 6px;
+  }
+  mjx-container[display="true"]::-webkit-scrollbar{height:6px}
+  mjx-container[display="true"]::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}
+  mjx-container[display="true"]::-webkit-scrollbar-track{background:transparent}
+  /* Inline math in prompts / options: allow the block to scroll rather than
+     be clipped by the card on narrow screens. */
+  .prompt{overflow-x:auto}
+  .prompt mjx-container{max-width:100%}
+  .opt .txt{min-width:0;overflow-x:auto}
+  .side p{overflow-x:auto}
+  .sol h3{margin:0 0 4px;font-size:14px;font-family:ui-monospace,monospace;
+    letter-spacing:.08em;text-transform:uppercase;color:var(--amber);display:flex;align-items:center;gap:10px}
+  .hackchip{background:#efe6d3;color:#7a5a1e;border:1px solid #e0d2b3;border-radius:99px;
+    padding:2px 10px;font-size:11px;letter-spacing:.02em;text-transform:none}
+  .sol p{margin:10px 0;font-size:15.5px}
+  .sol .final{background:var(--ink);color:var(--paper);padding:10px 14px;border-radius:8px;
+    display:inline-block;margin-top:8px;font-size:15px}
+  .sol .final .lbl{color:var(--amber-soft);font-family:ui-monospace,monospace;font-size:11px;
+    letter-spacing:.1em;text-transform:uppercase;margin-right:10px}
+
+  /* ---- Nav ---- */
+  .nav{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:18px}
+  .nav .btn{padding:9px 16px}
+  .grid-toggle{margin:22px 0 0;text-align:center}
+  .qgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(38px,1fr));gap:8px;
+    margin-top:14px;padding:16px;border:1px solid var(--line);border-radius:10px;background:var(--paper-2)}
+  .qgrid button{aspect-ratio:1;border:1px solid var(--line);border-radius:7px;background:#fff;
+    font-family:ui-monospace,monospace;font-size:12px;color:var(--ink-soft);cursor:pointer}
+  .qgrid button:hover{border-color:var(--amber)}
+  .qgrid button.cur{outline:2px solid var(--ink);outline-offset:1px}
+  .qgrid button.ok{background:var(--good-bg);border-color:var(--good);color:var(--good)}
+  .qgrid button.no{background:var(--bad-bg);border-color:var(--bad);color:var(--bad)}
+  .hidden{display:none}
+
+  footer{margin-top:34px;text-align:center;font-size:12px;color:var(--ink-soft);
+    font-family:ui-monospace,monospace}
+
+  @media (max-width:680px){
+    .card-body{grid-template-columns:1fr}
+    .side{border-left:none;border-top:1px dashed var(--line)}
+    .side{order:-1}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none!important;animation:none!important}
+  }
+
+  /* =====================================================================
+     STUDY TOOLKIT  ·  theory · interactive · intuition · exam tips
+     A collapsible companion added above the quiz to *support* the
+     questions: consolidated formulas, live simulations, intuition
+     callouts, and the "hack sheet" the solutions keep referencing.
+     ===================================================================== */
+  .toolkit{border:1px solid var(--line);border-radius:12px;background:var(--paper-2);
+    box-shadow:var(--shadow);margin-bottom:22px;overflow:hidden}
+  .tk-head{display:flex;align-items:center;gap:14px;cursor:pointer;user-select:none;
+    padding:14px 18px;background:var(--ink);color:var(--paper);border-bottom:3px solid var(--amber)}
+  .tk-head .tk-ic{font-size:19px}
+  .tk-head h2{margin:0;font-size:15px;font-weight:600;letter-spacing:.02em;flex:1}
+  .tk-head .tk-sub{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:10px;
+    letter-spacing:.13em;text-transform:uppercase;color:var(--amber-soft)}
+  .tk-head .tk-chev{transition:transform .3s ease;font-size:13px;color:var(--amber-soft)}
+  .toolkit.closed .tk-chev{transform:rotate(-90deg)}
+  .tk-head:focus-visible{outline:3px solid var(--amber-soft);outline-offset:-3px}
+  .tk-body{max-height:9000px;overflow:hidden;transition:max-height .5s ease}
+  .toolkit.closed .tk-body{max-height:0}
+  .tk-tabs{display:flex;flex-wrap:wrap;border-bottom:1px solid var(--line);background:#fdfcf9}
+  .tk-tab{flex:1 1 auto;min-width:130px;font-family:ui-monospace,Menlo,Consolas,monospace;
+    font-size:12px;letter-spacing:.03em;padding:12px 10px;background:transparent;border:none;
+    border-right:1px solid var(--line);border-bottom:3px solid transparent;color:var(--ink-soft);
+    cursor:pointer;transition:background .15s,color .15s,border-color .15s;text-align:center}
+  .tk-tab:last-child{border-right:none}
+  .tk-tab:hover{background:#f3eee2;color:var(--ink)}
+  .tk-tab.active{color:var(--ink);border-bottom-color:var(--amber);background:var(--paper-2);font-weight:700}
+  .tk-panel{display:none;padding:20px 20px 26px;animation:tkFade .3s ease}
+  .tk-panel.active{display:block}
+  @keyframes tkFade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  .tk-lead{font-size:14px;color:var(--ink-soft);margin:0 0 18px;max-width:74ch}
+
+  .tk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(268px,1fr));gap:16px}
+  .tk-card{border:1px solid var(--line);border-radius:10px;background:#fff;padding:15px 16px 13px;
+    box-shadow:0 1px 0 rgba(21,42,69,.04)}
+  .tk-card h3{margin:0 0 3px;font-size:13px;font-family:ui-monospace,Menlo,Consolas,monospace;
+    letter-spacing:.05em;text-transform:uppercase;color:var(--amber)}
+  .tk-card .kicker{font-family:ui-monospace,monospace;font-size:9.5px;letter-spacing:.13em;
+    text-transform:uppercase;color:var(--ink-soft);opacity:.72;display:block;margin-bottom:6px}
+  .tk-card p{margin:8px 0;font-size:14px;line-height:1.5}
+  .tk-card ul{margin:8px 0;padding-left:17px;font-size:13.5px}
+  .tk-card li{margin:4px 0}
+  .tk-card mjx-container{overflow-x:auto;max-width:100%}
+  .tk-eq{background:var(--paper);border:1px solid var(--line);border-radius:8px;
+    padding:4px 10px;margin:8px 0;overflow-x:auto;font-size:13.5px}
+  .tk-tip{border-left:3px solid var(--amber);background:#f6ecd8;border-radius:0 8px 8px 0;
+    padding:9px 12px;margin:11px 0 2px;font-size:13px;color:#6f531f}
+  .tk-tip b{color:#5a4416}
+  .tk-tip::before{content:"⚡ EXAM TIP";display:block;font-family:ui-monospace,monospace;
+    font-size:9.5px;letter-spacing:.15em;color:var(--amber);margin-bottom:3px}
+  .tk-trap{border-left:3px solid var(--bad);background:var(--bad-bg);border-radius:0 8px 8px 0;
+    padding:8px 12px;margin:11px 0;font-size:13px;color:#7d2b2b}
+  .tk-trap::before{content:"⚠ TRAP";display:block;font-family:ui-monospace,monospace;
+    font-size:9.5px;letter-spacing:.15em;color:var(--bad);margin-bottom:3px}
+
+  .tk-intu{border-left:3px solid var(--good);background:var(--good-bg);border-radius:0 10px 10px 0;
+    padding:12px 15px;margin:0 0 14px;font-size:14.5px}
+  .tk-intu h4{margin:0 0 5px;font-size:12px;font-family:ui-monospace,monospace;
+    letter-spacing:.05em;text-transform:uppercase;color:var(--good)}
+  .tk-intu p{margin:6px 0;line-height:1.55}
+  .tk-intu mjx-container{overflow-x:auto;max-width:100%}
+
+  /* hack sheet */
+  .hacklist{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:2px 24px}
+  .hackitem{display:flex;gap:11px;font-size:13.5px;padding:8px 0;border-bottom:1px dashed var(--line);align-items:baseline}
+  .hackitem .hno{flex:0 0 auto;font-family:ui-monospace,monospace;font-size:10.5px;font-weight:700;
+    color:#fff;background:var(--amber);border-radius:6px;padding:2px 7px;white-space:nowrap}
+  .hackitem .hno.m{background:var(--ink)} .hackitem .hno.c{background:var(--good)}
+  .hackitem .hbody{flex:1;line-height:1.45}
+  .hackitem .hbody b{color:var(--ink)}
+  .hackitem mjx-container{overflow-x:auto;max-width:100%}
+  .hackgroup{margin:6px 0 4px;font-family:ui-monospace,monospace;font-size:10.5px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--amber);grid-column:1/-1;padding-top:8px;border-top:1px solid var(--line)}
+  .hackgroup:first-child{border-top:none;padding-top:0}
+
+  /* interactive widgets */
+  .widget{border:1px solid var(--line);border-radius:10px;background:#fff;padding:14px 14px 16px;margin-bottom:20px}
+  .widget h3{margin:0 0 3px;font-size:14px;font-family:ui-monospace,monospace;letter-spacing:.03em;color:var(--ink)}
+  .widget .wdesc{font-size:13px;color:var(--ink-soft);margin:0 0 12px;line-height:1.5}
+  .widget canvas{width:100%;display:block;border:1px solid var(--line);border-radius:8px;background:var(--paper-2)}
+  .wctrls{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:flex-end;margin-top:13px}
+  .wctrl{display:flex;flex-direction:column;gap:4px;min-width:132px;flex:1 1 132px}
+  .wctrl label{font-family:ui-monospace,monospace;font-size:11px;letter-spacing:.03em;color:var(--ink-soft);
+    display:flex;justify-content:space-between;gap:8px}
+  .wctrl label b{color:var(--amber);font-weight:700}
+  .wctrl input[type=range]{width:100%;accent-color:var(--amber);cursor:pointer}
+  .wchk{display:flex;align-items:center;gap:7px;font-family:ui-monospace,monospace;font-size:11.5px;color:var(--ink-soft);flex:0 0 auto}
+  .wchk input{accent-color:var(--amber);cursor:pointer}
+  .wbtn{font-family:ui-monospace,monospace;font-size:12px;cursor:pointer;border:1px solid var(--ink);
+    background:transparent;color:var(--ink);padding:7px 12px;border-radius:8px;transition:background .15s,color .15s;flex:0 0 auto}
+  .wbtn:hover{background:var(--ink);color:var(--paper)}
+  .wread{display:flex;flex-wrap:wrap;gap:8px 12px;margin-top:13px;font-family:ui-monospace,monospace;font-size:12.5px}
+  .wread .rd{background:var(--paper);border:1px solid var(--line);border-radius:7px;padding:5px 10px}
+  .wread .rd b{color:var(--ink)}
+  .wread .rd .k{color:var(--ink-soft);font-size:10px;letter-spacing:.06em;text-transform:uppercase;margin-right:6px}
+  .wlegend{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:11px;font-size:11.5px;color:var(--ink-soft);
+    font-family:ui-monospace,monospace}
+  .wlegend span{display:inline-flex;align-items:center;gap:6px}
+  .wlegend i{width:18px;border-top:3px solid;display:inline-block;height:0}
+  .wlegend i.dash{border-top-style:dashed}
+
+  @media (max-width:680px){
+    .tk-tab{min-width:50%;border-bottom:1px solid var(--line)}
+  }
+</style>
+</head>
+<body>
+<header>
+  <svg class="path-svg" id="bmPath" preserveAspectRatio="none" viewBox="0 0 1200 200" aria-hidden="true"></svg>
+  <div class="h-inner">
+    <p class="eyebrow">Mathematical Finance &amp; Stochastic Processes · Block 1</p>
+    <h1>Quiz Exam — Extended Practice Set</h1>
+    <p class="sub">105 multiple-choice questions on Brownian motion, martingales, stochastic integrals, and now Itô's lemma, SDEs (GBM, Ornstein–Uhlenbeck, Vasicek, CIR) and classic exam tricks. Five options each, one correct, no negative marking. Check any question to reveal a full worked solution.</p>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="statusbar" role="status">
+    <span class="stat">Question <b id="curNum">1</b> / <span id="totNum">105</span></span>
+    <span class="stat">Score <b id="score">0</b> <span id="scoreOf">/ 0 answered</span></span>
+    <span class="stat">Correct <b class="good" id="nGood">0</b> · Wrong <b class="bad" id="nBad">0</b></span>
+    <div class="progress-track"><div class="progress-fill" id="prog"></div></div>
+    <button class="btn" id="resetBtn">Reset all</button>
+  </div>
+
+  <!-- ============================ STUDY TOOLKIT ============================ -->
+  <section class="toolkit" id="toolkit">
+    <div class="tk-head" id="tkHead" role="button" tabindex="0" aria-expanded="true" aria-controls="tkBody">
+      <span class="tk-ic">📓</span>
+      <h2>Study Toolkit</h2>
+      <span class="tk-sub">Theory · Interactive · Intuition · Exam tips</span>
+      <span class="tk-chev" id="tkChev">▾</span>
+    </div>
+    <div class="tk-body" id="tkBody">
+      <div class="tk-tabs" role="tablist" aria-label="Study toolkit sections">
+        <button class="tk-tab active" data-tab="theory" role="tab">📐 Theory &amp; formulas</button>
+        <button class="tk-tab" data-tab="play" role="tab">🎛 Interactive</button>
+        <button class="tk-tab" data-tab="intu" role="tab">💡 Intuition</button>
+        <button class="tk-tab" data-tab="hacks" role="tab">⚡ Exam hacks</button>
+      </div>
+
+      <!-- ---------------- THEORY ---------------- -->
+      <div class="tk-panel active" id="tk-theory" role="tabpanel">
+        <p class="tk-lead">Everything the 105 questions lean on, on one page. Each card lists the results, then a boxed exam tip on how to deploy them under time pressure.</p>
+        <div class="tk-grid">
+
+          <div class="tk-card">
+            <h3>Moments &amp; Itô isometry</h3>
+            <span class="kicker">Q1–3 · 6 · 15 · 88</span>
+            <p>\(B_t\sim N(0,t)\); scaling \(B_s\overset{d}{=}\sqrt{s}\,B_1\).</p>
+            <p>Even moments only: \(E[B_t^{2n}]=(2n-1)!!\,t^{\,n}\), odd moments \(=0\).</p>
+            <div class="tk-eq">\(E[B_t^2]=t,\quad E[B_t^4]=3t^2,\quad E[B_t^6]=15t^3\)</div>
+            <p><b>Itô isometry:</b> \(\;E\!\big[(\int_0^t H_s\,dB_s)^2\big]=\int_0^t E[H_s^2]\,ds.\)</p>
+            <p><b>Polarisation:</b> \(\;E\!\big[\int H\,dB\int K\,dB\big]=\int_0^t E[H_sK_s]\,ds.\)</p>
+            <div class="tk-tip">Every \(\int H\,dB\) has mean \(0\), so isometry hands you the <b>variance directly</b>. For deterministic \(H=f(s)\): just integrate \(f(s)^2\). Double factorial: \(3!!=3,\ 5!!=15\).</div>
+          </div>
+
+          <div class="tk-card">
+            <h3>Covariance · conditioning · bridges</h3>
+            <span class="kicker">Q7–8 · 20 · 24 · 38 · 49 · 59</span>
+            <p>\(\operatorname{cov}(B_s,B_t)=s\wedge t\). Increment covariance \(=\) <b>overlap length</b>: \(\operatorname{cov}(B_b-B_a,B_d-B_c)=|(a,b]\cap(c,d]|\).</p>
+            <p>Split \(B_t=B_s+\Delta\), \(\Delta\perp\mathcal F_s\), \(\Delta\sim N(0,t-s)\); then \(E[B_t\mid\mathcal F_s]=B_s\).</p>
+            <p><b>Backward projection:</b> \(E[B_s\mid B_t]=\tfrac st B_t\), \(\operatorname{var}(B_s\mid B_t)=\tfrac{s(t-s)}{t}\).</p>
+            <p><b>Bridge</b> \(X_t=B_t-tB_1\): \(\operatorname{cov}(X_s,X_t)=s(1-t)\), \(\operatorname{var}=t(1-t)\).</p>
+            <div class="tk-tip"><b>Add &amp; subtract:</b> write the later value as earlier \(+\) independent increment, expand, and kill every term with an odd leftover moment.</div>
+          </div>
+
+          <div class="tk-card">
+            <h3>Martingale dictionary</h3>
+            <span class="kicker">Q4–5 · 25 · 28 · 56 · 82 · 95</span>
+            <p><b>Mean check:</b> a martingale has constant mean. If \(E[X_t]\) grows \(\Rightarrow\) sub-martingale.</p>
+            <ul>
+              <li>\(B_t,\quad B_t^2-t,\quad B_t^3-3tB_t\)</li>
+              <li>\(e^{\theta B_t-\theta^2 t/2},\quad e^{t/2}\cos B_t,\quad \int_0^t H\,dB\)</li>
+            </ul>
+            <p><b>Match the drift:</b> for \(X_t=B_t+\mu t\), \(e^{\theta X_t}\) is a martingale iff \(\theta=-2\mu\).</p>
+            <p><b>Gaussian transfer:</b> swap \(t\!\to\!\Gamma(t,t)=E[M_t^2]\); \(\langle M\rangle_t=\Gamma(t,t)\). <b>Doob \(L^2\):</b> \(E[\sup_{s\le T}M_s^2]\le 4E[M_T^2]\).</p>
+            <div class="tk-tip">To <b>build</b> a martingale, cancel the drift. Convex function of a martingale (e.g. \(e^{B_t},B_t^2,|B_t|\)) is a <b>sub-</b>martingale (Jensen).</div>
+          </div>
+
+          <div class="tk-card">
+            <h3>Itô's lemma — master template</h3>
+            <span class="kicker">Q17–18 · 29 · 64–66 · 80–87 · 100–105</span>
+            <div class="tk-eq">\(dt\,dt=0,\quad dt\,dB=0,\quad dB\,dB=dt\)</div>
+            <p>\(df(B_t)=f'(B_t)\,dB_t+\tfrac12 f''(B_t)\,dt.\)</p>
+            <p>For \(dX=b\,dt+\sigma\,dB\): drift of \(df(t,X)\) is \(\partial_t f+b\,\partial_x f+\tfrac12\sigma^2\partial_{xx}f\).</p>
+            <p><b>Martingale ⇔ heat eq.:</b> \(f(B_t,t)\) is a martingale iff \(\partial_t f+\tfrac12\partial_{xx}f=0\).</p>
+            <p><b>Feynman–Kac:</b> \(u=E[g(B_t)\mid B_0=x]\) solves \(\partial_t u=\tfrac12\partial_{xx}u\). Core identity \(\int_0^tB\,dB=\tfrac{B_t^2-t}{2}\).</p>
+            <div class="tk-tip">All of Itô is the \(\tfrac12 f''\,dt\) term. If a factor is smooth there is <b>no correction</b>: \(d(tB_t)=B_t\,dt+t\,dB_t\).</div>
+          </div>
+
+          <div class="tk-card">
+            <h3>SDE toolkit</h3>
+            <span class="kicker">Q61–63 · 67–68 · 90–94 · 97–98 · 103–104</span>
+            <p><b>GBM</b> \(dS=\mu S\,dt+\sigma S\,dB\):</p>
+            <div class="tk-eq">\(S_t=S_0e^{(\mu-\frac12\sigma^2)t+\sigma B_t}\)</div>
+            <p>\(E[S_t]=S_0e^{\mu t}\); median \(=S_0e^{(\mu-\frac12\sigma^2)t}\); \(\operatorname{var}=S_0^2e^{2\mu t}(e^{\sigma^2t}-1)\); martingale iff \(\mu=0\).</p>
+            <p><b>OU</b> \(dX=-\theta X\,dt+\sigma\,dB\): \(X_t=X_0e^{-\theta t}+\sigma\!\int_0^t e^{-\theta(t-s)}dB_s\), \(\operatorname{var}\to\tfrac{\sigma^2}{2\theta}\), \(\operatorname{cov}(X_s,X_t)=\tfrac{\sigma^2}{2\theta}e^{-\theta|t-s|}\).</p>
+            <p><b>Vasicek</b> \(dr=a(b-r)dt+\sigma dW\): OU reverting to \(b\). <b>Bridge:</b> \(db_t=-\tfrac{b_t}{1-t}dt+dB_t\).</p>
+            <div class="tk-tip">OU / Vasicek → multiply by \(e^{\theta t}\) (deterministic ⇒ no Itô term). GBM → take \(\log\). Then <b>isometry</b> gives the variance.</div>
+          </div>
+
+          <div class="tk-card">
+            <h3>Stopping · reflection · exit</h3>
+            <span class="kicker">Q26–27 · 48 · 53–54 · 56 · 78–79 · 99</span>
+            <p><b>Reflection:</b> \(P(\max_{s\le t}B_s\ge a)=2P(B_t\ge a)=2\big(1-\Phi(\tfrac{a}{\sqrt t})\big)\).</p>
+            <p><b>Running max:</b> \(M_t\overset{d}{=}|B_t|\), \(E[M_t]=\sqrt{2t/\pi}\).</p>
+            <p><b>Hitting time</b> \(T_a\): \(T_a<\infty\) a.s. but \(E[T_a]=\infty\); \(E[e^{-\lambda T_a}]=e^{-a\sqrt{2\lambda}}\).</p>
+            <p><b>Exit of \((-a,b)\):</b> \(P(\text{hit }b\text{ first})=\tfrac{a}{a+b}\), \(E[T]=ab\).</p>
+            <div class="tk-tip">Exit interval → probabilities are the cross-ratio \(a/(a+b)\); \(E[T]=ab\) drops out of \(E[B_T^2]=E[T]\). Optional stopping needs finite \(E[T]\) — one-sided \(T_a\) is the classic failure.</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ---------------- INTERACTIVE ---------------- -->
+      <div class="tk-panel" id="tk-play" role="tabpanel">
+        <p class="tk-lead">Move the sliders and watch the formulas come alive. These sandboxes target the exact objects the quiz tests — the reflection principle, the log-normal skew of geometric BM, and mean reversion.</p>
+
+        <div class="widget">
+          <h3>1 · Brownian motion &amp; the reflection principle</h3>
+          <p class="wdesc">A single path on \([0,1]\) with its running maximum. Raise the level \(a\) and see whether the path breaches it; the faint mirror shows the <em>reflected</em> continuation that pairs each breaching path with one ending above — the origin of the factor of 2 in \(P(\max\ge a)=2\big(1-\Phi(a)\big)\).</p>
+          <canvas id="bmCanvas"></canvas>
+          <div class="wlegend">
+            <span><i style="border-color:#152a45"></i>path \(B_t\)</span>
+            <span><i style="border-color:#b5762a"></i>running max</span>
+            <span><i class="dash" style="border-color:#b23b3b"></i>level \(a\) / reflection</span>
+            <span><i class="dash" style="border-color:#3a5170"></i>\(\pm\sqrt t\) envelope</span>
+          </div>
+          <div class="wctrls">
+            <div class="wctrl"><label>level a <b id="bmAV">1.50</b></label>
+              <input type="range" id="bmA" min="0.3" max="3" step="0.05" value="1.5"></div>
+            <label class="wchk"><input type="checkbox" id="bmEnv" checked> ±√t envelope</label>
+            <label class="wchk"><input type="checkbox" id="bmRefl" checked> reflection</label>
+            <button class="wbtn" id="bmNew">↻ New path</button>
+            <button class="wbtn" id="bmRun">▶ Estimate P (5000 paths)</button>
+          </div>
+          <div class="wread">
+            <span class="rd"><span class="k">theory 2(1−Φ(a))</span><b id="bmTheo">—</b></span>
+            <span class="rd"><span class="k">empirical</span><b id="bmEmp">—</b></span>
+            <span class="rd"><span class="k">this path max</span><b id="bmMax">—</b></span>
+            <span class="rd"><span class="k">breached a?</span><b id="bmHit">—</b></span>
+          </div>
+        </div>
+
+        <div class="widget">
+          <h3>2 · Geometric Brownian motion — mean vs. median</h3>
+          <p class="wdesc">40 sample paths of \(dS=\mu S\,dt+\sigma S\,dB\) with \(S_0=1\). The solid amber curve is the <em>mean</em> \(e^{\mu t}\); the dashed navy curve is the <em>median</em> \(e^{(\mu-\frac12\sigma^2)t}\). Crank \(\sigma\) up and watch the mean pull away from the typical path — the log-normal right-skew.</p>
+          <canvas id="gbmCanvas"></canvas>
+          <div class="wlegend">
+            <span><i style="border-color:#152a45;opacity:.4"></i>sample paths</span>
+            <span><i style="border-color:#b5762a"></i>mean \(e^{\mu t}\)</span>
+            <span><i class="dash" style="border-color:#152a45"></i>median \(e^{(\mu-\sigma^2/2)t}\)</span>
+          </div>
+          <div class="wctrls">
+            <div class="wctrl"><label>drift μ <b id="gbmMuV">0.10</b></label>
+              <input type="range" id="gbmMu" min="-0.4" max="0.4" step="0.02" value="0.1"></div>
+            <div class="wctrl"><label>vol σ <b id="gbmSigV">0.30</b></label>
+              <input type="range" id="gbmSig" min="0.05" max="0.8" step="0.01" value="0.3"></div>
+            <div class="wctrl"><label>horizon T <b id="gbmTV">1.5</b></label>
+              <input type="range" id="gbmT" min="0.5" max="3" step="0.1" value="1.5"></div>
+            <button class="wbtn" id="gbmNew">↻ Resample</button>
+          </div>
+          <div class="wread">
+            <span class="rd"><span class="k">E[S_T]</span><b id="gbmMean">—</b></span>
+            <span class="rd"><span class="k">median</span><b id="gbmMed">—</b></span>
+            <span class="rd"><span class="k">mean/median</span><b id="gbmRatio">—</b></span>
+            <span class="rd"><span class="k">var(S_T)</span><b id="gbmVar">—</b></span>
+          </div>
+        </div>
+
+        <div class="widget">
+          <h3>3 · Ornstein–Uhlenbeck — mean reversion</h3>
+          <p class="wdesc">Paths of \(dX=-\theta X\,dt+\sigma\,dB\) started away from \(0\). The pull \(-\theta X\) drags them back; the green bands are the stationary \(\pm\sqrt{\sigma^2/2\theta}\) and \(\pm2\sqrt{\sigma^2/2\theta}\). Larger \(\theta\) = faster reversion (shorter half-life \(\ln 2/\theta\)); larger \(\sigma\) = wider band.</p>
+          <canvas id="ouCanvas"></canvas>
+          <div class="wlegend">
+            <span><i style="border-color:#152a45;opacity:.5"></i>sample paths</span>
+            <span><i class="dash" style="border-color:#1f7a4d"></i>stationary ±√(σ²/2θ)</span>
+          </div>
+          <div class="wctrls">
+            <div class="wctrl"><label>rate θ <b id="ouThetaV">1.2</b></label>
+              <input type="range" id="ouTheta" min="0.2" max="5" step="0.1" value="1.2"></div>
+            <div class="wctrl"><label>vol σ <b id="ouSigV">0.70</b></label>
+              <input type="range" id="ouSig" min="0.1" max="1.5" step="0.05" value="0.7"></div>
+            <div class="wctrl"><label>start X₀ <b id="ouX0V">2.5</b></label>
+              <input type="range" id="ouX0" min="-3" max="3" step="0.1" value="2.5"></div>
+            <button class="wbtn" id="ouNew">↻ Resample</button>
+          </div>
+          <div class="wread">
+            <span class="rd"><span class="k">stationary var σ²/2θ</span><b id="ouVar">—</b></span>
+            <span class="rd"><span class="k">stationary sd</span><b id="ouSd">—</b></span>
+            <span class="rd"><span class="k">half-life ln2/θ</span><b id="ouHalf">—</b></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---------------- INTUITION ---------------- -->
+      <div class="tk-panel" id="tk-intu" role="tabpanel">
+        <p class="tk-lead">The "why" behind the traps. When a computation feels like magic (or seems to prove something false), one of these pictures is usually the resolution.</p>
+
+        <div class="tk-intu">
+          <h4>Why the Itô correction exists</h4>
+          <p>Over a step \(dt\), Brownian motion moves by \(\sim\sqrt{dt}\), so \((\Delta B)^2\sim dt\) is <b>first order</b>, not negligible. Ordinary Taylor drops \((\Delta X)^2\); here it survives as \(\tfrac12 f''(dB)^2=\tfrac12 f''\,dt\). That single surviving term <em>is</em> Itô's lemma — everything else is classical calculus. The operative rule is \((dB)^2=dt\).</p>
+        </div>
+
+        <div class="tk-intu">
+          <h4>Mean vs. almost-sure limit</h4>
+          <p>For \(e^{B_t-ct}\): since \(B_t/t\to0\) a.s., the exponent \(\to-\infty\) and the <b>typical path dies</b> to \(0\) for any \(c>0\). Yet \(E[e^{B_t-ct}]=e^{(\frac12-c)t}\) can <b>explode</b> when \(c<\tfrac12\): a handful of astronomically large paths drag the average up. Always read whether the question asks for the a.s. limit or the mean.</p>
+        </div>
+
+        <div class="tk-intu">
+          <h4>Conditioning earlier on later shrinks by s/t</h4>
+          <p>\(E[B_s\mid B_t]=\tfrac st B_t\), not \(B_t\). Knowing only the <em>endpoint</em> \(B_t\), your best guess for the midpoint is a fraction \(s/t\) of the way there — a straight line back to the origin. The leftover wiggle has variance \(s(t-s)/t\), the Brownian-bridge variance, vanishing at both ends.</p>
+        </div>
+
+        <div class="tk-intu">
+          <h4>Quadratic variation ignores drift</h4>
+          <p>A drift term is smooth: over \(dt\) it moves \(O(dt)\), so its square is \(O(dt^2)\) — negligible. Only the jittery martingale part accumulates, at rate \((dB)^2=dt\). Hence \(\langle B+\mu t\rangle_t=\langle B\rangle_t=t\), and for \(dX=b\,dt+\sigma\,dB\) only \(\sigma^2\) matters: \(\langle X\rangle_t=\int_0^t\sigma_s^2\,ds\).</p>
+        </div>
+
+        <div class="tk-intu">
+          <h4>Running max has the same law as |Bₜ|</h4>
+          <p>Reflection principle: any path that touches \(a\) and ends <em>below</em> has a mirror-image twin (reflected after the first hit) that ends <em>above</em>. Pairing them gives \(P(\max\ge a)=2P(B_t\ge a)\), and letting the level vary shows \(\max_{s\le t}B_s\overset{d}{=}|B_t|\). Interactive sandbox #1 draws exactly this mirror.</p>
+        </div>
+
+        <div class="tk-trap">
+          <b>The "optional stopping proves 0 = 1" trap.</b> For \(T=\inf\{t:B_t=1\}\), \(E[B_T]=1\neq 0=E[B_0]\). No paradox: optional stopping needs \(E[T]<\infty\) (or uniform integrability), and here \(E[T]=\infty\). If a slick argument "shows" \(1=0\), an unbounded stopping time is the culprit.
+        </div>
+
+        <div class="tk-trap">
+          <b>Mean &gt; median for GBM.</b> \(\log S_t\) is symmetric (Gaussian), so the median sits at its centre \((\mu-\tfrac12\sigma^2)t\). Exponentiating stretches the upper tail, lifting the mean above the median by the factor \(e^{\sigma^2 t/2}\). Don't report \(e^{\mu t}\) when asked for the median.
+        </div>
+      </div>
+
+      <!-- ---------------- HACKS ---------------- -->
+      <div class="tk-panel" id="tk-hacks" role="tabpanel">
+        <p class="tk-lead">The consolidated hack sheet the worked solutions keep citing. Skim it before the exam; each line is a reflex to reach for when you recognise the pattern.</p>
+        <div class="hacklist">
+          <div class="hackgroup">Expectations &amp; moments</div>
+          <div class="hackitem"><span class="hno">H1</span><span class="hbody"><b>Itô isometry.</b> \(E[(\int H\,dB)^2]=\int E[H^2]\,ds\). Square the integrand, integrate.</span></div>
+          <div class="hackitem"><span class="hno">H2</span><span class="hbody"><b>Moment table.</b> \(E[B_t^{2n}]=(2n-1)!!\,t^n\); odd \(=0\).</span></div>
+          <div class="hackitem"><span class="hno">H3</span><span class="hbody"><b>Absorb constants.</b> \(cB_t=\int_0^t c\,dB_s\), then merge into one integral.</span></div>
+          <div class="hackitem"><span class="hno">H6</span><span class="hbody"><b>Scaling.</b> \(B_s\overset{d}{=}\sqrt s\,B_1\Rightarrow E[B_s^{k}]=s^{k/2}E[B_1^k]\).</span></div>
+          <div class="hackitem"><span class="hno">H9</span><span class="hbody"><b>Odd degree dies.</b> Total power odd \(\Rightarrow\) expectation \(0\) by \(B\overset{d}{=}-B\).</span></div>
+          <div class="hackitem"><span class="hno">H15</span><span class="hbody"><b>Indicator isometry.</b> \(\mathbf 1^2=\mathbf 1\), \(E[\mathbf 1_A]=P(A)\).</span></div>
+          <div class="hackitem"><span class="hno">H34</span><span class="hbody"><b>MGF derivatives.</b> \(\partial_\theta^k e^{\theta^2t/2}\) gives \(E[B_t^k e^{\theta B_t}]\).</span></div>
+
+          <div class="hackgroup">Increments &amp; conditioning</div>
+          <div class="hackitem"><span class="hno">H7</span><span class="hbody"><b>Add &amp; subtract.</b> \(B_t=B_s+\Delta\), \(\Delta\perp\mathcal F_s\); expand, drop odd moments.</span></div>
+          <div class="hackitem"><span class="hno">H8</span><span class="hbody"><b>Tower.</b> Condition on the latest time; \(E[B_t\mid\mathcal F_s]=B_s\).</span></div>
+          <div class="hackitem"><span class="hno">H23</span><span class="hbody"><b>Overlap length.</b> \(\operatorname{cov}\) of two increments \(=\) length of interval overlap.</span></div>
+          <div class="hackitem"><span class="hno">H27</span><span class="hbody"><b>Gaussian projection.</b> \(E[X\mid Y]=\tfrac{\operatorname{cov}}{\operatorname{var}Y}Y\); bridge var \(\tfrac{s(t-s)}{t}\).</span></div>
+
+          <div class="hackgroup">Martingales</div>
+          <div class="hackitem"><span class="hno">H4</span><span class="hbody"><b>Match the drift.</b> \(e^{\theta X}\) martingale iff \(\theta=-2\mu\) for \(X=B+\mu t\).</span></div>
+          <div class="hackitem"><span class="hno">H5</span><span class="hbody"><b>Dictionary + mean check.</b> \(B,\,B^2-t,\,B^3-3tB,\,e^{\theta B-\theta^2t/2}\).</span></div>
+          <div class="hackitem"><span class="hno">H28</span><span class="hbody"><b>Gaussian transfer.</b> Replace \(t\) by \(\Gamma(t,t)=E[M_t^2]\).</span></div>
+          <div class="hackitem"><span class="hno">H32</span><span class="hbody"><b>Doob \(L^2\).</b> \(E[\sup_{s\le T}M_s^2]\le 4E[M_T^2]\).</span></div>
+          <div class="hackitem"><span class="hno">H33</span><span class="hbody"><b>Exotic \(f\).</b> \(m(t)=E[f(B_t)]\) solves \(m'=\tfrac12E[f'']\).</span></div>
+
+          <div class="hackgroup">Integrals &amp; brackets</div>
+          <div class="hackitem"><span class="hno">H16</span><span class="hbody"><b>Isometry twice.</b> Nested \(\int X\,dB\): compute \(E[X_s^2]\) first.</span></div>
+          <div class="hackitem"><span class="hno">H17</span><span class="hbody"><b>Integration by parts.</b> \(\int_0^t B\,ds=\int_0^t(t-s)\,dB\Rightarrow\) var \(=t^3/3\).</span></div>
+          <div class="hackitem"><span class="hno">H18</span><span class="hbody"><b>Core identity.</b> \(\int_0^t B\,dB=\tfrac{B_t^2-t}{2}\).</span></div>
+          <div class="hackitem"><span class="hno">H20</span><span class="hbody"><b>Fubini.</b> \(\operatorname{cov}(\int B)\) via \(E[B_rB_u]=r\wedge u\).</span></div>
+          <div class="hackitem"><span class="hno">H21</span><span class="hbody"><b>Polarisation.</b> \(E[\int H\,dB\int K\,dB]=\int HK\,ds\).</span></div>
+          <div class="hackitem"><span class="hno">H22</span><span class="hbody"><b>Drift invisible.</b> Brackets see only the \(dB\) coefficient.</span></div>
+          <div class="hackitem"><span class="hno">H24</span><span class="hbody"><b>Check the norm.</b> \(\sum\lambda_i^2=1\Rightarrow\) combination is a standard BM.</span></div>
+          <div class="hackitem"><span class="hno">H26</span><span class="hbody"><b>Gaussian checklist.</b> Linear in \(B\) ⇒ Gaussian; \(\int B\,dB\) is not.</span></div>
+
+          <div class="hackgroup">Itô &amp; SDEs (Master / Toolkit)</div>
+          <div class="hackitem"><span class="hno m">M0</span><span class="hbody"><b>Multiplication table.</b> \(dB\,dB=dt\), \(dt\,dt=dt\,dB=0\).</span></div>
+          <div class="hackitem"><span class="hno m">M1′</span><span class="hbody"><b>Itô template.</b> \(df=f'\,dB+\tfrac12 f''\,dt\).</span></div>
+          <div class="hackitem"><span class="hno m">M2</span><span class="hbody"><b>Heat eq ⇒ martingale.</b> \(\partial_t f+\tfrac12\partial_{xx}f=0\); Feynman–Kac.</span></div>
+          <div class="hackitem"><span class="hno m">M3</span><span class="hbody"><b>GBM via log.</b> \(d\log S=(\mu-\tfrac12\sigma^2)dt+\sigma\,dB\).</span></div>
+          <div class="hackitem"><span class="hno m">M4</span><span class="hbody"><b>Smooth factor.</b> One smooth factor ⇒ no correction (also Stratonovich).</span></div>
+          <div class="hackitem"><span class="hno m">M5</span><span class="hbody"><b>Independent ⇒ zero bracket.</b> \(\langle B^{(1)},B^{(2)}\rangle=0\).</span></div>
+          <div class="hackitem"><span class="hno c">C5</span><span class="hbody"><b>OU factor.</b> Multiply by \(e^{\theta t}\) then isometry.</span></div>
+          <div class="hackitem"><span class="hno c">C6</span><span class="hbody"><b>Vasicek factor.</b> Itô on \(e^{at}r_t\); \(r_t\) terms cancel.</span></div>
+
+          <div class="hackgroup">Stopping · reflection · exit</div>
+          <div class="hackitem"><span class="hno">H29</span><span class="hbody"><b>Exit of \((-a,b)\).</b> \(P=\tfrac{a}{a+b}\), \(E[T]=ab\) (gambler's ruin).</span></div>
+          <div class="hackitem"><span class="hno">H30</span><span class="hbody"><b>Reflection.</b> \(P(\max\ge a)=2P(B_t\ge a)\); \(M_t\overset{d}{=}|B_t|\).</span></div>
+          <div class="hackitem"><span class="hno">H31</span><span class="hbody"><b>a.s. vs mean.</b> \(B_t/t\to0\) a.s.; read which the question wants.</span></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <div id="cardMount"></div>
+
+  <div class="nav">
+    <button class="btn" id="prevBtn">◀ Previous</button>
+    <button class="btn" id="overviewBtn">Question overview</button>
+    <button class="btn" id="nextBtn">Next ▶</button>
+  </div>
+
+  <div class="qgrid hidden" id="qgrid"></div>
+
+  <footer>Study tool · answers computed from the Quiz Hack Sheet techniques · good luck.</footer>
+</div>
+
+<script>
+/* ============================ QUESTION BANK ============================ */
+const DEFAULT_NOTE = String.raw`Let \(B=(B_t)_{t\ge0}\) be a standard Brownian motion and \((\mathcal F_t)\) its completed canonical filtration. \(s\wedge t=\min(s,t)\).`;
+
+const Q = [
+/* 1 */{
+  topic:"Itô isometry", hack:"Hack 1 — Itô isometry",
+  q:String.raw`Determine \(\displaystyle E\!\left[\left(\int_0^t s\,dB_s\right)^{2}\right].\)`,
+  opts:[String.raw`\(\dfrac{t^3}{3}\)`,String.raw`\(\dfrac{t^2}{2}\)`,String.raw`\(t^3\)`,String.raw`\(\dfrac{t^2}{3}\)`,String.raw`\(\dfrac{t^4}{4}\)`],
+  correct:0,
+  sol:String.raw`<p>The integrand \(H_s=s\) is deterministic. Itô isometry turns the squared integral into an ordinary integral of the squared integrand:</p>
+  \[E\!\left[\left(\int_0^t s\,dB_s\right)^2\right]=\int_0^t s^2\,ds=\Big[\tfrac{s^3}{3}\Big]_0^t=\frac{t^3}{3}.\]
+  <p>(This is also the variance, since stochastic integrals have mean zero.)</p>`
+},
+/* 2 */{
+  topic:"Moment table", hack:"Hack 2 — Moment table",
+  q:String.raw`For a standard Brownian motion, determine \(E[B_t^4]\).`,
+  opts:[String.raw`\(3t^2\)`,String.raw`\(t^2\)`,String.raw`\(6t^2\)`,String.raw`\(t^4\)`,String.raw`\(15t^2\)`],
+  correct:0,
+  sol:String.raw`<p>\(B_t\sim N(0,t)\). For a centred Gaussian, the fourth moment is \(3\,(\text{variance})^2\):</p>
+  \[E[B_t^4]=3\,t^2.\]
+  <p>Memorised via \(E[Z^{2n}]=(2n-1)!!\): here \(3!!=3\), scaled by \(t^2\). (Compare \(E[B_t^6]=15t^3\).)</p>`
+},
+/* 3 */{
+  topic:"Absorb into integral", hack:"Hack 3 + Hack 1",
+  q:String.raw`Determine \(\displaystyle E\!\left[\left(2B_t+\int_0^t B_s\,dB_s\right)^{2}\right].\)`,
+  opts:[String.raw`\(4t+\dfrac{t^2}{2}\)`,String.raw`\(t+\dfrac{t^2}{2}\)`,String.raw`\(4t+t^2\)`,String.raw`\(2t+\dfrac{t^2}{2}\)`,String.raw`\(4t^2+\dfrac{t}{2}\)`],
+  correct:0,
+  sol:String.raw`<p>Write \(2B_t=\int_0^t 2\,dB_s\) and merge the two stochastic integrals into one:</p>
+  \[2B_t+\int_0^t B_s\,dB_s=\int_0^t (2+B_s)\,dB_s.\]
+  <p>Now Itô isometry, using \(E[(2+B_s)^2]=4+4\!\cdot\!0+s=4+s\):</p>
+  \[\int_0^t(4+s)\,ds=4t+\frac{t^2}{2}.\]`
+},
+/* 4 */{
+  topic:"Exponential martingale", hack:"Hack 4 — match the drift",
+  q:String.raw`Let \(X_t=B_t+3t\). Which process is a martingale?`,
+  opts:[String.raw`\(e^{-6X_t}\)`,String.raw`\(e^{-3X_t}\)`,String.raw`\(e^{6X_t}\)`,String.raw`\(e^{3X_t}\)`,String.raw`\(e^{-X_t}\)`],
+  correct:0,
+  sol:String.raw`<p>\(e^{\theta X_t}\) is a martingale iff the drift is cancelled. For \(X_t=B_t+\mu t\), \(e^{\theta B_t+\theta\mu t}\) has drift term \(\big(\theta\mu+\tfrac{\theta^2}{2}\big)t\), which vanishes when \(\theta=-2\mu\).</p>
+  <p>Here \(\mu=3\), so \(\theta=-6\):</p>
+  \[e^{-6X_t}=e^{-6B_t-18t}=e^{-6B_t-\frac{(-6)^2}{2}t}\quad\checkmark\ \text{martingale.}\]`
+},
+/* 5 */{
+  topic:"Martingale dictionary", hack:"Hack 5 — dictionary",
+  q:String.raw`Which of the following processes is a martingale?`,
+  opts:[String.raw`\(B_t^3\)`,String.raw`\(B_t^3-3tB_t\)`,String.raw`\(B_t^2+t\)`,String.raw`\(e^{B_t}\)`,String.raw`\(\int_0^t B_s\,ds\)`],
+  correct:1,
+  sol:String.raw`<p>Run the mean check \(m(t)=E[X_t]\): a martingale must have constant mean.</p>
+  <p>\(E[B_t^3]=0\) but \(B_t^3\) itself is not a martingale (its compensated version is). \(E[B_t^2+t]=2t\uparrow\) — submartingale. \(E[e^{B_t}]=e^{t/2}\uparrow\) — submartingale. \(\int_0^t B_s\,ds\) has finite variation and non-constant paths — never a martingale.</p>
+  <p>The dictionary entry for \(B_t^3\) is</p>
+  \[B_t^3-3tB_t,\]
+  <p>which is a genuine martingale (equivalently \(3\int_0^tB_s^2\,dB_s\)).</p>`
+},
+/* 6 */{
+  topic:"Scaling", hack:"Hack 6 + Hack 2",
+  q:String.raw`Determine \(E[B_s^6]\).`,
+  opts:[String.raw`\(15s^3\)`,String.raw`\(15s^2\)`,String.raw`\(6s^3\)`,String.raw`\(3s^3\)`,String.raw`\(s^3\)`],
+  correct:0,
+  sol:String.raw`<p>Scaling: \(B_s\overset{d}{=}\sqrt{s}\,B_1\), so \(E[B_s^6]=s^3E[B_1^6]\). From the moment table \(E[B_1^6]=(6-1)!!=5!!=15\):</p>
+  \[E[B_s^6]=15\,s^3.\]`
+},
+/* 7 */{
+  topic:"Add & subtract", hack:"Hack 7 — independent increments",
+  q:String.raw`For \(0\le s<t\), determine \(E[B_s^2B_t^2]\).`,
+  opts:[String.raw`\(s(t-s)+3s^2\)`,String.raw`\(st\)`,String.raw`\(s(t-s)+s^2\)`,String.raw`\(3s^2\)`,String.raw`\(s(t-s)+2s^2\)`],
+  correct:0,
+  sol:String.raw`<p>Write \(B_t=\Delta+B_s\) with \(\Delta=B_t-B_s\sim N(0,t-s)\) independent of \(\mathcal F_s\):</p>
+  \[E[B_s^2(\Delta+B_s)^2]=E[B_s^2]\,E[\Delta^2]+E[B_s^4]+2\,E[B_s^3]\,E[\Delta].\]
+  <p>Using \(E[B_s^2]=s,\ E[\Delta^2]=t-s,\ E[B_s^4]=3s^2,\ E[B_s^3]=0\):</p>
+  \[= s(t-s)+3s^2.\]`
+},
+/* 8 */{
+  topic:"Tower property", hack:"Hack 8 — condition on latest time",
+  q:String.raw`For \(0\le s<t\), determine \(E[B_t^3\mid\mathcal F_s]\).`,
+  opts:[String.raw`\(B_s^3+3(t-s)B_s\)`,String.raw`\(B_s^3\)`,String.raw`\(B_s^3+3tB_s\)`,String.raw`\(B_s^3-3(t-s)B_s\)`,String.raw`\(3(t-s)B_s\)`],
+  correct:0,
+  sol:String.raw`<p>Split \(B_t=B_s+\Delta\), \(\Delta=B_t-B_s\perp\mathcal F_s\), \(\Delta\sim N(0,t-s)\):</p>
+  \[E[(B_s+\Delta)^3\mid\mathcal F_s]=B_s^3+3B_s^2E[\Delta]+3B_sE[\Delta^2]+E[\Delta^3].\]
+  <p>With \(E[\Delta]=E[\Delta^3]=0\) and \(E[\Delta^2]=t-s\):</p>
+  \[=B_s^3+3(t-s)B_s.\]`
+},
+/* 9 */{
+  topic:"Symmetry", hack:"Hack 9 — odd totals vanish",
+  q:String.raw`Which of the following expectations is <b>non-zero</b>?`,
+  opts:[String.raw`\(E[B_1B_2^2]\)`,String.raw`\(E[B_1^3B_2^2]\)`,String.raw`\(E[B_1^2B_2^4]\)`,String.raw`\(E[B_1^2B_2^3]\)`,String.raw`\(E[B_1B_2^4]\)`],
+  correct:2,
+  sol:String.raw`<p>Since \(B\overset{d}{=}-B\) as a process, any monomial with an <b>odd total degree</b> has zero expectation. Count degrees:</p>
+  <p>\(1{+}2{=}3\) (odd, \(=0\)); \(3{+}2{=}5\) (odd); \(2{+}4{=}6\) (<b>even</b>); \(2{+}3{=}5\) (odd); \(1{+}4{=}5\) (odd).</p>
+  <p>Only \(E[B_1^2B_2^4]\) has even total degree, so it is the one that need not vanish (indeed it is \(2\cdot 1+3\cdot1^2\cdots>0\)).</p>`
+},
+/* 10 */{
+  topic:"Independence splitting", hack:"Hack 10",
+  q:String.raw`For \(0\le s<t\), determine \(E\!\left[B_s^2\,e^{B_t-B_s}\right].\)`,
+  opts:[String.raw`\(s\,e^{(t-s)/2}\)`,String.raw`\(s\,e^{t/2}\)`,String.raw`\(e^{(t-s)/2}\)`,String.raw`\(s(t-s)\)`,String.raw`\(s^2 e^{(t-s)/2}\)`],
+  correct:0,
+  sol:String.raw`<p>\(B_s^2\) is \(\mathcal F_s\)-measurable and \(e^{B_t-B_s}\) depends only on the increment after \(s\); they are independent, so the expectation factorises:</p>
+  \[E[B_s^2]\,E[e^{B_t-B_s}]=s\cdot e^{(t-s)/2},\]
+  <p>using \(E[B_s^2]=s\) and the MGF \(E[e^{N(0,t-s)}]=e^{(t-s)/2}\).</p>`
+},
+/* 11 */{
+  topic:"Quadratic variation", hack:"Hack 11 — QV lookup",
+  q:String.raw`Let \(X_t=\int_0^t e^{s}\,dB_s\). Determine \(\langle X\rangle_t\).`,
+  opts:[String.raw`\(\dfrac{e^{2t}-1}{2}\)`,String.raw`\(e^{t}-1\)`,String.raw`\(\dfrac{e^{2t}-1}{4}\)`,String.raw`\(\dfrac{e^{2t}}{2}\)`,String.raw`\(\int_0^t e^{s}\,dB_s\)`],
+  correct:0,
+  sol:String.raw`<p>For \(X=\int H\,dB\), the quadratic variation squares the integrand and swaps \(dB_s\to ds\):</p>
+  \[\langle X\rangle_t=\int_0^t (e^{s})^2\,ds=\int_0^t e^{2s}\,ds=\frac{e^{2t}-1}{2}.\]
+  <p>Note \(\langle X\rangle\) is increasing and of finite variation — any option containing \(dB_s\) is automatically wrong.</p>`
+},
+/* 12 */{
+  topic:"Time-changed BM", hack:"Hack 12 — f(t)B_{g(t)}",
+  q:String.raw`Determine \(\operatorname{cov}(X_s,X_t)\) for \(X_t=e^{-t}B_{e^{2t}}\), \(0\le s<t\).`,
+  opts:[String.raw`\(e^{-(t-s)}\)`,String.raw`\(e^{2(t-s)}\)`,String.raw`\(e^{t-s}\)`,String.raw`\(e^{-(t+s)}\)`,String.raw`\(e^{-s-t}e^{2t}\)`],
+  correct:0,
+  sol:String.raw`<p>With \(f(t)=e^{-t}\), \(g(t)=e^{2t}\) (increasing), \(X\) is centred Gaussian with</p>
+  \[\operatorname{cov}(X_s,X_t)=f(s)f(t)\,g(s\wedge t)=e^{-s}e^{-t}e^{2s}=e^{-(t-s)}.\]
+  <p>This is the stationary Ornstein–Uhlenbeck covariance — depends only on \(t-s\).</p>`
+},
+/* 13 */{
+  topic:"Brownian bridge", hack:"Hack 13 — bridge covariance",
+  q:String.raw`Let \(X_t=B_t-tB_1\), \(0\le t\le1\) (a Brownian bridge). Determine \(E[X_sX_t]\) for \(s\le t\le1\).`,
+  opts:[String.raw`\(s(1-t)\)`,String.raw`\(t(1-s)\)`,String.raw`\(s(1-s)\)`,String.raw`\(s(1+t)\)`,String.raw`\(st\)`],
+  correct:0,
+  sol:String.raw`<p>Expand and use \(E[B_uB_v]=u\wedge v\):</p>
+  \[E[(B_s-sB_1)(B_t-tB_1)]=(s\wedge t)-tE[B_sB_1]-sE[B_1B_t]+stE[B_1^2].\]
+  \[=s-ts-st+st=s(1-t).\]
+  <p>Endpoint check: at \(t=1\) it gives \(0\) — the bridge is pinned there. \(\checkmark\)</p>`
+},
+/* 14 */{
+  topic:"Stopping times", hack:"Hack 14 — two-valued T",
+  q:String.raw`Which random variable is a stopping time?`,
+  opts:[String.raw`\(1\cdot\mathbf 1_{\{B_2>0\}}+2\cdot\mathbf 1_{\{B_2\le0\}}\)`,String.raw`\(2\cdot\mathbf 1_{\{B_3>0\}}+3\cdot\mathbf 1_{\{B_3\le0\}}\)`,String.raw`\(3\cdot\mathbf 1_{\{B_1>0\}}+5\cdot\mathbf 1_{\{B_1\le0\}}\)`,String.raw`\(1\cdot\mathbf 1_{\{B_4>0\}}+4\cdot\mathbf 1_{\{B_4\le0\}}\)`,String.raw`\(2\cdot\mathbf 1_{\{B_5>0\}}+4\cdot\mathbf 1_{\{B_5\le0\}}\)`],
+  correct:2,
+  sol:String.raw`<p>For \(T=a\,\mathbf 1_A+b\,\mathbf 1_{A^c}\) with \(a<b\) and \(A=\{B_u>0\}\) decided at time \(u\): \(T\) is a stopping time iff the <b>smaller</b> value cannot be reached before that information exists, i.e. <b>observation time \(u\le a\)</b>.</p>
+  <p>Scan each candidate as (observation time \(u\), smaller value \(a\)): \((2,1)\Rightarrow 2\not\le1\); \((3,2)\Rightarrow 3\not\le2\); \((1,3)\Rightarrow 1\le3\ \checkmark\); \((4,1)\Rightarrow 4\not\le1\); \((5,2)\Rightarrow 5\not\le2\).</p>
+  <p>Only \(3\cdot\mathbf 1_{\{B_1>0\}}+5\cdot\mathbf 1_{\{B_1\le0\}}\) qualifies: it observes \(B_1\) and its smaller value \(3\) satisfies \(1\le3\). The rest peek at a future value at the smaller time.</p>`
+},
+/* 15 */{
+  topic:"Indicators", hack:"Hack 15 — indicator isometry",
+  q:String.raw`Determine \(\displaystyle E\!\left[\left(\int_0^1 \mathbf 1_{\{B_t\ge0\}}\,dB_t\right)^{2}\right].\)`,
+  opts:[String.raw`\(\dfrac12\)`,String.raw`\(1\)`,String.raw`\(\dfrac14\)`,String.raw`\(\dfrac32\)`,String.raw`\(0\)`],
+  correct:0,
+  sol:String.raw`<p>Isometry, then \(\mathbf 1^2=\mathbf 1\), then \(E[\mathbf 1_A]=P(A)\):</p>
+  \[\int_0^1 E\big[\mathbf 1_{\{B_t\ge0\}}^2\big]\,dt=\int_0^1 P(B_t\ge0)\,dt=\int_0^1\tfrac12\,dt=\frac12.\]`
+},
+/* 16 */{
+  topic:"Integrated BM", hack:"Hack 17 — integration by parts",
+  q:String.raw`Determine \(\displaystyle \operatorname{var}\!\left(\int_0^t B_s\,ds\right).\)`,
+  opts:[String.raw`\(\dfrac{t^3}{3}\)`,String.raw`\(\dfrac{t^2}{2}\)`,String.raw`\(\dfrac{t^3}{6}\)`,String.raw`\(t^3\)`,String.raw`\(\dfrac{t^4}{4}\)`],
+  correct:0,
+  sol:String.raw`<p>Integration by parts writes integrated BM as a Wiener integral of a deterministic kernel:</p>
+  \[\int_0^t B_s\,ds=\int_0^t (t-s)\,dB_s.\]
+  <p>Then isometry:</p>
+  \[\operatorname{var}=\int_0^t (t-s)^2\,ds=\Big[-\tfrac{(t-s)^3}{3}\Big]_0^t=\frac{t^3}{3}.\]`
+},
+/* 17 */{
+  topic:"Core identity", hack:"Hack 18 — ∫B dB",
+  q:String.raw`Determine \(\displaystyle \int_0^t B_s\,dB_s\).`,
+  opts:[String.raw`\(\dfrac{B_t^2-t}{2}\)`,String.raw`\(\dfrac{B_t^2}{2}\)`,String.raw`\(\dfrac{B_t^2+t}{2}\)`,String.raw`\(B_t^2-t\)`,String.raw`\(\dfrac{t}{2}\)`],
+  correct:0,
+  sol:String.raw`<p>From Itô's formula \(d(B_t^2)=2B_t\,dB_t+dt\). Integrating and rearranging:</p>
+  \[B_t^2=2\int_0^t B_s\,dB_s+t\ \Longrightarrow\ \int_0^t B_s\,dB_s=\frac{B_t^2-t}{2}.\]
+  <p>The naive calculus answer \(B_t^2/2\) is corrected by the \(-t/2\) quadratic-variation term. This also re-explains why \(B_t^2-t\) is a martingale.</p>`
+},
+/* 18 */{
+  topic:"Itô's formula", hack:"Hack 19 — Itô template",
+  q:String.raw`Determine \(\displaystyle \int_0^t B_s^2\,dB_s\).`,
+  opts:[String.raw`\(\dfrac{B_t^3}{3}-\displaystyle\int_0^t B_s\,ds\)`,String.raw`\(\dfrac{B_t^3}{3}\)`,String.raw`\(\dfrac{B_t^3}{3}+\displaystyle\int_0^t B_s\,ds\)`,String.raw`\(\dfrac{B_t^3}{3}-\displaystyle\int_0^t s\,ds\)`,String.raw`\(\dfrac{B_t^3}{3}-tB_t\)`],
+  correct:0,
+  sol:String.raw`<p>Apply Itô to \(f(x)=x^3\): \(f'=3x^2\), \(f''=6x\), so</p>
+  \[B_t^3=3\int_0^t B_s^2\,dB_s+3\int_0^t B_s\,ds.\]
+  <p>Divide by \(3\) and rearrange:</p>
+  \[\int_0^t B_s^2\,dB_s=\frac{B_t^3}{3}-\int_0^t B_s\,ds.\]
+  <p>Mean check: LHS is a stochastic integral (mean \(0\)); RHS mean \(=0-0=0\). \(\checkmark\)</p>`
+},
+/* 19 */{
+  topic:"Cross-isometry", hack:"Hack 21 — polarization",
+  q:String.raw`Determine \(\displaystyle E\!\left[\int_0^t s\,dB_s\cdot\int_0^t e^{s}\,dB_s\right].\)`,
+  opts:[String.raw`\((t-1)e^{t}+1\)`,String.raw`\((t-1)e^{t}\)`,String.raw`\(te^{t}-1\)`,String.raw`\((t+1)e^{t}-1\)`,String.raw`\(e^{t}-1\)`],
+  correct:0,
+  sol:String.raw`<p>Polarised isometry: \(E[\int H\,dB\int K\,dB]=\int_0^t H_sK_s\,ds\). Here</p>
+  \[\int_0^t s\,e^{s}\,ds=\big[(s-1)e^{s}\big]_0^t=(t-1)e^{t}-(-1)=(t-1)e^{t}+1.\]`
+},
+/* 20 */{
+  topic:"Increment covariance", hack:"Hack 23 — overlap length",
+  q:String.raw`Determine \(\operatorname{cov}(B_3-B_1,\,B_4-B_2)\).`,
+  opts:[String.raw`\(1\)`,String.raw`\(2\)`,String.raw`\(0\)`,String.raw`\(3\)`,String.raw`\(\tfrac12\)`],
+  correct:0,
+  sol:String.raw`<p>Covariance of two increments equals the length of the overlap of their time intervals:</p>
+  \[\operatorname{cov}(B_3-B_1,B_4-B_2)=\big|(1,3]\cap(2,4]\big|=\big|(2,3]\big|=1.\]`
+},
+/* 21 */{
+  topic:"Correlated BMs", hack:"Hack 24 — cross-terms die",
+  q:String.raw`Let \(W_t=\sqrt{1-\rho^2}\,B^{(1)}_t+\rho B^{(2)}_t\) with independent BMs. Determine \(\operatorname{corr}(W_t,B^{(2)}_t)\).`,
+  opts:[String.raw`\(\rho\)`,String.raw`\(\rho^2\)`,String.raw`\(\sqrt{1-\rho^2}\)`,String.raw`\(\rho t\)`,String.raw`\(1\)`],
+  correct:0,
+  sol:String.raw`<p>\(W_t\) is itself a standard BM (\(\|\lambda\|^2=1\)), so \(\operatorname{var}(W_t)=t\). The cross term dies since \(E[B^{(1)}B^{(2)}]=0\):</p>
+  \[\operatorname{cov}(W_t,B^{(2)}_t)=\rho\,\operatorname{var}(B^{(2)}_t)=\rho t,\qquad
+  \operatorname{corr}=\frac{\rho t}{\sqrt t\,\sqrt t}=\rho.\]`
+},
+/* 22 */{
+  topic:"BM invariances", hack:"Hack 25 — BM in disguise",
+  q:String.raw`Which process is again a standard Brownian motion?`,
+  opts:[String.raw`\(\tfrac12 B_{4t}\)`,String.raw`\(2B_t\)`,String.raw`\(B_{2t}\)`,String.raw`\(B_t+t\)`,String.raw`\(B_t^2\)`],
+  correct:0,
+  sol:String.raw`<p>Scaling invariance: \(\lambda B_{t/\lambda^2}\) is a BM. Check \(\tfrac12 B_{4t}\) via its covariance (it is centred Gaussian):</p>
+  \[\operatorname{cov}\!\big(\tfrac12B_{4s},\tfrac12B_{4t}\big)=\tfrac14\min(4s,4t)=s\wedge t.\ \checkmark\]
+  <p>\(2B_t\) has variance \(4t\); \(B_{2t}\) has variance \(2t\); \(B_t+t\) has drift; \(B_t^2\) is not Gaussian.</p>`
+},
+/* 23 */{
+  topic:"Gaussian or not", hack:"Hack 26 — Gaussian checklist",
+  q:String.raw`Which of the following is <b>not</b> a Gaussian random variable?`,
+  opts:[String.raw`\(\displaystyle\int_0^t (t-s)\,dB_s\)`,String.raw`\(\displaystyle\int_0^t B_s\,ds\)`,String.raw`\(3B_t-B_1\)`,String.raw`\(\displaystyle\int_0^t B_s\,dB_s\)`,String.raw`\(B_t+B_{2t}\)`],
+  correct:3,
+  sol:String.raw`<p>Linear functionals of BM (Wiener integrals of deterministic kernels, \(ds\)-integrals, finite sums) are Gaussian. But \(\int_0^t B_s\,dB_s=\tfrac{B_t^2-t}{2}\) is <b>quadratic</b> in \(B\) — a shifted/scaled chi-square, not Gaussian.</p>
+  <p>The others are all linear in Gaussian inputs, hence Gaussian.</p>`
+},
+/* 24 */{
+  topic:"Gaussian conditioning", hack:"Hack 27 — projection (backward)",
+  q:String.raw`Determine \(E[B_2\mid B_5]\).`,
+  opts:[String.raw`\(\tfrac{2}{5}B_5\)`,String.raw`\(B_5\)`,String.raw`\(\tfrac{5}{2}B_5\)`,String.raw`\(B_2\)`,String.raw`\(\tfrac{2}{5}B_2\)`],
+  correct:0,
+  sol:String.raw`<p>For jointly centred Gaussian, \(E[X\mid Y]=\dfrac{\operatorname{cov}(X,Y)}{\operatorname{var}(Y)}Y\). With \(X=B_2,\ Y=B_5\), \(\operatorname{cov}(B_2,B_5)=2\), \(\operatorname{var}(B_5)=5\):</p>
+  \[E[B_2\mid B_5]=\frac{2}{5}B_5.\]
+  <p>Trap: conditioning the <i>earlier</i> value on the <i>later</i> one is <b>not</b> \(B_5\); the shrinkage factor \(s/t\) appears.</p>`
+},
+/* 25 */{
+  topic:"Gaussian-mart transfer", hack:"Hack 28 — replace t by Γ(t,t)",
+  q:String.raw`Let \(M\) be a continuous centred Gaussian martingale with \(E[M_t^2]=t^3\). For which \(\theta\) is \(e^{\theta M_t-2t^3}\) a martingale?`,
+  opts:[String.raw`\(\theta=\pm2\)`,String.raw`\(\theta=\pm4\)`,String.raw`\(\theta=\pm\sqrt2\)`,String.raw`\(\theta=\pm1\)`,String.raw`\(\theta=\pm2\sqrt2\)`],
+  correct:0,
+  sol:String.raw`<p>Everything true for BM with "\(t\)" holds for \(M\) with "\(\Gamma(t,t)=E[M_t^2]\)". The exponential martingale is \(e^{\theta M_t-\frac{\theta^2}{2}\Gamma(t,t)}\). Match the exponent:</p>
+  \[\frac{\theta^2}{2}\,t^3=2t^3\ \Longrightarrow\ \theta^2=4\ \Longrightarrow\ \theta=\pm2.\]`
+},
+/* 26 */{
+  topic:"Optional stopping", hack:"Hack 29 — exit of an interval",
+  q:String.raw`Let \(T\) be the first exit time of \((-2,3)\) by \(B\). Determine \(E[T]\).`,
+  opts:[String.raw`\(6\)`,String.raw`\(5\)`,String.raw`\(\tfrac25\)`,String.raw`\(\tfrac35\)`,String.raw`\(1\)`],
+  correct:0,
+  sol:String.raw`<p>Master case: exit of \((-a,b)\) gives \(P(\text{hit }b\text{ first})=\dfrac{a}{a+b}\) and \(E[T]=ab\). With \(a=2,\ b=3\):</p>
+  \[E[T]=ab=2\cdot3=6.\]
+  <p>(Derived from \(E[B_T^2]=E[T]\): \(E[T]=b^2\cdot\tfrac{a}{a+b}+a^2\cdot\tfrac{b}{a+b}=ab\).)</p>`
+},
+/* 27 */{
+  topic:"Reflection principle", hack:"Hack 30 — running max",
+  q:String.raw`Determine \(P\!\left(\max_{s\le1}B_s\ge2\right)\), where \(\Phi\) is the standard normal cdf.`,
+  opts:[String.raw`\(2\big(1-\Phi(2)\big)\)`,String.raw`\(1-\Phi(2)\)`,String.raw`\(2\Phi(2)-1\)`,String.raw`\(\Phi(2)\)`,String.raw`\(1-2\Phi(2)\)`],
+  correct:0,
+  sol:String.raw`<p>Reflection principle: \(P(\max_{s\le t}B_s\ge a)=2P(B_t\ge a)\). With \(t=1,\ a=2\):</p>
+  \[2P(B_1\ge2)=2\big(1-\Phi(2)\big)\approx0.0455.\]`
+},
+/* 28 */{
+  topic:"Doob L² inequality", hack:"Hack 32 — bound the sup",
+  q:String.raw`Determine the best bound from Doob's \(L^2\) inequality for \(E\!\left[\sup_{s\le1}(B_{n+s}-B_n)^2\right].\)`,
+  opts:[String.raw`\(\le 4\)`,String.raw`\(\le 1\)`,String.raw`\(\le 2\)`,String.raw`\(\le 8\)`,String.raw`\(\le 16\)`],
+  correct:0,
+  sol:String.raw`<p>Doob's \(L^2\) inequality: \(E[\sup_{s\le T}M_s^2]\le 4\,E[M_T^2]\). Here \(M_s=B_{n+s}-B_n\) is a BM, so \(E[M_1^2]=1\):</p>
+  \[E\!\left[\sup_{s\le1}(B_{n+s}-B_n)^2\right]\le 4\cdot1=4.\]`
+},
+/* 29 */{
+  topic:"Itô compensator", hack:"Hack 33 — exotic f",
+  q:String.raw`Determine \(E[\cos B_t]\).`,
+  opts:[String.raw`\(e^{-t/2}\)`,String.raw`\(e^{t/2}\)`,String.raw`\(\cos t\)`,String.raw`\(e^{-t}\)`,String.raw`\(1\)`],
+  correct:0,
+  sol:String.raw`<p>By Itô, \(f(B_t)-\tfrac12\int_0^tf''(B_s)\,ds\) is a martingale. For \(f=\cos\), \(f''=-\cos\), so \(\cos B_t+\tfrac12\int_0^t\cos B_s\,ds\) is a martingale. Taking expectations, \(m(t)=E[\cos B_t]\) solves \(m'(t)=-\tfrac12 m(t)\), \(m(0)=1\):</p>
+  \[E[\cos B_t]=e^{-t/2}.\]
+  <p>(Equivalently \(=\mathrm{Re}\,E[e^{iB_t}]=\mathrm{Re}\,e^{-t/2}\). So \(e^{t/2}\cos B_t\) is a martingale.)</p>`
+},
+/* 30 */{
+  topic:"MGF derivatives", hack:"Hack 34 — mixed moments",
+  q:String.raw`Determine \(E[B_1 e^{B_1}]\).`,
+  opts:[String.raw`\(e^{1/2}\)`,String.raw`\(e\)`,String.raw`\(1\)`,String.raw`\(e^{-1/2}\)`,String.raw`\(2e^{1/2}\)`],
+  correct:0,
+  sol:String.raw`<p>Differentiate the MGF \(E[e^{\theta B_t}]=e^{\theta^2t/2}\) in \(\theta\): \(E[B_te^{\theta B_t}]=\theta t\,e^{\theta^2t/2}\). Set \(\theta=1,\ t=1\):</p>
+  \[E[B_1e^{B_1}]=1\cdot1\cdot e^{1/2}=e^{1/2}.\]
+  <p>(Also Stein's identity \(E[Xf(X)]=E[f'(X)]\) with \(f(x)=e^x\).)</p>`
+},
+/* 31 */{
+  topic:"Nested isometry", hack:"Hack 16 — isometry twice",
+  q:String.raw`Let \(X_t=\int_0^t e^{s}\,dB_s\). Determine \(E\!\left[\left(\int_0^t X_s\,dB_s\right)^{2}\right].\)`,
+  opts:[String.raw`\(\tfrac14(e^{2t}-1)-\tfrac t2\)`,String.raw`\(\tfrac14(e^{2t}-1)\)`,String.raw`\(\tfrac12(e^{2t}-1)-t\)`,String.raw`\(\tfrac14(e^{t}-1)-\tfrac t2\)`,String.raw`\(\tfrac12(e^{2t}-1)\)`],
+  correct:0,
+  sol:String.raw`<p>Inner isometry first: \(E[X_s^2]=\int_0^s e^{2u}\,du=\dfrac{e^{2s}-1}{2}\). Feed into the outer isometry:</p>
+  \[E\!\left[\Big(\int_0^t X_s\,dB_s\Big)^2\right]=\int_0^t E[X_s^2]\,ds=\int_0^t\frac{e^{2s}-1}{2}\,ds.\]
+  \[=\frac12\Big[\tfrac{e^{2t}-1}{2}-t\Big]=\frac{e^{2t}-1}{4}-\frac t2.\]`
+},
+/* 32 */{
+  topic:"Quadratic covariation", hack:"Hack 22 — drift invisible",
+  q:String.raw`Determine \(\displaystyle\Big\langle \int_0^{\cdot} s\,dB_s,\ B\Big\rangle_t.\)`,
+  opts:[String.raw`\(\dfrac{t^2}{2}\)`,String.raw`\(t\)`,String.raw`\(\dfrac{t^3}{3}\)`,String.raw`\(\displaystyle\int_0^t s\,dB_s\)`,String.raw`\(0\)`],
+  correct:0,
+  sol:String.raw`<p>\(\big\langle\int H\,dB,\int K\,dB\big\rangle_t=\int_0^t H_sK_s\,ds\). Here \(H_s=s\), \(K_s=1\) (since \(B=\int 1\,dB\)):</p>
+  \[\int_0^t s\cdot1\,ds=\frac{t^2}{2}.\]
+  <p>The bracket is increasing / finite variation — no \(dB\) can appear.</p>`
+},
+/* 33 */{
+  topic:"MGF 2nd derivative", hack:"Hack 34 — second derivative",
+  q:String.raw`Determine \(E[B_1^2 e^{B_1}]\).`,
+  opts:[String.raw`\(2e^{1/2}\)`,String.raw`\(e^{1/2}\)`,String.raw`\(3e^{1/2}\)`,String.raw`\(2e\)`,String.raw`\(\tfrac12 e^{1/2}\)`],
+  correct:0,
+  sol:String.raw`<p>Differentiate the MGF twice: \(E[B_t^2 e^{\theta B_t}]=(t+\theta^2t^2)\,e^{\theta^2t/2}\). At \(\theta=1,\ t=1\):</p>
+  \[E[B_1^2e^{B_1}]=(1+1)\,e^{1/2}=2e^{1/2}.\]`
+},
+/* 34 */{
+  topic:"Covariance of ∫B", hack:"Hack 20 — Fubini",
+  q:String.raw`Determine \(\displaystyle\operatorname{cov}\!\left(\int_0^{1}B_r\,dr,\ \int_0^{2}B_u\,du\right).\)`,
+  opts:[String.raw`\(\dfrac{5}{6}\)`,String.raw`\(\dfrac12\)`,String.raw`\(\dfrac13\)`,String.raw`\(1\)`,String.raw`\(\dfrac53\)`],
+  correct:0,
+  sol:String.raw`<p>The general formula (via Fubini and \(E[B_rB_u]=r\wedge u\)) is, for \(s<t\),</p>
+  \[\operatorname{cov}\!\Big(\int_0^{s}B_r\,dr,\int_0^{t}B_u\,du\Big)=s^2\Big(\frac t2-\frac s6\Big).\]
+  <p>With \(s=1,\ t=2\): \(1\cdot\big(1-\tfrac16\big)=\dfrac56.\)</p>`
+},
+/* 35 */{
+  topic:"Non-stationary increments", hack:"Hack 20 — t³/3 constants",
+  q:String.raw`Determine \(\displaystyle\operatorname{var}\!\left(\int_1^{2}B_r\,dr\right).\)`,
+  opts:[String.raw`\(\dfrac43\)`,String.raw`\(\dfrac13\)`,String.raw`\(1\)`,String.raw`\(\dfrac23\)`,String.raw`\(\dfrac53\)`],
+  correct:0,
+  sol:String.raw`<p>For integrated BM the increment variance over \([s,s+t]\) is \(st^2+\tfrac{t^3}{3}\) — it depends on \(s\), so increments are <b>not</b> stationary. With \(s=1,\ t=1\):</p>
+  \[\operatorname{var}\!\Big(\int_1^{2}B_r\,dr\Big)=1\cdot1^2+\frac{1^3}{3}=\frac43.\]
+  <p>Contrast \(\operatorname{var}(\int_0^1 B\,dr)=\tfrac13\): the later increment is more spread out.</p>`
+},
+/* 36 */{
+  topic:"Long-run behaviour", hack:"Hack 31 — a.s. vs mean",
+  q:String.raw`Determine the almost-sure limit \(\displaystyle\lim_{t\to\infty}e^{\,B_t-0.01t}.\)`,
+  opts:[String.raw`\(0\)`,String.raw`\(\infty\)`,String.raw`\(1\)`,String.raw`\(e^{0.49t}\)`,String.raw`does not exist`],
+  correct:0,
+  sol:String.raw`<p>Since \(B_t/t\to0\) a.s., \(B_t-0.01t=t\big(\tfrac{B_t}{t}-0.01\big)\to-\infty\) a.s., hence</p>
+  \[e^{\,B_t-0.01t}\to0\ \text{a.s.}\]
+  <p>Trap: in expectation \(E[e^{B_t-0.01t}]=e^{t/2-0.01t}=e^{0.49t}\to\infty\). The a.s. limit and the mean disagree — read which the question asks for.</p>`
+},
+/* 37 */{
+  topic:"Correlated BM covariance", hack:"Hack 24",
+  q:String.raw`With \(W_t=\sqrt{1-\rho^2}\,B^{(1)}_t+\rho B^{(2)}_t\) and \(\rho=\tfrac12\), determine \(\operatorname{cov}(W_2,B^{(2)}_3)\).`,
+  opts:[String.raw`\(1\)`,String.raw`\(\tfrac32\)`,String.raw`\(\tfrac12\)`,String.raw`\(2\)`,String.raw`\(3\)`],
+  correct:0,
+  sol:String.raw`<p>The \(B^{(1)}\) term is independent of \(B^{(2)}\), so only the \(\rho B^{(2)}\) part contributes:</p>
+  \[\operatorname{cov}(W_s,B^{(2)}_t)=\rho\,(s\wedge t)=\tfrac12(2\wedge3)=\tfrac12\cdot2=1.\]`
+},
+/* 38 */{
+  topic:"Bridge variance", hack:"Hack 27 — conditional variance",
+  q:String.raw`Determine \(\operatorname{var}(B_2\mid B_5)\).`,
+  opts:[String.raw`\(\dfrac65\)`,String.raw`\(\dfrac25\)`,String.raw`\(10\)`,String.raw`\(\dfrac35\)`,String.raw`\(2\)`],
+  correct:0,
+  sol:String.raw`<p>Conditioning a BM on a later endpoint produces a bridge: for \(s<t\),</p>
+  \[\operatorname{var}(B_s\mid B_t)=\frac{s(t-s)}{t}.\]
+  <p>With \(s=2,\ t=5\): \(\dfrac{2\cdot3}{5}=\dfrac65.\)</p>`
+},
+/* 39 */{
+  topic:"Sum of scaled BMs", hack:"Hack 24 — check the norm",
+  q:String.raw`With independent BMs \(B^{(1)},B^{(2)}\), which linear combination is a standard Brownian motion?`,
+  opts:[String.raw`\(\tfrac{\sqrt3}{2}B^{(1)}_t+\tfrac12 B^{(2)}_t\)`,String.raw`\(B^{(1)}_t+B^{(2)}_t\)`,String.raw`\(\tfrac12 B^{(1)}_t+\tfrac12 B^{(2)}_t\)`,String.raw`\(2B^{(1)}_t-B^{(2)}_t\)`,String.raw`\(\tfrac13 B^{(1)}_t+\tfrac23 B^{(2)}_t\)`],
+  correct:0,
+  sol:String.raw`<p>\(\sum_i\lambda_iB^{(i)}\) is a standard BM iff \(\sum_i\lambda_i^2=1\). Check the sums of squares:</p>
+  <p>\(\tfrac34+\tfrac14=1\ \checkmark\); \(1+1=2\); \(\tfrac14+\tfrac14=\tfrac12\); \(4+1=5\); \(\tfrac19+\tfrac49=\tfrac59\).</p>
+  <p>Only \(\tfrac{\sqrt3}{2}B^{(1)}+\tfrac12B^{(2)}\) has unit norm.</p>`
+},
+/* 40 */{
+  topic:"Martingale from f", hack:"Hack 33 — compensator",
+  q:String.raw`Which of the following is a martingale?`,
+  opts:[String.raw`\(B_t^4-6\displaystyle\int_0^t B_s^2\,ds\)`,String.raw`\(B_t^4-6t^2\)`,String.raw`\(B_t^4-3t^2\)`,String.raw`\(B_t^4\)`,String.raw`\(B_t^4-\displaystyle\int_0^t B_s^2\,ds\)`],
+  correct:0,
+  sol:String.raw`<p>The Itô compensator \(f(B_t)-\tfrac12\int_0^t f''(B_s)\,ds\) is a martingale. For \(f(x)=x^4\), \(f''=12x^2\):</p>
+  \[B_t^4-\tfrac12\int_0^t 12B_s^2\,ds=B_t^4-6\int_0^t B_s^2\,ds.\]
+  <p>Trap: \(B_t^4-3t^2\) has the right (zero) mean since \(E[B_t^4]=3t^2\), but the compensator is <b>random</b> (\(\propto\int B_s^2\,ds\)), not deterministic — so \(B_t^4-3t^2\) is <i>not</i> a martingale.</p>`
+},
+/* 41 */{
+  topic:"Stein's identity", hack:"Sheet 1.1 — E[Zf(Z)]=E[f'(Z)]",
+  q:String.raw`For \(Z\sim N(0,1)\), use Stein's identity \(E[Zf(Z)]=E[f'(Z)]\) to determine \(E[Z^6]\).`,
+  opts:[String.raw`\(15\)`,String.raw`\(6\)`,String.raw`\(9\)`,String.raw`\(45\)`,String.raw`\(3\)`],
+  correct:0,
+  sol:String.raw`<p>Take \(f(z)=z^{5}\), so \(f'(z)=5z^{4}\). Stein's identity gives the moment recursion:</p>
+  \[E[Z^6]=E[Z\cdot Z^5]=E[5Z^4]=5\,E[Z^4]=5\cdot 3=15.\]
+  <p>This is exactly the double-factorial rule \(E[Z^{2n}]=(2n-1)!!\): here \(5!!=15\). The same identity with \(f=e^{\lambda z}\) also derives the Gaussian MGF \(M(\lambda)=e^{\lambda^2/2}\).</p>`
+},
+/* 42 */{
+  topic:"cos/sin Gaussian process", hack:"Sheet 1.3 — covariance",
+  q:String.raw`Let \(X_t=\cos(ct)\,\xi+\sin(ct)\,\eta\) with \(\xi,\eta\) i.i.d. \(N(0,1)\). Determine \(\operatorname{cov}(X_s,X_t)\).`,
+  opts:[String.raw`\(\cos\!\big(c(t-s)\big)\)`,String.raw`\(\cos(cs)\cos(ct)\)`,String.raw`\(\sin\!\big(c(t-s)\big)\)`,String.raw`\(\cos\!\big(c(t+s)\big)\)`,String.raw`\(e^{-(t-s)}\)`],
+  correct:0,
+  sol:String.raw`<p>Each \(X_t\) is a linear combination of the independent normals \(\xi,\eta\), so the process is Gaussian and centred. Using \(E[\xi^2]=E[\eta^2]=1\), \(E[\xi\eta]=0\):</p>
+  \[\operatorname{cov}(X_s,X_t)=\cos(cs)\cos(ct)+\sin(cs)\sin(ct)=\cos\!\big(c(s-t)\big)=\cos\!\big(c(t-s)\big).\]
+  <p>It is stationary (depends only on \(t-s\)) but is <b>not</b> a Brownian motion — the covariance is not \(s\wedge t\).</p>`
+},
+/* 43 */{
+  topic:"Time inversion", hack:"Sheet 2.4 — cov(W_s,W_t)",
+  q:String.raw`Define \(W_t=tB_{1/t}\) for \(t>0\) and \(W_0=0\). For \(0<s<t\), determine \(\operatorname{cov}(W_s,W_t)\).`,
+  opts:[String.raw`\(s\)`,String.raw`\(t\)`,String.raw`\(st\)`,String.raw`\(\dfrac st\)`,String.raw`\(\dfrac{1}{s\wedge t}\)`],
+  correct:0,
+  sol:String.raw`<p>\(W\) is centred Gaussian; compute the covariance directly with \(E[B_uB_v]=u\wedge v\):</p>
+  \[\operatorname{cov}(W_s,W_t)=st\,E[B_{1/s}B_{1/t}]=st\min\!\Big(\tfrac1s,\tfrac1t\Big)=st\cdot\tfrac1t=s=s\wedge t.\]
+  <p>Since \(W\) is centred Gaussian with covariance \(s\wedge t\), it is itself a standard Brownian motion (time inversion invariance). Continuity at \(0\) follows from \(B_t/t\to0\) a.s.</p>`
+},
+/* 44 */{
+  topic:"Not a BM — trap", hack:"Sheet 2.5 — independent increments fail",
+  q:String.raw`Let \(X_t=\sqrt{t}\,Z\) with a single \(Z\sim N(0,1)\) fixed for all \(t\). Note \(X_t\sim N(0,t)\) for each \(t\). Which Brownian-motion property does \(X\) <b>fail</b>?`,
+  opts:[String.raw`Increments are not independent`,String.raw`Paths are not continuous`,String.raw`Marginals are not Gaussian`,String.raw`\(X_0\neq0\)`,String.raw`Increments are not centred`],
+  correct:0,
+  sol:String.raw`<p>Every marginal is correct (\(X_t\sim N(0,t)\), \(X_0=0\), continuous paths), which is the trap. But the increments</p>
+  \[X_{t_2}-X_{t_1}=(\sqrt{t_2}-\sqrt{t_1})Z,\qquad X_{t_4}-X_{t_3}=(\sqrt{t_4}-\sqrt{t_3})Z\]
+  <p>are both deterministic multiples of the <b>same</b> \(Z\) — perfectly correlated, hence not independent. Matching one-dimensional marginals is far weaker than being a Brownian motion.</p>`
+},
+/* 45 */{
+  topic:"Sub/supermartingale", hack:"Sheet 3.1 / Hack 4 trap",
+  q:String.raw`Classify the process \(S_t=e^{\,B_t-t/4}\).`,
+  opts:[String.raw`Submartingale`,String.raw`Supermartingale`,String.raw`Martingale`,String.raw`Neither`,String.raw`Depends on \(t\)`],
+  correct:0,
+  sol:String.raw`<p>Run the mean check \(m(t)=E[S_t]\). Using \(E[e^{\theta B_t}]=e^{\theta^2t/2}\) with \(\theta=1\):</p>
+  \[E[e^{\,B_t-t/4}]=e^{t/2}\,e^{-t/4}=e^{\,t/4}\ \uparrow.\]
+  <p>A martingale needs constant mean; here the mean is strictly increasing, so \(S\) is a <b>submartingale</b>. (The martingale would require the compensator \(e^{B_t-t/2}\); the drift here is too weak by \(t/4\).)</p>`
+},
+/* 46 */{
+  topic:"Convex ⇒ submartingale", hack:"Sheet 3.1(e) — Jensen",
+  q:String.raw`\(B\) is a martingale. The discounted call payoff \(M_t=\big(e^{B_t}-K\big)^{+}\) is which kind of process?`,
+  opts:[String.raw`Submartingale`,String.raw`Supermartingale`,String.raw`Martingale`,String.raw`Finite-variation process`,String.raw`Gaussian process`],
+  correct:0,
+  sol:String.raw`<p>\(g(x)=(e^{x}-K)^{+}\) is convex: it is the composition of the convex function \(x\mapsto e^{x}-K\) with the increasing convex map \(y\mapsto y^{+}\). By the conditional Jensen inequality, a convex function of a martingale is a <b>submartingale</b>:</p>
+  \[E[g(B_t)\mid\mathcal F_s]\ge g\big(E[B_t\mid\mathcal F_s]\big)=g(B_s).\]
+  <p>Likewise \(|B_t|\) and \(B_t^2\) are submartingales; a <i>concave</i> function would give a supermartingale.</p>`
+},
+/* 47 */{
+  topic:"Multi-dim norm check", hack:"Sheet 3.2 — ⟨λ,λ⟩=1",
+  q:String.raw`Let \(B^{(1)},B^{(2)},B^{(3)}\) be independent standard BMs. For which \(\lambda\) is \(X_t=\sum_{i}\lambda_i B^{(i)}_t\) a standard Brownian motion?`,
+  opts:[String.raw`\(\tfrac{1}{\sqrt3}\big(B^{(1)}+B^{(2)}+B^{(3)}\big)\)`,String.raw`\(\tfrac13\big(B^{(1)}+B^{(2)}+B^{(3)}\big)\)`,String.raw`\(B^{(1)}+B^{(2)}+B^{(3)}\)`,String.raw`\(\tfrac1{\sqrt2}\big(B^{(1)}+B^{(2)}+B^{(3)}\big)\)`,String.raw`\(\tfrac12 B^{(1)}+\tfrac12 B^{(2)}\)`],
+  correct:0,
+  sol:String.raw`<p>\(X=\langle\lambda,B\rangle\) is a continuous centred Gaussian process with independent increments; it is a <b>standard</b> BM iff \(\operatorname{var}(X_t-X_s)=\|\lambda\|^2(t-s)=t-s\), i.e. \(\sum_i\lambda_i^2=1\). Check the norms:</p>
+  <p>\(3\cdot\tfrac13=1\ \checkmark\); \(3\cdot\tfrac19=\tfrac13\); \(3\); \(3\cdot\tfrac12=\tfrac32\); \(\tfrac12\).</p>
+  <p>Only \(\tfrac1{\sqrt3}(B^{(1)}+B^{(2)}+B^{(3)})\) has unit norm.</p>`
+},
+/* 48 */{
+  topic:"Stopping times", hack:"Sheet 3.4(b) / 2.2 — peeking",
+  q:String.raw`Which of the following is <b>not</b> a stopping time for Brownian motion?`,
+  opts:[String.raw`\(\displaystyle\operatorname*{arg\,max}_{s\le1}B_s\)`,String.raw`\(\inf\{t\ge0:B_t=1\}\)`,String.raw`\(\inf\{t\ge0:B_t\notin(-1,2)\}\)`,String.raw`\(\inf\{t\ge0:B_t-t=-1\}\)`,String.raw`the constant time \(5\)`],
+  correct:0,
+  sol:String.raw`<p>Hitting times of levels/closed sets and exit times of open intervals are stopping times: \(\{T\le t\}\) is decidable from the path up to \(t\). The <b>arg-max</b> on \([0,1]\) is not: to know the maximiser occurred by time \(t\) you must confirm the path never exceeds it on \((t,1]\) — that needs future information, so \(\{\theta\le t\}\notin\mathcal F_t\).</p>
+  <p>Smell test: hitting a set ✓; "argmax / last time / never again / future-peeking" ✗.</p>`
+},
+/* 49 */{
+  topic:"Increment × later value", hack:"Sheet 3.4(e)",
+  q:String.raw`For \(0\le s<t<u\), determine \(E\big[(B_t-B_s)\,B_u\big]\).`,
+  opts:[String.raw`\(t-s\)`,String.raw`\(u-s\)`,String.raw`\(0\)`,String.raw`\(t\)`,String.raw`\(u-t\)`],
+  correct:0,
+  sol:String.raw`<p>By linearity and \(E[B_aB_b]=a\wedge b\):</p>
+  \[E[(B_t-B_s)B_u]=E[B_tB_u]-E[B_sB_u]=(t\wedge u)-(s\wedge u)=t-s.\]
+  <p>The increment \(B_t-B_s\) is independent of \(B_s\) but <i>not</i> of the later value \(B_u\); the overlap \((s,t]\subset(0,u]\) has length \(t-s\).</p>`
+},
+/* 50 */{
+  topic:"Gaussian martingale ⟨M⟩", hack:"Sheet 4.1(h)/4.2 — ⟨M⟩=Γ(t,t)",
+  q:String.raw`Let \(M\) be a continuous centred Gaussian martingale with \(E[M_t^2]=2t\). Determine the quadratic variation \(\langle M,M\rangle_t\).`,
+  opts:[String.raw`\(2t\)`,String.raw`\(t\)`,String.raw`\(t^2\)`,String.raw`\(4t^2\)`,String.raw`\(\sqrt{2t}\)`],
+  correct:0,
+  sol:String.raw`<p>For a continuous martingale, \(M_t^2-\langle M,M\rangle_t\) is a martingale, and \(\langle M,M\rangle\) is the unique continuous increasing compensator. Since \(M_t^2-\Gamma(t,t)\) is a martingale with \(\Gamma(t,t)=E[M_t^2]=2t\) (continuous, increasing), uniqueness forces</p>
+  \[\langle M,M\rangle_t=\Gamma(t,t)=2t.\]
+  <p>Everything true for BM with "\(t\)" holds for \(M\) with "\(\Gamma(t,t)\)".</p>`
+},
+/* 51 */{
+  topic:"Gaussian-mart exponential", hack:"Sheet 4.1(i)/4.2 — match Γ",
+  q:String.raw`With the same \(M\) (\(E[M_t^2]=2t\)), for which \(\theta\) is \(e^{\theta M_t-4t}\) a martingale?`,
+  opts:[String.raw`\(\theta=\pm2\)`,String.raw`\(\theta=\pm4\)`,String.raw`\(\theta=\pm\sqrt2\)`,String.raw`\(\theta=\pm2\sqrt2\)`,String.raw`\(\theta=\pm1\)`],
+  correct:0,
+  sol:String.raw`<p>The exponential martingale for a Gaussian martingale is \(e^{\theta M_t-\frac{\theta^2}{2}\Gamma(t,t)}\). With \(\Gamma(t,t)=2t\) the compensator is \(\tfrac{\theta^2}{2}\cdot 2t=\theta^2 t\). Match it to the given \(4t\):</p>
+  \[\theta^2 t=4t\ \Longrightarrow\ \theta^2=4\ \Longrightarrow\ \theta=\pm2.\]`
+},
+/* 52 */{
+  topic:"Scaling limit", hack:"Hack 6 — α = ½ case",
+  q:String.raw`Determine \(\displaystyle\lim_{t\to\infty}P\big(B_t\le\sqrt{t}\big)\), where \(\Phi\) is the standard normal cdf.`,
+  opts:[String.raw`\(\Phi(1)\)`,String.raw`\(\tfrac12\)`,String.raw`\(1\)`,String.raw`\(0\)`,String.raw`does not exist`],
+  correct:0,
+  sol:String.raw`<p>By scaling \(B_t\overset{d}{=}\sqrt{t}\,B_1\), so for <b>every</b> \(t\):</p>
+  \[P(B_t\le\sqrt{t})=P\big(\sqrt{t}\,B_1\le\sqrt{t}\big)=P(B_1\le1)=\Phi(1)\approx0.841.\]
+  <p>The probability is constant in \(t\), so the limit is \(\Phi(1)\). Trichotomy for \(P(B_t\le c\,t^\alpha)\): \(\alpha<\tfrac12\Rightarrow\tfrac12\); \(\alpha=\tfrac12\Rightarrow\Phi(c)\); \(\alpha>\tfrac12,\,c>0\Rightarrow1\).</p>`
+},
+/* 53 */{
+  topic:"Hitting-time law", hack:"Hack 30 — reflection",
+  q:String.raw`Let \(T_a=\inf\{t\ge0:B_t=a\}\) with \(a>0\). Determine \(P(T_a\le t)\).`,
+  opts:[String.raw`\(2\big(1-\Phi(a/\sqrt t)\big)\)`,String.raw`\(1-\Phi(a/\sqrt t)\)`,String.raw`\(2\Phi(a/\sqrt t)-1\)`,String.raw`\(\Phi(a/\sqrt t)\)`,String.raw`\(2\big(1-\Phi(a)\big)\)`],
+  correct:0,
+  sol:String.raw`<p>The event \(\{T_a\le t\}\) equals \(\{\max_{s\le t}B_s\ge a\}\). The reflection principle gives \(P(\max_{s\le t}B_s\ge a)=2P(B_t\ge a)\):</p>
+  \[P(T_a\le t)=2P(B_t\ge a)=2\Big(1-\Phi\big(\tfrac{a}{\sqrt t}\big)\Big).\]
+  <p>As \(t\to\infty\) this \(\to 2(1-\tfrac12)=1\): BM hits every level a.s. — yet \(E[T_a]=\infty\).</p>`
+},
+/* 54 */{
+  topic:"Exit probability", hack:"Hack 29 — gambler's ruin",
+  q:String.raw`Standard BM starts at \(0\). Determine the probability it reaches \(3\) before \(-2\).`,
+  opts:[String.raw`\(\tfrac25\)`,String.raw`\(\tfrac35\)`,String.raw`\(\tfrac12\)`,String.raw`\(\tfrac56\)`,String.raw`\(\tfrac13\)`],
+  correct:0,
+  sol:String.raw`<p>For exit of \((-a,b)\) from \(0\), \(P(\text{hit }b\text{ before }-a)=\dfrac{a}{a+b}\) (the process reaches the <i>nearer</i> boundary more often). Here \(a=2,\ b=3\):</p>
+  \[P(\text{hit }3\text{ first})=\frac{2}{2+3}=\frac25.\]
+  <p>Check: \(E[B_T]=3\cdot\tfrac25+(-2)\cdot\tfrac35=\tfrac65-\tfrac65=0\ \checkmark\), consistent with optional stopping.</p>`
+},
+/* 55 */{
+  topic:"QV of drifted BM", hack:"Hack 11/22 — drift invisible",
+  q:String.raw`Determine the quadratic variation \(\langle X\rangle_t\) of \(X_t=B_t+3t\).`,
+  opts:[String.raw`\(t\)`,String.raw`\(t+9t^2\)`,String.raw`\(9t\)`,String.raw`\(4t\)`,String.raw`\(t+3t^2\)`],
+  correct:0,
+  sol:String.raw`<p>Quadratic variation ignores finite-variation (drift) terms entirely: only the martingale part contributes. Since \(3t\) is smooth (finite variation),</p>
+  \[\langle B_\cdot+3\cdot\rangle_t=\langle B\rangle_t=t.\]
+  <p>Elimination: \(\langle X\rangle\) must be increasing; anything with a \(dB\) term or the wrong power of \(t\) is out.</p>`
+},
+/* 56 */{
+  topic:"Optional stopping trap", hack:"Hack 29 — one-sided fails",
+  q:String.raw`Let \(T=\inf\{t\ge0:B_t=1\}\). Which statement is correct?`,
+  opts:[String.raw`\(E[B_T]=1\); optional stopping fails because \(E[T]=\infty\)`,String.raw`\(E[B_T]=0\) by optional stopping`,String.raw`\(E[B_T]=1\) and \(E[T]=1\)`,String.raw`\(T\) is not a stopping time`,String.raw`\(B\) never reaches \(1\), so \(T=\infty\) a.s.`],
+  correct:0,
+  sol:String.raw`<p>BM hits every level a.s., so \(T<\infty\) a.s. and \(B_T=1\), giving \(E[B_T]=1\). The naive "\(E[B_T]=E[B_0]=0\)" is <b>wrong</b>: optional stopping needs a uniform-integrability / finite-expectation condition, and here \(E[T]=\infty\). The one-sided hitting time is the classic counterexample — if a computation "proves" \(1=0\), this is the lesson.</p>`
+},
+/* 57 */{
+  topic:"Symmetry", hack:"Hack 9 — odd function",
+  q:String.raw`Determine \(E[\sin B_t]\).`,
+  opts:[String.raw`\(0\)`,String.raw`\(e^{-t/2}\)`,String.raw`\(e^{-t/2}\sin t\)`,String.raw`\(\sin t\)`,String.raw`\(t\)`],
+  correct:0,
+  sol:String.raw`<p>\(B_t\overset{d}{=}-B_t\) and \(\sin\) is odd, so \(E[\sin B_t]=E[\sin(-B_t)]=-E[\sin B_t]\Rightarrow E[\sin B_t]=0\).</p>
+  <p>Contrast the even function: \(E[\cos B_t]=e^{-t/2}\neq0\). (Together: \(E[e^{iB_t}]=e^{-t/2}\), whose imaginary part is \(0\).)</p>`
+},
+/* 58 */{
+  topic:"Mixed moment (tower)", hack:"Hack 7/8 — add & subtract",
+  q:String.raw`For \(0\le s<t\), determine \(E[B_s\,B_t^3]\).`,
+  opts:[String.raw`\(3st\)`,String.raw`\(3s^2\)`,String.raw`\(3s^2t\)`,String.raw`\(st\)`,String.raw`\(3t^2\)`],
+  correct:0,
+  sol:String.raw`<p>Write \(B_t=B_s+\Delta\), \(\Delta=B_t-B_s\sim N(0,t-s)\perp\mathcal F_s\), and expand \(B_t^3\):</p>
+  \[E[B_s(B_s+\Delta)^3]=E[B_s^4]+3E[B_s^3]E[\Delta]+3E[B_s^2]E[\Delta^2]+E[B_s]E[\Delta^3].\]
+  <p>With \(E[B_s^4]=3s^2\), \(E[B_s^2]=s\), and all odd moments \(0\):</p>
+  \[=3s^2+3s(t-s)=3st.\]
+  <p>Dimension check: total degree \(4\Rightarrow\) units of \(t^2\), which kills \(3s^2t\) (\(t^3\)) immediately.</p>`
+},
+/* 59 */{
+  topic:"Bridge variance", hack:"Sheet 2.6 — s(1−t) on the diagonal",
+  q:String.raw`For the Brownian bridge \(X_t=B_t-tB_1\), \(0\le t\le1\), determine \(\operatorname{var}(X_t)\).`,
+  opts:[String.raw`\(t(1-t)\)`,String.raw`\(t\)`,String.raw`\(t^2\)`,String.raw`\(t(1+t)\)`,String.raw`\(1-t\)`],
+  correct:0,
+  sol:String.raw`<p>The bridge covariance is \(E[X_sX_t]=s(1-t)\) for \(s\le t\). Setting \(s=t\):</p>
+  \[\operatorname{var}(X_t)=t(1-t).\]
+  <p>Endpoint check: it vanishes at \(t=0\) and \(t=1\) — the bridge is pinned at both ends — and peaks at \(t=\tfrac12\) with value \(\tfrac14\). Any option not dying at both endpoints is wrong.</p>`
+},
+/* 60 */{
+  topic:"Integration by parts", hack:"Hack 17 — the tB_t identity",
+  q:String.raw`Using \(d(tB_t)=B_t\,dt+t\,dB_t\), express \(\displaystyle\int_0^t s\,dB_s\).`,
+  opts:[String.raw`\(tB_t-\displaystyle\int_0^t B_s\,ds\)`,String.raw`\(tB_t+\displaystyle\int_0^t B_s\,ds\)`,String.raw`\(\displaystyle\int_0^t B_s\,ds-tB_t\)`,String.raw`\(tB_t\)`,String.raw`\(\dfrac{t^2}{2}B_t\)`],
+  correct:0,
+  sol:String.raw`<p>Integrating \(d(tB_t)=B_t\,dt+t\,dB_t\) from \(0\) to \(t\) (no Itô correction — one factor \(s\) is smooth):</p>
+  \[tB_t=\int_0^t B_s\,ds+\int_0^t s\,dB_s\ \Longrightarrow\ \int_0^t s\,dB_s=tB_t-\int_0^t B_s\,ds.\]
+  <p>Rearranged the other way this is the kernel identity \(\int_0^t B_s\,ds=\int_0^t(t-s)\,dB_s\) behind \(\operatorname{var}(\int_0^tB_s\,ds)=t^3/3\).</p>`
+},
+
+/* ============ EXTENSION BATCH: Itô's lemma, SDEs & classic tricks ============ */
+
+/* 61 */{
+  topic:"Geometric BM — solve the SDE", hack:"Master M3 — Itô on log",
+  note:String.raw`Geometric Brownian motion solves \(dS_t=\mu S_t\,dt+\sigma S_t\,dB_t\), \(S_0>0\). The multiplicative diffusion \(\sigma S_t\) makes \(d\langle S\rangle_t=\sigma^2S_t^2\,dt\).`,
+  q:String.raw`Solve \(dS_t=\mu S_t\,dt+\sigma S_t\,dB_t\) with \(S_0>0\).`,
+  opts:[String.raw`\(S_t=S_0\,e^{(\mu-\frac12\sigma^2)t+\sigma B_t}\)`,String.raw`\(S_t=S_0\,e^{\mu t+\sigma B_t}\)`,String.raw`\(S_t=S_0\,e^{(\mu+\frac12\sigma^2)t+\sigma B_t}\)`,String.raw`\(S_t=S_0\,e^{\mu t+\sigma B_t-\sigma^2t}\)`,String.raw`\(S_t=S_0\big(1+\mu t+\sigma B_t\big)\)`],
+  correct:0,
+  sol:String.raw`<p>Apply Itô to \(f(x)=\log x\): \(f'=\tfrac1x\), \(f''=-\tfrac1{x^2}\). The bracket is \(d\langle S\rangle_t=(\sigma S_t\,dB_t)^2=\sigma^2S_t^2\,dt\), so</p>
+  \[d(\log S_t)=\frac{1}{S_t}\,dS_t-\frac12\frac{1}{S_t^2}\,\sigma^2S_t^2\,dt=(\mu\,dt+\sigma\,dB_t)-\tfrac12\sigma^2\,dt.\]
+  <p>Integrate \(d(\log S_t)=(\mu-\tfrac12\sigma^2)\,dt+\sigma\,dB_t\):</p>
+  \[S_t=S_0\,e^{(\mu-\frac12\sigma^2)t+\sigma B_t}.\]
+  <p>The \(-\tfrac12\sigma^2\) is the Itô correction — naive calculus would drop it.</p>`
+},
+/* 62 */{
+  topic:"Geometric BM — mean", hack:"Master M3 — the drift cancels the correction",
+  note:String.raw`\(S_t=S_0e^{(\mu-\frac12\sigma^2)t+\sigma B_t}\). Recall \(E[e^{\sigma B_t}]=e^{\sigma^2t/2}\).`,
+  q:String.raw`For \(dS_t=\mu S_t\,dt+\sigma S_t\,dB_t\), determine \(E[S_t]\).`,
+  opts:[String.raw`\(S_0\,e^{\mu t}\)`,String.raw`\(S_0\,e^{(\mu-\sigma^2/2)t}\)`,String.raw`\(S_0\,e^{(\mu+\sigma^2/2)t}\)`,String.raw`\(S_0\)`,String.raw`\(S_0\,e^{\sigma^2 t/2}\)`],
+  correct:0,
+  sol:String.raw`<p>Two ways. Directly, \(E[S_t]=S_0e^{(\mu-\frac12\sigma^2)t}\,E[e^{\sigma B_t}]=S_0e^{(\mu-\frac12\sigma^2)t}\,e^{\sigma^2t/2}=S_0e^{\mu t}\).</p>
+  <p>Or take expectations in the SDE: \(\dfrac{d}{dt}E[S_t]=\mu E[S_t]\) (the \(dB\) term has mean \(0\)), giving \(E[S_t]=S_0e^{\mu t}\). The \(-\tfrac12\sigma^2\) correction is exactly cancelled by the \(+\tfrac12\sigma^2\) from the log-normal MGF.</p>`
+},
+/* 63 */{
+  topic:"Geometric BM — quadratic variation", hack:"Master M0 — multiplication table",
+  q:String.raw`For geometric BM \(dS_t=\mu S_t\,dt+\sigma S_t\,dB_t\), determine \(\langle S\rangle_t\).`,
+  opts:[String.raw`\(\sigma^2\displaystyle\int_0^t S_u^2\,du\)`,String.raw`\(\sigma^2 t\)`,String.raw`\(\sigma^2 S_t^2\,t\)`,String.raw`\(\dfrac{\sigma^2 t^2}{2}\)`,String.raw`\(\displaystyle\int_0^t S_u\,du\)`],
+  correct:0,
+  sol:String.raw`<p>Square the differential with \(dt\,dt=0\), \(dt\,dB=0\), \(dB\,dB=dt\). The drift is invisible:</p>
+  \[d\langle S\rangle_t=(dS_t)^2=(\sigma S_t\,dB_t)^2=\sigma^2 S_t^2\,dt\ \Longrightarrow\ \langle S\rangle_t=\sigma^2\int_0^t S_u^2\,du.\]
+  <p>Unlike \(\langle B\rangle_t=t\), this bracket is <b>random</b> because the diffusion coefficient \(\sigma S_t\) depends on the path.</p>`
+},
+/* 64 */{
+  topic:"Itô differential", hack:"Master M1′ — the template",
+  q:String.raw`Determine \(d(B_t^2)\).`,
+  opts:[String.raw`\(2B_t\,dB_t+dt\)`,String.raw`\(2B_t\,dB_t\)`,String.raw`\(2B_t\,dB_t-dt\)`,String.raw`\(B_t\,dB_t+dt\)`,String.raw`\(2B_t\,dt+dB_t\)`],
+  correct:0,
+  sol:String.raw`<p>With \(f(x)=x^2\), \(f'=2x\), \(f''=2\), and \(d\langle B\rangle_t=dt\):</p>
+  \[d(B_t^2)=f'(B_t)\,dB_t+\tfrac12 f''(B_t)\,dt=2B_t\,dB_t+dt.\]
+  <p>The extra \(+dt\) is the Itô correction \(\tfrac12 f''\,(dB)^2\). Integrating recovers \(\int_0^tB\,dB=\tfrac{B_t^2-t}{2}\).</p>`
+},
+/* 65 */{
+  topic:"Itô differential — drift", hack:"Master M1′ — read off the dt term",
+  q:String.raw`What is the drift (the \(dt\)-coefficient) of \(d(e^{B_t})\)?`,
+  opts:[String.raw`\(\tfrac12 e^{B_t}\)`,String.raw`\(e^{B_t}\)`,String.raw`\(\tfrac12\)`,String.raw`\(0\)`,String.raw`\(-\tfrac12 e^{B_t}\)`],
+  correct:0,
+  sol:String.raw`<p>For \(f(x)=e^x\), \(f'=f''=e^x\), so</p>
+  \[d(e^{B_t})=e^{B_t}\,dB_t+\tfrac12 e^{B_t}\,dt.\]
+  <p>The drift is \(\tfrac12 e^{B_t}\neq 0\) — that is precisely why \(e^{B_t}\) is a <b>submartingale</b>, and why one subtracts \(t/2\) in the exponent to get the martingale \(e^{B_t-t/2}\).</p>`
+},
+/* 66 */{
+  topic:"Heat equation ⇒ martingale", hack:"Master M2 — ∂ₜf+½∂ₓₓf=0",
+  q:String.raw`For which \(f(x,t)\) is \(f(B_t,t)\) a martingale?`,
+  opts:[String.raw`\(e^{t/2}\cos x\)`,String.raw`\(e^{t/2}\sin x\)`,String.raw`\(e^{-t/2}\cos x\)`,String.raw`\(x^2+t\)`,String.raw`\(e^{t}\cos x\)`],
+  correct:0,
+  sol:String.raw`<p>By Itô, \(f(B_t,t)\) is a (local) martingale iff its \(dt\)-coefficient vanishes: \(\partial_t f+\tfrac12\partial_{xx}f=0\).</p>
+  <p>For \(f=e^{t/2}\cos x\): \(\partial_t f=\tfrac12 e^{t/2}\cos x\), \(\partial_{xx}f=-e^{t/2}\cos x\), sum \(=\tfrac12 e^{t/2}\cos x-\tfrac12 e^{t/2}\cos x=0\ \checkmark\).</p>
+  <p>Fails for the others: \(e^{-t/2}\cos x\Rightarrow-e^{-t/2}\cos x\); \(x^2+t\Rightarrow 1+1=2\) (need \(x^2-t\)); \(e^{t}\cos x\Rightarrow\tfrac12 e^{t}\cos x\neq0\).</p>`
+},
+/* 67 */{
+  topic:"Ornstein–Uhlenbeck — solve", hack:"Toolkit C5 — integrating factor",
+  note:String.raw`The OU process solves \(dX_t=-\theta X_t\,dt+\sigma\,dB_t\), \(\theta>0\). Multiplying by the deterministic factor \(e^{\theta t}\) needs no Itô correction.`,
+  q:String.raw`Solve \(dX_t=-\theta X_t\,dt+\sigma\,dB_t\) with \(X_0\) given.`,
+  opts:[String.raw`\(X_t=X_0e^{-\theta t}+\sigma\displaystyle\int_0^t e^{-\theta(t-s)}\,dB_s\)`,String.raw`\(X_t=X_0e^{-\theta t}+\sigma B_t\)`,String.raw`\(X_t=X_0e^{\theta t}+\sigma\displaystyle\int_0^t e^{\theta(t-s)}\,dB_s\)`,String.raw`\(X_t=X_0+\sigma\displaystyle\int_0^t e^{-\theta(t-s)}\,dB_s\)`,String.raw`\(X_t=X_0e^{-\theta t}+\sigma\displaystyle\int_0^t e^{-\theta s}\,dB_s\)`],
+  correct:0,
+  sol:String.raw`<p>Multiply by \(e^{\theta t}\). Since \(e^{\theta t}\) is deterministic (finite variation, no Itô term), the product rule gives</p>
+  \[d\!\left(e^{\theta t}X_t\right)=e^{\theta t}(dX_t+\theta X_t\,dt)=\sigma e^{\theta t}\,dB_t.\]
+  <p>Integrate \(0\to t\): \(e^{\theta t}X_t-X_0=\sigma\int_0^t e^{\theta s}\,dB_s\), then divide by \(e^{\theta t}\):</p>
+  \[X_t=X_0e^{-\theta t}+\sigma\int_0^t e^{-\theta(t-s)}\,dB_s.\]`
+},
+/* 68 */{
+  topic:"Ornstein–Uhlenbeck — stationary variance", hack:"Toolkit C5 + Hack 1 (isometry)",
+  q:String.raw`For \(dX_t=-\theta X_t\,dt+\sigma\,dB_t\) (\(\theta>0\)), determine \(\displaystyle\lim_{t\to\infty}\operatorname{var}(X_t)\).`,
+  opts:[String.raw`\(\dfrac{\sigma^2}{2\theta}\)`,String.raw`\(\dfrac{\sigma^2}{\theta}\)`,String.raw`\(\dfrac{\sigma^2\theta}{2}\)`,String.raw`\(\sigma^2\)`,String.raw`\(\dfrac{\theta}{2\sigma^2}\)`],
+  correct:0,
+  sol:String.raw`<p>Only the Wiener-integral term carries randomness. By Itô isometry,</p>
+  \[\operatorname{var}(X_t)=\sigma^2\int_0^t e^{-2\theta(t-s)}\,ds=\frac{\sigma^2}{2\theta}\big(1-e^{-2\theta t}\big)\ \xrightarrow[t\to\infty]{}\ \frac{\sigma^2}{2\theta}.\]
+  <p>So the stationary law is \(N\!\big(0,\tfrac{\sigma^2}{2\theta}\big)\): mean-reversion balances the noise.</p>`
+},
+/* 69 */{
+  topic:"Vasicek — mean", hack:"Toolkit C6 — drift decides the mean",
+  note:String.raw`Vasicek: \(dr_t=a(b-r_t)\,dt+\sigma\,dW_t\) with speed \(a>0\), long-run level \(b\).`,
+  q:String.raw`For the Vasicek model \(dr_t=a(b-r_t)\,dt+\sigma\,dW_t\), determine \(E[r_t\mid r_0]\).`,
+  opts:[String.raw`\(r_0e^{-at}+b\big(1-e^{-at}\big)\)`,String.raw`\(b\)`,String.raw`\(r_0e^{-at}\)`,String.raw`\(r_0+b\big(1-e^{-at}\big)\)`,String.raw`\(r_0e^{-at}+b\)`],
+  correct:0,
+  sol:String.raw`<p>Taking expectations kills the \(dW\) term (mean \(0\)). Writing \(m(t)=E[r_t]\), \(m'(t)=a(b-m(t))\), \(m(0)=r_0\). Solving this linear ODE (substitute \(u=m-b\Rightarrow u'=-au\)):</p>
+  \[E[r_t\mid r_0]=r_0e^{-at}+b\big(1-e^{-at}\big)\ \xrightarrow[t\to\infty]{}\ b.\]
+  <p>The mean depends only on the drift — the diffusion never enters.</p>`
+},
+/* 70 */{
+  topic:"Vasicek — stationary law", hack:"Toolkit C6 — Gaussian, Itô isometry",
+  q:String.raw`For \(dr_t=a(b-r_t)\,dt+\sigma\,dW_t\), the stationary distribution of \(r_t\) as \(t\to\infty\) is:`,
+  opts:[String.raw`\(N\!\big(b,\ \tfrac{\sigma^2}{2a}\big)\)`,String.raw`\(N\!\big(b,\ \tfrac{\sigma^2}{a}\big)\)`,String.raw`\(N\!\big(0,\ \tfrac{\sigma^2}{2a}\big)\)`,String.raw`\(N\!\big(a,\ \tfrac{\sigma^2}{2b}\big)\)`,String.raw`\(N\!\big(b,\ \sigma^2\big)\)`],
+  correct:0,
+  sol:String.raw`<p>Vasicek is the OU process with mean-reversion level \(b\). The closed form is Gaussian (Wiener integral against a deterministic kernel): mean \(r_0e^{-at}+b(1-e^{-at})\to b\), and variance \(\tfrac{\sigma^2}{2a}(1-e^{-2at})\to\tfrac{\sigma^2}{2a}\) by Itô isometry. Hence</p>
+  \[r_t\ \xrightarrow{d}\ N\!\Big(b,\ \tfrac{\sigma^2}{2a}\Big).\]
+  <p>Trap: rates can go negative under Vasicek — that is the model's known weakness.</p>`
+},
+/* 71 */{
+  topic:"CIR — mean", hack:"Toolkit C7 — diffusion never touches the mean",
+  note:String.raw`CIR: \(dr_t=a(b-r_t)\,dt+\sigma\sqrt{r_t}\,dW_t\). No explicit path formula exists, but the mean does.`,
+  q:String.raw`For the CIR model \(dr_t=a(b-r_t)\,dt+\sigma\sqrt{r_t}\,dW_t\), determine \(E[r_t\mid r_0]\).`,
+  opts:[String.raw`\(r_0e^{-at}+b\big(1-e^{-at}\big)\)`,String.raw`no closed form exists for the mean`,String.raw`\(r_0e^{-at}\)`,String.raw`\(b\big(1-e^{-at}\big)\)`,String.raw`\(r_0e^{-at}+\tfrac{\sigma^2}{2a}\big(1-e^{-at}\big)\)`],
+  correct:0,
+  sol:String.raw`<p>Even though \(\sqrt{r_s}\) makes the <i>path</i> intractable, the Itô integral \(\int_0^t\sigma\sqrt{r_s}\,dW_s\) is a martingale started at \(0\), so \(E\) of it is exactly \(0\). Thus \(m(t)=E[r_t]\) obeys the <b>same</b> ODE as Vasicek, \(m'=a(b-m)\), because CIR and Vasicek share the drift:</p>
+  \[E[r_t\mid r_0]=r_0e^{-at}+b\big(1-e^{-at}\big).\]
+  <p>Diffusion lives entirely inside \(d\langle r\rangle_t\), which \(E\) annihilates.</p>`
+},
+/* 72 */{
+  topic:"CIR vs Vasicek", hack:"Toolkit C7 — the law is non-central χ²",
+  q:String.raw`Which statement about the CIR process \(dr_t=a(b-r_t)\,dt+\sigma\sqrt{r_t}\,dW_t\) is <b>true</b>?`,
+  opts:[String.raw`\(r_t\ge0\) a.s. and its law is non-central \(\chi^2\), not Gaussian`,String.raw`\(r_t\) is Gaussian, exactly like Vasicek`,String.raw`\(r_t\) can take negative values`,String.raw`\(E[r_t]\) differs from the Vasicek mean`,String.raw`\(r_t\) is log-normally distributed`],
+  correct:0,
+  sol:String.raw`<p>The \(\sqrt{r}\) diffusion shuts off as \(r\downarrow0\), keeping \(r_t\ge0\) (this is exactly why CIR is preferred over Vasicek for interest rates). The transition law is non-central \(\chi^2\), <b>not</b> Gaussian. The mean, however, is identical to Vasicek's because the derivation used only the shared drift.</p>`
+},
+/* 73 */{
+  topic:"Product of independent BMs", hack:"Master M4 — product rule, ⟨·⟩=0",
+  note:String.raw`Let \(W,B\) be <b>independent</b> standard BMs, so \(d\langle W,B\rangle_t=0\).`,
+  q:String.raw`For independent standard BMs \(W,B\), the process \(W_tB_t\) is:`,
+  opts:[String.raw`a martingale`,String.raw`a submartingale`,String.raw`equal to \(W_tB_t-t\) plus a martingale`,String.raw`a process with drift \(dt\)`,String.raw`not adapted to the joint filtration`],
+  correct:0,
+  sol:String.raw`<p>Itô product rule: \(d(W_tB_t)=W_t\,dB_t+B_t\,dW_t+d\langle W,B\rangle_t\). For independent BMs the cross-variation vanishes, \(d\langle W,B\rangle_t=0\), leaving</p>
+  \[d(W_tB_t)=W_t\,dB_t+B_t\,dW_t,\]
+  <p>a pure stochastic-integral (no \(dt\)) term — hence a <b>martingale</b>.</p>`
+},
+/* 74 */{
+  topic:"Product of correlated BMs", hack:"Master M5 — the ρt compensator",
+  note:String.raw`Let \(W,B\) be correlated BMs with \(d\langle W,B\rangle_t=\rho\,dt\).`,
+  q:String.raw`For correlated BMs with \(d\langle W,B\rangle_t=\rho\,dt\), which process is a martingale?`,
+  opts:[String.raw`\(W_tB_t-\rho t\)`,String.raw`\(W_tB_t\)`,String.raw`\(W_tB_t+\rho t\)`,String.raw`\(W_tB_t-t\)`,String.raw`\(W_tB_t-\rho^2 t\)`],
+  correct:0,
+  sol:String.raw`<p>Product rule: \(d(W_tB_t)=W_t\,dB_t+B_t\,dW_t+\rho\,dt\). The \(\rho\,dt\) drift must be compensated, so</p>
+  \[W_tB_t-\rho t\quad\text{is a martingale}\qquad(\text{it equals }\textstyle\int W\,dB+\int B\,dW).\]
+  <p>This is the general fact \(X_tY_t-\langle X,Y\rangle_t\) is a martingale.</p>`
+},
+/* 75 */{
+  topic:"Correlated BM — drift of the product", hack:"Master M5 — cross term",
+  q:String.raw`With \(d\langle W,B\rangle_t=\rho\,dt\), what is the drift (\(dt\)-coefficient) of \(d(W_tB_t)\)?`,
+  opts:[String.raw`\(\rho\)`,String.raw`\(0\)`,String.raw`\(\rho t\)`,String.raw`\(1\)`,String.raw`\(2\rho\)`],
+  correct:0,
+  sol:String.raw`<p>\(d(W_tB_t)=W_t\,dB_t+B_t\,dW_t+d\langle W,B\rangle_t\). The only \(dt\) piece is the cross-variation \(d\langle W,B\rangle_t=\rho\,dt\), so the drift coefficient is \(\rho\). (Independent BMs \(\Rightarrow\rho=0\Rightarrow\) driftless \(\Rightarrow\) martingale, matching the previous question.)</p>`
+},
+/* 76 */{
+  topic:"Wiener integral — distribution", hack:"Hack 26 + Hack 1 — Gaussian, var = ∫h²",
+  q:String.raw`Identify the distribution of \(\displaystyle\int_0^t (t-s)\,dB_s\).`,
+  opts:[String.raw`\(N\!\big(0,\ \tfrac{t^3}{3}\big)\)`,String.raw`\(N\!\big(0,\ \tfrac{t^2}{2}\big)\)`,String.raw`\(N\!\big(t,\ \tfrac{t^3}{3}\big)\)`,String.raw`\(N(0,\ t)\)`,String.raw`not Gaussian`],
+  correct:0,
+  sol:String.raw`<p>A Wiener integral of a <b>deterministic</b> kernel is centred Gaussian with variance \(\int_0^t h(s)^2\,ds\) (Itô isometry). Here \(h(s)=t-s\):</p>
+  \[\operatorname{var}=\int_0^t (t-s)^2\,ds=\frac{t^3}{3}\quad\Longrightarrow\quad \int_0^t(t-s)\,dB_s\sim N\!\Big(0,\tfrac{t^3}{3}\Big).\]
+  <p>This is exactly integrated BM \(\int_0^tB_s\,ds\) in disguise (Hack 17).</p>`
+},
+/* 77 */{
+  topic:"Cross-isometry — matched exponentials", hack:"Hack 21 — polarization",
+  q:String.raw`Determine \(\displaystyle E\!\left[\int_0^t e^{-s}\,dB_s\cdot\int_0^t e^{s}\,dB_s\right].\)`,
+  opts:[String.raw`\(t\)`,String.raw`\(e^{2t}-1\)`,String.raw`\(\dfrac{e^{2t}-1}{2}\)`,String.raw`\(1-e^{-2t}\)`,String.raw`\(0\)`],
+  correct:0,
+  sol:String.raw`<p>Polarised isometry: \(E\big[\int H\,dB\int K\,dB\big]=\int_0^t H_sK_s\,ds\). The exponentials cancel:</p>
+  \[\int_0^t e^{-s}e^{s}\,ds=\int_0^t 1\,ds=t.\]`
+},
+/* 78 */{
+  topic:"Hitting time — Laplace transform", hack:"Hack 4 + Hack 29 — exp. martingale stopped",
+  note:String.raw`\(T_a=\inf\{t\ge0:B_t=a\}\) with \(a>0\). Use \(e^{\theta B_t-\theta^2t/2}\) (a martingale) and optional stopping.`,
+  q:String.raw`For \(a>0\) and \(\lambda>0\), determine \(E\!\left[e^{-\lambda T_a}\right]\).`,
+  opts:[String.raw`\(e^{-a\sqrt{2\lambda}}\)`,String.raw`\(e^{-a\lambda}\)`,String.raw`\(e^{-a^2\lambda/2}\)`,String.raw`\(e^{-\sqrt{2\lambda}/a}\)`,String.raw`\(e^{-\lambda/a}\)`],
+  correct:0,
+  sol:String.raw`<p>Apply optional stopping to \(M_t=e^{\theta B_t-\theta^2t/2}\) at \(T_a\) (with \(\theta>0\), so \(M_{t\wedge T_a}\) is bounded): \(E[e^{\theta B_{T_a}-\theta^2T_a/2}]=1\). Since \(B_{T_a}=a\),</p>
+  \[e^{\theta a}\,E[e^{-\theta^2T_a/2}]=1\ \Longrightarrow\ E[e^{-\theta^2T_a/2}]=e^{-\theta a}.\]
+  <p>Set \(\lambda=\theta^2/2\), i.e. \(\theta=\sqrt{2\lambda}\):</p>
+  \[E[e^{-\lambda T_a}]=e^{-a\sqrt{2\lambda}}.\]
+  <p>(Its non-differentiability at \(\lambda=0\) encodes \(E[T_a]=\infty\).)</p>`
+},
+/* 79 */{
+  topic:"Exit time — expectation", hack:"Hack 29 — E[T]=ab",
+  q:String.raw`Let \(T\) be the first exit time of \((-1,4)\) by \(B\). Determine \(E[T]\).`,
+  opts:[String.raw`\(4\)`,String.raw`\(5\)`,String.raw`\(\tfrac15\)`,String.raw`\(\tfrac45\)`,String.raw`\(20\)`],
+  correct:0,
+  sol:String.raw`<p>For exit of \((-a,b)\), \(E[T]=ab\) (from \(E[B_T^2]=E[T]\)). With \(a=1,\ b=4\):</p>
+  \[E[T]=1\cdot4=4.\]
+  <p>Check the exit probabilities: \(P(\text{hit }4)=\tfrac{a}{a+b}=\tfrac15\), \(P(\text{hit }-1)=\tfrac45\), and \(E[B_T^2]=16\cdot\tfrac15+1\cdot\tfrac45=\tfrac{20}{5}=4=E[T]\ \checkmark\).</p>`
+},
+/* 80 */{
+  topic:"Itô product — d(tBₜ)", hack:"Master M4 — one factor smooth",
+  q:String.raw`Determine \(d(tB_t)\).`,
+  opts:[String.raw`\(B_t\,dt+t\,dB_t\)`,String.raw`\(t\,dB_t\)`,String.raw`\(B_t\,dt\)`,String.raw`\(B_t\,dt+t\,dB_t+dt\)`,String.raw`\(2tB_t\,dB_t\)`],
+  correct:0,
+  sol:String.raw`<p>Take \(f(x,t)=tx\): \(\partial_t f=x\), \(\partial_x f=t\), \(\partial_{xx}f=0\). No second-order term, so <b>no Itô correction</b> — because one factor (\(t\)) is smooth:</p>
+  \[d(tB_t)=B_t\,dt+t\,dB_t.\]
+  <p>Integrating gives \(tB_t=\int_0^tB_s\,ds+\int_0^t s\,dB_s\), the integration-by-parts identity behind \(t^3/3\).</p>`
+},
+/* 81 */{
+  topic:"Itô differential — cube", hack:"Master M1′ — f=x³",
+  q:String.raw`Determine \(d(B_t^3)\).`,
+  opts:[String.raw`\(3B_t^2\,dB_t+3B_t\,dt\)`,String.raw`\(3B_t^2\,dB_t\)`,String.raw`\(3B_t^2\,dB_t+3t\,dt\)`,String.raw`\(3B_t^2\,dB_t+6B_t\,dt\)`,String.raw`\(B_t^3\,dt\)`],
+  correct:0,
+  sol:String.raw`<p>\(f(x)=x^3\Rightarrow f'=3x^2,\ f''=6x\):</p>
+  \[d(B_t^3)=3B_t^2\,dB_t+\tfrac12\cdot6B_t\,dt=3B_t^2\,dB_t+3B_t\,dt.\]
+  <p>Integrating: \(B_t^3=3\int_0^tB_s^2\,dB_s+3\int_0^tB_s\,ds\).</p>`
+},
+/* 82 */{
+  topic:"Martingale version of B³", hack:"Master M2 / Hack 5",
+  q:String.raw`Which process is a martingale?`,
+  opts:[String.raw`\(B_t^3-3tB_t\)`,String.raw`\(B_t^3-3t^2\)`,String.raw`\(B_t^3-t^3\)`,String.raw`\(B_t^3\)`,String.raw`\(B_t^3-3t\)`],
+  correct:0,
+  sol:String.raw`<p>Check the heat equation \(\partial_t f+\tfrac12\partial_{xx}f=0\) for \(f=x^3-3tx\): \(\partial_t f=-3x\), \(\partial_{xx}f=6x\), sum \(=-3x+3x=0\ \checkmark\).</p>
+  <p>So \(B_t^3-3tB_t\) is a martingale (equivalently \(3\int_0^tB_s^2\,dB_s\)). The decoy \(B_t^3-3t^2\) has the right mean \(0\) but wrong \(x\)-dependence, so it is not a martingale.</p>`
+},
+/* 83 */{
+  topic:"Feynman–Kac (value)", hack:"Master M2 — expectations solve heat eq.",
+  note:String.raw`\(u(t,x)=E[\,g(x+B_t)\,]\) solves the heat equation \(\partial_t u=\tfrac12\partial_{xx}u\).`,
+  q:String.raw`Determine \(u(t,x)=E\!\left[e^{\,x+B_t}\right].\)`,
+  opts:[String.raw`\(e^{\,x+t/2}\)`,String.raw`\(e^{\,x}\)`,String.raw`\(e^{\,x+t}\)`,String.raw`\(e^{\,x-t/2}\)`,String.raw`\(e^{\,2x+t}\)`],
+  correct:0,
+  sol:String.raw`<p>Factor out the constant: \(u(t,x)=e^{x}E[e^{B_t}]=e^{x}e^{t/2}=e^{x+t/2}\).</p>
+  <p>Sanity via Feynman–Kac: \(\partial_t u=\tfrac12 u\) and \(\tfrac12\partial_{xx}u=\tfrac12 u\), so \(\partial_t u=\tfrac12\partial_{xx}u\ \checkmark\), with \(u(0,x)=e^{x}\).</p>`
+},
+/* 84 */{
+  topic:"Stratonovich integral", hack:"Master M4 — the correction disappears",
+  note:String.raw`The Stratonovich integral \(\int_0^t B_s\circ dB_s\) obeys ordinary calculus (no Itô correction).`,
+  q:String.raw`Determine the Stratonovich integral \(\displaystyle\int_0^t B_s\circ dB_s\).`,
+  opts:[String.raw`\(\dfrac{B_t^2}{2}\)`,String.raw`\(\dfrac{B_t^2-t}{2}\)`,String.raw`\(\dfrac{B_t^2+t}{2}\)`,String.raw`\(B_t^2\)`,String.raw`\(\dfrac t2\)`],
+  correct:0,
+  sol:String.raw`<p>The Stratonovich integral is defined so the chain rule works classically: \(\int_0^tB\circ dB=\tfrac{B_t^2}{2}\), no \(-t/2\). The link to Itô is</p>
+  \[\int_0^t B\circ dB=\int_0^t B\,dB+\tfrac12\langle B\rangle_t=\frac{B_t^2-t}{2}+\frac t2=\frac{B_t^2}{2}.\]
+  <p>The Itô version keeps the \(-t/2\); Stratonovich hides it inside the integral.</p>`
+},
+/* 85 */{
+  topic:"Quadratic variation of B", hack:"Master M0 — ⟨B⟩ₜ=t",
+  q:String.raw`\(B_t^2-\langle B\rangle_t\) is a martingale. What is \(\langle B\rangle_t\)?`,
+  opts:[String.raw`\(t\)`,String.raw`\(B_t^2\)`,String.raw`\(\dfrac{t^2}{2}\)`,String.raw`\(\sqrt t\)`,String.raw`\(0\)`],
+  correct:0,
+  sol:String.raw`<p>The quadratic variation of Brownian motion is <b>deterministic</b>: \(\langle B\rangle_t=t\). This is exactly what makes \(B_t^2-t\) a martingale. Note \(\langle B\rangle_t=t\) is increasing (finite variation) and is <i>not</i> itself a martingale — brackets never are.</p>`
+},
+/* 86 */{
+  topic:"Bracket of an Itô process", hack:"Master M0 — drift invisible",
+  q:String.raw`For \(dX_t=3\,dt+2\,dB_t\), determine \(\langle X\rangle_t\).`,
+  opts:[String.raw`\(4t\)`,String.raw`\(2t\)`,String.raw`\(13t\)`,String.raw`\(9t\)`,String.raw`\(4t+9t^2\)`],
+  correct:0,
+  sol:String.raw`<p>Square the differential using \(dt\,dt=dt\,dB=0\), \(dB\,dB=dt\):</p>
+  \[d\langle X\rangle_t=(3\,dt+2\,dB_t)^2=(2\,dB_t)^2=4\,dt\ \Longrightarrow\ \langle X\rangle_t=4t.\]
+  <p>The drift \(3\,dt\) contributes nothing — only the diffusion coefficient squared matters.</p>`
+},
+/* 87 */{
+  topic:"Cross-variation, common driver", hack:"Master M0 — d⟨X,Y⟩=σˣσʸdt",
+  q:String.raw`Let \(dX_t=2\,dB_t\) and \(dY_t=3\,dB_t\) (same \(B\)). Determine \(\langle X,Y\rangle_t\).`,
+  opts:[String.raw`\(6t\)`,String.raw`\(5t\)`,String.raw`\(0\)`,String.raw`\(6\)`,String.raw`\(6t^2\)`],
+  correct:0,
+  sol:String.raw`<p>The cross-variation multiplies the two diffusion coefficients: \(d\langle X,Y\rangle_t=(2\,dB_t)(3\,dB_t)=6\,dt\), so \(\langle X,Y\rangle_t=6t\).</p>
+  <p>Had \(X,Y\) been driven by <i>independent</i> BMs, this would be \(0\).</p>`
+},
+/* 88 */{
+  topic:"Isometry — decaying integrand", hack:"Hack 1 — square and integrate",
+  q:String.raw`Determine \(\displaystyle E\!\left[\left(\int_0^t e^{-s}\,dB_s\right)^2\right].\)`,
+  opts:[String.raw`\(\dfrac{1-e^{-2t}}{2}\)`,String.raw`\(\dfrac{1-e^{-t}}{2}\)`,String.raw`\(\dfrac{1-e^{-2t}}{4}\)`,String.raw`\(\dfrac{e^{2t}-1}{2}\)`,String.raw`\(1-e^{-2t}\)`],
+  correct:0,
+  sol:String.raw`<p>Itô isometry: square the integrand and integrate.</p>
+  \[\int_0^t (e^{-s})^2\,ds=\int_0^t e^{-2s}\,ds=\frac{1-e^{-2t}}{2}.\]
+  <p>As \(t\to\infty\) this \(\to\tfrac12\), the stationary variance of the OU integral \(\int_0^\infty e^{-s}dB_s\).</p>`
+},
+/* 89 */{
+  topic:"Mean of a stochastic integral", hack:"Hack 5 — ∫H dB is a martingale",
+  q:String.raw`Determine \(\displaystyle E\!\left[\int_0^t B_s\,dB_s\right].\)`,
+  opts:[String.raw`\(0\)`,String.raw`\(\dfrac t2\)`,String.raw`\(-\dfrac t2\)`,String.raw`\(t\)`,String.raw`\(\dfrac{t^2}{2}\)`],
+  correct:0,
+  sol:String.raw`<p>Any Itô integral \(\int_0^t H_s\,dB_s\) is a martingale started at \(0\), so its expectation is \(0\). Check via the closed form: \(\int_0^tB\,dB=\tfrac{B_t^2-t}{2}\), and \(E\big[\tfrac{B_t^2-t}{2}\big]=\tfrac{t-t}{2}=0\ \checkmark\).</p>`
+},
+/* 90 */{
+  topic:"Brownian bridge — SDE", hack:"Toolkit — conditioned diffusion",
+  note:String.raw`The bridge \(b_t\) is BM on \([0,1]\) conditioned to satisfy \(b_1=0\); its drift pulls it back toward \(0\) ever harder as \(t\to1\).`,
+  q:String.raw`Which SDE does the standard Brownian bridge \(b_t\) on \([0,1)\) satisfy?`,
+  opts:[String.raw`\(db_t=-\dfrac{b_t}{1-t}\,dt+dB_t\)`,String.raw`\(db_t=-b_t\,dt+dB_t\)`,String.raw`\(db_t=\dfrac{b_t}{1-t}\,dt+dB_t\)`,String.raw`\(db_t=-\dfrac{b_t}{1-t}\,dt\)`,String.raw`\(db_t=dB_t\)`],
+  correct:0,
+  sol:String.raw`<p>The bridge has a mean-reverting drift toward its pinned endpoint \(0\), with strength \(\tfrac{1}{1-t}\) that blows up as \(t\to1\):</p>
+  \[db_t=-\frac{b_t}{1-t}\,dt+dB_t,\qquad b_0=0.\]
+  <p>The diffusion is still \(dB_t\) (bracket \(t\)); only the drift is added. As \(t\to1\) the drift forces \(b_1=0\).</p>`
+},
+/* 91 */{
+  topic:"Stationary OU — covariance", hack:"Toolkit C5 / Hack 12",
+  q:String.raw`For the stationary OU process solving \(dX_t=-\theta X_t\,dt+\sigma\,dB_t\), determine \(\operatorname{cov}(X_s,X_t)\) for \(s\le t\).`,
+  opts:[String.raw`\(\dfrac{\sigma^2}{2\theta}\,e^{-\theta(t-s)}\)`,String.raw`\(\dfrac{\sigma^2}{2\theta}\,e^{\theta(t-s)}\)`,String.raw`\(e^{-\theta(t-s)}\)`,String.raw`\(\dfrac{\sigma^2}{2\theta}\,(s\wedge t)\)`,String.raw`\(\sigma^2 e^{-\theta(t-s)}\)`],
+  correct:0,
+  sol:String.raw`<p>In stationarity, \(\operatorname{var}(X_t)=\tfrac{\sigma^2}{2\theta}\), and the mean-reverting dynamics give an exponentially decaying autocorrelation:</p>
+  \[\operatorname{cov}(X_s,X_t)=\frac{\sigma^2}{2\theta}\,e^{-\theta|t-s|}.\]
+  <p>It depends only on \(|t-s|\) (stationary) — the same structural form as the time-changed process \(e^{-t}B_{e^{2t}}\).</p>`
+},
+/* 92 */{
+  topic:"Geometric BM — median", hack:"Master M3 — log-normal",
+  q:String.raw`For \(dS_t=\mu S_t\,dt+\sigma S_t\,dB_t\), determine the <b>median</b> of \(S_t\).`,
+  opts:[String.raw`\(S_0\,e^{(\mu-\sigma^2/2)t}\)`,String.raw`\(S_0\,e^{\mu t}\)`,String.raw`\(S_0\)`,String.raw`\(S_0\,e^{(\mu+\sigma^2/2)t}\)`,String.raw`\(S_0\,e^{-\sigma^2t/2}\)`],
+  correct:0,
+  sol:String.raw`<p>\(\log S_t=\log S_0+(\mu-\tfrac12\sigma^2)t+\sigma B_t\) is Gaussian with median equal to its mean \((\mu-\tfrac12\sigma^2)t\). Since \(\exp\) is increasing, the median passes through:</p>
+  \[\text{median}(S_t)=S_0\,e^{(\mu-\sigma^2/2)t}.\]
+  <p>This is strictly below the mean \(S_0e^{\mu t}\) — the log-normal is right-skewed, so mean \(>\) median.</p>`
+},
+/* 93 */{
+  topic:"Driftless GBM — martingale", hack:"Master M2 — which μ",
+  q:String.raw`For which \(\mu\) is geometric BM \(S_t\) (with \(dS_t=\mu S_t\,dt+\sigma S_t\,dB_t\)) a martingale?`,
+  opts:[String.raw`\(\mu=0\)`,String.raw`\(\mu=\sigma^2/2\)`,String.raw`\(\mu=-\sigma^2/2\)`,String.raw`\(\mu=\sigma^2\)`,String.raw`any \(\mu\)`],
+  correct:0,
+  sol:String.raw`<p>\(E[S_t]=S_0e^{\mu t}\), which is constant iff \(\mu=0\). Then \(S_t=S_0e^{\sigma B_t-\sigma^2t/2}\) is precisely the exponential martingale. Equivalently, the SDE has no drift term: \(dS_t=\sigma S_t\,dB_t\Rightarrow S\) is a (local) martingale.</p>`
+},
+/* 94 */{
+  topic:"Itô on log — GBM differential", hack:"Master M3 — the −½σ² term",
+  q:String.raw`For \(dS_t=\mu S_t\,dt+\sigma S_t\,dB_t\), determine \(d(\log S_t)\).`,
+  opts:[String.raw`\(\big(\mu-\tfrac12\sigma^2\big)\,dt+\sigma\,dB_t\)`,String.raw`\(\mu\,dt+\sigma\,dB_t\)`,String.raw`\(\big(\mu+\tfrac12\sigma^2\big)\,dt+\sigma\,dB_t\)`,String.raw`\(\sigma\,dB_t\)`,String.raw`\(\big(\mu-\sigma^2\big)\,dt+\sigma\,dB_t\)`],
+  correct:0,
+  sol:String.raw`<p>With \(f=\log x\), \(f'=\tfrac1x\), \(f''=-\tfrac1{x^2}\), and \(d\langle S\rangle_t=\sigma^2S_t^2\,dt\):</p>
+  \[d(\log S_t)=\frac{dS_t}{S_t}-\frac12\frac{\sigma^2S_t^2}{S_t^2}\,dt=(\mu\,dt+\sigma\,dB_t)-\tfrac12\sigma^2\,dt=\big(\mu-\tfrac12\sigma^2\big)dt+\sigma\,dB_t.\]
+  <p>The \(-\tfrac12\sigma^2\) is the whole content of Itô's lemma here.</p>`
+},
+/* 95 */{
+  topic:"Spot the non-martingale", hack:"Master M2 — mean check",
+  q:String.raw`Which of the following is <b>not</b> a martingale?`,
+  opts:[String.raw`\(e^{B_t}\)`,String.raw`\(e^{t/2}\cos B_t\)`,String.raw`\(B_t^2-t\)`,String.raw`\(B_t^3-3tB_t\)`,String.raw`\(e^{B_t-t/2}\)`],
+  correct:0,
+  sol:String.raw`<p>Run the mean check. \(E[e^{B_t}]=e^{t/2}\), which is <b>increasing</b> — so \(e^{B_t}\) is a submartingale, not a martingale. The other four all pass the heat equation \(\partial_t f+\tfrac12\partial_{xx}f=0\) (equivalently have constant mean \(1,0,0,1\)).</p>`
+},
+/* 96 */{
+  topic:"Independent brackets", hack:"Master M5 — d⟨B¹,B²⟩=0",
+  q:String.raw`For independent standard BMs \(B^{(1)},B^{(2)}\), determine \(\langle B^{(1)},B^{(2)}\rangle_t\).`,
+  opts:[String.raw`\(0\)`,String.raw`\(t\)`,String.raw`\(s\wedge t\)`,String.raw`\(\rho t\)`,String.raw`\(1\)`],
+  correct:0,
+  sol:String.raw`<p>Independence forces zero cross-variation: \(d\langle B^{(1)},B^{(2)}\rangle_t=0\), so the bracket is \(0\). This is exactly why \(B^{(1)}_tB^{(2)}_t\) is already a martingale (no \(\rho t\) compensator needed).</p>`
+},
+/* 97 */{
+  topic:"Vasicek — the integrating-factor step", hack:"Toolkit C6 — Itô on e^{at}rₜ",
+  q:String.raw`In the Vasicek derivation, applying Itô to \(e^{at}r_t\) (with \(dr_t=a(b-r_t)\,dt+\sigma\,dW_t\)) gives:`,
+  opts:[String.raw`\(d\!\big(e^{at}r_t\big)=ab\,e^{at}\,dt+\sigma e^{at}\,dW_t\)`,String.raw`\(d\!\big(e^{at}r_t\big)=a\,e^{at}r_t\,dt+\sigma\,dW_t\)`,String.raw`\(d\!\big(e^{at}r_t\big)=e^{at}\,dr_t\)`,String.raw`\(d\!\big(e^{at}r_t\big)=ab\,dt+\sigma\,dW_t\)`,String.raw`\(d\!\big(e^{at}r_t\big)=a\,e^{at}(b-r_t)\,dt\)`],
+  correct:0,
+  sol:String.raw`<p>Since \(f(x,t)=e^{at}x\) is linear in \(x\) (\(f''=0\), no Itô correction):</p>
+  \[d(e^{at}r_t)=a e^{at}r_t\,dt+e^{at}\,dr_t=a e^{at}r_t\,dt+e^{at}\big[a(b-r_t)\,dt+\sigma\,dW_t\big].\]
+  <p>The \(r_t\) terms cancel exactly (\(a e^{at}r_t-a e^{at}r_t=0\)), leaving purely deterministic coefficients:</p>
+  \[d(e^{at}r_t)=ab\,e^{at}\,dt+\sigma e^{at}\,dW_t,\]
+  <p>which integrates directly to the closed form.</p>`
+},
+/* 98 */{
+  topic:"Vasicek — finite-time variance", hack:"Toolkit C6 + Hack 1",
+  q:String.raw`For \(dr_t=a(b-r_t)\,dt+\sigma\,dW_t\), determine \(\operatorname{var}(r_t\mid r_0)\).`,
+  opts:[String.raw`\(\dfrac{\sigma^2}{2a}\big(1-e^{-2at}\big)\)`,String.raw`\(\dfrac{\sigma^2}{2a}\)`,String.raw`\(\dfrac{\sigma^2}{a}\big(1-e^{-at}\big)\)`,String.raw`\(\sigma^2 t\)`,String.raw`\(\dfrac{\sigma^2}{2a}\big(1-e^{-at}\big)\)`],
+  correct:0,
+  sol:String.raw`<p>From the closed form, the only random piece is \(\sigma\int_0^t e^{-a(t-s)}\,dW_s\). Itô isometry:</p>
+  \[\operatorname{var}(r_t)=\sigma^2\int_0^t e^{-2a(t-s)}\,ds=\frac{\sigma^2}{2a}\big(1-e^{-2at}\big)\ \xrightarrow[t\to\infty]{}\ \frac{\sigma^2}{2a}.\]`
+},
+/* 99 */{
+  topic:"Running max — expectation", hack:"Hack 30 — reflection, Mₜ =ᵈ |Bₜ|",
+  q:String.raw`Determine \(E\!\left[\max_{s\le t}B_s\right].\)`,
+  opts:[String.raw`\(\sqrt{\dfrac{2t}{\pi}}\)`,String.raw`\(\sqrt{t}\)`,String.raw`\(\sqrt{\dfrac{t}{\pi}}\)`,String.raw`\(\dfrac t2\)`,String.raw`\(\sqrt{2t}\)`],
+  correct:0,
+  sol:String.raw`<p>The reflection principle gives \(M_t=\max_{s\le t}B_s\overset{d}{=}|B_t|\). For \(B_t\sim N(0,t)\), the half-normal mean is</p>
+  \[E|B_t|=\sqrt{t}\;\sqrt{\tfrac2\pi}=\sqrt{\tfrac{2t}{\pi}}.\]
+  <p>So the running max has the same law as the absolute value of the endpoint.</p>`
+},
+/* 100 */{
+  topic:"Itô on a product function", hack:"Master M1′ — f=x eˣ",
+  q:String.raw`What is the drift (\(dt\)-coefficient) of \(d\!\big(B_t e^{B_t}\big)\)?`,
+  opts:[String.raw`\(\tfrac12(2+B_t)e^{B_t}\)`,String.raw`\((1+B_t)e^{B_t}\)`,String.raw`\(\tfrac12 e^{B_t}\)`,String.raw`\((2+B_t)e^{B_t}\)`,String.raw`\(0\)`],
+  correct:0,
+  sol:String.raw`<p>Let \(f(x)=xe^{x}\): \(f'(x)=(1+x)e^{x}\), \(f''(x)=(2+x)e^{x}\). Then</p>
+  \[d(B_te^{B_t})=(1+B_t)e^{B_t}\,dB_t+\tfrac12(2+B_t)e^{B_t}\,dt.\]
+  <p>The drift is \(\tfrac12 f''(B_t)=\tfrac12(2+B_t)e^{B_t}\).</p>`
+},
+/* 101 */{
+  topic:"Triple product", hack:"Hack 9 — odd total degree",
+  q:String.raw`For \(0\le s<t<u\), determine \(E[B_sB_tB_u]\).`,
+  opts:[String.raw`\(0\)`,String.raw`\(s\,t\,u\)`,String.raw`\(s\,(t\wedge u)\)`,String.raw`\(\dfrac{stu}{6}\)`,String.raw`\(s+t+u\)`],
+  correct:0,
+  sol:String.raw`<p>Total degree \(1+1+1=3\) is odd, and \(B\overset{d}{=}-B\) as a process, so the expectation is \(0\). (Explicitly: condition on \(\mathcal F_t\), \(E[B_u\mid\mathcal F_t]=B_t\), reducing to \(E[B_sB_t^2]\), which has odd degree \(3\) again — still \(0\).)</p>
+  <p>Trap: it does <b>not</b> factor into a product of covariances.</p>`
+},
+/* 102 */{
+  topic:"Feynman–Kac (PDE)", hack:"Master M2 — the backward equation",
+  q:String.raw`The function \(u(t,x)=E\!\left[g(B_t)\mid B_0=x\right]\) satisfies which PDE?`,
+  opts:[String.raw`\(\partial_t u=\tfrac12\partial_{xx}u\)`,String.raw`\(\partial_t u=\partial_{xx}u\)`,String.raw`\(\partial_t u=-\tfrac12\partial_{xx}u\)`,String.raw`\(\partial_t u=\tfrac12\partial_x u\)`,String.raw`\(\partial_{xx}u=0\)`],
+  correct:0,
+  sol:String.raw`<p>Applying Itô to \(u(t-r,B_r)\) and requiring the drift to vanish (martingale property under the expectation) yields the heat equation</p>
+  \[\partial_t u=\tfrac12\partial_{xx}u,\qquad u(0,x)=g(x).\]
+  <p>This is the probabilistic representation of the heat/diffusion equation — the bridge between Itô calculus and PDEs.</p>`
+},
+/* 103 */{
+  topic:"Geometric BM — second moment", hack:"Master M3 — E[e^{2σBₜ}]",
+  q:String.raw`For \(dS_t=\mu S_t\,dt+\sigma S_t\,dB_t\), determine \(E[S_t^2]\).`,
+  opts:[String.raw`\(S_0^2\,e^{(2\mu+\sigma^2)t}\)`,String.raw`\(S_0^2\,e^{2\mu t}\)`,String.raw`\(S_0^2\,e^{(2\mu+\sigma^2/2)t}\)`,String.raw`\(S_0^2\,e^{\mu t+\sigma^2 t}\)`,String.raw`\(S_0^2\,e^{2\mu t+\sigma^2 t/2}\)`],
+  correct:0,
+  sol:String.raw`<p>\(S_t^2=S_0^2 e^{(2\mu-\sigma^2)t+2\sigma B_t}\). Using \(E[e^{2\sigma B_t}]=e^{(2\sigma)^2t/2}=e^{2\sigma^2t}\):</p>
+  \[E[S_t^2]=S_0^2 e^{(2\mu-\sigma^2)t}\,e^{2\sigma^2t}=S_0^2\,e^{(2\mu+\sigma^2)t}.\]`
+},
+/* 104 */{
+  topic:"Geometric BM — variance", hack:"Master M3 — log-normal variance",
+  q:String.raw`For \(dS_t=\mu S_t\,dt+\sigma S_t\,dB_t\), determine \(\operatorname{var}(S_t)\).`,
+  opts:[String.raw`\(S_0^2 e^{2\mu t}\big(e^{\sigma^2 t}-1\big)\)`,String.raw`\(S_0^2 e^{2\mu t}\)`,String.raw`\(S_0^2\big(e^{\sigma^2 t}-1\big)\)`,String.raw`\(S_0^2 e^{\sigma^2 t}\)`,String.raw`\(S_0^2 e^{2\mu t}e^{\sigma^2 t}\)`],
+  correct:0,
+  sol:String.raw`<p>Combine the previous two moments: \(E[S_t]=S_0 e^{\mu t}\), \(E[S_t^2]=S_0^2 e^{(2\mu+\sigma^2)t}\), so</p>
+  \[\operatorname{var}(S_t)=S_0^2 e^{(2\mu+\sigma^2)t}-S_0^2 e^{2\mu t}=S_0^2 e^{2\mu t}\big(e^{\sigma^2 t}-1\big).\]
+  <p>Standard log-normal variance formula.</p>`
+},
+/* 105 */{
+  topic:"Why the Itô correction exists", hack:"Master M0 — (dB)²=dt",
+  q:String.raw`The \(-\tfrac12\sigma^2\) correction in \(\log S_t\) (and every Itô formula) arises because:`,
+  opts:[String.raw`\((dB_t)^2=dt\): the quadratic variation makes the second-order term persist`,String.raw`the drift \(\mu\) is negative`,String.raw`the logarithm is an increasing function`,String.raw`Brownian motion is not differentiable`,String.raw`the diffusion is multiplicative rather than additive`],
+  correct:0,
+  sol:String.raw`<p>Ordinary Taylor expansion of \(f(X_{t+dt})\) drops \((dX)^2\) as higher order. For Brownian motion this term does <b>not</b> vanish: \((dB_t)^2=dt\) is first-order. That surviving \(\tfrac12 f''\,(dB)^2=\tfrac12 f''\,dt\) is the entire Itô correction — everything else is classical calculus.</p>
+  <p>Non-differentiability of paths is <i>why</i> \((dB)^2\) is \(O(dt)\), but the operative rule you compute with is \((dB)^2=dt\).</p>`
+}
+];
+
+/* ===================== SHUFFLE ANSWER POSITIONS ======================
+   The bank was authored with the correct choice usually first. Permute each
+   question's options with Fisher–Yates and remap `correct` so the right
+   answer lands in a different slot each session. Solutions reference answers
+   by formula/value (never by letter), so shuffling stays consistent. */
+(function shuffleOptions(){
+  for(const q of Q){
+    const order = q.opts.map((_,i)=>i);
+    for(let i=order.length-1;i>0;i--){
+      const j=Math.floor(Math.random()*(i+1));
+      [order[i],order[j]]=[order[j],order[i]];
+    }
+    q.opts = order.map(i=>q.opts[i]);
+    q.correct = order.indexOf(q.correct);
+  }
+})();
+
+/* ============================ STATE / RENDER ============================ */
+const state = { i:0, answered:Array(Q.length).fill(null) }; // answered[i] = chosen index or null
+{ const tn=document.getElementById('totNum'); if(tn) tn.textContent=Q.length; }
+let selectedTmp = null; // current selection before checking
+
+const $ = s => document.querySelector(s);
+const mount = $('#cardMount');
+
+function typeset(node){
+  // MathJax loads async: on the very first render its typesetPromise may not
+  // exist yet. Wait for the startup promise (or retry) instead of silently
+  // skipping — otherwise the first question shows raw \(...\) source.
+  if(window.MathJax){
+    if(MathJax.typesetPromise){ MathJax.typesetPromise([node]).catch(()=>{}); return; }
+    if(MathJax.startup && MathJax.startup.promise){
+      MathJax.startup.promise.then(()=>MathJax.typesetPromise([node])).catch(()=>{});
+      return;
+    }
+  }
+  setTimeout(()=>typeset(node), 120);
+}
+
+function render(){
+  const i = state.i, q = Q[i];
+  const done = state.answered[i]!==null;
+  const chosen = done ? state.answered[i] : selectedTmp;
+
+  const optsHtml = q.opts.map((o,idx)=>{
+    let cls='opt';
+    if(done){
+      if(idx===q.correct) cls+=' correct';
+      else if(idx===chosen) cls+=' wrong';
+    } else if(idx===chosen) cls+=' sel';
+    const letter = String.fromCharCode(65+idx);
+    return `<li class="opt ${cls==='opt'?'':cls.replace('opt ','')}" data-idx="${idx}" role="radio" aria-checked="${idx===chosen}" tabindex="0">
+      <span class="mark">${done && idx===q.correct?'✓':(done && idx===chosen?'✗':letter)}</span>
+      <span class="txt">${o}</span></li>`;
+  }).join('');
+
+  mount.innerHTML = `
+    <div class="card">
+      <div class="card-top">
+        <span class="qtag"><span class="num">Q${i+1}</span>1 point</span>
+        <span class="topic">${q.topic}</span>
+      </div>
+      <div class="card-body">
+        <div class="qmain">
+          <p class="prompt">${q.q}</p>
+          <ul class="opts ${done?'locked':''}" id="optList" role="radiogroup" aria-label="Answer choices">${optsHtml}</ul>
+          <div class="actions">
+            <button class="btn check" id="checkBtn" ${done?'disabled':''}>Check answer</button>
+            <span class="hint" id="hint">${done? (chosen===q.correct?'Correct.':'Not quite — see solution.') : 'Pick an option (or press 1–5), then Check ↵.'}</span>
+          </div>
+        </div>
+        <aside class="side">
+          <h4>Notation</h4>
+          <p>${q.note||DEFAULT_NOTE}</p>
+        </aside>
+      </div>
+      <div class="sol ${done?'open':''}" id="sol">
+        <div class="sol-inner">
+          <h3>Worked solution <span class="hackchip">${q.hack}</span></h3>
+          ${q.sol}
+          <div class="final"><span class="lbl">Answer</span>${q.opts[q.correct]}</div>
+        </div>
+      </div>
+    </div>`;
+
+  // option interactions
+  if(!done){
+    mount.querySelectorAll('.opt').forEach(el=>{
+      const pick=()=>{ selectedTmp=+el.dataset.idx; render(); };
+      el.addEventListener('click',pick);
+      el.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();pick();} });
+    });
+    $('#checkBtn').addEventListener('click',()=>{
+      if(selectedTmp===null){ $('#hint').textContent='Pick an option first.'; return; }
+      state.answered[i]=selectedTmp; selectedTmp=null; render(); updateStatus(); buildGrid();
+    });
+  }
+  $('#curNum').textContent=i+1;
+  typeset(mount);
+  updateStatus(); buildGrid();
+}
+
+function updateStatus(){
+  const ans = state.answered.filter(a=>a!==null);
+  const good = state.answered.filter((a,i)=>a===Q[i].correct).length;
+  const bad = ans.length-good;
+  $('#score').textContent=good;
+  $('#scoreOf').textContent=`/ ${ans.length} answered`;
+  $('#nGood').textContent=good;
+  $('#nBad').textContent=bad;
+  $('#prog').style.width=(ans.length/Q.length*100)+'%';
+}
+
+function buildGrid(){
+  const g=$('#qgrid');
+  g.innerHTML=Q.map((q,idx)=>{
+    let cls=''; const a=state.answered[idx];
+    if(a!==null) cls = (a===q.correct)?'ok':'no';
+    if(idx===state.i) cls+=' cur';
+    return `<button class="${cls}" data-g="${idx}">${idx+1}</button>`;
+  }).join('');
+  g.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{ state.i=+b.dataset.g; selectedTmp=null; render(); }));
+}
+
+$('#prevBtn').addEventListener('click',()=>{ if(state.i>0){state.i--;selectedTmp=null;render();} });
+$('#nextBtn').addEventListener('click',()=>{ if(state.i<Q.length-1){state.i++;selectedTmp=null;render();} });
+$('#overviewBtn').addEventListener('click',()=>{ $('#qgrid').classList.toggle('hidden'); });
+$('#resetBtn').addEventListener('click',()=>{
+  if(confirm('Clear all answers and start over?')){ state.answered=Array(Q.length).fill(null); state.i=0; selectedTmp=null; render(); }
+});
+document.addEventListener('keydown',e=>{
+  if(e.target.closest('.opt'))return;
+  if(e.key==='ArrowRight'){$('#nextBtn').click();return;}
+  if(e.key==='ArrowLeft'){$('#prevBtn').click();return;}
+  const answered = state.answered[state.i]!==null;
+  // number keys pick an option (only while the question is still open)
+  if(/^[1-9]$/.test(e.key) && !answered){
+    const opts = mount.querySelectorAll('.opt');
+    const idx = +e.key-1;
+    if(idx<opts.length){ opts[idx].click(); }
+    return;
+  }
+  // Enter checks the current selection
+  if(e.key==='Enter' && !answered){ const b=$('#checkBtn'); if(b) b.click(); }
+});
+
+/* ---- animated Brownian path in header ---- */
+(function(){
+  const svg=document.getElementById('bmPath');
+  const W=1200,H=200,N=240; let x=0,y=H/2;
+  const pts=[[0,y]];
+  for(let k=1;k<=N;k++){ y+=(Math.random()-0.5)*20; y=Math.max(20,Math.min(H-20,y)); pts.push([k/N*W,y]); }
+  const d=pts.map((p,idx)=>(idx?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+  const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+  path.setAttribute('d',d); path.setAttribute('fill','none');
+  path.setAttribute('stroke','#e7b55f'); path.setAttribute('stroke-width','1.6');
+  path.setAttribute('stroke-linejoin','round');
+  svg.appendChild(path);
+  const reduce=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  if(!reduce){
+    const len=path.getTotalLength();
+    path.style.strokeDasharray=len; path.style.strokeDashoffset=len;
+    path.animate([{strokeDashoffset:len},{strokeDashoffset:0}],{duration:2600,easing:'ease-out',fill:'forwards'});
+  }
+})();
+
+render();
+</script>
+
+<script>
+/* ===================== STUDY TOOLKIT LOGIC ===================== */
+(function(){
+  const toolkit=document.getElementById('toolkit');
+  if(!toolkit) return;
+
+  /* ---- MathJax typeset (wait for async startup) ---- */
+  function tkTypeset(node){
+    if(window.MathJax){
+      if(MathJax.typesetPromise){ MathJax.typesetPromise([node]).catch(()=>{}); return; }
+      if(MathJax.startup&&MathJax.startup.promise){
+        MathJax.startup.promise.then(()=>MathJax.typesetPromise([node])).catch(()=>{}); return; }
+    }
+    setTimeout(()=>tkTypeset(node),150);
+  }
+  tkTypeset(toolkit);
+
+  /* ---- collapse ---- */
+  const head=document.getElementById('tkHead');
+  function toggle(){ toolkit.classList.toggle('closed');
+    head.setAttribute('aria-expanded', String(!toolkit.classList.contains('closed')));
+    if(!toolkit.classList.contains('closed')) drawActive(); }
+  head.addEventListener('click',toggle);
+  head.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle();} });
+
+  /* ---- tabs ---- */
+  let activeTab='theory';
+  Array.from(document.querySelectorAll('.tk-tab')).forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      activeTab=btn.dataset.tab;
+      document.querySelectorAll('.tk-tab').forEach(b=>b.classList.toggle('active',b===btn));
+      document.querySelectorAll('.tk-panel').forEach(p=>p.classList.toggle('active', p.id==='tk-'+activeTab));
+      if(activeTab==='play') drawActive();
+    });
+  });
+
+  /* ---- numerics ---- */
+  function gauss(){ let u=0,v=0; while(u===0)u=Math.random(); while(v===0)v=Math.random();
+    return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
+  function Phi(x){ // standard normal CDF (Abramowitz–Stegun 7.1.26)
+    const t=1/(1+0.2316419*Math.abs(x));
+    const d=0.3989422804014327*Math.exp(-x*x/2);
+    const p=d*t*(0.319381530+t*(-0.356563782+t*(1.781477937+t*(-1.821255978+t*1.330274429))));
+    return x>=0 ? 1-p : p; }
+  const COL={ink:'#152a45',inkSoft:'#3a5170',amber:'#b5762a',good:'#1f7a4d',bad:'#b23b3b',line:'#d9d2c4'};
+  function fit(canvas,cssH){
+    const dpr=window.devicePixelRatio||1;
+    const w=Math.max(canvas.clientWidth||canvas.parentElement.clientWidth||600,240);
+    canvas.style.height=cssH+'px';
+    canvas.width=Math.round(w*dpr); canvas.height=Math.round(cssH*dpr);
+    const ctx=canvas.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0);
+    return {ctx,w,h:cssH};
+  }
+  function frame(ctx,w,h,p){ ctx.strokeStyle=COL.line; ctx.lineWidth=1;
+    ctx.strokeRect(p.l,p.t,w-p.l-p.r,h-p.t-p.b); }
+  function setTxt(id,v){ const el=document.getElementById(id); if(el) el.textContent=v; }
+
+  /* ============ Widget 1: Brownian motion + reflection ============ */
+  const bm={canvas:null,path:null,a:1.5,env:true,refl:true,emp:null};
+  function bmGen(){ const N=500,dt=1/N,B=[0]; let x=0;
+    for(let i=1;i<=N;i++){ x+=Math.sqrt(dt)*gauss(); B.push(x); }
+    const M=[]; let m=-Infinity; for(const b of B){ m=Math.max(m,b); M.push(m); }
+    bm.path={B,M,N}; }
+  function bmMC(){ const N=200,dt=1/N,K=5000,a=bm.a; let hit=0;
+    for(let k=0;k<K;k++){ let x=0,mx=0; for(let i=0;i<N;i++){ x+=Math.sqrt(dt)*gauss(); if(x>mx)mx=x; } if(mx>=a)hit++; }
+    bm.emp=hit/K; }
+  function bmDraw(){ if(!bm.canvas) return; if(!bm.path) bmGen();
+    const {ctx,w,h}=fit(bm.canvas,280), pad={l:36,r:14,t:14,b:22};
+    ctx.clearRect(0,0,w,h);
+    const {B,M,N}=bm.path, a=bm.a;
+    let ymax=Math.max(a+0.4, M[N], 1.5); ymax=Math.min(ymax,4.5); const ymin=-ymax;
+    const X=t=>pad.l+t*(w-pad.l-pad.r), Y=y=>pad.t+(ymax-y)/(ymax-ymin)*(h-pad.t-pad.b);
+    ctx.strokeStyle=COL.line; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(pad.l,Y(0)); ctx.lineTo(w-pad.r,Y(0)); ctx.stroke();
+    frame(ctx,w,h,pad);
+    ctx.save(); ctx.beginPath(); ctx.rect(pad.l,pad.t,w-pad.l-pad.r,h-pad.t-pad.b); ctx.clip();
+    if(bm.env){ ctx.strokeStyle='rgba(58,81,112,.5)'; ctx.setLineDash([4,4]); ctx.lineWidth=1;
+      for(const sgn of [1,-1]){ ctx.beginPath();
+        for(let i=0;i<=N;i++){ const t=i/N,yy=Y(sgn*Math.sqrt(t)); i?ctx.lineTo(X(t),yy):ctx.moveTo(X(t),yy);} ctx.stroke(); }
+      ctx.setLineDash([]); }
+    ctx.strokeStyle=COL.bad; ctx.setLineDash([6,4]); ctx.lineWidth=1.4;
+    ctx.beginPath(); ctx.moveTo(pad.l,Y(a)); ctx.lineTo(w-pad.r,Y(a)); ctx.stroke(); ctx.setLineDash([]);
+    let tau=-1; for(let i=0;i<=N;i++){ if(B[i]>=a){tau=i;break;} }
+    if(bm.refl && tau>=0){ ctx.strokeStyle='rgba(178,59,59,.45)'; ctx.lineWidth=1.4; ctx.beginPath();
+      for(let i=tau;i<=N;i++){ const t=i/N,yy=Y(2*a-B[i]); i===tau?ctx.moveTo(X(t),yy):ctx.lineTo(X(t),yy);} ctx.stroke(); }
+    ctx.strokeStyle=COL.amber; ctx.lineWidth=1.6; ctx.beginPath();
+    for(let i=0;i<=N;i++){ const t=i/N; i?ctx.lineTo(X(t),Y(M[i])):ctx.moveTo(X(t),Y(M[i])); } ctx.stroke();
+    ctx.strokeStyle=COL.ink; ctx.lineWidth=1.5; ctx.beginPath();
+    for(let i=0;i<=N;i++){ const t=i/N; i?ctx.lineTo(X(t),Y(B[i])):ctx.moveTo(X(t),Y(B[i])); } ctx.stroke();
+    if(tau>=0){ ctx.fillStyle=COL.bad; ctx.beginPath(); ctx.arc(X(tau/N),Y(a),3.5,0,7); ctx.fill(); }
+    ctx.restore();
+    ctx.fillStyle=COL.inkSoft; ctx.font='11px ui-monospace,monospace';
+    ctx.fillText('a='+a.toFixed(2),X(1)-52,Y(a)-5);
+    ctx.fillText('0',6,Y(0)+3); ctx.fillText('t',w-pad.r-6,Y(0)+14);
+    const theo=2*(1-Phi(a));
+    setTxt('bmTheo',(theo*100).toFixed(1)+'%');
+    setTxt('bmEmp', bm.emp==null?'—':(bm.emp*100).toFixed(1)+'%');
+    setTxt('bmMax', M[N].toFixed(3));
+    setTxt('bmHit', tau>=0?('yes · t≈'+(tau/N).toFixed(2)):'no');
+  }
+
+  /* ============ Widget 2: Geometric Brownian motion ============ */
+  const gbm={canvas:null,mu:0.1,sig:0.3,T:1.5,paths:null};
+  function gbmGen(){ const K=40,N=280,dt=gbm.T/N,arr=[];
+    for(let k=0;k<K;k++){ const p=[1]; let ls=0;
+      for(let i=1;i<=N;i++){ ls+=(gbm.mu-0.5*gbm.sig*gbm.sig)*dt+gbm.sig*Math.sqrt(dt)*gauss(); p.push(Math.exp(ls)); }
+      arr.push(p); }
+    gbm.paths={arr,N}; }
+  function gbmDraw(){ if(!gbm.canvas) return; gbmGen();
+    const {ctx,w,h}=fit(gbm.canvas,280), pad={l:44,r:14,t:14,b:24};
+    ctx.clearRect(0,0,w,h);
+    const {arr,N}=gbm.paths, T=gbm.T, mu=gbm.mu, sig=gbm.sig;
+    const vals=[]; for(const p of arr) for(const v of p) vals.push(v);
+    vals.sort((a,b)=>a-b);
+    const meanEnd=Math.exp(mu*T);
+    let ymax=Math.max(vals[Math.floor(vals.length*0.95)]||2, meanEnd*1.1, 1.3);
+    const X=t=>pad.l+(t/T)*(w-pad.l-pad.r), Y=y=>pad.t+(1-y/ymax)*(h-pad.t-pad.b);
+    frame(ctx,w,h,pad);
+    ctx.strokeStyle=COL.line; ctx.beginPath(); ctx.moveTo(pad.l,Y(1)); ctx.lineTo(w-pad.r,Y(1)); ctx.stroke();
+    ctx.save(); ctx.beginPath(); ctx.rect(pad.l,pad.t,w-pad.l-pad.r,h-pad.t-pad.b); ctx.clip();
+    ctx.strokeStyle='rgba(21,42,69,.16)'; ctx.lineWidth=1;
+    for(const p of arr){ ctx.beginPath(); for(let i=0;i<=N;i++){ const t=i/N*T; i?ctx.lineTo(X(t),Y(p[i])):ctx.moveTo(X(t),Y(p[i])); } ctx.stroke(); }
+    ctx.strokeStyle=COL.amber; ctx.lineWidth=2.2; ctx.beginPath();
+    for(let i=0;i<=100;i++){ const t=i/100*T; i?ctx.lineTo(X(t),Y(Math.exp(mu*t))):ctx.moveTo(X(t),Y(Math.exp(mu*t))); } ctx.stroke();
+    ctx.strokeStyle=COL.ink; ctx.lineWidth=2; ctx.setLineDash([6,4]); ctx.beginPath();
+    for(let i=0;i<=100;i++){ const t=i/100*T,md=Math.exp((mu-0.5*sig*sig)*t); i?ctx.lineTo(X(t),Y(md)):ctx.moveTo(X(t),Y(md)); } ctx.stroke(); ctx.setLineDash([]);
+    ctx.restore();
+    ctx.fillStyle=COL.inkSoft; ctx.font='11px ui-monospace,monospace';
+    ctx.fillText(ymax.toFixed(1),6,Y(ymax)+9); ctx.fillText('1',pad.l-16,Y(1)+3); ctx.fillText('0',pad.l-16,Y(0)-1);
+    ctx.fillText('t='+T.toFixed(1),w-pad.r-42,h-8);
+    const med=Math.exp((mu-0.5*sig*sig)*T), varr=Math.exp(2*mu*T)*(Math.exp(sig*sig*T)-1);
+    setTxt('gbmMean',meanEnd.toFixed(3)); setTxt('gbmMed',med.toFixed(3));
+    setTxt('gbmRatio','×'+Math.exp(0.5*sig*sig*T).toFixed(3)); setTxt('gbmVar',varr.toFixed(3));
+  }
+
+  /* ============ Widget 3: Ornstein–Uhlenbeck ============ */
+  const ou={canvas:null,theta:1.2,sig:0.7,x0:2.5,T:6,paths:null};
+  function ouGen(){ const K=38,N=380,dt=ou.T/N,arr=[];
+    for(let k=0;k<K;k++){ const p=[ou.x0]; let x=ou.x0;
+      for(let i=1;i<=N;i++){ x+=-ou.theta*x*dt+ou.sig*Math.sqrt(dt)*gauss(); p.push(x); }
+      arr.push(p); }
+    ou.paths={arr,N}; }
+  function ouDraw(){ if(!ou.canvas) return; ouGen();
+    const {ctx,w,h}=fit(ou.canvas,280), pad={l:34,r:14,t:14,b:22};
+    ctx.clearRect(0,0,w,h);
+    const {arr,N}=ou.paths, T=ou.T, s=Math.sqrt(ou.sig*ou.sig/(2*ou.theta));
+    let ymax=Math.max(Math.abs(ou.x0)*1.05, 3*s, 1.2); const ymin=-ymax;
+    const X=t=>pad.l+(t/T)*(w-pad.l-pad.r), Y=y=>pad.t+(ymax-y)/(ymax-ymin)*(h-pad.t-pad.b);
+    ctx.fillStyle='rgba(31,122,77,.09)'; ctx.fillRect(pad.l,Y(2*s),w-pad.l-pad.r,Y(-2*s)-Y(2*s));
+    ctx.fillStyle='rgba(31,122,77,.15)'; ctx.fillRect(pad.l,Y(s),w-pad.l-pad.r,Y(-s)-Y(s));
+    frame(ctx,w,h,pad);
+    ctx.strokeStyle=COL.line; ctx.beginPath(); ctx.moveTo(pad.l,Y(0)); ctx.lineTo(w-pad.r,Y(0)); ctx.stroke();
+    ctx.save(); ctx.beginPath(); ctx.rect(pad.l,pad.t,w-pad.l-pad.r,h-pad.t-pad.b); ctx.clip();
+    ctx.strokeStyle='rgba(21,42,69,.22)'; ctx.lineWidth=1;
+    for(const p of arr){ ctx.beginPath(); for(let i=0;i<=N;i++){ const t=i/N*T; i?ctx.lineTo(X(t),Y(p[i])):ctx.moveTo(X(t),Y(p[i])); } ctx.stroke(); }
+    ctx.restore();
+    ctx.strokeStyle=COL.good; ctx.setLineDash([5,4]); ctx.lineWidth=1.2;
+    for(const yy of [s,-s]){ ctx.beginPath(); ctx.moveTo(pad.l,Y(yy)); ctx.lineTo(w-pad.r,Y(yy)); ctx.stroke(); }
+    ctx.setLineDash([]);
+    ctx.fillStyle=COL.good; ctx.font='11px ui-monospace,monospace'; ctx.fillText('±√(σ²/2θ)',pad.l+6,Y(s)-4);
+    ctx.fillStyle=COL.inkSoft; ctx.fillText('0',6,Y(0)+3); ctx.fillText('t',w-pad.r-6,Y(0)+14);
+    setTxt('ouVar',(s*s).toFixed(3)); setTxt('ouSd',s.toFixed(3)); setTxt('ouHalf',(Math.LN2/ou.theta).toFixed(3));
+  }
+
+  function drawActive(){ if(activeTab!=='play'||toolkit.classList.contains('closed')) return;
+    bmDraw(); gbmDraw(); ouDraw(); }
+  let rTimer; window.addEventListener('resize',()=>{ clearTimeout(rTimer); rTimer=setTimeout(drawActive,150); });
+
+  /* ---- wiring ---- */
+  function bind(sid,lid,set,dec,draw){ const el=document.getElementById(sid); if(!el) return;
+    const upd=()=>{ const v=+el.value; set(v); const l=document.getElementById(lid); if(l) l.textContent=v.toFixed(dec); draw(); };
+    el.addEventListener('input',upd); upd(); }
+  function chk(id,set,draw){ const el=document.getElementById(id); if(!el) return;
+    el.addEventListener('change',()=>{ set(el.checked); draw(); }); }
+  function btn(id,fn){ const el=document.getElementById(id); if(el) el.addEventListener('click',fn); }
+
+  bm.canvas=document.getElementById('bmCanvas');
+  gbm.canvas=document.getElementById('gbmCanvas');
+  ou.canvas=document.getElementById('ouCanvas');
+
+  bind('bmA','bmAV',v=>bm.a=v,2,bmDraw);
+  chk('bmEnv',v=>bm.env=v,bmDraw);
+  chk('bmRefl',v=>bm.refl=v,bmDraw);
+  btn('bmNew',()=>{ bmGen(); bm.emp=null; bmDraw(); });
+  btn('bmRun',()=>{ setTxt('bmEmp','computing…'); setTimeout(()=>{ bmMC(); bmDraw(); },20); });
+
+  bind('gbmMu','gbmMuV',v=>gbm.mu=v,2,gbmDraw);
+  bind('gbmSig','gbmSigV',v=>gbm.sig=v,2,gbmDraw);
+  bind('gbmT','gbmTV',v=>gbm.T=v,1,gbmDraw);
+  btn('gbmNew',()=>gbmDraw());
+
+  bind('ouTheta','ouThetaV',v=>ou.theta=v,1,ouDraw);
+  bind('ouSig','ouSigV',v=>ou.sig=v,2,ouDraw);
+  bind('ouX0','ouX0V',v=>ou.x0=v,1,ouDraw);
+  btn('ouNew',()=>ouDraw());
+})();
+</script>
+</body>
+</html>
