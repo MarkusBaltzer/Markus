@@ -1,0 +1,2018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Statistics for Insurance — Study Companion</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<style>
+:root{
+  --paper:#FAFAF7; --panel:#FFFFFF;
+  --ink:#15181D; --ink-soft:#4C525B; --ink-faint:#7A828C;
+  --rule:#E4E1D8; --rule-strong:#CFCBBE;
+  --navy:#1F3A57; --navy-wash:#EDF1F5;
+  --teal:#0E787E; --teal-wash:#E4F0F0; --teal-deep:#0A5A5F;
+  --risk:#AE3A2C; --risk-wash:#F6E9E6;
+  --amber:#8A6212; --amber-wash:#F5EEDD;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --mono:"SFMono-Regular",ui-monospace,"JetBrains Mono",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:var(--serif); font-size:18px; line-height:1.66;
+  -webkit-font-smoothing:antialiased;
+}
+.layout{display:grid; grid-template-columns:288px minmax(0,1fr);}
+/* ---------- Sidebar ---------- */
+.side{
+  position:sticky; top:0; align-self:start; height:100vh; overflow-y:auto;
+  border-right:1px solid var(--rule); background:var(--panel); padding:26px 20px 60px;
+}
+.brand{font-family:var(--sans); letter-spacing:.02em;}
+.brand .eyebrow{font-size:11px; text-transform:uppercase; letter-spacing:.18em; color:var(--teal); font-weight:700;}
+.brand h1{font-family:var(--serif); font-size:22px; line-height:1.2; margin:6px 0 2px; font-weight:600;}
+.brand .sub{font-size:12.5px; color:var(--ink-faint); font-family:var(--sans);}
+.toc{margin-top:24px; font-family:var(--sans); font-size:13.5px;}
+.toc .grp{font-size:10.5px; text-transform:uppercase; letter-spacing:.15em; color:var(--ink-faint); margin:20px 0 8px; font-weight:700;}
+.toc a{display:block; color:var(--ink-soft); text-decoration:none; padding:5px 10px; border-radius:6px; border-left:2px solid transparent; line-height:1.35;}
+.toc a:hover{background:var(--navy-wash); color:var(--navy);}
+.toc a.active{background:var(--teal-wash); color:var(--teal-deep); border-left-color:var(--teal); font-weight:600;}
+/* ---------- Main ---------- */
+main{max-width:820px; margin:0 auto; padding:0 40px 140px;}
+.hero{padding:64px 0 34px; border-bottom:1px solid var(--rule);}
+.hero .kicker{font-family:var(--sans); font-size:12px; text-transform:uppercase; letter-spacing:.2em; color:var(--teal); font-weight:700;}
+.hero h2{font-size:44px; line-height:1.06; margin:14px 0 0; font-weight:600; letter-spacing:-.01em;}
+.hero h2 em{font-style:italic; color:var(--navy);}
+.hero p.lede{font-size:19.5px; color:var(--ink-soft); margin:18px 0 26px; max-width:64ch;}
+.herofig{border:1px solid var(--rule); border-radius:12px; background:var(--panel); overflow:hidden;}
+.herofig canvas{display:block; width:100%; height:220px;}
+.herocap{font-family:var(--sans); font-size:12px; color:var(--ink-faint); padding:9px 14px; border-top:1px solid var(--rule); background:var(--paper);}
+section{padding:52px 0 8px; border-bottom:1px solid var(--rule);}
+.eyebrow{font-family:var(--sans); font-size:11.5px; text-transform:uppercase; letter-spacing:.16em; color:var(--teal); font-weight:700; display:flex; gap:10px; align-items:center;}
+.eyebrow .num{background:var(--teal); color:#fff; border-radius:5px; padding:1px 7px; font-size:11px; letter-spacing:.04em;}
+h3{font-size:31px; line-height:1.14; margin:12px 0 6px; font-weight:600; letter-spacing:-.01em;}
+h4{font-family:var(--sans); font-size:19px; margin:34px 0 6px; font-weight:650; color:var(--navy); letter-spacing:-.01em;}
+p{margin:14px 0;}
+a{color:var(--teal-deep);}
+strong{font-weight:650;}
+.small{font-size:15px; color:var(--ink-soft);}
+ul,ol{padding-left:1.3em;} li{margin:7px 0;}
+code{font-family:var(--mono); font-size:.86em; background:var(--navy-wash); padding:1px 5px; border-radius:4px; color:var(--navy);}
+.katex{font-size:1.02em;}
+.katex-display{margin:1.1em 0; overflow-x:auto; overflow-y:hidden; padding:2px 0;}
+/* ---------- Callouts ---------- */
+.box{border-radius:11px; padding:18px 22px; margin:22px 0; border:1px solid var(--rule); background:var(--panel);}
+.box .tag{font-family:var(--sans); font-size:11px; font-weight:700; letter-spacing:.13em; text-transform:uppercase; display:inline-block; margin-bottom:4px;}
+.box p:first-of-type{margin-top:2px;} .box p:last-child{margin-bottom:0;}
+.box.intuition{background:var(--teal-wash); border-color:#C9E3E3;} .box.intuition .tag{color:var(--teal-deep);}
+.box.theorem{background:var(--navy-wash); border-color:#D3DEE8;} .box.theorem .tag{color:var(--navy);}
+.box.example{background:var(--panel); border-left:4px solid var(--rule-strong);} .box.example .tag{color:var(--ink-soft);}
+.box.watch{background:var(--risk-wash); border-color:#E8CFC9;} .box.watch .tag{color:var(--risk);}
+.box.actuary{background:var(--amber-wash); border-color:#E7DCC2;} .box.actuary .tag{color:var(--amber);}
+/* ---------- Interactive ---------- */
+.demo{border:1px solid var(--rule-strong); border-radius:13px; background:var(--panel); margin:26px 0; overflow:hidden; box-shadow:0 1px 0 rgba(0,0,0,.02);}
+.demo-head{padding:14px 20px 12px; border-bottom:1px solid var(--rule); background:linear-gradient(var(--paper),var(--panel));}
+.demo-head .tag{font-family:var(--sans); font-size:11px; font-weight:700; letter-spacing:.13em; text-transform:uppercase; color:var(--teal-deep);}
+.demo-head h5{font-family:var(--sans); font-size:16.5px; margin:3px 0 0; font-weight:650;}
+.demo-body{padding:16px 20px 20px;}
+.demo canvas{display:block; width:100%; border-radius:8px; background:var(--paper); border:1px solid var(--rule);}
+.controls{display:flex; flex-wrap:wrap; gap:16px 22px; align-items:center; margin:14px 0 4px; font-family:var(--sans); font-size:13.5px;}
+.ctrl{display:flex; flex-direction:column; gap:3px; min-width:150px;}
+.ctrl label{font-size:12px; color:var(--ink-soft); font-weight:600; display:flex; justify-content:space-between; gap:10px;}
+.ctrl label b{color:var(--teal-deep); font-variant-numeric:tabular-nums;}
+input[type=range]{-webkit-appearance:none; appearance:none; width:100%; height:5px; border-radius:5px; background:var(--rule-strong); outline:none;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:17px; height:17px; border-radius:50%; background:var(--teal); cursor:pointer; border:2px solid #fff; box-shadow:0 1px 3px rgba(0,0,0,.25);}
+input[type=range]::-moz-range-thumb{width:17px; height:17px; border-radius:50%; background:var(--teal); cursor:pointer; border:2px solid #fff;}
+button.btn{font-family:var(--sans); font-size:13px; font-weight:600; padding:8px 15px; border-radius:8px; border:1px solid var(--teal); background:var(--teal); color:#fff; cursor:pointer;}
+button.btn:hover{background:var(--teal-deep);}
+button.btn.ghost{background:transparent; color:var(--teal-deep);}
+button.btn.ghost:hover{background:var(--teal-wash);}
+.seg{display:inline-flex; border:1px solid var(--rule-strong); border-radius:8px; overflow:hidden;}
+.seg button{font-family:var(--sans); font-size:12.5px; padding:7px 13px; border:none; background:var(--panel); color:var(--ink-soft); cursor:pointer; border-right:1px solid var(--rule);}
+.seg button:last-child{border-right:none;}
+.seg button.on{background:var(--teal); color:#fff;}
+.readout{font-family:var(--mono); font-size:13px; color:var(--ink-soft); margin-top:12px; background:var(--paper); border:1px dashed var(--rule-strong); border-radius:8px; padding:9px 12px; line-height:1.6;}
+.readout b{color:var(--navy);}
+/* ---------- Details / exam ---------- */
+details{border:1px solid var(--rule); border-radius:10px; margin:16px 0; background:var(--panel); overflow:hidden;}
+details summary{cursor:pointer; padding:14px 18px; font-family:var(--sans); font-weight:600; font-size:15px; color:var(--navy); list-style:none; display:flex; justify-content:space-between; align-items:center; gap:12px; background:var(--navy-wash);}
+details summary::-webkit-details-marker{display:none}
+details summary .chev{transition:transform .2s; color:var(--teal);}
+details[open] summary .chev{transform:rotate(90deg);}
+details .inner{padding:6px 20px 18px; border-top:1px solid var(--rule);}
+.q{border-left:3px solid var(--teal); padding:2px 0 2px 16px; margin:22px 0 6px; font-family:var(--sans); font-size:15px; color:var(--ink-soft);}
+.q b{color:var(--ink); font-weight:650;}
+.pill{display:inline-block; font-family:var(--sans); font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:2px 9px; border-radius:20px; background:var(--navy-wash); color:var(--navy); margin-right:6px;}
+.pill.hard{background:var(--risk-wash); color:var(--risk);}
+.pill.core{background:var(--teal-wash); color:var(--teal-deep);}
+.rule2{height:0; border-top:1px solid var(--rule-strong); border-bottom:1px solid var(--rule-strong); margin:0; padding:2px 0;}
+table.tbl{width:100%; border-collapse:collapse; font-size:15.5px; margin:18px 0; font-family:var(--sans);}
+table.tbl th,table.tbl td{text-align:left; padding:9px 12px; border-bottom:1px solid var(--rule);}
+table.tbl th{font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-faint); font-weight:700;}
+table.tbl tr:hover td{background:var(--paper);}
+.legend{display:flex; gap:16px; flex-wrap:wrap; font-family:var(--sans); font-size:12.5px; color:var(--ink-soft); margin-top:10px;}
+.legend span{display:inline-flex; align-items:center; gap:6px;}
+.swatch{width:22px; height:3px; border-radius:2px; display:inline-block;}
+.footer{padding:40px 0 0; color:var(--ink-faint); font-family:var(--sans); font-size:13px;}
+.mobtoggle{display:none;}
+@media (max-width:920px){
+  .layout{grid-template-columns:1fr;}
+  .side{position:fixed; z-index:40; width:280px; transform:translateX(-100%); transition:transform .25s; box-shadow:0 0 40px rgba(0,0,0,.2);}
+  .side.open{transform:none;}
+  main{padding:0 22px 120px;}
+  .hero h2{font-size:34px;}
+  .mobtoggle{display:inline-flex; position:fixed; z-index:50; top:14px; left:14px; background:var(--navy); color:#fff; border:none; border-radius:9px; padding:10px 13px; font-family:var(--sans); font-weight:600; font-size:13px; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,.2);}
+  body{font-size:17px;}
+}
+/* ---------- Recipe / playbook cards ---------- */
+.recipe-grid{display:grid; grid-template-columns:1fr; gap:16px; margin:24px 0;}
+.recipe{border:1px solid var(--rule); border-radius:12px; background:var(--panel); overflow:hidden;}
+.recipe .rhead{display:flex; align-items:baseline; gap:12px; padding:14px 18px 11px; border-bottom:1px solid var(--rule); background:linear-gradient(var(--paper),var(--panel));}
+.recipe .rnum{font-family:var(--sans); font-size:12px; font-weight:700; color:#fff; background:var(--navy); border-radius:6px; padding:2px 9px; letter-spacing:.03em; flex:0 0 auto; align-self:flex-start;}
+.recipe .rtrigger{font-family:var(--sans); font-size:15.5px; font-weight:650; color:var(--navy); line-height:1.32;}
+.recipe .rbody{padding:12px 20px 16px;}
+.recipe .rbody ol{margin:8px 0 6px; padding-left:1.25em;}
+.recipe .rbody ol li{margin:6px 0;}
+.recipe .rbody p{margin:8px 0;}
+.recipe .cite{font-family:var(--sans); font-size:12.5px; color:var(--teal-deep); background:var(--teal-wash); border:1px solid #C9E3E3; border-radius:7px; padding:6px 11px; margin-top:8px; display:inline-block; line-height:1.4;}
+.recipe .cite b{color:var(--teal-deep); font-weight:700;}
+/* ---------- Exam tips ---------- */
+.tips{margin:22px 0; border:1px solid var(--rule); border-radius:12px; overflow:hidden;}
+.tip{display:grid; grid-template-columns:46px 1fr; border-bottom:1px solid var(--rule); background:var(--panel);}
+.tip:last-child{border-bottom:none;}
+.tip .tn{font-family:var(--sans); font-weight:700; font-size:14px; color:var(--teal-deep); background:var(--teal-wash); display:flex; align-items:center; justify-content:center; font-variant-numeric:tabular-nums;}
+.tip .tc{padding:14px 18px;}
+.tip .tc b{color:var(--navy); font-weight:650;}
+.tip .tc p{margin:0;}
+/* ---------- Self-test quiz ---------- */
+.quiz{border:1px solid var(--rule-strong); border-radius:14px; background:var(--panel); overflow:hidden; margin:26px 0; box-shadow:0 1px 0 rgba(0,0,0,.02);}
+.quiz-top{padding:16px 22px 14px; border-bottom:1px solid var(--rule); background:linear-gradient(var(--paper),var(--panel)); display:flex; flex-wrap:wrap; gap:12px 18px; align-items:center; justify-content:space-between;}
+.quiz-top .qz-title{font-family:var(--sans); font-weight:650; font-size:15.5px; color:var(--navy);}
+.quiz-filters{overflow-x:auto; max-width:100%; -webkit-overflow-scrolling:touch;}
+.quiz-filters .seg{flex-wrap:nowrap;}
+.quiz-filters .seg button{white-space:nowrap;}
+.qz-progwrap{height:5px; background:var(--rule);}
+.qz-prog{height:100%; width:0; background:var(--teal); transition:width .3s;}
+.quiz-body{padding:20px 22px 22px;}
+.qz-meta{display:flex; gap:7px; align-items:center; margin-bottom:8px; font-family:var(--sans); font-size:12px; color:var(--ink-faint);}
+.qz-meta .qz-count{margin-left:auto; font-variant-numeric:tabular-nums;}
+.qz-q{font-size:18.5px; margin:4px 0 16px; line-height:1.5;}
+.qz-opts{display:grid; gap:10px;}
+.qz-opt{font-family:var(--sans); text-align:left; font-size:15.5px; line-height:1.45; padding:13px 16px; border:1px solid var(--rule-strong); border-radius:10px; background:var(--panel); color:var(--ink); cursor:pointer; transition:border-color .15s, background .15s; display:flex; gap:11px; align-items:flex-start; width:100%;}
+.qz-opt:hover:not(:disabled){border-color:var(--teal); background:var(--teal-wash);}
+.qz-opt .lt{font-weight:700; color:var(--teal-deep); flex:0 0 auto;}
+.qz-opt.correct{border-color:var(--teal); background:var(--teal-wash);}
+.qz-opt.wrong{border-color:var(--risk); background:var(--risk-wash);}
+.qz-opt.wrong .lt{color:var(--risk);}
+.qz-opt:disabled{cursor:default;}
+.qz-exp{margin-top:16px; border-left:3px solid var(--teal); background:var(--paper); border-radius:0 8px 8px 0; padding:12px 16px; font-size:16px; line-height:1.62;}
+.qz-exp .lbl{font-family:var(--sans); font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--teal-deep); display:block; margin-bottom:4px;}
+.qz-exp.miss{border-left-color:var(--risk);}
+.qz-exp.miss .lbl{color:var(--risk);}
+.qz-foot{display:flex; align-items:center; justify-content:space-between; gap:14px; margin-top:18px; padding-top:14px; border-top:1px solid var(--rule); font-family:var(--sans);}
+.qz-score{font-size:13.5px; color:var(--ink-soft); font-variant-numeric:tabular-nums;}
+.qz-score b{color:var(--navy);}
+.qz-result{text-align:center; padding:16px 6px 8px;}
+.qz-result .big{font-family:var(--serif); font-size:46px; font-weight:600; color:var(--navy); letter-spacing:-.01em; line-height:1;}
+.qz-result .sub{font-family:var(--sans); color:var(--ink-soft); font-size:15px; margin:8px 0 2px;}
+.qz-break{margin:20px auto 4px; max-width:440px; text-align:left; font-family:var(--sans); font-size:13.5px;}
+.qz-break .row{display:flex; align-items:center; gap:12px; padding:8px 0; border-bottom:1px solid var(--rule);}
+.qz-break .row .nm{flex:1;}
+.qz-break .row .bar{height:6px; border-radius:4px; background:var(--rule); overflow:hidden; width:110px; flex:0 0 auto;}
+.qz-break .row .bar i{display:block; height:100%; background:var(--teal);}
+.qz-break .row .fr{width:40px; text-align:right; color:var(--ink-soft); font-variant-numeric:tabular-nums;}
+@media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important;}}
+:focus-visible{outline:2px solid var(--teal); outline-offset:2px;}
+</style>
+</head>
+<body>
+<button class="mobtoggle" id="mobToggle" aria-label="Toggle contents">☰ Contents</button>
+<div class="layout">
+<!-- ================= SIDEBAR ================= -->
+<aside class="side" id="side">
+  <div class="brand">
+    <div class="eyebrow">Study Companion</div>
+    <h1>Statistics for Insurance</h1>
+    <div class="sub">Convergence · empirical processes · smoothing · exam prep</div>
+  </div>
+  <nav class="toc" id="toc">
+    <div class="grp">Foundations</div>
+    <a href="#start">How to use this</a>
+    <a href="#prereq">P · Prerequisite toolkit</a>
+    <a href="#prereq2">P· · Deeper machinery</a>
+    <a href="#modes">1 · Modes of convergence</a>
+    <a href="#onotation">2 · Stochastic \(o_P,O_P\)</a>
+    <a href="#tools">3 · CMT &amp; Slutsky</a>
+    <a href="#clt">4 · The central limit theorems</a>
+    <a href="#gc">5 · Glivenko–Cantelli</a>
+    <a href="#delta">6 · The delta method</a>
+    <div class="grp">Exploratory risk tools</div>
+    <a href="#variance">7 · Empirical variance</a>
+    <a href="#meanexcess">8 · Mean excess function</a>
+    <a href="#hazard">9 · Cumulative hazard</a>
+    <div class="grp">From points to paths</div>
+    <a href="#weak">10 · Weak convergence</a>
+    <a href="#fdelta">11 · Functional delta method</a>
+    <a href="#donsker">12 · Donsker &amp; bracketing</a>
+    <a href="#bridge">13 · Empirical process = bridge</a>
+    <a href="#quantiles">14 · Quantiles, VaR, copulas</a>
+    <div class="grp">Smoothing covariates</div>
+    <a href="#kde">15 · Kernel density</a>
+    <a href="#nw">16 · Nadaraya–Watson</a>
+    <a href="#distreg">17 · Distributional regression</a>
+    <a href="#bandwidth">18 · Bandwidth selection</a>
+    <div class="grp">Exam</div>
+    <a href="#examstrat">19 · Exam strategy</a>
+    <a href="#exam2025">20 · 2024/25 exam, solved</a>
+    <a href="#extra">21 · More exam questions</a>
+    <a href="#cheat">22 · One-page cheat sheet</a>
+    <div class="grp">Rehearsal &amp; toolkit</div>
+    <a href="#playbook">23 · Technique playbook</a>
+    <a href="#toolkit">24 · Toolkit &amp; theorem index</a>
+    <a href="#tips">25 · Exam-day tips</a>
+    <a href="#quiz">26 · Self-test quiz</a>
+    <div class="grp">Solutions manual</div>
+    <a href="#marker">27 · Marker's-eye view</a>
+    <a href="#manual">28 · Worked variant problems</a>
+    <a href="#intuition">29 · Intuition builders</a>
+    <a href="#mock">30 · Mock exam, solved</a>
+  </nav>
+</aside>
+
+<!-- ================= MAIN ================= -->
+<main>
+<header class="hero" id="top">
+  <div class="kicker">University of Copenhagen · Bladt notes, Ch. 1–2 + exam</div>
+  <h2>The machinery of <em>risk</em>, made to move.</h2>
+  <p class="lede">Everything in these first weeks is one idea repeated: an estimator wiggles, and we ask what it settles into. This companion turns each theorem into intuition, a picture you can push around, and exam-shaped practice.</p>
+  <div class="herofig">
+    <canvas id="heroCanvas"></canvas>
+    <div class="herocap">Live: many empirical processes \(\sqrt{n}\,(F^{(n)}-F)\), each pinned to zero at both ends — the Brownian bridge \(B\circ F\) that Chapter&nbsp;1 builds toward.</div>
+  </div>
+</header>
+
+<!-- ---- START ---- -->
+<section id="start">
+  <div class="eyebrow"><span class="num">00</span> Orientation</div>
+  <h3>How to read this</h3>
+  <p>The course has a single spine. You observe iid risks \(Z_1,\dots,Z_n\) (claim sizes, say), you build a statistic, and you want two things: <strong>consistency</strong> (it lands on the truth) and a <strong>limit law</strong> (usually Gaussian, so you can put error bars — Solvency&nbsp;II capital, confidence intervals). Chapter&nbsp;1 does this first for numbers, then for whole <em>curves</em> (the empirical distribution function as a random path). Chapter&nbsp;2 applies the same reflexes to <em>smoothers</em> that borrow strength from covariates.</p>
+  <p>Four moves recur so often they are worth naming now, because almost every proof is a recombination of them:</p>
+  <table class="tbl">
+    <tr><th>Move</th><th>What it does</th><th>Where it shows up</th></tr>
+    <tr><td><b>LLN</b></td><td>averages → expectations</td><td>every consistency proof</td></tr>
+    <tr><td><b>CLT</b></td><td>scaled averages → Gaussian</td><td>every error bar</td></tr>
+    <tr><td><b>Continuous mapping</b></td><td>convergence survives continuous \(g\)</td><td>ratios, logs, sups</td></tr>
+    <tr><td><b>Delta method</b></td><td>transform <em>then</em> normalise</td><td>variance, mean excess, hazard, quantiles, copulas</td></tr>
+  </table>
+  <div class="box intuition"><span class="tag">Mental model</span>
+  <p>Think of an estimator as a spring settling. The LLN says where it settles (the mean position). The CLT describes the jitter around that point — and the width of that jitter, divided by \(\sqrt n\), is your confidence interval. The functional versions in the second half say the same thing about a spring at <em>every</em> point of a curve simultaneously.</p></div>
+</section>
+
+<!-- ---- P PREREQUISITES ---- -->
+<section id="prereq">
+  <div class="eyebrow"><span class="num">P</span> Before you start</div>
+  <h3>The prerequisite toolkit</h3>
+  <p>This course generalises three things you're assumed to already own: <strong>the classical limit theorems</strong>, <strong>integration against a distribution</strong>, and <strong>the standard families of loss distributions</strong>. None of it is taught in the lectures — it's the floor Chapter&nbsp;1 stands on. Skim this; anything that looks unfamiliar, patch it before you start.</p>
+
+  <h4>Distributions to recognise on sight</h4>
+  <p>Every exam problem names a specific law and expects its density, mean and tail without hesitation. Note this course uses the <em>rate</em> parametrisation of the Gamma (rate \(c\), not scale).</p>
+  <table class="tbl">
+    <tr><th>Law</th><th>Density / tail</th><th>Mean · variance</th><th>Enters as</th></tr>
+    <tr><td><b>Poisson</b> \((\lambda)\)</td><td>\(p(n)=e^{-\lambda}\lambda^n/n!\)</td><td>\(\lambda\ \cdot\ \lambda\)</td><td>claim <em>frequency</em> \(N\)</td></tr>
+    <tr><td><b>Gamma</b> \((\gamma,c)\)</td><td>\(\dfrac{c^\gamma x^{\gamma-1}e^{-cx}}{\Gamma(\gamma)}\)</td><td>\(\gamma/c\ \cdot\ \gamma/c^2\)</td><td>claim <em>severity</em> \(Y\)</td></tr>
+    <tr><td><b>Exponential</b> \((\lambda)\)</td><td>\(\lambda e^{-\lambda x}=\Gamma(1,\lambda)\)</td><td>\(1/\lambda\ \cdot\ 1/\lambda^2\)</td><td>memoryless waiting time</td></tr>
+    <tr><td><b>Normal</b> \((\mu,\sigma^2)\)</td><td>\(\varphi\); \(\bar\Phi(z)\sim\varphi(z)/z\)</td><td>\(\mu\ \cdot\ \sigma^2\)</td><td>every limit law</td></tr>
+    <tr><td><b>Pareto</b> \((\alpha,\kappa)\)</td><td>\(\bar F(z)=(\kappa/z)^\alpha,\ z\ge\kappa\)</td><td>\(\tfrac{\alpha\kappa}{\alpha-1}\) if \(\alpha\gt1\)</td><td>heavy-tailed loss</td></tr>
+    <tr><td><b>Lognormal</b> \((\mu,\sigma)\)</td><td>\(G(z)=\Phi\!\big(\tfrac{\log z-\mu}{\sigma}\big)\)</td><td>\(e^{\mu+\sigma^2/2}\)</td><td>moderately heavy loss</td></tr>
+    <tr><td><b>Burr</b> \((\theta,\eta,\beta)\)</td><td>\(\bar F(x)=(1+(x/\theta)^\eta)^{-\beta}\)</td><td>tail index \(\beta\eta\)</td><td>regularly-varying loss</td></tr>
+  </table>
+  <div class="box actuary"><span class="tag">Gamma facts to keep loaded</span>
+  <p>\(\Gamma(\gamma+1)=\gamma\,\Gamma(\gamma)\) and \(\Gamma(n)=(n-1)!\); and the identity the compound-Poisson problem hinges on — a sum of \(n\) independent \(\Gamma(\gamma,c)\) variables is \(\Gamma(n\gamma,c)\).</p></div>
+
+  <h4>Expectation machinery</h4>
+  <ul>
+    <li><b>Indicators do the heavy lifting:</b> \(\mathbb E[\mathbf 1_A]=\mathbb P(A)\) and \(\operatorname{Cov}(\mathbf 1_A,\mathbf 1_B)=\mathbb P(A\cap B)-\mathbb P(A)\mathbb P(B)\) — the single most-used line on the exam.</li>
+    <li><b>Tower property:</b> \(\mathbb E[X]=\mathbb E[\mathbb E[X\mid Y]]\), with the companion law of total variance \(\operatorname{Var}(X)=\mathbb E[\operatorname{Var}(X\mid Y)]+\operatorname{Var}(\mathbb E[X\mid Y])\).</li>
+    <li><b>Compound sums (Wald):</b> for \(S=\sum_{i=1}^N Y_i\) with \(N\) independent of \((Y_i)\), \(\mathbb E[S]=\mathbb E[N]\,\mathbb E[Y]\); in the compound-Poisson case \(\operatorname{Var}(S)=\lambda\,\mathbb E[Y^2]\).</li>
+    <li><b>MGF &amp; heavy tails:</b> \(M(t)=\mathbb E[e^{tX}]\); a law is <em>heavy-tailed</em> precisely when \(M(t)=\infty\) for every \(t\gt0\).</li>
+  </ul>
+
+  <h4>Integrating against a distribution</h4>
+  <p>The empirical CDF \(F^{(n)}\) is itself a (random) distribution function, so you integrate against one constantly. Be fluent with the Riemann–Stieltjes / Lebesgue integral \(\int\varphi\,dF\): against a jump measure it is a sum \(\sum_k\varphi(x_k)\,\Delta F(x_k)\); against a density it is \(\int\varphi(x)f(x)\,dx\).</p>
+  <div class="box theorem"><span class="tag">The analysis moves the proofs reuse</span>
+  <ul>
+    <li><b>Integration by parts</b> on tails: \(\int_u^\infty\bar F\) is the backbone of every mean-excess computation.</li>
+    <li><b>Dominated / monotone convergence</b> to exchange \(\lim\) and \(\int\) — the engine behind Breiman's lemma and the Kaplan–Meier-integral consistency.</li>
+    <li><b>First-order Taylor:</b> \(\log(1-x)\approx-x\) and \((1+x)^a\approx1+ax\) for small \(x\) — used verbatim in the Hadamard-derivative and regular-variation arguments.</li>
+    <li><b>Asymptotic ratios (L'Hôpital)</b> and <b>Mill's ratio</b> \(\Phi(z)\sim-\varphi(z)/z\) as \(z\to-\infty\), for the lognormal tail.</li>
+  </ul>
+  </div>
+
+  <h4>Landau notation — deterministic and stochastic</h4>
+  <p>Keep both families straight; the course uses them side by side. Deterministically, \(f=o(g)\) means \(f/g\to0\) and \(f=O(g)\) means \(f/g\) stays bounded. Stochastically, \(X_n=o_P(1)\) means \(X_n\xrightarrow{P}0\), while \(X_n=O_P(1)\) means the sequence is <em>tight</em> (bounded in probability). The bridge between them — "\(o_P(1)\) apart \(\Rightarrow\) same weak limit" — is the very first lemma of Week&nbsp;1.</p>
+
+  <h4>The classical limit theorems this course upgrades</h4>
+  <ul>
+    <li><b>LLN:</b> \(\tfrac1n\sum_i g(Z_i)\xrightarrow{a.s.}\mathbb E[g(Z_1)]\) — the source of every consistency proof.</li>
+    <li><b>CLT (Lindeberg / Lyapounov):</b> \(\sqrt n(\bar Z_n-\mu)\xrightarrow{d}N(0,\sigma^2)\) — the source of every error bar. Chapter&nbsp;1 replaces the number \(\bar Z_n\) by the whole curve \(F^{(n)}\), and the Gaussian by the Brownian bridge.</li>
+  </ul>
+
+  <h4>Linear algebra &amp; the multivariate normal</h4>
+  <p>You need covariance matrices \(\Sigma\), quadratic forms, and the fact that a Gaussian vector or process is <em>completely determined by its mean and covariance</em>. Two tools recur throughout. The <b>Cramér–Wold device</b> — a random vector converges in law iff every linear combination \(a^\top X_n\) does — reduces the multivariate CLT to the univariate one. And the <b>Brownian bridge</b> \(B(t)=W(t)-tW(1)\), pinned at \(B(0)=B(1)=0\) with</p>
+  \[\operatorname{Cov}(B(s),B(t))=s\wedge t-st,\]
+  <p>is the exact object the empirical process converges to. Recognise this covariance and you recognise a bridge.</p>
+
+  <h4>Statistics &amp; processes vocabulary</h4>
+  <ul>
+    <li><b>Estimator language:</b> bias, consistency \((\hat\theta_n\xrightarrow{P}\theta)\), asymptotic normality, and the empirical distribution function \(F^{(n)}(t)=\tfrac1n\sum_i\mathbf 1_{Z_i\le t}\).</li>
+    <li><b>MLE &amp; exponential families:</b> the likelihood/score picture, and that a one-parameter exponential family writes \(f=\exp\{(x\theta-b(\theta))/\phi+c(x,\phi)\}\) with mean identity \(b'(\theta)=\mu\). Problem&nbsp;1 is exactly this.</li>
+    <li><b>Poisson &amp; jump processes:</b> the Poisson process behind compound claims, and finite-state Markov / jump processes with transition probabilities \(P_{ij}(s,t)\) — the objects of Problem&nbsp;3.</li>
+  </ul>
+
+  <div class="box intuition"><span class="tag">Readiness check</span>
+  <p>You're ready for Chapter&nbsp;1 if you can, without notes: (1) write the Gamma and Poisson densities and the mean of a compound sum; (2) compute \(\operatorname{Cov}(\mathbf 1_{Z\le s},\mathbf 1_{Z\le t})\); (3) state the CLT and distinguish \(o_P\) from \(O_P\); (4) integrate \(\int_u^\infty(z-u)\,dF(z)\) by parts; and (5) recall the bridge covariance \(s\wedge t-st\). Any gaps? Patch those five first — the lectures assume all of them.</p></div>
+</section>
+
+<!-- ---- P2 DEEPER MACHINERY ---- -->
+<section id="prereq2">
+  <div class="eyebrow"><span class="num">P·</span> Before you start</div>
+  <h3>Deeper machinery the techniques lean on</h3>
+  <p>The brush-up above is the probability floor. This second layer is the <em>course-specific</em> apparatus that the harder subparts — Problem&nbsp;2's Kaplan–Meier jumps, Problem&nbsp;3's counting-process CLT — silently assume. If a proof in the solved exam looked like it skipped a step, the missing step lives here.</p>
+
+  <h4>Inequalities you invoke by name</h4>
+  <p>Each does one job in these proofs; state it, don't re-derive it.</p>
+  <table class="tbl">
+    <tr><th>Inequality</th><th>Statement</th><th>Its job here</th></tr>
+    <tr><td><b>Markov</b></td><td>\(\mathbb P(X\gt a)\le \mathbb E[X]/a\) for \(X\ge0\)</td><td>turn a probability into an expectation — the first line of the tail step in 2.4</td></tr>
+    <tr><td><b>Chebyshev</b></td><td>\(\mathbb P(|X-\mu|\gt a)\le \sigma^2/a^2\)</td><td>consistency from a vanishing variance</td></tr>
+    <tr><td><b>Jensen</b></td><td>\(\varphi(\mathbb E X)\le\mathbb E[\varphi(X)]\), \(\varphi\) convex</td><td>bounding transformed means</td></tr>
+    <tr><td><b>Cauchy–Schwarz</b></td><td>\(\mathbb E[XY]^2\le\mathbb E[X^2]\mathbb E[Y^2]\)</td><td>\(L^2\) bracket sizes in the Donsker step of 3.4</td></tr>
+  </table>
+
+  <h4>Counting processes &amp; at-risk sets</h4>
+  <p>A jump process is bookkept by <em>counts</em>. Write \(N_{jk}(t)=\#\{s\le t:Z_{s-}=j,Z_s=k\}\) for the number of \(j\to k\) transitions, and \(Y_j(t)\) for the number <em>at risk</em> in state \(j\) just before \(t\). Two facts do all the work:</p>
+  <ul>
+    <li><b>Occupation as a transition balance.</b> The state indicator decomposes as \(\mathbf 1_{Z_t=j}=\mathbf 1_{Z_0=j}+\sum_{k\ne j}\big(N_{kj}(t)-N_{jk}(t)\big)\) — arrivals minus departures. This is the identity (Prop. 12.3 in the exam script) that turns the occupation estimator into an average of counting processes, which is why the LLN and abstract Glivenko–Cantelli then apply to it.</li>
+    <li><b>Nelson–Aalen increment.</b> \(d\hat A_{jk}(s)=dN_{jk}(s)/Y_j(s)\) estimates the transition intensity from exactly the subjects still observed — the mechanism that makes censoring harmless.</li>
+  </ul>
+
+  <h4>Product-limit and product integral</h4>
+  <p>Both survival estimators are <em>products</em>, not sums, and you must be fluent reading them.</p>
+  <ul>
+    <li><b>Kaplan–Meier (survival form):</b> \(1-F^{(n)}(t)=\prod_{W_{(i)}\le t}\big(1-\tfrac{\delta_{(i)}}{n-i+1}\big)\). Its jump at an uncensored time is read off with the <b>telescoping identity</b> \(\prod_{j=1}^{k-1}(1-\tfrac1{n-j+1})=\tfrac{n-k+1}{n}\) — the exact move that gives the \(1/n\) jump (and \(2/n\) under a tie) in Problem&nbsp;2.2.</li>
+    <li><b>Aalen–Johansen (multistate):</b> the transition matrix is the <b>product integral</b> \(\hat P(0,t)=\prod_{(0,t]}\big(\mathrm{Id}+d\hat A(s)\big)\), and occupation is its first row, \(\hat p_j(t)=\sum_i\hat p_i(0)\hat P_{ij}(0,t)\).</li>
+  </ul>
+
+  <h4>Empirical-process vocabulary: brackets, entropy, Donsker</h4>
+  <p>Problem&nbsp;3.4 and all of Week&nbsp;2 speak this language. For a class of functions \(\mathcal F\):</p>
+  <ul>
+    <li>A <b>bracket</b> \([l,u]\) is the set of \(f\) with \(l\le f\le u\); its <b>size</b> is the \(L^2(P)\) distance \(\|u-l\|_{L^2}\).</li>
+    <li>The <b>bracketing number</b> \(N_{[\,]}(\varepsilon,\mathcal F,L^2)\) is how many \(\varepsilon\)-brackets cover \(\mathcal F\); the <b>entropy integral</b> is \(\int_0^1\sqrt{\log N_{[\,]}(\varepsilon)}\,d\varepsilon\).</li>
+    <li><b>Two thresholds:</b> a <em>finite</em> bracketing number at every \(\varepsilon\) makes \(\mathcal F\) Glivenko–Cantelli (uniform LLN); a <em>convergent entropy integral</em> makes it Donsker (uniform CLT / tightness). That is the whole logic separating a consistency proof from a weak-convergence proof.</li>
+  </ul>
+  <div class="box theorem"><span class="tag">Càdlàg, BV, monotone — why they matter</span>
+  <p>Right-continuous-with-left-limits (<em>càdlàg</em>), bounded-variation, non-decreasing functions are the well-behaved objects the theorems accept. In Problem&nbsp;3.3 the counting processes \(N_{jk}\) are bounded, non-decreasing and càdlàg — that trio is exactly the hypothesis of the abstract Glivenko–Cantelli theorem, so uniform consistency follows for free once pointwise consistency (LLN) is in hand.</p></div>
+
+  <h4>Reading the exponential dispersion family off the page</h4>
+  <p>Membership proofs are pattern-matching against \(f(x;\theta,\phi)=\exp\{(x\theta-b(\theta))/\phi+c(x,\phi)\}\). The drill: isolate the term <em>linear in \(x\)</em> to read \(\theta/\phi\); collect the remaining \(\theta\)-dependent constant as \(-b(\theta)/\phi\); dump everything else into \(c\). Then two derivatives give you the moments,</p>
+  \[\mathbb E[X]=b'(\theta),\qquad \operatorname{Var}(X)=\phi\,b''(\theta)=\phi\,V(\mu),\]
+  <p>where \(V(\mu)=b''(\theta)\) is the <b>variance function</b> — \(V(\mu)=\mu\) for Poisson, \(\mu^2\) for gamma, and \(\mu^p\) for the whole Tweedie family. Verifying \(b'(\theta)=\mu\) is the certificate the exam rewards.</p>
+
+  <div class="box watch"><span class="tag">Reference numbers drift between note editions</span>
+  <p>The weekly solutions cite results as "1.x" (bridge 1.30, bracketing 1.28); the graded 2024/25 script cites the same machinery as Lemma&nbsp;2.10, Theorem&nbsp;2.15, Lemma&nbsp;2.4, Proposition&nbsp;12.3, Chapter&nbsp;12.1.2. Same theorems, renumbered edition. On the exam, cite by <em>name</em> and add the number from <em>your</em> printout — graders accept the name.</p></div>
+</section>
+
+<!-- ---- 1 MODES ---- -->
+<section id="modes">
+  <div class="eyebrow"><span class="num">01</span> Foundations</div>
+  <h3>Three ways a sequence can converge</h3>
+  <p>For \(\mathbb{R}^p\)-valued \(Z_n\) there are three modes, from strongest to weakest, and knowing which one a theorem gives you tells you what you're allowed to conclude.</p>
+  <ul>
+    <li><b>Almost sure</b> \(\;Z_n\xrightarrow{a.s.}Z\): with probability one the whole trajectory eventually gets and stays close. This is convergence of paths.</li>
+    <li><b>In probability</b> \(\;Z_n\xrightarrow{P}Z\): for any tolerance \(\varepsilon\), the chance of being further than \(\varepsilon\) away vanishes. Individual excursions are allowed forever, they just get rare.</li>
+    <li><b>In distribution</b> \(\;Z_n\xrightarrow{d}Z\): only the <em>law</em> settles — \(\mathbb{E}f(Z_n)\to\mathbb{E}f(Z)\) for bounded continuous \(f\). The \(Z_n\) needn't even live near \(Z\); a symmetric limit can't tell \(+Z\) from \(-Z\).</li>
+  </ul>
+  <div class="box theorem"><span class="tag">Lemma 1.1 · the ladder</span>
+  <p>\(a.s.\Rightarrow P\Rightarrow d\). The reverse implications fail in general — <strong>with one exception</strong>: convergence to a <em>constant</em> \(c\) is the same in probability and in distribution. That exception is the engine of Slutsky's lemma below.</p></div>
+  <div class="demo">
+    <div class="demo-head"><div class="tag">Interactive</div><h5>Watch the three modes diverge</h5></div>
+    <div class="demo-body">
+      <p class="small" style="margin-top:2px">Each grey line is one realisation of \(Z_n=\bar X_n\) (a running sample mean, so \(\xrightarrow{a.s.}0\)). The teal histogram at right is the <em>law</em> of \(\sqrt n\,\bar X_n\) — it does <b>not</b> collapse: it converges only in distribution, to \(N(0,1)\). Consistency is the lines flattening; a limit law is the histogram holding its shape.</p>
+      <canvas id="modesCanvas" height="300"></canvas>
+      <div class="controls">
+        <button class="btn" id="modesRun">Run new paths</button>
+        <div class="ctrl"><label>Paths shown <b id="modesKlbl">40</b></label><input type="range" id="modesK" min="5" max="120" value="40"></div>
+      </div>
+      <div class="legend"><span><i class="swatch" style="background:#B9B4A6"></i>running means \( \bar X_n \) (→ 0, a.s.)</span><span><i class="swatch" style="background:var(--teal)"></i>law of \(\sqrt n\,\bar X_n\) (→ N(0,1), only in dist.)</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ---- 2 O NOTATION ---- -->
+<section id="onotation">
+  <div class="eyebrow"><span class="num">02</span> Foundations</div>
+  <h3>Stochastic bookkeeping: \(o_P\) and \(O_P\)</h3>
+  <p>This is just sloppiness with a licence. \(Z_n=O_P(1)\) means "bounded in probability" — the mass doesn't run off to infinity. \(Z_n=o_P(1)\) means \(Z_n\xrightarrow{P}0\). Rates attach by division: \(Z_n=O_P(r_n)\) iff \(Z_n/r_n=O_P(1)\).</p>
+  <div class="box intuition"><span class="tag">Why you care</span>
+  <p>Two facts do almost all the work. First (Example 1.1): <em>convergence in distribution implies \(O_P(1)\)</em> — a settling law can't leak mass to infinity. Second, remainder terms in Taylor expansions get absorbed: if the leading term is \(O_P(a_n^{-1})\) and the remainder is \(o_P\) of the increment, the remainder is \(o_P(a_n^{-1})\) and simply drops out after you multiply by \(a_n\). That is the entire delta-method proof in one sentence.</p></div>
+  <div class="box example"><span class="tag">Example 1.2, in words</span>
+  <p>If \(Z_n=O_P(a_n)\) and \(W_n=o_P(\|Z_n\|)\), then \(W_n=o_P(a_n)\). Read it as: "a small fraction of a bounded thing is small." You split the event \(\{\|W_n\|/a_n\ge\varepsilon\}\) using an intermediate scale \(\varepsilon_1\) — one piece controls \(W_n\) relative to \(Z_n\), the other controls \(Z_n\) relative to \(a_n\) — and both go to zero.</p></div>
+</section>
+
+<!-- ---- 3 CMT SLUTSKY ---- -->
+<section id="tools">
+  <div class="eyebrow"><span class="num">03</span> Foundations</div>
+  <h3>Divide and conquer: continuous mapping &amp; Slutsky</h3>
+  <p>These two let you break a messy statistic into a "converges to something random" part and a "converges to a constant" part, handle them separately, and glue back.</p>
+  <div class="box theorem"><span class="tag">Continuous mapping (Thm 1.2)</span>
+  <p>If \(Z_n\to Z\) (in any of the three modes) and \(g\) is continuous, then \(g(Z_n)\to g(Z)\) in the same mode. You may apply logs, ratios, maxima — anything continuous — without losing convergence.</p></div>
+  <div class="box theorem"><span class="tag">Slutsky (Lemma 1.3)</span>
+  <p>If \(Z_n\xrightarrow{d}Z\) and \(W_n\xrightarrow{d}c\) (a <em>constant</em>), then \((Z_n,W_n)\xrightarrow{d}(Z,c)\). Hence \(Z_n+W_n\xrightarrow{d}Z+c\) and \(W_nZ_n\xrightarrow{d}cZ\).</p></div>
+  <div class="box watch"><span class="tag">Trap</span>
+  <p>Slutsky needs the second sequence to converge to a <b>constant</b>. Two genuinely random sequences converging in distribution do <em>not</em> automatically converge jointly — their dependence is unknown. This is exactly why the empirical-process chapter has to work so hard to get <em>joint</em> (pathwise) statements rather than pointwise ones.</p></div>
+</section>
+
+<!-- ---- 4 CLT ---- -->
+<section id="clt">
+  <div class="eyebrow"><span class="num">04</span> Foundations</div>
+  <h3>The central limit theorems</h3>
+  <p>Three flavours, matched to three data situations.</p>
+  <h4>Laplace — iid, the default</h4>
+  <p>\(\sqrt n\big(\tfrac1n\sum Z_i-\mathbb{E}Z_1\big)\xrightarrow{d}N(0,\operatorname{Var}(Z_1))\), given a finite second moment. This is the one you reach for 90% of the time.</p>
+  <h4>Lindeberg — triangular arrays, non-identical rows</h4>
+  <p>Real portfolios aren't identically distributed: different policies, different exposures. The <em>triangular array</em> \(Z_{nm}\) (row \(n\) has \(m=1,\dots,n\) independent entries) handles this. If the rows are centred, their variances sum to \(\Sigma\), and <b>Lindeberg's condition</b> holds — no single term dominates the sum —</p>
+  <div class="katex-display" id="lindeberg"></div>
+  <p>then \(\sum_m Z_{nm}\xrightarrow{d}N(0,\Sigma)\).</p>
+  <div class="box intuition"><span class="tag">Lindeberg in plain terms</span>
+  <p>The condition says: the total variance contributed by the "unusually large" summands (those exceeding \(c\)) vanishes. No one policy is allowed to carry the portfolio. <b>Lyapounov's</b> condition (a bounded \((2{+}\delta)\)-moment sum \(\to 0\)) is a easier-to-check sufficient version — this is the one you verify in practice, and it's exactly the step used in every kernel-CLT proof of Chapter&nbsp;2.</p></div>
+  <div class="demo">
+    <div class="demo-head"><div class="tag">Interactive</div><h5>The CLT assembling itself</h5></div>
+    <div class="demo-body">
+      <p class="small" style="margin-top:2px">Draw \(n\) values from a deliberately non-normal law, standardise the mean, repeat thousands of times, and histogram the result against \(N(0,1)\). Push \(n\) up and watch the skew of the base distribution get laundered away.</p>
+      <canvas id="cltCanvas" height="290"></canvas>
+      <div class="controls">
+        <div class="ctrl"><label>Base law</label>
+          <div class="seg" id="cltDist"><button data-d="exp" class="on">Exponential</button><button data-d="pareto">Pareto(3)</button><button data-d="unif">Uniform</button><button data-d="bern">Bernoulli(.15)</button></div>
+        </div>
+        <div class="ctrl"><label>Sample size <b id="cltNlbl">5</b></label><input type="range" id="cltN" min="1" max="120" value="5"></div>
+        <button class="btn" id="cltRun">Resample 6000×</button>
+      </div>
+      <div class="readout" id="cltRead"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ---- 5 GC ---- -->
+<section id="gc">
+  <div class="eyebrow"><span class="num">05</span> Foundations</div>
+  <h3>Glivenko–Cantelli: the whole CDF at once</h3>
+  <p>The empirical distribution function \(F^{(n)}(t)=\tfrac1n\sum_i \mathbf 1_{Z_i\le t}\) converges to \(F(t)\) at each fixed \(t\) by the LLN. Glivenko–Cantelli upgrades this to <strong>uniform</strong> convergence:</p>
+  <div class="katex-display" id="gcstate"></div>
+  <div class="box intuition"><span class="tag">The proof idea worth stealing</span>
+  <p>Chop the range into finitely many slabs, each of \(F\)-height \(&lt;\varepsilon\) (possible because \(F\) is bounded and càdlàg). Convergence at the finitely many grid points is ordinary LLN; monotonicity squeezes every point between neighbouring grid points. The <b>Abstract Glivenko–Cantelli</b> (Lemma 1.8) is exactly this argument stated for any non-decreasing, bounded, càdlàg limit — which is why the same one page later delivers uniform consistency of the cumulative hazard, Kaplan–Meier, and Markov occupation estimators.</p></div>
+  <div class="demo">
+    <div class="demo-head"><div class="tag">Interactive</div><h5>Uniform convergence, and the Kolmogorov–Smirnov gap</h5></div>
+    <div class="demo-body">
+      <p class="small" style="margin-top:2px">Black = true \(F\); teal step = \(F^{(n)}\). The red bar marks \(D_n=\sup_t|F^{(n)}(t)-F(t)|\), the largest vertical gap. As \(n\) grows the whole step function is trapped against the curve and \(D_n\to0\).</p>
+      <canvas id="gcCanvas" height="280"></canvas>
+      <div class="controls">
+        <div class="ctrl"><label>Sample size \(n\) <b id="gcNlbl">20</b></label><input type="range" id="gcN" min="4" max="400" value="20"></div>
+        <button class="btn" id="gcRun">New sample</button>
+      </div>
+      <div class="readout" id="gcRead"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ---- 6 DELTA ---- -->
+<section id="delta">
+  <div class="eyebrow"><span class="num">06</span> Foundations</div>
+  <h3>The delta method: transform, <em>then</em> normalise</h3>
+  <p>If \(a_n(T_n-c)\xrightarrow{d}Z\) and \(h\) is differentiable at \(c\), then</p>
+  <div class="katex-display" id="deltastate"></div>
+  <div class="box intuition"><span class="tag">Why it's not just continuous mapping</span>
+  <p>Continuous mapping transforms <em>after</em> the limit is taken. The delta method transforms the raw estimator and asks how the transformation reshapes the <em>fluctuations</em>. A smooth \(h\) looks linear up close, so it multiplies the Gaussian noise by the local slope \(\nabla h(c)\). The whole proof is: Taylor-expand, note the remainder is \(o_P(a_n^{-1})\) (from §02), multiply by \(a_n\), let it drop out.</p></div>
+  <p>This single lemma powers most of the "exploratory tools" below — the trick each time is to write the estimator as \(h(T_n)\) for a vector average \(T_n\), get \(T_n\)'s joint CLT from Laplace, then read off the sandwich variance \(\nabla h^\top \Sigma\, \nabla h\).</p>
+</section>
+
+<!-- ---- 7 VARIANCE ---- -->
+<section id="variance">
+  <div class="eyebrow"><span class="num">07</span> Exploratory risk tools</div>
+  <h3>Empirical variance</h3>
+  <p>Write \(\hat\sigma_n^2=h(T_n)\) with \(T_n=(\overline{Z},\overline{Z^2})\) and \(h(x,y)=y-x^2\). Laplace gives the joint CLT of \(T_n\); the delta method with \(\nabla h=(-2x,1)^\top\) yields</p>
+  <div class="katex-display" id="varstate"></div>
+  <p>where \(\mu_{(k)}\) are central moments. In words: <strong>the spread of your spread estimate is governed by the fourth moment.</strong> Heavy-tailed claims (big \(\mu_{(4)}\)) make even the variance hard to pin down — a first warning that the tail is where the difficulty lives.</p>
+  <div class="box example"><span class="tag">Worked · Pareto reminder</span>
+  <p>For a Pareto tail the fourth moment can be infinite (if \(\alpha\le4\)), so this Gaussian CI for the variance is <em>worthless</em> exactly when you'd most want it. That failure is the motivation for the extreme-value machinery in Ch.&nbsp;3, and for the mean excess diagnostic next.</p></div>
+</section>
+
+<!-- ---- 8 MEAN EXCESS ---- -->
+<section id="meanexcess">
+  <div class="eyebrow"><span class="num">08</span> Exploratory risk tools</div>
+  <h3>The mean excess function — a tail thermometer</h3>
+  <p>\(e_F(u)=\mathbb E[Z-u\mid Z>u]\): given a claim already exceeds \(u\), how much more do you expect to pay? Its shape <em>is</em> the tail's fingerprint:</p>
+  <ul>
+    <li><b>Flat</b> \(\Rightarrow\) exponential tail (memoryless: exceedance size doesn't grow with \(u\)).</li>
+    <li><b>Increasing / linear</b> \(\Rightarrow\) heavy (Pareto) tail — \(e_F(u)=u/(\alpha-1)\), the worse the tail the steeper.</li>
+    <li><b>Decreasing</b> \(\Rightarrow\) light (sub-exponential from below) tail.</li>
+  </ul>
+  <p>The empirical version \(e_n(u)\) is asymptotically Gaussian at each fixed \(u\) (Thm 1.12), with variance \(\big(e_F^{(2)}(u)-e_F(u)^2\big)/(1-F(u))\) — note it blows up as \(u\) enters the sparse tail, which is the honest statement that far-tail estimation is hard.</p>
+  <div class="demo">
+    <div class="demo-head"><div class="tag">Interactive</div><h5>Read the tail off the slope</h5></div>
+    <div class="demo-body">
+      <p class="small" style="margin-top:2px">Grey = empirical \(e_n(u)\); black = true \(e_F(u)\). Flip between an exponential and a Pareto sample: the exponential's mean excess hovers flat, the Pareto's climbs in a straight line. This plot is a working actuary's first look at whether a portfolio is dangerous.</p>
+      <canvas id="meCanvas" height="280"></canvas>
+      <div class="controls">
+        <div class="ctrl"><label>Claim law</label>
+          <div class="seg" id="meDist"><button data-d="exp" class="on">Exponential (light)</button><button data-d="pareto">Pareto (heavy)</button></div>
+        </div>
+        <div class="ctrl"><label>Sample size \(n\) <b id="meNlbl">2000</b></label><input type="range" id="meN" min="200" max="8000" step="100" value="2000"></div>
+        <button class="btn" id="meRun">New sample</button>
+      </div>
+      <div class="readout" id="meRead"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ---- 9 HAZARD ---- -->
+<section id="hazard">
+  <div class="eyebrow"><span class="num">09</span> Exploratory risk tools</div>
+  <h3>Cumulative hazard, and "finite-sample behaviour"</h3>
+  <p>The empirical cumulative hazard \(\Lambda^{(n)}(t)=-\log\!\big(\tfrac1n\sum_i\mathbf 1_{Z_i>t}\big)\) estimates \(\Lambda(t)=-\log(1-F(t))\). By the delta method with \(h(x)=-\log(1-x)\),</p>
+  <div class="katex-display" id="hazstate"></div>
+  <div class="box intuition"><span class="tag">Finite-sample behaviour</span>
+  <p>Two estimators can share the same asymptotic law yet behave very differently at realistic \(n\). In the notes' Figure 1.1, the cumulative hazard tracks its target cleanly at \(n=500\) while the mean excess is still visibly noisy — because the hazard's variance \(F/(1-F)\) grows gently, whereas mean-excess variance explodes in the tail. <b>Lesson for the exam and for practice:</b> "asymptotically Gaussian" is a promise about \(n=\infty\); always ask how fast.</p></div>
+</section>
+
+<!-- ---- 10 WEAK ---- -->
+<section id="weak">
+  <div class="eyebrow"><span class="num">10</span> From points to paths</div>
+  <h3>Weak convergence of processes</h3>
+  <p>Now the object is a random <em>function</em> — \(t\mapsto \sqrt n\,(F^{(n)}(t)-F(t))\) lives in a space of càdlàg paths. Two new problems appear, and the chapter's abstractions exist only to solve them.</p>
+  <h4>Problem 1: finite-dimensional laws aren't enough</h4>
+  <p>Knowing the joint law at every finite grid \(t_1,\dots,t_m\) does <em>not</em> determine pathwise behaviour. A test like "does \(F\) match this parametric family?" depends on \(\sup_t\) — the maximum gap can occur between any two grid points, and the probability it lands exactly on a pre-chosen grid is zero. You need convergence of the <em>whole path</em>.</p>
+  <h4>Problem 2: measurability breaks under the sup-norm</h4>
+  <p>The natural metric on càdlàg space is the uniform norm, but then the empirical path isn't Borel-measurable. The fix is elegant: replace \(\mathbb E\) by the <b>outer expectation</b> \(\mathbb E^\ast\) (infimum over measurable majorants). It agrees with \(\mathbb E\) when there's no problem, and lets every theorem go through when there is.</p>
+  <div class="box theorem"><span class="tag">Weak convergence (Def 1.8) + the toolkit</span>
+  <p>\(X_n\xrightarrow{d}X\) means \(\mathbb E^\ast f(X_n)\to\mathbb E f(X)\) for bounded continuous \(f\). The finite-dimensional generalisations of everything survive: an outer-probability continuous mapping theorem (1.18), a general Slutsky (1.19), a marginal-to-joint lemma (1.17) that needs <b>tightness</b> (mass stays on compacts), and a monotone Dini theorem (1.20) that is Glivenko–Cantelli's twin. You rarely touch \(\mathbb E^\ast\) directly — you cite these.</p></div>
+</section>
+
+<!-- ---- 11 FUNCTIONAL DELTA ---- -->
+<section id="fdelta">
+  <div class="eyebrow"><span class="num">11</span> From points to paths</div>
+  <h3>The functional delta method &amp; Hadamard differentiability</h3>
+  <p>To push weak convergence through a map on <em>paths</em> (invert a CDF, take a product integral, form a copula) you need the right notion of derivative. Fréchet is too strong; the winner is <b>Hadamard differentiability</b>: \(\phi\) is Hadamard differentiable at \(\theta\) if</p>
+  <div class="katex-display" id="hadstate"></div>
+  <p>for every \(t_n\to0\) and \(h_n\to h\). The perturbation is allowed to <em>wobble</em> as it shrinks (that's the \(h_n\), not a fixed \(h\)) — which is precisely what a random perturbation does.</p>
+  <div class="box theorem"><span class="tag">Functional delta method (Thm 1.26)</span>
+  <p>If \(r_n(X_n-\theta)\xrightarrow{d}X\) (tight) and \(\phi\) is Hadamard differentiable at \(\theta\), then \(r_n(\phi(X_n)-\phi(\theta))\xrightarrow{d}\phi'_\theta(X)\). Same shape as the ordinary delta method — the derivative is now a linear map on functions.</p></div>
+  <div class="box intuition"><span class="tag">The catalogue you actually use</span>
+  <p>Lemma 1.22–1.25 pre-compute the Hadamard derivatives of the maps that matter: <b>inversion</b> \(h\mapsto h^{-1}\) (derivative \(-\xi/f\circ F^{-1}\), the quantile chain rule), pointwise \(g(\cdot)\), composition, and the <b>product integral</b>. Combined with the chain rule (Thm 1.21), these are Lego bricks: you build the quantile process, the hazard, and the copula estimator by stacking known-differentiable maps and reading off the limit.</p></div>
+</section>
+
+<!-- ---- 12 DONSKER ---- -->
+<section id="donsker">
+  <div class="eyebrow"><span class="num">12</span> From points to paths</div>
+  <h3>Donsker classes &amp; bracketing entropy</h3>
+  <p>Index the empirical process by a class of functions \(\mathcal F\): \(\mathbb G^{(n)}f=\sqrt n(\mathbb P^{(n)}f-\mathbb P f)\). Two questions:</p>
+  <ul>
+    <li><b>Glivenko–Cantelli class:</b> does \(\sup_{f\in\mathcal F}|\mathbb P^{(n)}f-\mathbb P f|\to0\)? (uniform LLN over \(\mathcal F\))</li>
+    <li><b>Donsker class:</b> does \(\mathbb G^{(n)}\xrightarrow{d}\mathbb G\), a tight Gaussian process? (uniform CLT over \(\mathcal F\))</li>
+  </ul>
+  <p>The answer is controlled by how "wiggly" \(\mathcal F\) is, measured by <b>bracketing numbers</b> \(N_{[\,]}(\varepsilon,\mathcal F,\|\cdot\|)\): the fewest \(\varepsilon\)-thick brackets \([l,u]\) needed to sandwich every \(f\). Small entropy = tame class = limit theorems hold.</p>
+  <div class="box theorem"><span class="tag">The two entropy theorems</span>
+  <p><b>GC (1.27):</b> finite \(N_{[\,]}(\varepsilon,\mathcal F,L_1)\) for every \(\varepsilon\) \(\Rightarrow\) Glivenko–Cantelli. <br><b>Donsker (1.28):</b> a finite bracketing <em>integral</em> \(\int_0^1\!\sqrt{\log N_{[\,]}(\varepsilon,\mathcal F,L_2)}\,d\varepsilon\) \(\Rightarrow\) Donsker. Theorem 1.29 is the moving-class version needed when the functions themselves depend on \(n\) — exactly the kernel-smoothing situation of Ch.&nbsp;2.</p></div>
+  <div class="box example"><span class="tag">The canonical calculation</span>
+  <p>For the indicator class \(\mathcal F=\{\mathbf 1_{[0,t]}:t\}\), take brackets \([\mathbf 1_{[0,t_{j-1})},\mathbf 1_{[0,t_j)}]\) at grid points where \(F\) rises by \(&lt;\varepsilon^2\). Then \(N_{[\,]}(\varepsilon,\mathcal F,L_2)\lesssim 2/\varepsilon^2\), the entropy integral converges, and \(\mathcal F\) is Donsker. This <em>one</em> computation — done in Thm 1.30 and re-run for the bivariate and conditional cases in the exercises — is the reason the empirical CDF converges to a Brownian bridge.</p></div>
+</section>
+
+<!-- ---- 13 BRIDGE ---- -->
+<section id="bridge">
+  <div class="eyebrow"><span class="num">13</span> From points to paths</div>
+  <h3>The payoff: \(\sqrt n(F^{(n)}-F)\Rightarrow B\circ F\)</h3>
+  <p>Putting it together (Thm 1.30): the empirical process converges, as a path, to a Brownian bridge time-changed by \(F\),</p>
+  <div class="katex-display" id="bridgestate"></div>
+  <p>with covariance \(F(s\wedge t)-F(s)F(t)\). The bridge is a Brownian motion "pinned" to zero at both ends — pinned because \(F^{(n)}\) and \(F\) both start at 0 and end at 1, so their scaled difference must vanish at both extremes.</p>
+  <div class="demo">
+    <div class="demo-head"><div class="tag">Interactive</div><h5>Fluctuations that hold their shape</h5></div>
+    <div class="demo-body">
+      <p class="small" style="margin-top:2px">Plotting \(\sqrt n\,(F^{(n)}(t)-F(t))\) against \(u=F(t)\in[0,1]\). Unlike a running mean, this does <b>not</b> shrink as \(n\) grows — it keeps the amplitude and roughness of a Brownian bridge (grey reference). Re-sampling redraws the noise; increasing \(n\) makes it visibly <em>more bridge-like</em>, not smaller.</p>
+      <canvas id="bridgeCanvas" height="290"></canvas>
+      <div class="controls">
+        <div class="ctrl"><label>Sample size \(n\) <b id="brNlbl">60</b></label><input type="range" id="brN" min="15" max="1500" value="60"></div>
+        <button class="btn" id="brRun">Resample</button>
+        <button class="btn ghost" id="brBridge">Show a true bridge</button>
+      </div>
+      <div class="readout" id="brRead"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ---- 14 QUANTILES ---- -->
+<section id="quantiles">
+  <div class="eyebrow"><span class="num">14</span> From points to paths</div>
+  <h3>Quantiles, Value-at-Risk, and copulas</h3>
+  <p><b>VaR</b> at level \(\alpha\) is simply the \(\alpha\)-quantile of the loss: \(\mathrm{VaR}_\alpha(Z)=F^{-1}(\alpha)\). Solvency II's "200-year event" is \(\mathrm{VaR}_{0.995}\). As a risk measure VaR is monotone, translation-equivariant, homogeneous, and subadditive <em>for elliptical losses</em> (the caveat that launched coherent risk measures).</p>
+  <div class="box theorem"><span class="tag">Quantile process (Thm 1.31)</span>
+  <p>Feed the bridge result through the Hadamard-differentiable inverse map:
+  \(\sqrt n\big([F^{(n)}]^{-1}-F^{-1}\big)\xrightarrow{d}-\dfrac{B\circ F}{f\circ F^{-1}}\) on \([p,q]\).
+  The density \(f\) in the denominator is why <em>sparse tails give wide quantile error bars</em> — small \(f\) inflates the limit. For very high quantiles, switch to the extreme-value tools of Ch.&nbsp;3.</p></div>
+  <p>A <b>copula</b> strips out the marginals and keeps only the dependence: by Sklar, \(H(x_1,\dots,x_r)=C(F_1(x_1),\dots,F_r(x_r))\) with \(C\) a distribution on \([0,1]^r\) with uniform margins. The empirical copula process \(\sqrt n(C^{(n)}-C)\) is again a functional-delta image of the bridge (Thm 1.32) — the notes assemble it from four stacked Hadamard-differentiable maps, a clean showcase of the chain rule.</p>
+  <div class="box actuary"><span class="tag">Actuarial reading</span>
+  <p>Copulas let you couple, say, motor and household claims that spike together in a storm while modelling each margin separately. The empirical copula gives a distribution-free first estimate; its Gaussian limit gives the uncertainty band.</p></div>
+</section>
+
+<!-- ---- 15 KDE ---- -->
+<section id="kde">
+  <div class="eyebrow"><span class="num">15</span> Smoothing covariates</div>
+  <h3>Kernel density estimation</h3>
+  <p>The Parzen–Rosenblatt estimator plants a little bump \(K\) at each observation and averages:
+  \(f^{(n)}(x)=\tfrac1{nh}\sum_i K\!\big(\tfrac{x-X_i}{h}\big)\). Everything hinges on the <b>bias–variance trade-off in \(h\)</b>:</p>
+  <table class="tbl">
+    <tr><th></th><th>order</th><th>direction in \(h\)</th></tr>
+    <tr><td><b>Bias</b></td><td>\(\tfrac{h^2}{2}f''(x)\!\int u^2K\)</td><td>grows with \(h\) (over-smoothing)</td></tr>
+    <tr><td><b>Variance</b></td><td>\(\tfrac{f(x)}{nh}\!\int K^2\)</td><td>grows as \(h\downarrow\) (under-smoothing)</td></tr>
+  </table>
+  <p>Balancing them and running Lindeberg (via Lyapounov) on the array gives the limit law</p>
+  <div class="katex-display" id="kdestate"></div>
+  <p>Note the rate is \(\sqrt{nh}\), <em>slower</em> than the parametric \(\sqrt n\): the price of assuming nothing about the shape. The condition \(nh^5\to0\) kills the bias so the Gaussian is centred.</p>
+  <div class="demo">
+    <div class="demo-head"><div class="tag">Interactive</div><h5>Over-smooth, under-smooth, just right</h5></div>
+    <div class="demo-body">
+      <p class="small" style="margin-top:2px">A bimodal claim-size population (black = truth). Ticks = data. Drag \(h\): tiny \(h\) gives a spiky, high-variance estimate; large \(h\) melts the two modes into one biased blob. The two modes are the whole point — smoothing them away is a modelling error.</p>
+      <canvas id="kdeCanvas" height="280"></canvas>
+      <div class="controls">
+        <div class="ctrl"><label>Bandwidth \(h\) <b id="kdeHlbl">0.35</b></label><input type="range" id="kdeH" min="6" max="180" value="35"></div>
+        <div class="ctrl"><label>Sample size \(n\) <b id="kdeNlbl">200</b></label><input type="range" id="kdeN" min="30" max="1200" value="200"></div>
+        <button class="btn" id="kdeRun">New sample</button>
+      </div>
+      <div class="readout" id="kdeRead"></div>
+      <div class="legend"><span><i class="swatch" style="background:#111"></i>true density</span><span><i class="swatch" style="background:var(--teal)"></i>kernel estimate</span></div>
+    </div>
+  </div>
+  <div class="box watch"><span class="tag">Boundary bias</span>
+  <p>On \([0,\infty)\) — where claim sizes live — a symmetric kernel near \(0\) spills mass into the forbidden negative region and <em>under</em>-estimates the density at the boundary. Asymptotically negligible, but a real finite-sample nuisance flagged in the notes.</p></div>
+</section>
+
+<!-- ---- 16 NW ---- -->
+<section id="nw">
+  <div class="eyebrow"><span class="num">16</span> Smoothing covariates</div>
+  <h3>Nadaraya–Watson regression</h3>
+  <p>To estimate \(e(x)=\mathbb E[Y\mid X=x]\) without a functional form, take a <em>kernel-weighted local average</em> of the responses:</p>
+  <div class="katex-display" id="nwstate"></div>
+  <p>It's a ratio of two Parzen–Rosenblatt-type sums (Priestley–Chao over the marginal density), so consistency follows by continuous mapping and the limit by a joint CLT:</p>
+  <div class="katex-display" id="nwclt"></div>
+  <p>with \(\sigma^2(x)=\operatorname{Var}(Y\mid X=x)\). Same \(\sqrt{nh}\) rate, same \(\int K^2\) structure — the noise floor is the conditional variance divided by how much data lands near \(x\), namely \(f(x)\).</p>
+  <div class="box intuition"><span class="tag">Local linear = the upgrade</span>
+  <p>Fitting a local <em>line</em> instead of a local <em>constant</em> (Thm 2.5) has the identical limit law but far better behaviour at boundaries and on slopes, because a tilted design can't be fooled by an asymmetric cloud of neighbours. NW is the intuition; local-linear is what you'd actually run.</p></div>
+  <div class="demo">
+    <div class="demo-head"><div class="tag">Interactive</div><h5>Local averaging in action</h5></div>
+    <div class="demo-body">
+      <p class="small" style="margin-top:2px">Points \((X_i,Y_i)\) with a wavy true mean (black). The teal curve is the Nadaraya–Watson fit. Small \(h\) chases every point (wiggly, high variance); large \(h\) flattens the wave (smooth, biased). This is the same trade-off as the density, now for a regression.</p>
+      <canvas id="nwCanvas" height="290"></canvas>
+      <div class="controls">
+        <div class="ctrl"><label>Bandwidth \(h\) <b id="nwHlbl">0.20</b></label><input type="range" id="nwH" min="4" max="120" value="20"></div>
+        <div class="ctrl"><label>Noise \(\sigma\) <b id="nwSlbl">0.35</b></label><input type="range" id="nwS" min="5" max="120" value="35"></div>
+        <button class="btn" id="nwRun">New sample</button>
+      </div>
+      <div class="legend"><span><i class="swatch" style="background:#111"></i>true \(\mathbb E[Y\!\mid\!X]\)</span><span><i class="swatch" style="background:var(--teal)"></i>NW estimate</span><span><i class="swatch" style="background:#C9C3B4"></i>data</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ---- 17 DIST REG ---- -->
+<section id="distreg">
+  <div class="eyebrow"><span class="num">17</span> Smoothing covariates</div>
+  <h3>Distributional regression</h3>
+  <p>Why settle for the conditional <em>mean</em> when you can smooth the whole conditional <em>distribution</em>? The conditional empirical distribution function replaces the response by an indicator:</p>
+  <div class="katex-display" id="cedfstate"></div>
+  <p>For each \(t\) it's a Nadaraya–Watson estimator; as a <em>process</em> in \(t\) it converges (Thm 2.7, via the moving-class Donsker theorem 1.29) to a scaled Brownian bridge:</p>
+  <div class="katex-display" id="cedfclt"></div>
+  <div class="box actuary"><span class="tag">Why an actuary loves this</span>
+  <p>No model choice beyond a bandwidth, yet you get the entire conditional loss distribution — tail, skew, multimodality — as a function of the covariate. It doubles as a <b>goodness-of-fit oracle</b>: overlay a candidate parametric GLM and see, with proper pathwise (Kolmogorov–Smirnov) confidence bands, whether it lives inside them. The KS band uses \(\sup_t|B(t)|\), whose law is the Kolmogorov distribution.</p></div>
+</section>
+
+<!-- ---- 18 BANDWIDTH ---- -->
+<section id="bandwidth">
+  <div class="eyebrow"><span class="num">18</span> Smoothing covariates</div>
+  <h3>Choosing \(h\): leave-one-out cross-validation</h3>
+  <p>You can't minimise the true risk (it hides the unknown \(f\)), but you can minimise an unbiased proxy. For the density, drop the \(f\)-independent term and estimate the rest, using a <b>leave-one-out</b> fit \(f^{(n)}_{-i}\) so the data can't grade its own homework:</p>
+  <div class="katex-display" id="cvstate"></div>
+  <p>The minimiser \(\hat h=\arg\min_h \hat J(h)\) is the cross-validation bandwidth. The same idea gives the regression CV score \(\hat R(h)=\tfrac1n\sum_i(Y_i-e^{(n)}_{-i}(X_i))^2\).</p>
+  <div class="demo">
+    <div class="demo-head"><div class="tag">Interactive</div><h5>The cross-validation curve picks \(h\) for you</h5></div>
+    <div class="demo-body">
+      <p class="small" style="margin-top:2px">\(\hat J(h)\) computed on a fresh sample (using the Gaussian-kernel convolution formula from Exercise 3, week 4). The dip is the sweet spot; the marker is \(\hat h\). Re-sample to see how the minimiser jiggles — a reminder to <em>always plot the curve</em> rather than trust a single number.</p>
+      <canvas id="cvCanvas" height="270"></canvas>
+      <div class="controls">
+        <div class="ctrl"><label>Sample size \(n\) <b id="cvNlbl">150</b></label><input type="range" id="cvN" min="40" max="600" value="150"></div>
+        <button class="btn" id="cvRun">New sample</button>
+      </div>
+      <div class="readout" id="cvRead"></div>
+    </div>
+  </div>
+  <div class="box watch"><span class="tag">The distributional-regression surprise</span>
+  <p>For the <em>conditional distribution</em> estimator, naïve leave-one-out CV asymptotically equals leaving <b>nothing</b> out (Altman &amp; Léger) — it silently fails. The pragmatic fix in the notes: cross-validate the density of \(X\) instead and plug that \(\hat h\) in. A great exam-flavoured "explain why" question.</p></div>
+</section>
+
+<!-- ================= EXAM ================= -->
+<section id="examstrat">
+  <div class="eyebrow"><span class="num">19</span> Exam</div>
+  <h3>How the exam thinks</h3>
+  <p>Three hours, three problems, equal-weight subparts, closed book but <em>you must cite exact results</em>. The recurring template of every subpart is one of:</p>
+  <ol>
+    <li><b>"Argue why X is natural / inappropriate"</b> — a couple of sentences. Say what the estimator targets by LLN, or why a bias creeps in.</li>
+    <li><b>"Show consistency"</b> — LLN or (extended) Glivenko–Cantelli + continuous mapping; if there's an integral against \(F^{(n)}\), reach for uniform convergence + a domination/uniform-integrability bound.</li>
+    <li><b>"Show weak convergence / identify the limit variance"</b> — finite-dimensional CLT first, then a Donsker/bracketing argument for the path, then covariance via \(\operatorname{Cov}(\mathbf 1_A,\mathbf 1_B)=\mathbb P(A\cap B)-\mathbb P(A)\mathbb P(B)\).</li>
+    <li><b>"Explain how it fits the framework"</b> — a conceptual paragraph (EDF/Tweedie, censoring adaptation, etc.).</li>
+  </ol>
+  <div class="box intuition"><span class="tag">Citation reflexes</span>
+  <p>Have these on the tip of your pen: Laplace CLT (1.4), Lindeberg/Lyapounov (1.5–1.6), Glivenko–Cantelli &amp; abstract/extended versions (1.7–1.9), delta &amp; functional delta (1.10, 1.26), Slutsky (1.3, 1.19), Donsker/bracketing (1.28–1.29), and the bridge (1.30). Naming the right theorem <em>is</em> most of the mark.</p></div>
+</section>
+
+<section id="exam2025">
+  <div class="eyebrow"><span class="num">20</span> Exam</div>
+  <h3>The 2024/2025 final, worked</h3>
+  <p>Full solutions. Open one at a time and try it first — every subpart is designed to be attackable from the earlier ones even if you're stuck.</p>
+
+  <h4 style="color:var(--risk)">Problem 1 — Compound Poisson–Gamma &amp; the exponential dispersion family</h4>
+  <p class="small">\(N\sim\mathrm{Poi}(\lambda)\), \(Y_i\stackrel{iid}\sim\Gamma(\gamma,c)\) (shape \(\gamma\), rate \(c\)) independent of \(N\), and \(S=\sum_{i=1}^N Y_i\).</p>
+
+  <details><summary><span><span class="pill core">1.1</span>Point mass and density of \(S\)</span><span class="chev">›</span></summary>
+  <div class="inner">
+    <p><b>Point mass.</b> \(S=0\) exactly when there are no claims, so \(\;\mathbb P(S=0)=\mathbb P(N=0)=e^{-\lambda}.\)</p>
+    <p><b>Density on \((0,\infty)\).</b> Given \(N=n\ge1\), \(S=\sum_{i=1}^n Y_i\) is a sum of \(n\) independent \(\Gamma(\gamma,c)\) variables, hence \(\Gamma(n\gamma,c)\) with density \(f_n(x)=\dfrac{c^{n\gamma}x^{n\gamma-1}e^{-cx}}{\Gamma(n\gamma)}\). Mixing over \(N\) with the hint,</p>
+    <div class="katex-display" id="p11"></div>
+    <p class="small">This is the density of a Tweedie / compound-Poisson–gamma law: an atom at 0 plus a continuous, right-skewed positive part.</p>
+  </div></details>
+
+  <details><summary><span><span class="pill">1.2</span>Membership in the exponential dispersion family</span><span class="chev">›</span></summary>
+  <div class="inner">
+    <p>The EDF form is \(f(x;\theta,\phi)=\exp\!\big\{\tfrac{x\theta-b(\theta)}{\phi}+c(x,\phi)\big\}\). The clean, high-value way to "show" the claimed parametrisation is correct is to <b>verify the mean identity \(b'(\theta)=\mathbb E[S]\)</b>, which pins the natural parameter, and to note that the \(x\)-dependence of the mixture density is absorbed into \(c(x,\phi)\) while the \(x\theta/\phi\) term reproduces the \(e^{-cx}\cdot x^{\,\cdot}\) structure.</p>
+    <p>With \(b(\theta)=\tfrac{\gamma+1}{\gamma}\big(\tfrac{-\theta}{\gamma+1}\big)^{-\gamma}\),</p>
+    <div class="katex-display" id="p12a"></div>
+    <p>and since \(\tfrac{-\theta}{\gamma+1}=\big(\tfrac{\lambda\gamma}{c}\big)^{-1/(\gamma+1)}\),</p>
+    <div class="katex-display" id="p12b"></div>
+    <p>which is exactly \(\mathbb E[S]=\mathbb E[N]\,\mathbb E[Y_1]=\lambda\cdot\tfrac{\gamma}{c}\). The natural parameter \(\theta\) and dispersion \(\phi\) given in the problem are therefore the correct EDF coordinates; matching the leading \(\exp\{(x\theta-b(\theta))/\phi\}\) factor against \(e^{-cx}\) fixes \(\theta\propto -c^{1/(\gamma+1)}\) as stated, and the residual normalising series is precisely \(c(x,\phi)\).</p>
+    <p class="small"><b>Exam tip:</b> the grader wants the \(b'(\theta)=\mu\) verification and the recognition that the awkward infinite sum is just \(c(x,\phi)\); you are not expected to re-derive the whole reparametrisation from scratch under time pressure.</p>
+  </div></details>
+
+  <details><summary><span><span class="pill">1.3</span>Tweedie's role in reserving</span><span class="chev">›</span></summary>
+  <div class="inner">
+    <p>Aggregate claims per cell (accident year × development year, or per risk class) are naturally <b>zero-inflated and continuous-when-positive</b>: many cells have no claim, positive cells are right-skewed amounts. The Tweedie family — compound Poisson–gamma, power parameter \(p\in(1,2)\) — has exactly this structure: a mass at \(0\) and a gamma-like continuous part, all inside one <b>exponential dispersion family</b>. That makes it a legitimate GLM response, so a single likelihood jointly captures claim <em>frequency</em> and <em>severity</em> and lets you regress reserves/premiums on covariates by maximum likelihood, with all the EDF machinery (deviance, IRLS, standard errors) coming for free. It is the standard bridge between the frequency–severity split and one-model pricing/reserving.</p>
+  </div></details>
+
+  <div class="rule2"></div>
+  <h4 style="color:var(--risk)">Problem 2 — IPCW mean under right-censoring &amp; Kaplan–Meier</h4>
+  <p class="small">Survival setup: observe \(W_\ell=\min(Z_\ell,C_\ell)\), \(\delta_\ell=\mathbf 1_{W_\ell=Z_\ell}\). Study \(\hat\mu^{(n)}=\tfrac1n\sum_\ell \dfrac{\delta_\ell}{1-G^{(n)}(W_\ell-)}\,W_\ell\), with \(G^{(n)}\) the KM estimator of the censoring law \(G\), \(F^{(n)}\) the KM estimator of \(F\).</p>
+
+  <details><summary><span><span class="pill core">2.1</span>Why the plain average \(\tfrac1n\sum W_\ell\) fails</span><span class="chev">›</span></summary>
+  <div class="inner">
+    <p>\(W_\ell=\min(Z_\ell,C_\ell)\le Z_\ell\) always, and it is <em>strictly</em> smaller whenever \(C_\ell&lt;Z_\ell\) (a censored observation). So \(\tfrac1n\sum W_\ell\xrightarrow{a.s.}\mathbb E[\min(Z,C)]\le \mathbb E[Z]\), with the gap growing in the amount of censoring. Censoring preferentially chops off the <b>large</b> \(Z\)'s (they're the ones still "alive" when censoring strikes), so the naïve mean is systematically biased <b>downward</b>. It estimates the wrong quantity, \(\mathbb E[W]\ne\mathbb E[Z]\).</p>
+  </div></details>
+
+  <details><summary><span><span class="pill hard">2.2</span>The IPCW measure \(K^{(n)}\) equals \(F^{(n)}\)</span><span class="chev">›</span></summary>
+  <div class="inner">
+    <p>With \(K^{(n)}(t)=\tfrac1n\sum_\ell \mathbf 1_{W_\ell\le t}\dfrac{\delta_\ell}{1-G^{(n)}(W_\ell-)}\):</p>
+    <p><b>Same jump <em>locations</em>.</b> \(K^{(n)}\) increments only when \(\delta_\ell=1\) (the factor \(\delta_\ell\) zeroes censored points), i.e. at <em>uncensored</em> event times. The Kaplan–Meier \(F^{(n)}\) for \(Z\) also jumps only at uncensored event times. Identical support.</p>
+    <p><b>Same jump <em>magnitudes</em>.</b> Order the observations; let \(w_{(k)}\) be the \(k\)-th ordered time and suppose it is an uncensored event. The KM jump of \(F^{(n)}\) there is the product-limit increment
+    \(\;\Delta F^{(n)}(w_{(k)})=\big(1-F^{(n)}(w_{(k)}-)\big)\dfrac{d_k}{r_k}\),
+    where \(r_k=n-k+1\) is the number at risk and \(d_k\) the events. Using the telescoping identity
+    \(\prod_{j=1}^{k-1}\!\big(1-\tfrac1{n-j+1}\big)=\tfrac{n-k+1}{n}\)
+    to expand the KM survival factor \(1-G^{(n)}(w_{(k)}-)\) for the <em>censoring</em> distribution, the weight \(\dfrac{1}{n\,(1-G^{(n)}(w_{(k)}-))}\) telescopes to exactly the same product-limit increment. Term by term the two jumps coincide.</p>
+    <p>Equal support and equal jumps, both right-continuous starting at 0 \(\Rightarrow K^{(n)}\equiv F^{(n)}\). (This is the Satten–Datta identity: IPCW re-weighting reconstructs Kaplan–Meier.)</p>
+  </div></details>
+
+  <details><summary><span><span class="pill">2.3</span>\(\hat\mu^{(n)}\) as a KM integral</span><span class="chev">›</span></summary>
+  <div class="inner">
+    <p>Because \(\hat\mu^{(n)}=\int_0^\infty w\,dK^{(n)}(w)\) (each summand \( \tfrac{\delta_\ell W_\ell}{n(1-G^{(n)}(W_\ell-))}\) is the jump of \(K^{(n)}\) at \(W_\ell\) times the value \(W_\ell\)), and \(K^{(n)}=F^{(n)}\) from 2.2,</p>
+    <div class="katex-display" id="p23"></div>
+    <p>It is simply the <b>mean of the Kaplan–Meier estimator</b>.</p>
+  </div></details>
+
+  <details><summary><span><span class="pill hard">2.4</span>Consistency \(\hat\mu^{(n)}\xrightarrow{P}\mathbb E[Z_1]\)</span><span class="chev">›</span></summary>
+  <div class="inner">
+    <p>We have \(\hat\mu^{(n)}=\int_0^\infty w\,dF^{(n)}(w)\) and want it to converge to \(\int_0^\infty w\,dF(w)=\mathbb E[Z_1]\).</p>
+    <p><b>Step 1 — pathwise consistency of KM.</b> Under \(F^{-1}(1)=G^{-1}(1)=\infty\), the Kaplan–Meier estimator is uniformly consistent: \(\sup_t|F^{(n)}(t)-F(t)|\xrightarrow{P}0\) (extended Glivenko–Cantelli / KM strong consistency, Thm 7.x in the notes). So \(dF^{(n)}\Rightarrow dF\) weakly, giving \(\int_0^M w\,dF^{(n)}\xrightarrow{P}\int_0^M w\,dF\) for each fixed truncation \(M\) (bounded continuous integrand \(w\wedge M\)).</p>
+    <p><b>Step 2 — control the tail with Mauro's inequality.</b> For \(\phi(x)=x\,\mathbf 1_{x>M}\ge0\),</p>
+    <div class="katex-display" id="p24"></div>
+    <p>The right side is the tail of \(\mathbb E[Z_1]&lt;\infty\), so it \(\to0\) as \(M\to\infty\), <em>uniformly in \(n\)</em>. That is uniform integrability of \(w\) under \(dF^{(n)}\): the tail contribution to \(\int w\,dF^{(n)}\) is uniformly small.</p>
+    <p><b>Step 3 — combine.</b> Split \(\int_0^\infty=\int_0^M+\int_M^\infty\). Step 1 handles the truncated part; Step 2 makes both tails uniformly negligible. Sending \(n\to\infty\) then \(M\to\infty\),</p>
+    <div class="katex-display" id="p24b"></div>
+    <p class="small">The structure — <em>uniform consistency on compacts + a uniform-integrability tail bound</em> — is the archetype for "consistency of an integral against an empirical measure." Memorise it.</p>
+  </div></details>
+
+  <div class="rule2"></div>
+  <h4 style="color:var(--risk)">Problem 3 — Occupation probabilities of a jump process</h4>
+  <p class="small">\((Z^\ell_t)\), \(\ell=1,2,\dots\) iid non-explosive fully-observed jump processes on \(\mathcal Z=\{1,\dots,K\}\); \(p_j(t)=\mathbb P(Z^1_t=j)\); \(p^{(n)}_j(t)=\tfrac1n\sum_\ell \mathbf 1_{Z^\ell_t=j}\).</p>
+
+  <details><summary><span><span class="pill core">3.1</span>Natural estimator; it's a probability vector</span><span class="chev">›</span></summary>
+  <div class="inner">
+    <p><b>Natural.</b> \(p^{(n)}_j(t)\) is the sample average of iid bounded indicators \(\mathbf 1_{Z^\ell_t=j}\), so by the LLN \(p^{(n)}_j(t)\xrightarrow{a.s.}\mathbb E[\mathbf 1_{Z^1_t=j}]=\mathbb P(Z^1_t=j)=p_j(t)\). A plug-in empirical proportion is the canonical nonparametric estimator of a probability.</p>
+    <p><b>Probability vector.</b> Non-negativity is immediate. For the sum, each path occupies exactly one state at time \(t\), so \(\sum_{j=1}^K\mathbf 1_{Z^\ell_t=j}=1\), and</p>
+    <div class="katex-display" id="p31"></div>
+  </div></details>
+
+  <details><summary><span><span class="pill">3.2</span>Failure under censoring &amp; the fix</span><span class="chev">›</span></summary>
+  <div class="inner">
+    <p><b>Why it fails.</b> \(\mathbf 1_{Z^\ell_t=j}\) requires knowing the state at time \(t\). Under right-censoring the path is unobserved after the censoring time, so for censored subjects the indicator is undefined; naïvely dropping them (or treating them as "not in \(j\)") biases \(p^{(n)}\), because censoring is typically informative about how long a path has been running.</p>
+    <p><b>The fix (Aalen–Johansen).</b> Don't estimate occupation directly — estimate <em>transition intensities</em> from the parts you <em>do</em> see. For each ordered transition time build Nelson–Aalen increments \(d\hat A_{jk}(s)=dN^{\bullet}_{jk}(s)/Y_j(s)\) (transitions \(j\!\to\!k\) over at-risk count in \(j\)), assemble the intensity matrix \(d\hat A\), and form the transition matrix by the <b>product integral</b>
+    \(\hat P(0,t)=\prod_{(0,t]}\!\big(\mathrm{Id}+d\hat A(s)\big)\).
+    Then \(\hat p_j(t)=\sum_i \hat p_i(0)\,\hat P_{ij}(0,t)\). At-risk counts correctly exclude censored subjects only <em>after</em> they leave, so no bias — this is exactly why the product-integral Hadamard-differentiability machinery of Ch.&nbsp;1 was built.</p>
+  </div></details>
+
+  <details><summary><span><span class="pill hard">3.3</span>Uniform consistency \(\sup_{t\le\theta}|p^{(n)}_j(t)-p_j(t)|\xrightarrow{P}0\)</span><span class="chev">›</span></summary>
+  <div class="inner">
+    <p>Fix state \(j\) and horizon \(\theta\). Consider the function class indexing the empirical process,</p>
+    <div class="katex-display" id="p33a"></div>
+    <p>so that \(p^{(n)}_j(t)=\mathbb P^{(n)}f_t\) and \(p_j(t)=\mathbb P f_t\). Each path lies in \(D[0,\theta]\); the maps \(t\mapsto \mathbf 1_{\omega_t=j}\) are bounded and, because paths are non-explosive (finitely many jumps on \([0,\theta]\)), of bounded variation. This class has finite bracketing numbers: for any \(\varepsilon\) pick a grid \(0=t_0&lt;\cdots&lt;t_m=\theta\) refining where \(t\mapsto p_j(t)\) moves by \(&lt;\varepsilon\) (\(p_j\) is càdlàg of bounded variation), and bracket \(f_t\) between the indicators built on neighbouring grid points; then \(N_{[\,]}(\varepsilon,\mathcal F,L_1)&lt;\infty\).</p>
+    <p>By the <b>bracketing Glivenko–Cantelli theorem (Thm 1.27)</b>, \(\mathcal F\) is \(P\)-Glivenko–Cantelli, i.e.</p>
+    <div class="katex-display" id="p33b"></div>
+    <p class="small">Alternatively, since \(t\mapsto p^{(n)}_j(t)\) and \(p_j(t)\) are of bounded variation with a common finite jump structure, an extended-Glivenko–Cantelli / Dini argument (Thm 1.9, 1.20) gives the same conclusion by squeezing between finitely many grid points where the LLN holds.</p>
+  </div></details>
+
+  <details><summary><span><span class="pill hard">3.4</span>Weak convergence &amp; the limit variance</span><span class="chev">›</span></summary>
+  <div class="inner">
+    <p><b>Finite dimensions.</b> For any grid \(t_1,\dots,t_m\le\theta\), the vector \(\sqrt n(p^{(n)}_j(t_r)-p_j(t_r))_r\) is a standardised average of iid mean-zero vectors \(\big(\mathbf 1_{Z^\ell_{t_r}=j}-p_j(t_r)\big)_r\) with finite second moments (given), so Laplace's CLT gives a centred Gaussian limit with covariance \(\operatorname{Cov}(\mathbf 1_{Z_s=j},\mathbf 1_{Z_t=j})\).</p>
+    <p><b>Tightness / the whole path.</b> The class \(\mathcal F=\{f_t\}\) from 3.3 has a finite bracketing <em>integral</em> (its brackets have \(L_2\)-size \(\big(p_j(t_j-)-p_j(t_{j-1})\big)^{1/2}\), giving \(N_{[\,]}\lesssim \varepsilon^{-2}\) and a convergent \(\int_0^1\!\sqrt{\log N_{[\,]}}\,d\varepsilon\)). Hence \(\mathcal F\) is <b>\(P\)-Donsker (Thm 1.28)</b>, and</p>
+    <div class="katex-display" id="p34a"></div>
+    <p>a tight centred Gaussian process. <b>Limit variance process:</b> for \(s,t\in[0,\theta]\),</p>
+    <div class="katex-display" id="p34b"></div>
+    <p>Using the Markov property, for \(s\le t\) this is \(p_j(s)\,P_{jj}(s,t)-p_j(s)p_j(t)\), and on the diagonal \(\operatorname{Var}(\gamma(t))=p_j(t)\big(1-p_j(t)\big)\).</p>
+  </div></details>
+</section>
+
+<section id="extra">
+  <div class="eyebrow"><span class="num">21</span> Exam</div>
+  <h3>More exam-style questions, with solutions</h3>
+  <p>Drawn from the same toolkit and the provided weekly solutions. Try before revealing.</p>
+
+  <details><summary><span><span class="pill core">A</span>Approximation lemma (week 1, Ex 1)</span><span class="chev">›</span></summary>
+  <div class="inner">
+    <p class="q"><b>Show:</b> if \(\|Z_n-W_n\|=o_P(1)\) and \(Z_n\xrightarrow{d}Z\), then \(W_n\xrightarrow{d}Z\).</p>
+    <p>Take bounded Lipschitz \(f\), \(|f|\le M\), \(|f(x)-f(y)|\le K\|x-y\|\). Split on the event \(\{\|W_n-Z_n\|\le\varepsilon\}\):</p>
+    <div class="katex-display" id="exA1"></div>
+    <p>Bound the two pieces by \(\varepsilon K\) and \(2M\,\mathbb P(\|W_n-Z_n\|&gt;\varepsilon)\) respectively; the second \(\to0\) by \(o_P(1)\), so \(\limsup_n|\mathbb E[f(W_n)-f(Z_n)]|\le \varepsilon K\). Since \(\varepsilon\) is arbitrary the difference vanishes. Add and subtract:
+    \(|\mathbb E f(W_n)-\mathbb E f(Z)|\le|\mathbb E f(W_n)-\mathbb E f(Z_n)|+|\mathbb E f(Z_n)-\mathbb E f(Z)|\to0.\)
+    A bounded-Lipschitz-determining-class argument closes it: \(W_n\xrightarrow{d}Z\). <span class="small">(This is the lemma that lets you swap an estimator for an asymptotically equivalent one — used silently in every delta-method proof.)</span></p>
+  </div></details>
+
+  <details><summary><span><span class="pill">B</span>Multivariate empirical CLT (week 1, Ex 2)</span><span class="chev">›</span></summary>
+  <div class="inner">
+    <p class="q"><b>Show:</b> for \(t_1&lt;\cdots&lt;t_M\), \(\sqrt n\big(F^{(n)}(t_1)-F(t_1),\dots\big)\xrightarrow{d}N(0,\Sigma)\) with \(\Sigma_{ij}=F(t_i\wedge t_j)-F(t_i)F(t_j)\).</p>
+    <p>Cramér–Wold: fix \(a\in\mathbb R^M\) and form \(\sum_m a_m\sqrt n(F^{(n)}(t_m)-F(t_m))=\sqrt n\big(\tfrac1n\sum_i X_i^M-\mathbb E X^M\big)\) with \(X_i^M=\sum_m a_m\mathbf 1_{Z_i\le t_m}\), iid. Laplace's CLT gives a univariate Gaussian with variance
+    \(\sum_{m_1,m_2}a_{m_1}a_{m_2}\operatorname{Cov}(\mathbf 1_{Z\le t_{m_1}},\mathbf 1_{Z\le t_{m_2}})\),
+    and \(\operatorname{Cov}(\mathbf 1_{Z\le s},\mathbf 1_{Z\le t})=F(s\wedge t)-F(s)F(t)\). Since this holds for all \(a\), Cramér–Wold delivers the joint normal with the stated \(\Sigma\). <span class="small">The bivariate version of exactly this (week 2, Ex 9) is the finite-dimensional half of the bridge theorem.</span></p>
+  </div></details>
+
+  <details><summary><span><span class="pill">C</span>Pareto &amp; lognormal mean excess (week 1, Ex 4)</span><span class="chev">›</span></summary>
+  <div class="inner">
+    <p class="q"><b>(a)</b> Pareto \(\bar F(z)=(\kappa/z)^\alpha\), \(\alpha&gt;1\): show \(e_F(u)=u/(\alpha-1)\).</p>
+    <p>\(e_F(u)=\tfrac1{\bar F(u)}\int_u^\infty(z-u)\,dF(z)\). Substituting \(x=z-u\) and integrating by parts (density \(f(z)=\alpha\kappa^\alpha z^{-\alpha-1}\)),
+    \(e_F(u)=\tfrac{u}{\alpha-1}\). The <b>linear growth in \(u\)</b> is the signature of a heavy tail — this is what the mean-excess demo shows climbing.</p>
+    <p class="q"><b>(b)</b> Lognormal: show \(e_G(u)=\dfrac{\sigma^2 u}{\log u-(\mu+\sigma^2)}(1+o(1))\).</p>
+    <p>Apply Mill's ratio \(\Phi(z)\sim-\phi(z)/z\) (\(z\to-\infty\)) to the exact ratio of \(\Phi\)'s, cancel the Gaussian exponents, and simplify. The excess grows almost linearly (up to the slowly-varying \(1/\log u\)): lognormal is heavy, but milder than Pareto. <span class="small">Good "compare the tails" discussion point.</span></p>
+  </div></details>
+
+  <details><summary><span><span class="pill hard">D</span>Functional CLT for the cumulative hazard (week 2, Ex 10)</span><span class="chev">›</span></summary>
+  <div class="inner">
+    <p class="q"><b>(a)</b> For \(\phi(h)(t)=-\log(1-h(t))\), show the Hadamard derivative is \(\phi'_f(h)(t)=\dfrac{h(t)}{1-f(t)}\).</p>
+    <p>With \(u_n\to0\), \(h_n\to h\):
+    \(\tfrac{\phi(f+u_nh_n)(t)-\phi(f)(t)}{u_n}=-\tfrac1{u_n}\log\!\big(1-\tfrac{u_nh_n(t)}{1-f(t)}\big)\to \tfrac{h(t)}{1-f(t)}\)
+    using \(\log(1-x)\approx-x\). (Codomain: bounded non-decreasing functions on a compact set, uniform norm.)</p>
+    <p class="q"><b>(b)</b> State &amp; prove the functional CLT for \(\sqrt n(\Lambda^{(n)}-\Lambda)\).</p>
+    <p>Feed the bridge result \(\sqrt n(F^{(n)}-F)\xrightarrow{d}B\circ F\) through the functional delta method with \(\phi\):</p>
+    <div class="katex-display" id="exD"></div>
+    <p>a centred Gaussian process with \(\operatorname{Cov}\big(\tfrac{(B\circ F)(t)}{1-F(t)},\tfrac{(B\circ F)(s)}{1-F(s)}\big)=\dfrac{F(s\wedge t)-F(s)F(t)}{(1-F(t))(1-F(s))}\). <span class="small">Pointwise this recovers the Ch.1 variance \(F(t)/(1-F(t))\).</span></p>
+  </div></details>
+
+  <details><summary><span><span class="pill">E</span>Kernel AMSE &amp; the nonparametric rate (week 4, Ex 2)</span><span class="chev">›</span></summary>
+  <div class="inner">
+    <p class="q"><b>Show</b> the AMSE-optimal bandwidth for the Priestley–Chao estimator is \(\hat h\propto n^{-1/5}\), and give the resulting rate.</p>
+    <p>Differentiate \(\mathrm{AMSE}=\big(\tfrac{h^2}{2}m''(x)\!\int u^2K\big)^2+\tfrac{\mathbb E[Y^2|x]f(x)}{nh}\!\int K^2\) in \(h\), set to zero:</p>
+    <div class="katex-display" id="exE"></div>
+    <p>Plugging back, \(\mathrm{AMSE}(\hat h)\asymp n^{-4/5}\). Compare with the parametric MLE rate \(n^{-1}\): the nonparametric estimator converges <b>strictly slower</b>. That gap is the standing cost of assuming nothing about the shape — the recurring theme of Chapter&nbsp;2.</p>
+  </div></details>
+
+  <details><summary><span><span class="pill">F</span>The bracketing integral converges (week 2, Ex 7)</span><span class="chev">›</span></summary>
+  <div class="inner">
+    <p class="q"><b>Show:</b> \(\int_{(0,1]}\sqrt{\log(2/\varepsilon^2+1)}\,d\varepsilon&lt;\infty\).</p>
+    <p>Since \(\log(2/\varepsilon^2+1)&gt;1\) on \((0,1)\), \(\sqrt{\log(\cdot)}&lt;\log(\cdot)\) there, so it suffices to bound \(\int_{(0,1]}\log(2/\varepsilon^2+1)\,d\varepsilon\). Integrate by parts with \(u=\log(2/\varepsilon^2+1)\), \(v=\varepsilon\): the boundary term \(\varepsilon\log(2/\varepsilon^2+1)\to0\) as \(\varepsilon\to0\) by L'Hôpital, and the remaining integral is finite. Hence the entropy integral converges — this is the technical fact that makes the indicator class Donsker, hence the empirical CDF a bridge.</p>
+  </div></details>
+</section>
+
+<section id="cheat">
+  <div class="eyebrow"><span class="num">22</span> Reference</div>
+  <h3>One-page cheat sheet</h3>
+  <table class="tbl">
+    <tr><th>Object</th><th>Estimator</th><th>Limit law (\(\sqrt{\cdot}\)-scaled)</th></tr>
+    <tr><td>Mean</td><td>\(\bar Z_n\)</td><td>\(N(0,\operatorname{Var}Z)\), rate \(\sqrt n\)</td></tr>
+    <tr><td>Variance</td><td>\(\hat\sigma_n^2\)</td><td>\(N(0,\mu_{(4)}-\mu_{(2)}^2)\)</td></tr>
+    <tr><td>Mean excess</td><td>\(e_n(u)\)</td><td>\(N\!\big(0,\tfrac{e_F^{(2)}-e_F^2}{1-F(u)}\big)\)</td></tr>
+    <tr><td>Cum. hazard</td><td>\(\Lambda^{(n)}(t)\)</td><td>\(N\!\big(0,\tfrac{F(t)}{1-F(t)}\big)\)</td></tr>
+    <tr><td>Empirical CDF (path)</td><td>\(F^{(n)}\)</td><td>\(B\circ F\), cov \(F(s\wedge t)-F(s)F(t)\)</td></tr>
+    <tr><td>Quantile (path)</td><td>\([F^{(n)}]^{-1}\)</td><td>\(-\,\tfrac{B\circ F}{f\circ F^{-1}}\)</td></tr>
+    <tr><td>KDE</td><td>\(f^{(n)}(x)\)</td><td>\(N(0,f(x)\!\int K^2)\), rate \(\sqrt{nh}\)</td></tr>
+    <tr><td>Nadaraya–Watson</td><td>\(e^{(n)}(x)\)</td><td>\(N\!\big(0,\tfrac{\sigma^2(x)}{f(x)}\!\int K^2\big)\), rate \(\sqrt{nh}\)</td></tr>
+    <tr><td>Cond. CDF (path)</td><td>\(F^{(n)}(\cdot|x)\)</td><td>\(\big(\tfrac{\int K^2}{f(x)}\big)^{1/2}B\circ F(\cdot|x)\)</td></tr>
+  </table>
+  <div class="box intuition"><span class="tag">The four reflexes, one more time</span>
+  <p><b>Consistency?</b> LLN / (extended) Glivenko–Cantelli + continuous mapping. <b>Limit law at a point?</b> write as \(h(\text{average})\), Laplace CLT, delta method. <b>Limit law of a path?</b> finite-dim CLT + bracketing/Donsker for tightness, then functional delta through Hadamard maps. <b>Covariance?</b> \(\operatorname{Cov}(\mathbf 1_A,\mathbf 1_B)=\mathbb P(A\cap B)-\mathbb P(A)\mathbb P(B)\).</p></div>
+  <p class="small" style="margin-top:20px">The whole document from here on is <b>practice</b>: recipes for the recurring moves, a citable index of every result, exam-day discipline, and a scored self-test. Do the quiz last, closed-book.</p>
+</section>
+
+<!-- ================= 23 · PLAYBOOK ================= -->
+<section id="playbook">
+  <div class="eyebrow"><span class="num">23</span> Rehearsal</div>
+  <h3>The technique playbook</h3>
+  <p>Almost every subpart on this exam is one of nine moves. Each card below is a <em>trigger</em> — the phrasing you'll actually see — followed by the steps and the exact results to name. Reading the trigger should already start your pen moving.</p>
+
+  <div class="recipe-grid">
+    <div class="recipe">
+      <div class="rhead"><span class="rnum">R1</span><span class="rtrigger">"Argue why \(\hat\theta_n\) is a natural / consistent estimator" — a plug-in average.</span></div>
+      <div class="rbody">
+        <ol>
+          <li>Write it as a sample mean of iid bounded functions of the data: \(\hat\theta_n=\tfrac1n\sum_i g(Z_i)\).</li>
+          <li>Invoke the LLN: \(\hat\theta_n\xrightarrow{a.s.}\mathbb E[g(Z_1)]=\theta\). Say <em>what it targets</em> in one line.</li>
+          <li>If \(\hat\theta_n=H(\text{averages})\) for continuous \(H\) (a ratio, a log), add the <b>continuous mapping theorem</b>.</li>
+        </ol>
+        <span class="cite"><b>Cite:</b> LLN · CMT (1.2) · for a whole CDF use Glivenko–Cantelli (1.7)</span>
+      </div>
+    </div>
+
+    <div class="recipe">
+      <div class="rhead"><span class="rnum">R2</span><span class="rtrigger">"Show \(\int \varphi\,dF^{(n)}\xrightarrow{P}\int\varphi\,dF\)" — consistency of an integral against an empirical / KM measure.</span></div>
+      <div class="rbody">
+        <p>This is the archetype behind Problem&nbsp;2.4. Split \(\int_0^\infty=\int_0^M+\int_M^\infty\) and handle the two halves with two different tools:</p>
+        <ol>
+          <li><b>Bulk (compact \([0,M]\)):</b> uniform consistency \(\sup_t|F^{(n)}-F|\xrightarrow{P}0\) (extended Glivenko–Cantelli / KM strong consistency) \(\Rightarrow\) weak convergence of measures \(\Rightarrow\int_0^M\varphi\,dF^{(n)}\xrightarrow{P}\int_0^M\varphi\,dF\).</li>
+          <li><b>Tail:</b> a uniform-integrability bound — <b>Mauro's inequality</b> \(\mathbb E[\int\varphi\mathbf 1_{>M}\,dF^{(n)}]\le\int\varphi\mathbf 1_{>M}\,dF\to0\) as \(M\to\infty\), uniformly in \(n\).</li>
+          <li>Send \(n\to\infty\) then \(M\to\infty\).</li>
+        </ol>
+        <span class="cite"><b>Cite:</b> extended GC (1.20) / KM consistency · Mauro's inequality</span>
+      </div>
+    </div>
+
+    <div class="recipe">
+      <div class="rhead"><span class="rnum">R3</span><span class="rtrigger">"Find the limit law at a point" — a single number \(\sqrt n(\hat\theta_n-\theta)\).</span></div>
+      <div class="rbody">
+        <ol>
+          <li>Express \(\hat\theta_n=h(\bar A_n)\) as a smooth function of one or more averages.</li>
+          <li>Apply the CLT to the averages: \(\sqrt n(\bar A_n-a)\xrightarrow{d}N(0,\Sigma)\) (Laplace / Lindeberg–Feller).</li>
+          <li>Push through the <b>delta method</b>: \(\sqrt n(h(\bar A_n)-h(a))\xrightarrow{d}\nabla h(a)^\top N(0,\Sigma)\).</li>
+        </ol>
+        <span class="cite"><b>Cite:</b> Laplace CLT (1.4) · delta method (1.10) · Slutsky (1.3) to drop lower-order terms</span>
+      </div>
+    </div>
+
+    <div class="recipe">
+      <div class="rhead"><span class="rnum">R4</span><span class="rtrigger">"Show weak convergence of the whole process / identify the limit variance."</span></div>
+      <div class="rbody">
+        <ol>
+          <li><b>Finite-dimensional distributions:</b> fix a grid \(t_1,\dots,t_M\); reduce to a 1-D CLT with the <b>Cramér–Wold device</b>.</li>
+          <li><b>Tightness:</b> show the indexing class is \(P\)-Donsker via a finite bracketing entropy integral \(\int_0^1\sqrt{\log N_{[\,]}}\,d\varepsilon\lt\infty\).</li>
+          <li>Together \(\Rightarrow\) a tight centred Gaussian limit. Read off the covariance from step&nbsp;1.</li>
+          <li>If the target is a <em>transform</em> of \(F^{(n)}\) (hazard, quantile), route the bridge through the <b>functional delta method</b>.</li>
+        </ol>
+        <span class="cite"><b>Cite:</b> Cramér–Wold · bracketing CLT / Donsker (1.28–1.29) · bridge (1.30) · functional delta (1.26)</span>
+      </div>
+    </div>
+
+    <div class="recipe">
+      <div class="rhead"><span class="rnum">R5</span><span class="rtrigger">"Compute the covariance / variance of the limit."</span></div>
+      <div class="rbody">
+        <p>For indicator-based statistics the one identity you need is</p>
+        <div class="katex-display" id="pbCov"></div>
+        <p>so \(\operatorname{Cov}(\mathbf 1_{Z\le s},\mathbf 1_{Z\le t})=F(s\wedge t)-F(s)F(t)\). For a Markov / jump process, condition: \(\mathbb P(Z_s=j,Z_t=j)=p_j(s)P_{jj}(s,t)\) for \(s\le t\). <b>Sanity check:</b> the diagonal must collapse to the known pointwise variance, e.g. \(p_j(t)(1-p_j(t))\).</p>
+        <span class="cite"><b>Cite:</b> covariance-of-indicators identity · Markov property</span>
+      </div>
+    </div>
+
+    <div class="recipe">
+      <div class="rhead"><span class="rnum">R6</span><span class="rtrigger">"The data are right-censored" — the plain estimator is biased; adapt it.</span></div>
+      <div class="rbody">
+        <ol>
+          <li><b>State the bias.</b> \(\min(Z,C)\le Z\) chops the large values \(\Rightarrow\) downward bias; you're estimating \(\mathbb E[W]\ne\mathbb E[Z]\).</li>
+          <li><b>Single lifetime:</b> inverse-probability-of-censoring weighting \(\delta_\ell/(1-G^{(n)}(W_\ell-))\), which reconstructs Kaplan–Meier (Satten–Datta: \(K^{(n)}\equiv F^{(n)}\)).</li>
+          <li><b>Multistate:</b> estimate intensities from what you see (Nelson–Aalen), then the transition matrix by the <b>product integral</b> \(\hat P(0,t)=\prod_{(0,t]}(\mathrm{Id}+d\hat A)\) (Aalen–Johansen).</li>
+        </ol>
+        <span class="cite"><b>Cite:</b> Kaplan–Meier · IPCW / Satten–Datta · Aalen–Johansen · telescoping product identity</span>
+      </div>
+    </div>
+
+    <div class="recipe">
+      <div class="rhead"><span class="rnum">R7</span><span class="rtrigger">"Classify the tail" — heavy-tailed / subexponential / regularly varying.</span></div>
+      <div class="rbody">
+        <ol>
+          <li><b>Regular variation:</b> check \(\bar F(tx)/\bar F(x)\to t^{-1/\gamma}\); the exponent is the tail index \(1/\gamma\) (Burr \(\to\beta\eta\)).</li>
+          <li>Remember the strict, one-way chain: <b>RV \(\Rightarrow\) subexponential \(\Rightarrow\) long-tailed \(\Rightarrow\) heavy-tailed</b>.</li>
+          <li>For a <em>product</em> \(ZW\), use <b>Breiman's lemma</b>: same index, constant \(\mathbb E[W^{1/\gamma}]\).</li>
+          <li>Uniform tail control comes from <b>Potter's bounds</b>.</li>
+        </ol>
+        <span class="cite"><b>Cite:</b> RV\(\Rightarrow\)subexp\(\Rightarrow\)long\(\Rightarrow\)heavy (wk5 Ex1) · Potter (3.5–3.6) · Breiman (3.32)</span>
+      </div>
+    </div>
+
+    <div class="recipe">
+      <div class="rhead"><span class="rnum">R8</span><span class="rtrigger">"Choose / justify a bandwidth" — kernel density or regression.</span></div>
+      <div class="rbody">
+        <ol>
+          <li>Write AMSE = (squared bias \(\propto h^4\)) + (variance \(\propto 1/(nh)\)).</li>
+          <li>Differentiate in \(h\), set to zero \(\Rightarrow\ \hat h\propto n^{-1/5}\); check the second-order condition.</li>
+          <li>Back-substitute: the optimal AMSE decays at \(n^{-4/5}\) — <b>strictly slower</b> than the parametric \(n^{-1}\). That gap is the price of assuming nothing about shape.</li>
+          <li>In practice pick \(h\) by minimising the cross-validation risk \(\hat J(h)\).</li>
+        </ol>
+        <span class="cite"><b>Cite:</b> Priestley–Chao AMSE (Thm 2.3, wk4 Ex2) · CV risk</span>
+      </div>
+    </div>
+
+    <div class="recipe">
+      <div class="rhead"><span class="rnum">R9</span><span class="rtrigger">"Show membership in the exponential dispersion family."</span></div>
+      <div class="rbody">
+        <ol>
+          <li>Target form \(f(x;\theta,\phi)=\exp\{(x\theta-b(\theta))/\phi+c(x,\phi)\}\).</li>
+          <li>Match the \(x\theta/\phi\) term against the density's \(e^{-cx}x^{\,\cdot}\) structure to fix \(\theta\); dump the awkward normalising series into \(c(x,\phi)\).</li>
+          <li><b>Verify the mean identity</b> \(b'(\theta)=\mathbb E[S]\): this single check certifies the parametrisation without re-deriving it.</li>
+        </ol>
+        <span class="cite"><b>Cite:</b> EDF definition · mean identity \(b'(\theta)=\mu\) (Problem 1.2)</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 24 · TOOLKIT ================= -->
+<section id="toolkit">
+  <div class="eyebrow"><span class="num">24</span> Reference</div>
+  <h3>Toolkit &amp; theorem index</h3>
+  <p>The exam demands <em>exact references</em>. This is the citable inventory — what each result says and the moment you reach for it. Numbering follows the Bladt notes as used elsewhere in this companion; if your edition differs, cite by name.</p>
+
+  <h4>Convergence &amp; limit theorems</h4>
+  <table class="tbl">
+    <tr><th>Result</th><th>What it gives you</th><th>Reach for it when…</th></tr>
+    <tr><td><b>Modes ladder</b> (1.1)</td><td>\(a.s.\Rightarrow P\Rightarrow d\); \(P\Leftrightarrow d\) to a constant</td><td>justifying an upgrade/downgrade of a mode</td></tr>
+    <tr><td><b>Slutsky</b> (1.3, 1.19)</td><td>glue \(\xrightarrow{d}\) to a \(\xrightarrow{P}\)-constant</td><td>dropping a vanishing factor / lower-order term</td></tr>
+    <tr><td><b>Continuous mapping</b></td><td>convergence survives continuous \(g\)</td><td>ratios, logs, sups of convergent sequences</td></tr>
+    <tr><td><b>Laplace CLT</b> (1.4)</td><td>iid scaled average \(\to\) Gaussian</td><td>every pointwise error bar</td></tr>
+    <tr><td><b>Lindeberg–Feller / Lyapounov</b> (1.5–1.6)</td><td>CLT for triangular arrays</td><td>non-identical summands (kernel windows)</td></tr>
+    <tr><td><b>Cramér–Wold</b></td><td>vector \(\xrightarrow{d}\) iff all linear combos do</td><td>promoting a 1-D CLT to finite-dim</td></tr>
+    <tr><td><b>Delta method</b> (1.10)</td><td>transform then normalise, ordinary derivative</td><td>variance, mean-excess, any \(h(\text{average})\)</td></tr>
+    <tr><td><b>Approximation lemma</b> (wk1 Ex1)</td><td>\(o_P(1)\) apart + \(\xrightarrow{d}\) \(\Rightarrow\) same limit</td><td>swapping in an asymptotically equal statistic</td></tr>
+  </table>
+
+  <h4>Empirical processes &amp; the bridge</h4>
+  <table class="tbl">
+    <tr><th>Result</th><th>What it gives you</th><th>Reach for it when…</th></tr>
+    <tr><td><b>Glivenko–Cantelli</b> (1.7)</td><td>\(\sup_t|F^{(n)}-F|\xrightarrow{a.s.}0\)</td><td>uniform consistency of a CDF</td></tr>
+    <tr><td><b>Abstract / bracketing GC</b> (1.9, 1.27)</td><td>GC for a function class with finite brackets</td><td>consistency of a process indexed by a class</td></tr>
+    <tr><td><b>Extended GC</b> (1.20)</td><td>squeeze BV functions between grid points</td><td>occupation probabilities, KM integrals</td></tr>
+    <tr><td><b>Bracketing CLT / Donsker</b> (1.28–1.29)</td><td>tightness from \(\int_0^1\sqrt{\log N_{[\,]}}\,d\varepsilon\lt\infty\)</td><td>upgrading fin-dim CLT to a path CLT</td></tr>
+    <tr><td><b>Empirical-process bridge</b> (1.30)</td><td>\(\sqrt n(F^{(n)}-F)\xrightarrow{d}B\circ F\)</td><td>the master result behind every path limit</td></tr>
+    <tr><td><b>Functional delta / Hadamard</b> (1.22, 1.26)</td><td>bridge \(\to\) transform of the bridge</td><td>hazard, quantile, copula, product integral</td></tr>
+  </table>
+
+  <h4>Survival, tails &amp; smoothing</h4>
+  <table class="tbl">
+    <tr><th>Result</th><th>What it gives you</th><th>Reach for it when…</th></tr>
+    <tr><td><b>Kaplan–Meier</b></td><td>product-limit CDF under right-censoring</td><td>estimating \(F\) / a mean from censored data</td></tr>
+    <tr><td><b>IPCW / Satten–Datta</b></td><td>\(\delta/(1-G^{(n)})\)-reweighting \(\equiv\) KM</td><td>de-biasing a censored average</td></tr>
+    <tr><td><b>Aalen–Johansen</b></td><td>occupation via product integral \(\prod(\mathrm{Id}+d\hat A)\)</td><td>multistate occupation under censoring</td></tr>
+    <tr><td><b>Potter's bounds</b> (3.5–3.6)</td><td>uniform two-sided bound on \(\bar F(x/y)/\bar F(x)\)</td><td>dominating a RV tail for DCT</td></tr>
+    <tr><td><b>Breiman's lemma</b> (3.32)</td><td>\(P(ZW\gt z)/P(Z\gt z)\to\mathbb E[W^{1/\gamma}]\)</td><td>tail of a product of RV \(\times\) light</td></tr>
+    <tr><td><b>Hill estimator</b> (3.2–3.3)</td><td>\(\hat\gamma_{n,k}\), sum \(=\) integral form</td><td>estimating the tail index</td></tr>
+    <tr><td><b>Priestley–Chao AMSE</b> (2.3)</td><td>bias\(^2+\)var, optimal \(h\propto n^{-1/5}\)</td><td>bandwidth choice, nonparametric rate</td></tr>
+  </table>
+
+  <div class="box actuary"><span class="tag">Standard tricks worth memorising</span>
+  <ul>
+    <li><b>Covariance of indicators:</b> \(\operatorname{Cov}(\mathbf 1_A,\mathbf 1_B)=\mathbb P(A\cap B)-\mathbb P(A)\mathbb P(B)\).</li>
+    <li><b>Telescoping product:</b> \(\prod_{j=1}^{k-1}(1-\tfrac1{n-j+1})=\tfrac{n-k+1}{n}\) — the KM / IPCW jump-matching identity.</li>
+    <li><b>Mean excess by parts:</b> \(e_F(u)=\tfrac1{\bar F(u)}\int_u^\infty(z-u)\,dF(z)\); linear growth \(\Leftrightarrow\) heavy tail.</li>
+    <li><b>Mill's ratio:</b> \(\Phi(z)\sim-\varphi(z)/z\) as \(z\to-\infty\) — for lognormal / Gaussian-tail asymptotics.</li>
+    <li><b>Karamata / slowly varying:</b> \(y^\varepsilon\ell(y)\to\infty\) for every \(\varepsilon\gt0\) — the lever in the tail-class chain.</li>
+    <li><b>DCT via Potter:</b> dominate \(\bar F(x/y)/\bar F(x)\) by \(\mathrm{cst}\,(1\vee y)^{1/\gamma+\varepsilon}\), then integrate.</li>
+  </ul>
+  </div>
+</section>
+
+<!-- ================= 25 · TIPS ================= -->
+<section id="tips">
+  <div class="eyebrow"><span class="num">25</span> Rehearsal</div>
+  <h3>Exam-day tips</h3>
+  <p>Three hours, three equal-weight problems, closed book, exact references required. The score is won on discipline as much as on cleverness.</p>
+  <div class="tips">
+    <div class="tip"><div class="tn">1</div><div class="tc"><p><b>Harvest the independent subparts first.</b> Subparts are engineered so later ones use earlier <em>results</em>, not your ability to prove them. If 2.2 is hard, still use "\(K^{(n)}=F^{(n)}\)" to answer 2.3 and 2.4. Bank every "argue why" and every consistency mark before wrestling a hard covariance.</p></div></div>
+    <div class="tip"><div class="tn">2</div><div class="tc"><p><b>Name the theorem — that's most of the mark.</b> "By the bracketing CLT (1.28)" earns more than a page of hand-waving. Keep the citation list from §24 on the tip of your pen; a proof is largely a sequence of correct names.</p></div></div>
+    <div class="tip"><div class="tn">3</div><div class="tc"><p><b>Keep "argue why" answers to 2–3 sentences.</b> These want the mechanism, not a proof: what the estimator targets by the LLN, or precisely where a bias enters. Don't over-write and don't leave them blank.</p></div></div>
+    <div class="tip"><div class="tn">4</div><div class="tc"><p><b>Recognise the integral-consistency archetype (R2).</b> Any \(\int\varphi\,dF^{(n)}\to\int\varphi\,dF\) is <em>uniform consistency on compacts + a uniform-integrability tail bound</em>. Write those two words and you've structured the whole proof.</p></div></div>
+    <div class="tip"><div class="tn">5</div><div class="tc"><p><b>Sanity-check every covariance on the diagonal.</b> A limit variance process must reduce to the known pointwise variance when \(s=t\) — e.g. \(F(t)(1-F(t))\) or \(p_j(t)(1-p_j(t))\). If it doesn't, you have a sign or a min/max error.</p></div></div>
+    <div class="tip"><div class="tn">6</div><div class="tc"><p><b>Mind the signs and the given constants.</b> In the EDF problem \(\theta\lt0\) is stated — respect it. Don't re-derive a reparametrisation under time pressure; <em>verify</em> \(b'(\theta)=\mu\) and move on.</p></div></div>
+    <div class="tip"><div class="tn">7</div><div class="tc"><p><b>Censoring is a flag, not a wall.</b> The instant you see \(\min(Z,C)\), reach for KM / IPCW (single lifetime) or Aalen–Johansen (multistate). State the downward bias of the naïve estimator in one line first.</p></div></div>
+    <div class="tip"><div class="tn">8</div><div class="tc"><p><b>Rehearse the four reflexes cold.</b> Consistency? LLN/GC + CMT. Point limit? \(h(\text{average})\) + delta. Path limit? fin-dim CLT + Donsker + functional delta. Covariance? indicator identity. Everything on the paper is a recombination of these.</p></div></div>
+  </div>
+</section>
+
+<!-- ================= 26 · QUIZ ================= -->
+<section id="quiz">
+  <div class="eyebrow"><span class="num">26</span> Rehearsal</div>
+  <h3>Self-test quiz</h3>
+  <p>Eighteen questions across the whole course, each mapped to a technique above. Answer, get instant feedback and a worked explanation, and see a topic breakdown at the end. Filter by area to drill a weak spot. Best done closed-book.</p>
+
+  <div class="quiz" id="quizApp">
+    <div class="quiz-top">
+      <div class="qz-title">Rehearsal quiz</div>
+      <div class="quiz-filters">
+        <div class="seg" id="qzTopic" role="group" aria-label="Filter by topic">
+          <button class="on" data-t="all">All</button>
+          <button data-t="conv">Convergence</button>
+          <button data-t="emp">Empirical proc.</button>
+          <button data-t="surv">Survival</button>
+          <button data-t="edf">EDF</button>
+          <button data-t="tail">Tails</button>
+          <button data-t="smooth">Smoothing</button>
+        </div>
+      </div>
+    </div>
+    <div class="qz-progwrap"><div class="qz-prog" id="qzProg"></div></div>
+    <div class="quiz-body" id="qzBody"></div>
+  </div>
+  <p class="small">Questions are drawn from the 2024/25 final and the weekly solution sets (weeks 1, 2, 4, 5). Explanations cite the same results as §24 so you can trace anything back to the notes.</p>
+</section>
+
+<!-- ================= 27 · MARKER'S-EYE VIEW ================= -->
+<section id="marker">
+  <div class="eyebrow"><span class="num">27</span> Solutions manual</div>
+  <h3>The marker's-eye view</h3>
+  <p>A full graded 2024/25 script is available — near-perfect overall. Reading it back tells you precisely where marks are won and where they leak, which is more useful than any polished model answer. The pattern is consistent: <b>naming the right result and matching a target form scores; asserting a magnitude without the computation costs.</b></p>
+  <table class="tbl">
+    <tr><th>Subpart</th><th>Score</th><th>What the script actually did</th></tr>
+    <tr><td>1.1</td><td>100%</td><td>Right structure — \(P(S=0)=P(N=0)=e^{-\lambda}\) — carried a stray \(\lambda\) factor the grader flagged as a "minor calc mistake". The <em>reasoning</em> earned the mark despite the slip.</td></tr>
+    <tr><td>1.2</td><td>100%</td><td>Rewrote the mixture density into \(\exp\{\cdots\}\) form and <em>read off</em> \(\phi\) and \(\theta\). No reparametrisation from scratch under time pressure.</td></tr>
+    <tr><td>1.3</td><td>100%</td><td>Named the reserving frame explicitly — cross-classified / Bornhuetter–Ferguson mean structure \(\mathbb E[X_{ij}]=\eta_j\mu_i\) — instead of describing Tweedie generically.</td></tr>
+    <tr><td>2.2</td><td><b>80%</b></td><td>Got the jump locations and the \(1/n\) magnitude, but the <em>why</em> for the censored / tie case was asserted, not shown. The lost 20% was exactly the missing explicit telescoping + ties computation.</td></tr>
+    <tr><td>2.4</td><td>100%</td><td>Invoked <b>Markov's inequality</b> to convert the probability into an expectation, then <b>Mauro's inequality</b>, then took the limits in the right order — \(n\to\infty\) first, then \(M\to\infty\).</td></tr>
+    <tr><td>3.3</td><td>100%</td><td>Used the occupation-as-transition-balance decomposition (Prop. 12.3), then abstract Glivenko–Cantelli on the bounded non-decreasing càdlàg counts, then a triangle inequality across components.</td></tr>
+    <tr><td>3.4</td><td>100%</td><td>Defined \(F_{jk}(t)=\mathbb E[N_{jk}(t)N_{jk}(\theta)]\), bounded the \(L^2\) bracket sizes, cited the Donsker theorem (2.15), joined the fidi limits via the Slutsky-type lemma (2.4) + extended CMT, and read off the Bernoulli variance \(p_j(t)(1-p_j(t))\).</td></tr>
+  </table>
+  <div class="box intuition"><span class="tag">Three transferable lessons</span>
+  <ol>
+    <li><b>Score the cheap points cleanly.</b> All of 1.1 / 2.1 / 3.1 is "argue in two lines." A small arithmetic slip is survivable; a blank is not. Bank them before touching a hard covariance.</li>
+    <li><b>On any "show the magnitudes are equal," do the algebra.</b> This is the single place the script bled marks. Write the telescoping product out; handle ties explicitly. The grader will not fill the gap for you.</li>
+    <li><b>Name, don't narrate.</b> "By Markov's inequality", "by Mauro's inequality", "by the Donsker theorem", "by Prop. 12.3" — each phrase is a mark. Build the proof as a visible chain of named results.</li>
+  </ol>
+  </div>
+</section>
+
+<!-- ================= 28 · SOLUTIONS MANUAL ================= -->
+<section id="manual">
+  <div class="eyebrow"><span class="num">28</span> Solutions manual</div>
+  <h3>Worked variant problems</h3>
+  <p>Nine problems that <em>aren't</em> on the 2024/25 paper but are built from the same machinery — one per recipe in the playbook (§23). Each states a problem, works it, and ends with a <b>Transfers to</b> line naming the exam question-type it rehearses. Try each before revealing.</p>
+
+  <details><summary><span><span class="pill hard">V1 · R9</span>Show the Gamma law is in the EDF and find its variance function</span><span class="chev">›</span></summary>
+  <div class="inner">
+    <p class="q"><b>Problem.</b> Write \(Y\sim\Gamma\) with shape \(\nu\) and <em>mean</em> \(\mu\) (so rate \(=\nu/\mu\)). Show \(Y\) belongs to the exponential dispersion family, identify \((\theta,\phi,b)\), and compute the variance function \(V(\mu)\).</p>
+    <p><b>Method (R9).</b> Take logs, isolate the term linear in \(x\) to read \(\theta/\phi\), collect the rest.</p>
+    <p>The density is \(f(x)=\dfrac{(\nu/\mu)^\nu x^{\nu-1}e^{-\nu x/\mu}}{\Gamma(\nu)}\), so</p>
+    \[\log f(x)=\underbrace{-\tfrac{x}{\mu}-\log\mu}_{\text{depends on }\mu}\cdot\;\nu+(\nu-1)\log x+\nu\log\nu-\log\Gamma(\nu).\]
+    <p>The \(x\)-linear part is \(\nu(-x/\mu)=\dfrac{x\,(-1/\mu)}{1/\nu}\), so read off \(\theta=-1/\mu\;(\lt0)\) and \(\phi=1/\nu\). The remaining \(\mu\)-dependent constant \(-\nu\log\mu\) equals \(-b(\theta)/\phi\), giving \(b(\theta)=\log\mu=-\log(-\theta)\); everything in \(x\) alone is \(c(x,\phi)\).</p>
+    <p><b>Certify and differentiate.</b> \(b'(\theta)=-1/\theta=\mu=\mathbb E[Y]\) ✓, and \(b''(\theta)=1/\theta^2=\mu^2\). Hence</p>
+    \[V(\mu)=b''(\theta)=\mu^2,\qquad \operatorname{Var}(Y)=\phi\,V(\mu)=\mu^2/\nu.\]
+    <p class="small"><b>Transfers to:</b> Problem 1.2, and any "show \(\in\) EDF / find the variance function." Poisson gives \(\theta=\log\mu,\ b=e^\theta,\ V(\mu)=\mu\); inverse Gaussian gives \(V(\mu)=\mu^3\); the Tweedie ladder is \(V(\mu)=\mu^p\).</p>
+  </div></details>
+
+  <details><summary><span><span class="pill hard">V2 · R4</span>Asymptotic variance of the sample quantile / Value-at-Risk</span><span class="chev">›</span></summary>
+  <div class="inner">
+    <p class="q"><b>Problem.</b> Let \(q_p=F^{-1}(p)\) with \(F\) differentiable, \(f(q_p)\gt0\). Find the limit law of \(\sqrt n\big(q^{(n)}_p-q_p\big)\), where \(q^{(n)}_p=[F^{(n)}]^{-1}(p)\).</p>
+    <p><b>Method (R4).</b> Route the empirical bridge through the inversion map with the functional delta method.</p>
+    <p>Start from the bridge \(\sqrt n(F^{(n)}-F)\xrightarrow{d}B\circ F\). The Hadamard derivative of the inverse map \(\Psi(F)=F^{-1}\) at \(p\) is \(h\mapsto -\,h(q_p)/f(q_p)\). Feeding \(B\circ F\) through,</p>
+    \[\sqrt n\big(q^{(n)}_p-q_p\big)\xrightarrow{d}-\frac{(B\circ F)(q_p)}{f(q_p)}=-\frac{B(p)}{f(q_p)},\]
+    <p>since \(F(q_p)=p\). As \(\operatorname{Var}(B(p))=p(1-p)\),</p>
+    \[\sqrt n\big(q^{(n)}_p-q_p\big)\xrightarrow{d}N\!\Big(0,\ \tfrac{p(1-p)}{f(q_p)^2}\Big).\]
+    <p class="small"><b>Transfers to:</b> any smooth functional of \(F^{(n)}\). \(\mathrm{VaR}_p\) <em>is</em> a quantile, so the same formula prices its uncertainty; the cumulative hazard route gives \(F(t)/(1-F(t))\).</p>
+  </div></details>
+
+  <details><summary><span><span class="pill core">V3 · R5</span>Identify the joint limit covariance of the empirical CDF</span><span class="chev">›</span></summary>
+  <div class="inner">
+    <p class="q"><b>Problem.</b> For \(s\le t\), give the limit covariance of \(\sqrt n(F^{(n)}(s)-F(s))\) and \(\sqrt n(F^{(n)}(t)-F(t))\).</p>
+    <p><b>Method (R5).</b> The one identity: \(\operatorname{Cov}(\mathbf 1_A,\mathbf 1_B)=\mathbb P(A\cap B)-\mathbb P(A)\mathbb P(B)\).</p>
+    <p>With \(A=\{Z\le s\}\), \(B=\{Z\le t\}\) and \(A\cap B=\{Z\le s\}\) (as \(s\le t\)),</p>
+    \[\operatorname{Cov}=F(s)-F(s)F(t)=F(s\wedge t)-F(s)F(t).\]
+    <p>The diagonal \(s=t\) collapses to \(F(t)(1-F(t))\) — the sanity check every covariance must pass.</p>
+    <p class="small"><b>Transfers to:</b> every "identify \(\Sigma\)" subpart, and the fidi half of the bridge theorem (Week 1, Ex 2; Week 2, Ex 9).</p>
+  </div></details>
+
+  <details><summary><span><span class="pill">V4 · R5</span>Limit variance process for a two-state occupation</span><span class="chev">›</span></summary>
+  <div class="inner">
+    <p class="q"><b>Problem.</b> An alive/dead Markov process; \(p_1(t)=\mathbb P(Z_t=1)\) estimated by \(p^{(n)}_1(t)\). Identify the covariance of the limit process \(\gamma\) of \(\sqrt n(p^{(n)}_1-p_1)\).</p>
+    <p><b>Method (R5 + Markov).</b> Indicator identity, then condition on the earlier time.</p>
+    <p>For \(s\le t\), using the Markov property \(\mathbb P(Z_s=1,Z_t=1)=p_1(s)P_{11}(s,t)\),</p>
+    \[\operatorname{Cov}(\gamma(s),\gamma(t))=p_1(s)P_{11}(s,t)-p_1(s)p_1(t).\]
+    <p>On the diagonal this is \(p_1(t)(1-p_1(t))\), a Bernoulli variance — exactly the sanity check.</p>
+    <p class="small"><b>Transfers to:</b> Problem 3.4 verbatim, and any occupation or transition-count CLT where you must "identify the limit variance process."</p>
+  </div></details>
+
+  <details><summary><span><span class="pill hard">V5 · R2 + R6</span>Consistency of a Kaplan–Meier mean under censoring</span><span class="chev">›</span></summary>
+  <div class="inner">
+    <p class="q"><b>Problem.</b> With right-censoring \(W=\min(Z,C)\), show the KM-based estimator \(\hat\mu^{(n)}=\int_0^\infty w\,dF^{(n)}(w)\) satisfies \(\hat\mu^{(n)}\xrightarrow{P}\mathbb E[Z]\) when \(\mathbb E[Z]\lt\infty\).</p>
+    <p><b>Method.</b> First de-bias (R6), then the integral-consistency archetype (R2).</p>
+    <p><b>1 — why not the naïve mean.</b> \(\tfrac1n\sum W_\ell\xrightarrow{a.s.}\mathbb E[\min(Z,C)]\le\mathbb E[Z]\): censoring chops the large \(Z\)'s, a downward bias. IPCW reweighting reconstructs KM (Satten–Datta), so \(\hat\mu^{(n)}=\int w\,dF^{(n)}\).</p>
+    <p><b>2 — split and bound.</b> Write \(\int_0^\infty=\int_0^M+\int_M^\infty\). On \([0,M]\), uniform KM consistency \(\sup_t|F^{(n)}-F|\xrightarrow{P}0\) plus extended continuous mapping give \(\int_0^M w\,dF^{(n)}\xrightarrow{P}\int_0^M w\,dF\). For the tail, Markov then Mauro:</p>
+    \[\mathbb P\Big(\!\int_M^\infty\! w\,dF^{(n)}\gt\eta\Big)\le\tfrac1\eta\,\mathbb E\Big[\!\int_M^\infty\! w\,dF^{(n)}\Big]\le\tfrac1\eta\!\int_M^\infty\! w\,dF\xrightarrow{M\to\infty}0,\]
+    <p>uniformly in \(n\). Let \(n\to\infty\) then \(M\to\infty\): \(\hat\mu^{(n)}\xrightarrow{P}\int_0^\infty w\,dF=\mathbb E[Z]\).</p>
+    <p class="small"><b>Transfers to:</b> all of Problem 2, and any censored functional \(\int\varphi\,dF^{(n)}\). Memorise the two-word skeleton: <em>uniform-on-compacts + UI tail</em>.</p>
+  </div></details>
+
+  <details><summary><span><span class="pill">V6 · R7</span>Classify a Weibull tail and find its mean excess</span><span class="chev">›</span></summary>
+  <div class="inner">
+    <p class="q"><b>Problem.</b> \(\bar F(z)=e^{-(z/\lambda)^\tau}\), \(\tau,\lambda\gt0\). For which \(\tau\) is \(Z\) heavy-tailed, and what is the mean-excess growth?</p>
+    <p><b>Method (R7).</b> Heavy-tailed \(\Leftrightarrow\) the MGF is infinite for every \(t\gt0\), i.e. \(e^{\varepsilon z}\bar F(z)\to\infty\).</p>
+    <p>\(e^{\varepsilon z}\bar F(z)=\exp\{\varepsilon z-(z/\lambda)^\tau\}\). If \(\tau\lt1\) the linear term dominates \(\Rightarrow\to\infty\Rightarrow\) <b>heavy-tailed</b> (in fact subexponential). If \(\tau\ge1\) the MGF is finite \(\Rightarrow\) light-tailed.</p>
+    <p>The mean excess, by Watson's lemma on \(\int_u^\infty\bar F\), is</p>
+    \[e_F(u)=\frac{\int_u^\infty\bar F}{\bar F(u)}\sim\frac{\lambda^\tau}{\tau}\,u^{1-\tau}\quad(u\to\infty):\]
+    <p>increasing (heavy) for \(\tau\lt1\), the constant \(\lambda\) (memoryless) at \(\tau=1\), decreasing (light) for \(\tau\gt1\). The <em>slope of the mean-excess plot</em> is the diagnostic.</p>
+    <p class="small"><b>Transfers to:</b> the Pareto/lognormal computations of Week 1 and any "classify the tail" — apply the same MGF test and read the mean-excess signature.</p>
+  </div></details>
+
+  <details><summary><span><span class="pill">V7 · R7</span>Tail of a heavy risk scaled by an independent light factor</span><span class="chev">›</span></summary>
+  <div class="inner">
+    <p class="q"><b>Problem.</b> \(Z\) is Pareto with tail index \(\alpha\) (so \(\bar F(z)=(\kappa/z)^\alpha\)); \(W\ge0\) is independent with \(\mathbb E[W^{\alpha+\varepsilon}]\lt\infty\) for some \(\varepsilon\gt0\). Find the tail of the product \(ZW\) (e.g. a claim scaled by a random inflation factor).</p>
+    <p><b>Method (R7).</b> Breiman's lemma — regular variation is preserved under multiplication by a lighter factor.</p>
+    \[\lim_{z\to\infty}\frac{\mathbb P(ZW\gt z)}{\mathbb P(Z\gt z)}=\mathbb E[W^{\alpha}],\]
+    <p>so \(ZW\) is regularly varying with the <em>same</em> index \(\alpha\); only the constant is rescaled by \(\mathbb E[W^\alpha]\). The proof dominates the ratio via Potter's bound and applies dominated convergence.</p>
+    <p class="small"><b>Transfers to:</b> Week 5's Breiman exercise; exposure- or inflation-scaled losses, and any product of a heavy and a light risk.</p>
+  </div></details>
+
+  <details><summary><span><span class="pill">V8 · R8</span>Optimal bandwidth and rate for a kernel density estimator</span><span class="chev">›</span></summary>
+  <div class="inner">
+    <p class="q"><b>Problem.</b> For \(f^{(n)}(x)=\tfrac1{nh}\sum_iK\!\big(\tfrac{x-X_i}{h}\big)\), give the leading bias and variance, the AMISE-optimal bandwidth, and the resulting rate.</p>
+    <p><b>Method (R8).</b> Bias\(^2\propto h^4\), variance \(\propto1/(nh)\); minimise their sum.</p>
+    \[\mathrm{bias}\approx\tfrac{h^2}{2}f''(x)\!\int u^2K,\qquad \operatorname{Var}\approx\frac{f(x)}{nh}\!\int K^2.\]
+    <p>Minimising the integrated version \(\mathrm{AMISE}=\tfrac{h^4}{4}(\!\int u^2K)^2\!\int(f'')^2+\tfrac{\int K^2}{nh}\) gives</p>
+    \[\hat h=\Big(\tfrac{\int K^2}{(\int u^2K)^2\int(f'')^2}\Big)^{1/5}n^{-1/5},\qquad \mathrm{AMISE}(\hat h)\asymp n^{-4/5}.\]
+    <p>The \(n^{-4/5}\) rate is slower than the parametric \(n^{-1}\) — the price of assuming nothing about \(f\).</p>
+    <p class="small"><b>Transfers to:</b> Week 4 (Priestley–Chao); the Nadaraya–Watson smoother, with \(f(x)\) replaced by \(\sigma^2(x)/f(x)\) in the variance.</p>
+  </div></details>
+
+  <details><summary><span><span class="pill">V9 · R3</span>CLT for the sample variance via the delta method</span><span class="chev">›</span></summary>
+  <div class="inner">
+    <p class="q"><b>Problem.</b> Show \(\sqrt n(\hat\sigma^2_n-\sigma^2)\xrightarrow{d}N(0,\mu_{(4)}-\mu_{(2)}^2)\), where \(\mu_{(k)}\) are central moments and \(\mu_{(2)}=\sigma^2\).</p>
+    <p><b>Method (R3).</b> Write the estimator as a smooth function of averages, then apply the delta method.</p>
+    <p>With sample raw moments \(\hat m_1=\bar X\), \(\hat m_2=\tfrac1n\sum X_i^2\), we have \(\hat\sigma^2_n=\hat m_2-\hat m_1^2=:h(\hat m_1,\hat m_2)\). The bivariate CLT gives \(\sqrt n(\hat m_1-m_1,\hat m_2-m_2)\xrightarrow{d}N(0,\Sigma)\), and \(\nabla h=(-2m_1,1)\). The delta method yields a centred Gaussian with variance \(\nabla h^\top\Sigma\,\nabla h=\mu_{(4)}-\mu_{(2)}^2\).</p>
+    <p class="small"><b>Transfers to:</b> any moment-based or plug-in estimator (skewness, correlation, the mean-excess estimator) — the pointwise "write as \(h(\text{average})\), then delta" archetype.</p>
+  </div></details>
+
+  <details><summary><span><span class="pill hard">V10 · R6</span>Nelson–Aalen estimator and its variance under censoring</span><span class="chev">›</span></summary>
+  <div class="inner">
+    <p class="q"><b>Problem.</b> From right-censored data \((W_\ell,\delta_\ell)\), the Nelson–Aalen estimator of the cumulative hazard is \(\hat\Lambda(t)=\int_0^t \tfrac{dN(s)}{Y(s)}\), where \(N(s)=\sum_\ell\mathbf 1_{W_\ell\le s,\delta_\ell=1}\) counts events and \(Y(s)=\sum_\ell\mathbf 1_{W_\ell\ge s}\) is the number at risk. Describe its jumps, argue consistency, and give a variance estimator.</p>
+    <p><b>Method (R6 + counting processes).</b> Increments come only from the at-risk / event bookkeeping.</p>
+    <p><b>Jumps.</b> \(dN(s)=0\) except at observed <em>event</em> times, so \(\hat\Lambda\) is a step function jumping by \(d_i/Y_i\) at the \(i\)-th event time (\(d_i\) tied events, \(Y_i\) at risk). Censored times only <em>decrement</em> \(Y\); they never add a jump.</p>
+    <p><b>Consistency.</b> \(N/n\) and \(Y/n\) converge uniformly to their means (Glivenko–Cantelli), and \(\hat\Lambda(t)\xrightarrow{P}\Lambda(t)=\int_0^t\tfrac{dF}{1-F_-}=-\log(1-F(t))\) for continuous \(F\), on any \(t\) with \((1-F(t))(1-G(t))\gt0\).</p>
+    <p><b>Variance (Aalen).</b> The natural plug-in is \(\widehat{\operatorname{Var}}\,\hat\Lambda(t)=\sum_{t_i\le t}\tfrac{d_i}{Y_i^2}\). With no censoring this limits to \(\int_0^t\tfrac{dF}{(1-F)^2}=\tfrac{F(t)}{1-F(t)}\) — the same pointwise hazard variance the functional delta gives.</p>
+    <p class="small"><b>Transfers to:</b> Problem 2's survival machinery; any "describe the estimator's jumps / state its variance" for KM or Nelson–Aalen.</p>
+  </div></details>
+
+  <details><summary><span><span class="pill">V11 · R8</span>AMSE-optimal bandwidth for the Nadaraya–Watson / conditional-CDF smoother</span><span class="chev">›</span></summary>
+  <div class="inner">
+    <p class="q"><b>Problem.</b> For the Nadaraya–Watson estimator \(m^{(n)}(x)\) of \(m(x)=\mathbb E[Y\mid X=x]\), give the leading bias and variance and the optimal bandwidth. Then state the analogous limit for the conditional CDF \(F^{(n)}(t\mid x)\).</p>
+    <p><b>Method (R8).</b> Same bias\(^2\)–variance trade as the density case, with the conditional variance in the numerator.</p>
+    \[\mathrm{bias}\approx\tfrac{h^2}{2}\Big(m''(x)+\tfrac{2m'(x)f'(x)}{f(x)}\Big)\!\int u^2K,\qquad \operatorname{Var}\approx\frac{\sigma^2(x)}{f(x)\,nh}\!\int K^2,\]
+    <p>where \(\sigma^2(x)=\operatorname{Var}(Y\mid X=x)\). Minimising the AMSE gives \(\hat h\propto n^{-1/5}\) and \(\mathrm{AMSE}\asymp n^{-4/5}\), the familiar nonparametric rate. For the conditional CDF, replace \(Y\) by \(\mathbf 1_{Y\le t}\): the "variance" becomes \(F(t\mid x)(1-F(t\mid x))\) and</p>
+    \[\sqrt{nh}\,\big(F^{(n)}(\cdot\mid x)-F(\cdot\mid x)\big)\xrightarrow{d}\Big(\tfrac{\int K^2}{f(x)}\Big)^{1/2}B\circ F(\cdot\mid x).\]
+    <p class="small"><b>Transfers to:</b> the distributional-regression section (§17) and Week 4; any kernel smoother — only the numerator of the variance changes.</p>
+  </div></details>
+
+  <details><summary><span><span class="pill hard">V12 · R7</span>Regular variation is closed under maxima and sums — the single big jump</span><span class="chev">›</span></summary>
+  <div class="inner">
+    <p class="q"><b>Problem.</b> Let \(Z_1,\dots,Z_n\) be iid, regularly varying with index \(1/\gamma\), \(M_n=\max_i Z_i\), \(S_n=\sum_i Z_i\). Show \(M_n\) and \(S_n\) have the same tail order as a single \(Z\), scaled by \(n\).</p>
+    <p><b>Method (R7).</b> Maxima are elementary; sums use subexponentiality.</p>
+    <p><b>Maximum.</b> \(\mathbb P(M_n\gt z)=1-(1-\bar F(z))^n\sim n\,\bar F(z)\) as \(z\to\infty\), so \(M_n\) is regularly varying with the <em>same</em> index \(1/\gamma\).</p>
+    <p><b>Sum.</b> Regular variation \(\Rightarrow\) subexponential (Week 5, Ex 1), whose defining property is exactly</p>
+    \[\mathbb P(S_n\gt z)\sim n\,\bar F(z)\sim \mathbb P(M_n\gt z)\quad(z\to\infty).\]
+    <p>So the sum is large essentially because <em>one</em> term is large — the <b>single-big-jump principle</b>. For insurance this is the whole story: aggregate losses in a heavy-tailed line are driven by the one catastrophic claim, not the accumulation of many.</p>
+    <p class="small"><b>Transfers to:</b> Week 5's subexponential chain; any "closure of regular variation" question and the intuition behind tail reserves.</p>
+  </div></details>
+
+  <div class="box actuary"><span class="tag">How to use this manual</span>
+  <p>Map your weak spots from the §26 quiz to the recipe tags above (R1–R9), then work the matching V-problem closed-book. If you can reproduce the <em>method line</em> of each without the solution, you can attack any relabelling of that archetype on the day.</p></div>
+</section>
+
+<!-- ================= 29 · INTUITION BUILDERS ================= -->
+<section id="intuition">
+  <div class="eyebrow"><span class="num">29</span> Solutions manual</div>
+  <h3>Intuition builders</h3>
+  <p>Four mental models that make the proofs feel inevitable rather than arbitrary. If you can narrate these in your own words, the machinery stops being a list of theorems and becomes one picture.</p>
+
+  <h4>Why heavy tails break the average</h4>
+  <p>The whole reason insurance needs a separate theory of tails is that the sample mean — the workhorse of the CLT — stops behaving when claims are heavy. Push the tail index below: with a light (exponential) tail the running mean settles quickly; with a heavy (Pareto) tail it lurches every time a rare giant claim lands, and never quite settles. Both lines have the <em>same</em> true mean of 1.</p>
+  <div class="demo">
+    <div class="demo-head"><div class="tag">Interactive</div><h5>Watch one claim eat the mean</h5></div>
+    <div class="demo-body">
+      <canvas id="htCanvas"></canvas>
+      <div class="controls">
+        <div class="ctrl" style="min-width:220px">
+          <label>Pareto tail index \(\alpha\) <b id="htAlphaLbl">1.6</b></label>
+          <input type="range" id="htAlpha" min="1.1" max="3" step="0.1" value="1.6">
+        </div>
+        <button class="btn" id="htRun">Resample ⟳</button>
+      </div>
+      <div class="legend">
+        <span><span class="swatch" style="background:#0E787E"></span>Exponential(1) — light tail</span>
+        <span><span class="swatch" style="background:#AE3A2C"></span>Pareto(\(\alpha\)) — heavy tail</span>
+        <span><span class="swatch" style="background:#CFCBBE"></span>true mean = 1</span>
+      </div>
+      <div class="readout" id="htRead"></div>
+    </div>
+  </div>
+  <p class="small">At \(\alpha\le2\) the Pareto variance is infinite, so the CLT gives no usable error bar; at \(\alpha\le1\) even the mean is infinite. This is precisely why Week 5 replaces "average \(\pm\) CLT" with regular variation, mean-excess and the Hill estimator.</p>
+
+  <div class="box intuition"><span class="tag">Why \(\sqrt n\), and why a bridge</span>
+  <p>Center and it wobbles; scale by \(\sqrt n\) and the wobble stabilises into a Gaussian of fixed width — too little scaling and it collapses to 0, too much and it blows up. Now do it at every \(t\) at once. The curve \(F^{(n)}-F\) is <em>pinned to 0 at both ends</em> (nothing below the smallest value, everything below the largest), and its variance \(F(t)(1-F(t))\) bulges in the middle. A Gaussian process pinned at both ends with that variance is exactly a <b>Brownian bridge</b> \(B\circ F\). Every path limit in the course is this one picture, transformed.</p></div>
+
+  <div class="box intuition"><span class="tag">Censoring is "missing at the top"</span>
+  <p>Censoring removes the <em>largest</em> observations — the ones still running when observation stops — so a naïve average is biased downward. Kaplan–Meier and IPCW don't invent the missing data; they <b>reweight</b> the survivors to stand in for those who were cut off, which is why the reweighted measure exactly reconstructs the estimator you'd have had with full data (Satten–Datta). Same idea, one dimension up: Aalen–Johansen reweights transition counts by who is still at risk.</p></div>
+
+  <div class="box intuition"><span class="tag">Bias and variance are one dial</span>
+  <p>Every smoother has a single knob \(h\). Turn it up and you average over a wide window: low variance, high bias (you blur real features). Turn it down and you track the data closely: low bias, high variance (you chase noise). The optimal \(h\propto n^{-1/5}\) is just where the two curves cross, and the leftover \(n^{-4/5}\) rate — slower than the parametric \(n^{-1}\) — is the standing tax for refusing to assume a shape.</p></div>
+</section>
+
+<!-- ================= 30 · MOCK EXAM ================= -->
+<section id="mock">
+  <div class="eyebrow"><span class="num">30</span> Solutions manual</div>
+  <h3>Mock exam, solved</h3>
+  <p>Two fresh problems in the exact style and breadth of the real paper — an empirical-process problem and a heavy-tails problem — each with independently-attackable subparts. Sit them closed-book with a three-hour clock in mind (about 50 minutes each), then reveal.</p>
+
+  <h4 style="color:var(--navy)">Mock Problem A — Value-at-Risk and Expected Shortfall as empirical functionals</h4>
+  <p class="small">Losses \(Z_1,\dots,Z_n\) iid with continuous cdf \(F\), density \(f\gt0\). For \(p\in(0,1)\) write \(\mathrm{VaR}_p=q_p=F^{-1}(p)\) and \(\mathrm{ES}_p=\mathbb E[Z\mid Z\gt q_p]\). Estimators use the empirical cdf \(F^{(n)}\).</p>
+
+  <details><summary><span><span class="pill core">A.1</span>Consistency of empirical VaR</span><span class="chev">›</span></summary>
+  <div class="inner">
+    <p>\(q^{(n)}_p=[F^{(n)}]^{-1}(p)\). By Glivenko–Cantelli \(\sup_t|F^{(n)}(t)-F(t)|\xrightarrow{a.s.}0\), and since \(F\) is continuous and strictly increasing near \(q_p\) (as \(f(q_p)\gt0\)), the inverse map is continuous there. The continuous mapping theorem gives \(q^{(n)}_p\xrightarrow{P}q_p\). <span class="small">This is recipe R1 with the inversion continuity added.</span></p>
+  </div></details>
+
+  <details><summary><span><span class="pill hard">A.2</span>CLT for empirical VaR</span><span class="chev">›</span></summary>
+  <div class="inner">
+    <p>Route the bridge through the inverse map (functional delta, R4). With \(\sqrt n(F^{(n)}-F)\xrightarrow{d}B\circ F\) and the Hadamard derivative of inversion \(h\mapsto -h(q_p)/f(q_p)\),</p>
+    \[\sqrt n\big(q^{(n)}_p-q_p\big)\xrightarrow{d}-\frac{(B\circ F)(q_p)}{f(q_p)}=-\frac{B(p)}{f(q_p)}\sim N\!\Big(0,\tfrac{p(1-p)}{f(q_p)^2}\Big),\]
+    <p>using \(F(q_p)=p\) and \(\operatorname{Var}(B(p))=p(1-p)\).</p>
+  </div></details>
+
+  <details><summary><span><span class="pill hard">A.3</span>Expected Shortfall as an integral against \(F^{(n)}\)</span><span class="chev">›</span></summary>
+  <div class="inner">
+    <p>Since \(\mathrm{ES}_p=\tfrac1{1-p}\int_{q_p}^\infty z\,dF(z)\), the plug-in is</p>
+    \[\mathrm{ES}^{(n)}_p=\frac1{1-p}\int_{q^{(n)}_p}^\infty z\,dF^{(n)}(z)=\frac1{n(1-p)}\sum_{i=1}^n Z_i\,\mathbf 1_{Z_i\gt q^{(n)}_p}.\]
+    <p><b>Consistency.</b> \(q^{(n)}_p\xrightarrow{P}q_p\) (A.1) and \(F^{(n)}\Rightarrow F\) uniformly, so by the integral-consistency archetype (R2) — weak convergence on the compact bulk plus a uniform-integrability tail bound using \(\mathbb E[Z]\lt\infty\) — \(\mathrm{ES}^{(n)}_p\xrightarrow{P}\mathrm{ES}_p\).</p>
+  </div></details>
+
+  <details><summary><span><span class="pill">A.4</span>Why ES is coherent and VaR is not</span><span class="chev">›</span></summary>
+  <div class="inner">
+    <p>Expected shortfall averages the loss <em>beyond</em> the quantile, so it is <b>subadditive</b>: \(\mathrm{ES}_p(X+Y)\le\mathrm{ES}_p(X)+\mathrm{ES}_p(Y)\), rewarding diversification, and it satisfies the other coherence axioms (monotonicity, homogeneity, translation-invariance). VaR is only a quantile and can <em>increase</em> under pooling — merging two portfolios can push a fat-tailed loss just past the threshold in a way each alone did not — so it violates subadditivity. That single failure is why Solvency II and Basel shifted capital measures toward ES.</p>
+  </div></details>
+
+  <div class="rule2"></div>
+  <h4 style="color:var(--risk)">Mock Problem B — Regular variation, mean excess and the Hill estimator</h4>
+  <p class="small">Claims \(Z_1,\dots,Z_n\) iid with \(\bar F(z)=z^{-1/\gamma}\ell(z)\) regularly varying, \(\gamma\in(0,1)\), \(\ell\) slowly varying. Order statistics \(Z_{(1)}\le\cdots\le Z_{(n)}\).</p>
+
+  <details><summary><span><span class="pill core">B.1</span>Mean excess grows linearly; read off \(\gamma\)</span><span class="chev">›</span></summary>
+  <div class="inner">
+    <p>For a regularly varying (Pareto-type) tail the mean excess satisfies \(e_F(u)/u\to\gamma/(1-\gamma)\) as \(u\to\infty\). Concretely for exact Pareto \(\bar F(z)=(\kappa/z)^{1/\gamma}\) with index \(\alpha=1/\gamma\gt1\), the Week 1 computation gives \(e_F(u)=u/(\alpha-1)=\tfrac{\gamma}{1-\gamma}u\), exactly linear. <b>Diagnostic:</b> a straight, upward-sloping mean-excess plot signals a heavy (regularly varying) tail, and the slope pins \(\gamma\).</p>
+  </div></details>
+
+  <details><summary><span><span class="pill hard">B.2</span>The Hill estimator and its integral form</span><span class="chev">›</span></summary>
+  <div class="inner">
+    <p>The Hill estimator of \(\gamma\) on the top \(k\) order statistics is</p>
+    \[\hat\gamma_{n,k}=\frac1k\sum_{i=1}^{k}\log\frac{Z_{(n-i+1)}}{Z_{(n-k)}}.\]
+    <p>Writing \(\hat T_n(s)=\tfrac1k\sum_i\mathbf 1_{Z_i\gt Z_{(n-k)}s}\), the same estimator is the integral \(\int_1^\infty \tfrac{\hat T_n(s)}{s}\,ds\); telescoping the indicators over the top \(k\) order statistics recovers the sum form (Week 5, Ex 2). It is the empirical analogue of \(\gamma=\int_1^\infty \tfrac{T(s)}{s}\,ds\) with \(T(s)=s^{-1/\gamma}\).</p>
+  </div></details>
+
+  <details><summary><span><span class="pill hard">B.3</span>Consistency and asymptotic normality</span><span class="chev">›</span></summary>
+  <div class="inner">
+    <p>As \(n\to\infty\) with \(k=k_n\to\infty\) and \(k/n\to0\) (an intermediate sequence), \(\hat\gamma_{n,k}\xrightarrow{P}\gamma\): the top \(k\) log-spacings are approximately iid exponential with mean \(\gamma\), so their average concentrates. Under a second-order regular-variation condition,</p>
+    \[\sqrt k\,\big(\hat\gamma_{n,k}-\gamma\big)\xrightarrow{d}N(0,\gamma^2).\]
+    <p><b>Bias–variance in \(k\):</b> small \(k\) means high variance (few tail points); large \(k\) reaches into the body and biases the slowly-varying part. The optimal \(k\) balances the two — the heavy-tail echo of bandwidth selection.</p>
+  </div></details>
+
+  <details><summary><span><span class="pill">B.4</span>Tail of an inflated claim</span><span class="chev">›</span></summary>
+  <div class="inner">
+    <p>Let \(W\ge0\) be an independent inflation factor with \(\mathbb E[W^{1/\gamma+\varepsilon}]\lt\infty\). By Breiman's lemma the inflated claim \(ZW\) is regularly varying with the same index \(1/\gamma\), and</p>
+    \[\mathbb P(ZW\gt z)\sim \mathbb E[W^{1/\gamma}]\,\mathbb P(Z\gt z).\]
+    <p>Inflation rescales the tail constant by \(\mathbb E[W^{1/\gamma}]\) but leaves the index — and hence the Hill estimate and the reserve's tail shape — unchanged.</p>
+  </div></details>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<section id="colophon" style="border-bottom:none">
+  <div class="footer">
+    <p>Built as a study companion for the first weeks of <em>Statistics for Insurance</em> (Bladt, U. Copenhagen). The solved 2024/25 paper, its graded script, the weekly solution sets (weeks 1, 2, 4, 5), the worked variants, the mock exam and every interactive demo run entirely in your browser on simulated data — refresh to reseed. Not a substitute for the lecture notes: use it to build intuition and rehearse the exam reflexes.</p>
+  </div>
+</section>
+</main>
+</div>
+
+<script defer>
+document.addEventListener("DOMContentLoaded",function(){
+/* ---------- KaTeX render ---------- */
+function tex(id,s,disp){var el=document.getElementById(id); if(el) katex.render(s,el,{displayMode:disp!==false,throwOnError:false});}
+tex("lindeberg","\\forall c>0:\\quad \\sum_{m=1}^n \\int_{\\{\\|Z_{nm}\\|>c\\}}\\|Z_{nm}\\|^2\\,d\\mathbb P \\to 0");
+tex("gcstate","\\sup_{t\\in\\mathbb R}\\big|F^{(n)}(t)-F(t)\\big|\\;\\xrightarrow{a.s.}\\;0");
+tex("deltastate","a_n\\big(h(T_n)-h(c)\\big)\\;\\xrightarrow{d}\\;\\nabla h(c)^\\top Z");
+tex("varstate","\\hat\\sigma_n^2\\xrightarrow{a.s.}\\mu_{(2)},\\qquad \\sqrt n\\big(\\hat\\sigma_n^2-\\mu_{(2)}\\big)\\xrightarrow{d}N\\!\\big(0,\\;\\mu_{(4)}-\\mu_{(2)}^2\\big)");
+tex("hazstate","\\sqrt n\\big(\\Lambda^{(n)}(t)-\\Lambda(t)\\big)\\xrightarrow{d}N\\!\\Big(0,\\tfrac{F(t)}{1-F(t)}\\Big)");
+tex("hadstate","\\frac{\\phi(\\theta+t_n h_n)-\\phi(\\theta)}{t_n}\\;\\to\\;\\phi'_\\theta(h)");
+tex("bridgestate","\\sqrt n\\,(F^{(n)}-F)\\;\\xrightarrow{d}\\;B\\circ F\\quad\\text{in }\\ell^\\infty([0,\\infty))");
+tex("kdestate","\\sqrt{nh}\\,\\big(f^{(n)}(x)-f(x)\\big)\\xrightarrow{d}N\\!\\Big(0,\\;f(x)\\!\\int K^2(u)\\,du\\Big)");
+tex("nwstate","e^{(n)}(x)=\\frac{\\sum_i Y_i\\,K\\!\\big(\\tfrac{x-X_i}{h}\\big)}{\\sum_i K\\!\\big(\\tfrac{x-X_i}{h}\\big)}");
+tex("nwclt","\\sqrt{nh}\\,\\big(e^{(n)}(x)-\\mathbb E[Y|X=x]\\big)\\xrightarrow{d}N\\!\\Big(0,\\;\\tfrac{\\sigma^2(x)}{f(x)}\\!\\int K^2\\Big)");
+tex("cedfstate","F^{(n)}(t\\mid x)=\\frac{\\sum_i \\mathbf 1_{Y_i\\le t}\\,K\\!\\big(\\tfrac{x-X_i}{h}\\big)}{\\sum_i K\\!\\big(\\tfrac{x-X_i}{h}\\big)}");
+tex("cedfclt","\\sqrt{nh}\\,\\big(F^{(n)}(\\cdot|x)-F(\\cdot|x)\\big)\\xrightarrow{d}\\Big(\\tfrac{\\int K^2}{f(x)}\\Big)^{1/2}B\\circ F(\\cdot|x)");
+tex("cvstate","\\hat J(h)=\\int f^{(n)}(x)^2\\,dx-\\frac{2}{n}\\sum_{i=1}^n f^{(n)}_{-i}(X_i)");
+/* exam */
+tex("p11","f_S(x)=\\sum_{n=1}^\\infty \\frac{c^{n\\gamma}x^{n\\gamma-1}e^{-cx}}{\\Gamma(n\\gamma)}\\cdot\\frac{e^{-\\lambda}\\lambda^n}{n!},\\qquad x>0");
+tex("p12a","b'(\\theta)=\\frac{\\gamma+1}{\\gamma}\\cdot(-\\gamma)\\cdot\\Big(\\tfrac{-\\theta}{\\gamma+1}\\Big)^{-\\gamma-1}\\cdot\\Big(\\tfrac{-1}{\\gamma+1}\\Big)=\\Big(\\tfrac{-\\theta}{\\gamma+1}\\Big)^{-\\gamma-1}");
+tex("p12b","b'(\\theta)=\\Big(\\tfrac{\\lambda\\gamma}{c}\\Big)^{\\!\\frac{\\gamma+1}{\\gamma+1}}=\\frac{\\lambda\\gamma}{c}=\\mathbb E[S]");
+tex("p23","\\hat\\mu^{(n)}=\\int_0^\\infty w\\,dK^{(n)}(w)=\\int_0^\\infty w\\,dF^{(n)}(w)");
+tex("p24","\\mathbb E\\Big[\\int_0^\\infty w\\,\\mathbf 1_{w>M}\\,dF^{(n)}(w)\\Big]\\le \\int_0^\\infty w\\,\\mathbf 1_{w>M}\\,dF(w)=\\int_M^\\infty w\\,dF(w)");
+tex("p24b","\\hat\\mu^{(n)}=\\int_0^\\infty w\\,dF^{(n)}(w)\\xrightarrow{P}\\int_0^\\infty w\\,dF(w)=\\mathbb E[Z_1]");
+tex("p31","\\sum_{j=1}^K p^{(n)}_j(t)=\\frac1n\\sum_{\\ell=1}^n\\sum_{j=1}^K \\mathbf 1_{Z^\\ell_t=j}=\\frac1n\\sum_{\\ell=1}^n 1=1");
+tex("p33a","\\mathcal F=\\big\\{\\,f_t:\\ \\omega\\mapsto \\mathbf 1_{\\omega_t=j}\\ \\text{ for }t\\in[0,\\theta]\\,\\big\\}");
+tex("p33b","\\sup_{t\\in[0,\\theta]}\\big|p^{(n)}_j(t)-p_j(t)\\big|=\\|\\mathbb P^{(n)}-\\mathbb P\\|_{\\mathcal F}\\xrightarrow{P}0");
+tex("p34a","\\gamma^{(n)}=\\sqrt n\\,(p^{(n)}_j-p_j)\\xrightarrow{d}\\gamma\\quad\\text{in }\\ell^\\infty([0,\\theta])");
+tex("p34b","\\operatorname{Cov}(\\gamma(s),\\gamma(t))=\\mathbb P(Z_s=j,\\,Z_t=j)-p_j(s)\\,p_j(t)");
+tex("exA1","\\mathbb E\\big[(f(W_n)-f(Z_n))\\mathbf 1_{\\|W_n-Z_n\\|\\le\\varepsilon}\\big]+\\mathbb E\\big[(f(W_n)-f(Z_n))\\mathbf 1_{\\|W_n-Z_n\\|>\\varepsilon}\\big]");
+tex("exD","\\sqrt n\\,(\\Lambda^{(n)}-\\Lambda)=\\sqrt n\\,(\\phi(F^{(n)})-\\phi(F))\\xrightarrow{d}\\phi'_F(B\\circ F)=\\frac{B\\circ F}{1-F}");
+tex("exE","\\hat h=\\Bigg(\\frac{\\mathbb E[Y^2|X=x]\\,f(x)\\int K^2}{(m''(x))^2\\big(\\int u^2K\\big)^2}\\Bigg)^{1/5}n^{-1/5}");
+tex("pbCov","\\operatorname{Cov}(\\mathbf 1_A,\\mathbf 1_B)=\\mathbb P(A\\cap B)-\\mathbb P(A)\\,\\mathbb P(B)");
+
+/* ================= shared plotting ================= */
+function setup(cv,h){var dpr=window.devicePixelRatio||1; var w=cv.clientWidth; cv.width=w*dpr; cv.height=h*dpr; var ctx=cv.getContext("2d"); ctx.setTransform(dpr,0,0,dpr,0,0); return {ctx:ctx,w:w,h:h};}
+function Plot(ctx,w,h,xr,yr,pad){
+  pad=pad||{l:44,r:14,t:14,b:30};
+  var iw=w-pad.l-pad.r, ih=h-pad.t-pad.b;
+  function X(x){return pad.l+(x-xr[0])/(xr[1]-xr[0])*iw;}
+  function Y(y){return pad.t+ih-(y-yr[0])/(yr[1]-yr[0])*ih;}
+  return {X:X,Y:Y,pad:pad,iw:iw,ih:ih,
+    axes:function(xl,yl,xt,yt){
+      ctx.strokeStyle="#E4E1D8"; ctx.lineWidth=1; ctx.fillStyle="#7A828C";
+      ctx.font="11px system-ui"; ctx.textAlign="center"; ctx.textBaseline="top";
+      var i;
+      if(xt) for(i=0;i<xt.length;i++){var xx=X(xt[i]); ctx.beginPath(); ctx.moveTo(xx,pad.t); ctx.lineTo(xx,pad.t+ih); ctx.strokeStyle="#EFEDE5"; ctx.stroke(); ctx.fillText(""+xt[i],xx,pad.t+ih+5);}
+      ctx.textAlign="right"; ctx.textBaseline="middle";
+      if(yt) for(i=0;i<yt.length;i++){var yy=Y(yt[i]); ctx.beginPath(); ctx.moveTo(pad.l,yy); ctx.lineTo(pad.l+iw,yy); ctx.strokeStyle="#EFEDE5"; ctx.stroke(); ctx.fillText(""+yt[i],pad.l-6,yy);}
+      ctx.strokeStyle="#CFCBBE"; ctx.beginPath(); ctx.moveTo(pad.l,pad.t); ctx.lineTo(pad.l,pad.t+ih); ctx.lineTo(pad.l+iw,pad.t+ih); ctx.stroke();
+      ctx.fillStyle="#4C525B"; ctx.font="12px system-ui";
+      if(xl){ctx.textAlign="center"; ctx.textBaseline="top"; ctx.fillText(xl,pad.l+iw/2,h-14);}
+      if(yl){ctx.save(); ctx.translate(12,pad.t+ih/2); ctx.rotate(-Math.PI/2); ctx.textAlign="center"; ctx.textBaseline="middle"; ctx.fillText(yl,0,0); ctx.restore();}
+    },
+    line:function(pts,col,lw,dash){
+      ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=lw||2; if(dash)ctx.setLineDash(dash);
+      ctx.beginPath(); for(var i=0;i<pts.length;i++){var p=pts[i]; if(i===0)ctx.moveTo(X(p[0]),Y(p[1])); else ctx.lineTo(X(p[0]),Y(p[1]));} ctx.stroke(); ctx.restore();
+    },
+    step:function(pts,col,lw){
+      ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=lw||2; ctx.beginPath();
+      for(var i=0;i<pts.length;i++){var p=pts[i]; var px=X(p[0]),py=Y(p[1]); if(i===0){ctx.moveTo(px,py);} else {ctx.lineTo(px,Y(pts[i-1][1])); ctx.lineTo(px,py);}} ctx.stroke(); ctx.restore();
+    },
+    dots:function(pts,col,r){ctx.save(); ctx.fillStyle=col; for(var i=0;i<pts.length;i++){ctx.beginPath(); ctx.arc(X(pts[i][0]),Y(pts[i][1]),r||2.5,0,7); ctx.fill();} ctx.restore();},
+    bars:function(edges,heights,col){ctx.save(); ctx.fillStyle=col; for(var i=0;i<heights.length;i++){var x0=X(edges[i]),x1=X(edges[i+1]),y0=Y(0),y1=Y(heights[i]); ctx.fillRect(x0+0.5,y1,Math.max(1,x1-x0-1),y0-y1);} ctx.restore();},
+    rug:function(xs,col){ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=1; var yb=pad.t+ih; for(var i=0;i<xs.length;i++){var xx=X(xs[i]); ctx.beginPath(); ctx.moveTo(xx,yb); ctx.lineTo(xx,yb-6); ctx.stroke();} ctx.restore();},
+    vline:function(x,y0,y1,col,lw){ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=lw||2; ctx.beginPath(); ctx.moveTo(X(x),Y(y0)); ctx.lineTo(X(x),Y(y1)); ctx.stroke(); ctx.restore();},
+    marker:function(x,y,col){ctx.save(); ctx.fillStyle=col; ctx.beginPath(); ctx.arc(X(x),Y(y),4.5,0,7); ctx.fill(); ctx.strokeStyle="#fff"; ctx.lineWidth=2; ctx.stroke(); ctx.restore();}
+  };
+}
+/* rng */
+function randn(){var u=0,v=0; while(!u)u=Math.random(); while(!v)v=Math.random(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+function rexp(rate){return -Math.log(Math.random())/(rate||1);}
+function rpareto(a,k){return (k||1)/Math.pow(Math.random(),1/(a||2));}
+function phi(x){return Math.exp(-x*x/2)/Math.sqrt(2*Math.PI);}
+function Phi(x){var t=1/(1+0.2316419*Math.abs(x)); var d=0.3989423*Math.exp(-x*x/2); var p=d*t*(0.3193815+t*(-0.3565638+t*(1.781478+t*(-1.821256+t*1.330274)))); return x>0?1-p:p;}
+function linspace(a,b,m){var o=[];for(var i=0;i<m;i++)o.push(a+(b-a)*i/(m-1));return o;}
+
+/* ================= HERO ================= */
+(function(){
+  var cv=document.getElementById("heroCanvas"); if(!cv)return;
+  function draw(){
+    var s=setup(cv,220), ctx=s.ctx;
+    ctx.clearRect(0,0,s.w,s.h);
+    var P=Plot(ctx,s.w,s.h,[0,1],[-3,3],{l:36,r:14,t:14,b:24});
+    P.axes("u = F(t)","",[0,0.25,0.5,0.75,1],[-2,0,2]);
+    // several bridges
+    var m=140;
+    for(var k=0;k<9;k++){
+      var incr=[], cum=0;
+      for(var i=0;i<m;i++){cum+=randn()/Math.sqrt(m); incr.push(cum);}
+      var end=incr[m-1], pts=[];
+      for(i=0;i<m;i++){var u=i/(m-1); pts.push([u,(incr[i]-u*end)]);}
+      var alpha=0.16+0.05*Math.random();
+      P.line(pts,"rgba(14,120,126,"+alpha+")",1.4);
+    }
+    // one bold
+    var inc2=[],c2=0; for(i=0;i<m;i++){c2+=randn()/Math.sqrt(m); inc2.push(c2);} var e2=inc2[m-1], b=[];
+    for(i=0;i<m;i++){var uu=i/(m-1); b.push([uu,inc2[i]-uu*e2]);}
+    P.line(b,"#0A5A5F",2.4);
+  }
+  draw();
+  var t=setInterval(draw,2600);
+  window.addEventListener("resize",function(){clearTimeout(window._hr); window._hr=setTimeout(draw,200);});
+})();
+
+/* ================= MODES ================= */
+(function(){
+  var cv=document.getElementById("modesCanvas"); if(!cv)return;
+  var K=40;
+  function draw(){
+    var s=setup(cv,300),ctx=s.ctx; ctx.clearRect(0,0,s.w,s.h);
+    var splitL=s.w*0.60;
+    // left: running means
+    var PL=Plot(ctx,splitL,s.h,[1,80],[-1.4,1.4],{l:40,r:6,t:16,b:30});
+    PL.axes("n","running mean",[20,40,60,80],[-1,0,1]);
+    var lastStd=[];
+    for(var k=0;k<K;k++){
+      var sum=0,pts=[];
+      for(var n=1;n<=80;n++){var z=randn(); sum+=z; pts.push([n,sum/n]);}
+      PL.line(pts,"rgba(150,144,128,0.5)",1);
+      lastStd.push(sum/Math.sqrt(80));
+    }
+    // right: histogram of sqrt(n) mean at n=80, from many reps
+    var reps=4000, vals=[];
+    for(var r=0;r<reps;r++){var s2=0;for(n=0;n<80;n++)s2+=randn(); vals.push(s2/Math.sqrt(80));}
+    var bins=26,lo=-3.4,hi=3.4,ct=new Array(bins).fill(0);
+    for(r=0;r<reps;r++){var b=Math.floor((vals[r]-lo)/(hi-lo)*bins); if(b>=0&&b<bins)ct[b]++;}
+    var edges=[];for(var i=0;i<=bins;i++)edges.push(lo+(hi-lo)*i/bins);
+    var maxd=0; var dens=ct.map(function(c){var d=c/reps/((hi-lo)/bins); if(d>maxd)maxd=d; return d;});
+    ctx.save(); ctx.translate(splitL,0);
+    var PR=Plot(ctx,s.w-splitL,s.h,[lo,hi],[0,Math.max(maxd,0.42)*1.1],{l:30,r:12,t:16,b:30});
+    PR.axes("√n · mean","",[-2,0,2],null);
+    PR.bars(edges,dens,"rgba(14,120,126,0.75)");
+    var np=[];for(i=0;i<80;i++){var x=lo+(hi-lo)*i/79; np.push([x,phi(x)]);}
+    PR.line(np,"#15181D",2);
+    ctx.restore();
+  }
+  document.getElementById("modesRun").onclick=draw;
+  document.getElementById("modesK").oninput=function(e){K=+e.target.value; document.getElementById("modesKlbl").textContent=K; draw();};
+  draw();
+})();
+
+/* ================= CLT ================= */
+(function(){
+  var cv=document.getElementById("cltCanvas"); if(!cv)return;
+  var dist="exp",N=5;
+  function samp(){switch(dist){case"exp":return rexp(1)-1;case"pareto":return rpareto(3,1)-1.5;case"unif":return Math.random()-0.5;case"bern":return (Math.random()<0.15?1:0)-0.15;}}
+  function moms(){switch(dist){case"exp":return[1,1];case"pareto":return[1.5,rp_sd()];case"unif":return[0.5,1/Math.sqrt(12)];case"bern":return[0.15,Math.sqrt(0.15*0.85)];}}
+  function rp_sd(){return Math.sqrt(3/((3-1)*(3-1)*(3-2)));} // var of pareto(a=3,k=1)
+  function run(){
+    var s=setup(cv,290),ctx=s.ctx; ctx.clearRect(0,0,s.w,s.h);
+    var mm=moms(),mu=mm[0],sd=mm[1];
+    var reps=6000,vals=[];
+    for(var r=0;r<reps;r++){var acc=0;for(var i=0;i<N;i++)acc+=samp(); vals.push((acc/N)/(sd/Math.sqrt(N)));}
+    var lo=-4,hi=4,bins=34,ct=new Array(bins).fill(0);
+    for(r=0;r<reps;r++){var b=Math.floor((vals[r]-lo)/(hi-lo)*bins); if(b>=0&&b<bins)ct[b]++;}
+    var edges=[];for(var e=0;e<=bins;e++)edges.push(lo+(hi-lo)*e/bins);
+    var maxd=0,dens=ct.map(function(c){var d=c/reps/((hi-lo)/bins); if(d>maxd)maxd=d; return d;});
+    var P=Plot(ctx,s.w,s.h,[lo,hi],[0,Math.max(maxd,0.42)*1.12],{l:40,r:14,t:16,b:32});
+    P.axes("standardised sample mean","density",[-3,-1.5,0,1.5,3],[0.1,0.2,0.3,0.4]);
+    P.bars(edges,dens,"rgba(14,120,126,0.72)");
+    var np=[];for(i=0;i<120;i++){var x=lo+(hi-lo)*i/119; np.push([x,phi(x)]);}
+    P.line(np,"#15181D",2.2);
+    // skewness readout
+    var m3=0,m2=0; for(r=0;r<reps;r++){m2+=vals[r]*vals[r]; m3+=vals[r]*vals[r]*vals[r];} m2/=reps;m3/=reps;
+    var sk=m3/Math.pow(m2,1.5);
+    document.getElementById("cltRead").innerHTML="n = <b>"+N+"</b>&nbsp; empirical skewness of √n·mean = <b>"+sk.toFixed(3)+"</b>&nbsp;(→ 0 as the CLT bites; black curve is N(0,1)).";
+  }
+  document.querySelectorAll("#cltDist button").forEach(function(bt){bt.onclick=function(){document.querySelectorAll("#cltDist button").forEach(function(x){x.classList.remove("on");}); bt.classList.add("on"); dist=bt.dataset.d; run();};});
+  document.getElementById("cltN").oninput=function(e){N=+e.target.value; document.getElementById("cltNlbl").textContent=N; run();};
+  document.getElementById("cltRun").onclick=run;
+  run();
+})();
+
+/* ================= GC ================= */
+(function(){
+  var cv=document.getElementById("gcCanvas"); if(!cv)return;
+  var N=20;
+  function run(){
+    var s=setup(cv,280),ctx=s.ctx; ctx.clearRect(0,0,s.w,s.h);
+    // true F = exponential(1)
+    var lo=0,hi=5;
+    var data=[];for(var i=0;i<N;i++)data.push(rexp(1)); data.sort(function(a,b){return a-b;});
+    var P=Plot(ctx,s.w,s.h,[lo,hi],[0,1.02],{l:40,r:14,t:16,b:32});
+    P.axes("t","probability",[1,2,3,4,5],[0.25,0.5,0.75,1]);
+    // true
+    var tp=[];for(i=0;i<160;i++){var x=lo+(hi-lo)*i/159; tp.push([x,1-Math.exp(-x)]);}
+    P.line(tp,"#15181D",2);
+    // empirical step
+    var ep=[[lo,0]]; for(i=0;i<N;i++){ep.push([data[i],i/N]); ep.push([data[i],(i+1)/N]);} ep.push([hi,1]);
+    P.step(ep.map(function(p){return p;}),"#0E787E",1.8);
+    // KS gap
+    var Dn=0,xstar=0,ystar=0;
+    for(i=0;i<N;i++){var Fx=1-Math.exp(-data[i]); var above=Math.abs((i+1)/N-Fx), below=Math.abs(i/N-Fx); if(above>Dn){Dn=above;xstar=data[i];ystar=(i+1)/N;} if(below>Dn){Dn=below;xstar=data[i];ystar=i/N;}}
+    P.vline(xstar, 1-Math.exp(-xstar), ystar, "#AE3A2C",3);
+    document.getElementById("gcRead").innerHTML="n = <b>"+N+"</b>&nbsp; sup-distance Dₙ = <b>"+Dn.toFixed(3)+"</b>&nbsp;(√n·Dₙ = "+(Math.sqrt(N)*Dn).toFixed(2)+", → Kolmogorov law). Increase n: the red gap shrinks.";
+  }
+  document.getElementById("gcN").oninput=function(e){N=+e.target.value; document.getElementById("gcNlbl").textContent=N; run();};
+  document.getElementById("gcRun").onclick=run;
+  run();
+})();
+
+/* ================= MEAN EXCESS ================= */
+(function(){
+  var cv=document.getElementById("meCanvas"); if(!cv)return;
+  var dist="exp",N=2000;
+  function run(){
+    var s=setup(cv,280),ctx=s.ctx; ctx.clearRect(0,0,s.w,s.h);
+    var data=[],i;
+    if(dist==="exp"){for(i=0;i<N;i++)data.push(rexp(1));}
+    else {for(i=0;i<N;i++)data.push(rpareto(2.5,1));}
+    data.sort(function(a,b){return a-b;});
+    var umax = dist==="exp"?4:8;
+    var us=linspace(0.05,umax,60), pts=[], truep=[];
+    for(var u=0;u<us.length;u++){
+      var U=us[u],sum=0,cnt=0;
+      for(i=0;i<N;i++){if(data[i]>U){sum+=data[i];cnt++;}}
+      if(cnt>3){pts.push([U,sum/cnt-U]);}
+      truep.push([U, dist==="exp"?1:U/(2.5-1)]);
+    }
+    var ymax = dist==="exp"?2.2:(umax/(2.5-1))*1.15;
+    var P=Plot(ctx,s.w,s.h,[0,umax],[0,ymax],{l:42,r:14,t:16,b:32});
+    var xt = dist==="exp"?[1,2,3,4]:[2,4,6,8];
+    P.axes("threshold u","mean excess eₙ(u)",xt,null);
+    P.line(truep,"#15181D",2);
+    P.line(pts,"#0E787E",1.6);
+    document.getElementById("meRead").innerHTML = dist==="exp"
+      ? "Exponential: eₙ(u) hovers around the constant <b>1/λ = 1</b> — flat = light tail (memoryless)."
+      : "Pareto(α=2.5): eₙ(u) climbs the line <b>u/(α−1)</b> — increasing = heavy tail. Steeper line ⇒ heavier tail.";
+  }
+  document.querySelectorAll("#meDist button").forEach(function(bt){bt.onclick=function(){document.querySelectorAll("#meDist button").forEach(function(x){x.classList.remove("on");}); bt.classList.add("on"); dist=bt.dataset.d; run();};});
+  document.getElementById("meN").oninput=function(e){N=+e.target.value; document.getElementById("meNlbl").textContent=N; run();};
+  document.getElementById("meRun").onclick=run;
+  run();
+})();
+
+/* ================= BRIDGE ================= */
+(function(){
+  var cv=document.getElementById("bridgeCanvas"); if(!cv)return;
+  var N=60, showB=false;
+  function run(){
+    var s=setup(cv,290),ctx=s.ctx; ctx.clearRect(0,0,s.w,s.h);
+    var P=Plot(ctx,s.w,s.h,[0,1],[-2.6,2.6],{l:42,r:14,t:16,b:32});
+    P.axes("u = F(t)","√n (F⁽ⁿ⁾ − F)",[0.25,0.5,0.75,1],[-2,-1,0,1,2]);
+    if(showB){
+      var m=200,inc=[],c=0; for(var i=0;i<m;i++){c+=randn()/Math.sqrt(m); inc.push(c);} var e=inc[m-1],b=[];
+      for(i=0;i<m;i++){var u=i/(m-1); b.push([u,inc[i]-u*e]);}
+      P.line(b,"rgba(150,144,128,0.85)",1.6);
+    }
+    // empirical process: uniforms, plot sqrt(n)(F_n(u)-u) vs u
+    var U=[];for(i=0;i<N;i++)U.push(Math.random()); U.sort(function(a,b){return a-b;});
+    var pts=[[0,0]];
+    for(i=0;i<N;i++){var Fn=(i+1)/N; pts.push([U[i], Math.sqrt(N)*((i)/N - U[i])]); pts.push([U[i], Math.sqrt(N)*(Fn - U[i])]);}
+    pts.push([1,0]);
+    P.line(pts,"#0E787E",1.6);
+    var sup=0;for(i=0;i<N;i++){var g=Math.abs(Math.sqrt(N)*((i+1)/N-U[i])); if(g>sup)sup=g;}
+    document.getElementById("brRead").innerHTML="n = <b>"+N+"</b>&nbsp; amplitude sup|·| = <b>"+sup.toFixed(2)+"</b>. Note it does <b>not</b> shrink with n — it converges in <i>shape</i> to the bridge (grey), not to zero.";
+  }
+  document.getElementById("brN").oninput=function(e){N=+e.target.value; document.getElementById("brNlbl").textContent=N; run();};
+  document.getElementById("brRun").onclick=function(){showB=false; run();};
+  document.getElementById("brBridge").onclick=function(){showB=true; run();};
+  run();
+})();
+
+/* ================= KDE ================= */
+(function(){
+  var cv=document.getElementById("kdeCanvas"); if(!cv)return;
+  var H=0.35,N=200,data=[];
+  function gen(){data=[];for(var i=0;i<N;i++){data.push(Math.random()<0.45? -1.5+0.5*randn() : 1.4+0.7*randn());}}
+  function trueD(x){return 0.45*phi((x+1.5)/0.5)/0.5 + 0.55*phi((x-1.4)/0.7)/0.7;}
+  function run(){
+    var s=setup(cv,280),ctx=s.ctx; ctx.clearRect(0,0,s.w,s.h);
+    var lo=-4,hi=4;
+    var P=Plot(ctx,s.w,s.h,[lo,hi],[0,0.42],{l:42,r:14,t:16,b:32});
+    P.axes("claim size (std.)","density",[-3,-1.5,0,1.5,3],[0.1,0.2,0.3,0.4]);
+    var tp=[],kp=[];
+    for(var g=0;g<200;g++){var x=lo+(hi-lo)*g/199; tp.push([x,trueD(x)]);
+      var sum=0;for(var i=0;i<N;i++)sum+=phi((x-data[i])/H); kp.push([x,sum/(N*H)]);}
+    P.line(tp,"#15181D",2);
+    P.line(kp,"#0E787E",2);
+    P.rug(data.slice(0,Math.min(N,300)),"rgba(150,144,128,0.7)");
+    var lab = H<0.18?"under-smoothed (spiky, high variance)": H>0.9?"over-smoothed (modes merged, biased)":"well-balanced — both modes visible";
+    document.getElementById("kdeRead").innerHTML="h = <b>"+H.toFixed(2)+"</b>, n = <b>"+N+"</b> — "+lab+".";
+  }
+  document.getElementById("kdeH").oninput=function(e){H=+e.target.value/100; document.getElementById("kdeHlbl").textContent=H.toFixed(2); run();};
+  document.getElementById("kdeN").oninput=function(e){N=+e.target.value; document.getElementById("kdeNlbl").textContent=N; gen(); run();};
+  document.getElementById("kdeRun").onclick=function(){gen();run();};
+  gen();run();
+})();
+
+/* ================= NW ================= */
+(function(){
+  var cv=document.getElementById("nwCanvas"); if(!cv)return;
+  var H=0.20,SIG=0.35,N=120,X=[],Y=[];
+  function mfun(x){return Math.sin(6*x)*0.6 + x;}
+  function gen(){X=[];Y=[];for(var i=0;i<N;i++){var x=Math.random(); X.push(x); Y.push(mfun(x)+SIG*randn());}}
+  function run(){
+    var s=setup(cv,290),ctx=s.ctx; ctx.clearRect(0,0,s.w,s.h);
+    var P=Plot(ctx,s.w,s.h,[0,1],[-1.4,2.2],{l:42,r:14,t:16,b:32});
+    P.axes("covariate x","Y",[0.25,0.5,0.75,1],[-1,0,1,2]);
+    var pts=[];for(var i=0;i<N;i++)pts.push([X[i],Y[i]]); P.dots(pts,"rgba(150,144,128,0.85)",2.5);
+    var tp=[],np=[];
+    for(var g=0;g<160;g++){var x=g/159; tp.push([x,mfun(x)]);
+      var num=0,den=0; for(i=0;i<N;i++){var w=phi((x-X[i])/H); num+=w*Y[i]; den+=w;} np.push([x, den>1e-9?num/den:0]);}
+    P.line(tp,"#15181D",2);
+    P.line(np,"#0E787E",2.2);
+  }
+  document.getElementById("nwH").oninput=function(e){H=+e.target.value/100; document.getElementById("nwHlbl").textContent=H.toFixed(2); run();};
+  document.getElementById("nwS").oninput=function(e){SIG=+e.target.value/100; document.getElementById("nwSlbl").textContent=SIG.toFixed(2); gen(); run();};
+  document.getElementById("nwRun").onclick=function(){gen();run();};
+  gen();run();
+})();
+
+/* ================= CV ================= */
+(function(){
+  var cv=document.getElementById("cvCanvas"); if(!cv)return;
+  var N=150,data=[];
+  function gen(){data=[];for(var i=0;i<N;i++){data.push(Math.random()<0.45? -1.5+0.5*randn() : 1.4+0.7*randn());}}
+  function Jhat(h){
+    var n=N,s1=0,s2=0,i,j;
+    for(i=0;i<n;i++)for(j=0;j<n;j++){var d=(data[i]-data[j])/h; s1+=Math.exp(-d*d/4)/(2*Math.sqrt(Math.PI));}
+    s1=s1/(n*n*h);
+    for(i=0;i<n;i++){var acc=0; for(j=0;j<n;j++){if(j!==i){var e=(data[i]-data[j])/h; acc+=Math.exp(-e*e/2)/Math.sqrt(2*Math.PI);}} s2+=acc/((n-1)*h);}
+    s2=2*s2/n;
+    return s1-s2;
+  }
+  function run(){
+    var s=setup(cv,270),ctx=s.ctx; ctx.clearRect(0,0,s.w,s.h);
+    var hs=linspace(0.12,1.6,44), Js=hs.map(Jhat);
+    var ymin=Math.min.apply(null,Js),ymax=Math.max.apply(null,Js),pad=(ymax-ymin)*0.12;
+    var P=Plot(ctx,s.w,s.h,[hs[0],hs[hs.length-1]],[ymin-pad,ymax+pad],{l:52,r:14,t:16,b:32});
+    P.axes("bandwidth h","CV score Ĵ(h)",[0.25,0.5,0.75,1,1.25,1.5],null);
+    var pts=hs.map(function(h,k){return [h,Js[k]];}); P.line(pts,"#0E787E",2.2);
+    var mi=0;for(var k=1;k<Js.length;k++)if(Js[k]<Js[mi])mi=k;
+    P.marker(hs[mi],Js[mi],"#AE3A2C");
+    document.getElementById("cvRead").innerHTML="minimiser ĥ ≈ <b>"+hs[mi].toFixed(2)+"</b>&nbsp; (n = "+N+"). Re-sample: the dip location wanders — plot, don't trust one number.";
+  }
+  document.getElementById("cvN").oninput=function(e){N=+e.target.value; document.getElementById("cvNlbl").textContent=N; gen(); run();};
+  document.getElementById("cvRun").onclick=function(){gen();run();};
+  gen();run();
+})();
+
+/* ================= SELF-TEST QUIZ ================= */
+(function(){
+  var root=document.getElementById("quizApp"); if(!root)return;
+  var body=document.getElementById("qzBody"), prog=document.getElementById("qzProg"),
+      topicSeg=document.getElementById("qzTopic");
+  function M(el){ if(window.renderMathInElement){ try{ renderMathInElement(el,{delimiters:[{left:"\\(",right:"\\)",display:false},{left:"\\[",right:"\\]",display:true},{left:"$$",right:"$$",display:true}],throwOnError:false}); }catch(e){} } }
+  var TOPICS={conv:"Convergence",emp:"Empirical process",surv:"Survival",edf:"EDF / Tweedie",tail:"Heavy tails",smooth:"Smoothing"};
+
+  var BANK=[
+    {t:"conv",d:"core",
+     q:"Order the three modes of stochastic convergence from strongest to weakest.",
+     o:["\\(\\xrightarrow{d}\\Rightarrow\\xrightarrow{P}\\Rightarrow\\xrightarrow{a.s.}\\)","\\(\\xrightarrow{a.s.}\\Rightarrow\\xrightarrow{P}\\Rightarrow\\xrightarrow{d}\\)","\\(\\xrightarrow{P}\\Rightarrow\\xrightarrow{a.s.}\\Rightarrow\\xrightarrow{d}\\)","All three are equivalent."],
+     a:1,
+     e:"The ladder is \\(a.s.\\Rightarrow P\\Rightarrow d\\) (Lemma 1.1). The reverses fail in general, with one exception — convergence to a <b>constant</b>, where \\(\\xrightarrow{P}\\) and \\(\\xrightarrow{d}\\) coincide. That exception is the engine of Slutsky."},
+    {t:"conv",d:"core",
+     q:"In Slutsky's lemma, \\(X_n\\xrightarrow{d}X\\) and \\(Y_n\\xrightarrow{P}c\\) give \\((X_n,Y_n)\\xrightarrow{d}(X,c)\\). Why must the limit \\(c\\) be a constant?",
+     o:["Because \\(X\\) and \\(Y\\) must be independent.","Because \\(\\xrightarrow{P}\\) and \\(\\xrightarrow{d}\\) agree only for a constant limit.","Because \\(c\\) has to be zero.","Because \\(\\xrightarrow{d}\\) always implies \\(\\xrightarrow{P}\\)."],
+     a:1,
+     e:"The only rung where the ladder is reversible is convergence to a constant. That is precisely what lets you glue a \\(\\xrightarrow{d}\\) sequence to a \\(\\xrightarrow{P}\\)-to-constant sequence (Lemmas 1.3, 1.19)."},
+    {t:"conv",d:"medium",
+     q:"If \\(\\|Z_n-W_n\\|=o_P(1)\\) and \\(Z_n\\xrightarrow{d}Z\\), what follows for \\(W_n\\)?",
+     o:["\\(W_n\\xrightarrow{a.s.}Z\\)","\\(W_n\\xrightarrow{P}Z\\)","\\(W_n\\xrightarrow{d}Z\\)","Nothing without a convergence rate."],
+     a:2,
+     e:"The asymptotic-equivalence lemma (Week 1, Ex 1): test against bounded-Lipschitz \\(f\\), split on \\(\\{\\|W_n-Z_n\\|\\le\\varepsilon\\}\\); the difference in expectations vanishes, so \\(W_n\\xrightarrow{d}Z\\). This runs silently inside every delta-method proof."},
+    {t:"conv",d:"medium",
+     q:"You must show \\(\\sqrt n\\big(F^{(n)}(t_1)-F(t_1),\\dots,F^{(n)}(t_M)-F(t_M)\\big)\\xrightarrow{d}N(0,\\Sigma)\\). Which tool reduces this to a one-dimensional CLT?",
+     o:["Continuous mapping theorem","Portmanteau lemma","Cramér–Wold device","Delta method"],
+     a:2,
+     e:"Cramér–Wold: a vector converges in law iff every linear combination does. Each \\(\\sum_m a_m\\sqrt n(F^{(n)}(t_m)-F(t_m))\\) is a standardised iid average \\(\\to\\) Laplace CLT (Week 1, Ex 2)."},
+    {t:"emp",d:"core",
+     q:"For the empirical CDF, \\(\\operatorname{Cov}(\\mathbf 1_{Z\\le s},\\mathbf 1_{Z\\le t})=\\ ?\\)",
+     o:["\\(F(s)F(t)\\)","\\(F(s\\wedge t)-F(s)F(t)\\)","\\(F(s\\vee t)-F(s)F(t)\\)","\\(F(s)+F(t)-F(s)F(t)\\)"],
+     a:1,
+     e:"Use \\(\\operatorname{Cov}(\\mathbf 1_A,\\mathbf 1_B)=\\mathbb P(A\\cap B)-\\mathbb P(A)\\mathbb P(B)\\) with \\(\\{Z\\le s\\}\\cap\\{Z\\le t\\}=\\{Z\\le s\\wedge t\\}\\). This is the bridge covariance \\(B\\circ F\\)."},
+    {t:"conv",d:"medium",
+     q:"The delta method \\(a_n(h(T_n)-h(c))\\xrightarrow{d}\\nabla h(c)^\\top Z\\) needs \\(h\\) to be…",
+     o:["bounded","differentiable at \\(c\\)","monotone","Lipschitz everywhere"],
+     a:1,
+     e:"Only differentiability at the point \\(c\\) (together with \\(a_n(T_n-c)\\xrightarrow{d}Z\\)). The functional version replaces the ordinary derivative by a Hadamard derivative (Thm 1.10 / 1.26)."},
+    {t:"emp",d:"hard",
+     q:"For \\(\\phi(h)(t)=-\\log(1-h(t))\\), the Hadamard derivative at \\(f\\) in direction \\(h\\) is:",
+     o:["\\(-\\,h(t)/(1-f(t))\\)","\\(h(t)/(1-f(t))\\)","\\(h(t)/(1-h(t))\\)","\\(-\\log(1-h(t))\\)"],
+     a:1,
+     e:"From \\(\\frac{\\phi(f+u_nh_n)-\\phi(f)}{u_n}=-\\frac1{u_n}\\log\\!\\big(1-\\frac{u_nh_n}{1-f}\\big)\\to\\frac{h}{1-f}\\) via \\(\\log(1-x)\\approx-x\\). Feeding \\(B\\circ F\\) through gives \\(\\sqrt n(\\Lambda^{(n)}-\\Lambda)\\to (B\\circ F)/(1-F)\\) (Week 2, Ex 10)."},
+    {t:"edf",d:"hard",
+     q:"To certify a claimed EDF parametrisation \\((\\theta,\\phi,b)\\) quickly, the highest-value single check is:",
+     o:["integrate the density to 1","verify the mean identity \\(b'(\\theta)=\\mathbb E[S]\\)","compute the moment generating function","show \\(c(x,\\phi)=0\\)"],
+     a:1,
+     e:"In the EDF, \\(b'(\\theta)=\\mu\\) pins the natural parameter; matching the \\(\\exp\\{(x\\theta-b(\\theta))/\\phi\\}\\) factor fixes \\(\\theta\\), and the awkward normalising series is exactly \\(c(x,\\phi)\\) (Problem 1.2). No need to re-derive the reparametrisation."},
+    {t:"edf",d:"medium",
+     q:"Why is the Tweedie / compound-Poisson–gamma family the natural response for pricing and reserving?",
+     o:["it is symmetric about its mean","it has an atom at 0 plus a right-skewed continuous part, all inside one EDF","it has bounded support","it is light-tailed"],
+     a:1,
+     e:"Aggregate claims per cell are zero-inflated and continuous-when-positive. Tweedie (power \\(p\\in(1,2)\\)) captures frequency and severity in one GLM likelihood, with deviance, IRLS and standard errors for free (Problem 1.3)."},
+    {t:"surv",d:"core",
+     q:"With \\(W_\\ell=\\min(Z_\\ell,C_\\ell)\\), why is \\(\\tfrac1n\\sum_\\ell W_\\ell\\) a poor estimator of \\(\\mathbb E[Z]\\)?",
+     o:["it overestimates because of ties","it converges to \\(\\mathbb E[\\min(Z,C)]\\le\\mathbb E[Z]\\): biased downward","it has infinite variance","it is also inconsistent for \\(\\mathbb E[W]\\)"],
+     a:1,
+     e:"\\(\\min\\) chops off the large \\(Z\\)'s (they are the ones still alive when censoring strikes), so the naïve mean targets \\(\\mathbb E[W]\\ne\\mathbb E[Z]\\), biased down (Problem 2.1)."},
+    {t:"surv",d:"hard",
+     q:"The IPCW-reweighted measure with weights \\(\\delta_\\ell/(1-G^{(n)}(W_\\ell-))\\) equals which estimator?",
+     o:["the empirical CDF of \\(W\\)","the Kaplan–Meier estimator \\(F^{(n)}\\) of \\(Z\\)","the Nelson–Aalen estimator","the censoring KM \\(G^{(n)}\\)"],
+     a:1,
+     e:"Satten–Datta: the jumps coincide in location (uncensored times) and in magnitude (via the telescoping product identity), so \\(K^{(n)}\\equiv F^{(n)}\\) and \\(\\hat\\mu^{(n)}=\\int w\\,dF^{(n)}\\) (Problem 2.2–2.3)."},
+    {t:"surv",d:"hard",
+     q:"To prove \\(\\int w\\,dF^{(n)}(w)\\xrightarrow{P}\\int w\\,dF(w)\\) when \\(\\mathbb E[Z]\\lt\\infty\\), the standard recipe is:",
+     o:["monotone convergence plus Fatou","uniform consistency on compacts plus a uniform-integrability tail bound","dominated convergence alone","the Borel–Cantelli lemma"],
+     a:1,
+     e:"Split \\(\\int_0^M+\\int_M^\\infty\\). KM uniform consistency handles the bulk; Mauro's inequality bounds the tail uniformly in \\(n\\). Send \\(n\\to\\infty\\) then \\(M\\to\\infty\\) (Problem 2.4) — the archetype for any empirical-measure integral."},
+    {t:"surv",d:"hard",
+     q:"Under right-censoring the empirical occupation \\(p^{(n)}_j(t)=\\tfrac1n\\sum_\\ell\\mathbf 1_{Z^\\ell_t=j}\\) fails. The correct fix is:",
+     o:["drop the censored subjects","impute each censored path's last observed state","Aalen–Johansen: estimate intensities, then the product integral \\(\\prod(\\mathrm{Id}+d\\hat A)\\)","replace it by the mean of \\(W\\)"],
+     a:2,
+     e:"Estimate transition intensities from what you observe (Nelson–Aalen increments), assemble the intensity matrix and form \\(\\hat P(0,t)=\\prod_{(0,t]}(\\mathrm{Id}+d\\hat A)\\). At-risk sets exclude censored subjects only after they leave, removing the bias (Problem 3.2)."},
+    {t:"emp",d:"hard",
+     q:"What makes an indicator class \\(\\{f_t\\}\\) \\(P\\)-Donsker, so that \\(\\sqrt n(\\mathbb P^{(n)}-\\mathbb P)\\) is tight?",
+     o:["the class is finite","the class is convex","a convergent bracketing entropy integral \\(\\int_0^1\\sqrt{\\log N_{[\\,]}(\\varepsilon)}\\,d\\varepsilon\\lt\\infty\\)","the pointwise LLN holds"],
+     a:2,
+     e:"The bracketing CLT (Thm 1.28–1.29): a finite bracketing integral gives tightness. For indicators \\(N_{[\\,]}\\lesssim\\varepsilon^{-2}\\), so the integral converges (Week 2, Ex 7). Finite-dimensional CLT + tightness = functional CLT."},
+    {t:"smooth",d:"medium",
+     q:"Using the AMSE-optimal bandwidth \\(\\hat h\\propto n^{-1/5}\\), kernel-regression AMSE decays like:",
+     o:["\\(n^{-1}\\)","\\(n^{-1/2}\\)","\\(n^{-2/5}\\)","\\(n^{-4/5}\\)"],
+     a:3,
+     e:"Back-substituting \\(\\hat h\\propto n^{-1/5}\\) gives \\(\\mathrm{AMSE}\\asymp n^{-4/5}\\), strictly slower than the parametric MLE rate \\(n^{-1}\\). That gap is the standing cost of assuming nothing about the shape (Week 4, Ex 2)."},
+    {t:"tail",d:"medium",
+     q:"Which one-way implication chain was proved in Week 5?",
+     o:["heavy \\(\\Rightarrow\\) long \\(\\Rightarrow\\) subexponential \\(\\Rightarrow\\) regularly varying","regularly varying \\(\\Rightarrow\\) subexponential \\(\\Rightarrow\\) long-tailed \\(\\Rightarrow\\) heavy-tailed","subexponential \\(\\Rightarrow\\) regularly varying \\(\\Rightarrow\\) heavy \\(\\Rightarrow\\) long","they are all equivalent"],
+     a:1,
+     e:"RV \\(\\Rightarrow\\) subexp (sum tail \\(\\sim2\\bar F\\)) \\(\\Rightarrow\\) long-tailed \\(\\Rightarrow\\) heavy-tailed (MGF diverges). Strict and one-directional (Week 5, Ex 1)."},
+    {t:"tail",d:"medium",
+     q:"For Burr \\(\\bar F(x)=(1+(x/\\theta)^\\eta)^{-\\beta}\\), the regular-variation (tail) index \\(1/\\gamma\\) is:",
+     o:["\\(\\beta\\)","\\(\\eta\\)","\\(\\beta\\eta\\)","\\(\\beta/\\eta\\)"],
+     a:2,
+     e:"\\(\\bar F(tx)/\\bar F(x)\\to t^{-\\beta\\eta}\\), so the tail index is \\(1/\\gamma=\\beta\\eta\\) and \\(\\gamma=1/(\\beta\\eta)\\) (Week 5, Ex 3)."},
+    {t:"tail",d:"hard",
+     q:"Breiman's lemma: \\(Z\\) regularly varying with index \\(1/\\gamma\\), \\(W\\ge0\\) independent with \\(\\mathbb E[W^{1/\\gamma+\\varepsilon}]\\lt\\infty\\). Then \\(P(ZW\\gt z)/P(Z\\gt z)\\to\\ ?\\)",
+     o:["\\(1\\)","\\(\\mathbb E[W]\\)","\\(\\mathbb E[W^{1/\\gamma}]\\)","\\(\\mathbb E[W^{1/\\gamma+\\varepsilon}]\\)"],
+     a:2,
+     e:"Dominated convergence, with the ratio dominated via Potter's bound, gives the limit \\(\\mathbb E[W^{1/\\gamma}]\\); hence \\(ZW\\) is regularly varying with the same index (Week 5, Ex 5)."}
+  ];
+
+  var pool=BANK.slice(), idx=0, answered=false, score=0, results=[];
+
+  function setProg(frac){ prog.style.width=Math.max(0,Math.min(1,frac))*100+"%"; }
+
+  function render(){
+    answered=false;
+    var Q=pool[idx];
+    setProg(idx/pool.length);
+    var dcls = Q.d==="core"?"core":(Q.d==="hard"?"hard":"");
+    var html='<div class="qz-meta">'
+      +'<span class="pill '+dcls+'">'+Q.d+'</span>'
+      +'<span class="pill">'+TOPICS[Q.t]+'</span>'
+      +'<span class="qz-count">Q '+(idx+1)+' / '+pool.length+'</span></div>'
+      +'<div class="qz-q">'+Q.q+'</div>'
+      +'<div class="qz-opts">';
+    var letters=["A","B","C","D"];
+    for(var i=0;i<Q.o.length;i++){
+      html+='<button class="qz-opt" data-i="'+i+'"><span class="lt">'+letters[i]+'</span><span class="ot">'+Q.o[i]+'</span></button>';
+    }
+    html+='</div><div class="qz-exp" id="qzExp"></div>'
+      +'<div class="qz-foot"><span class="qz-score">Score <b>'+score+'</b> / '+results.length+' answered</span>'
+      +'<button class="btn" id="qzNext" style="visibility:hidden">Next ›</button></div>';
+    body.innerHTML=html;
+    M(body);
+    var opts=body.querySelectorAll(".qz-opt");
+    for(var j=0;j<opts.length;j++){ opts[j].addEventListener("click",onPick); }
+    document.getElementById("qzNext").addEventListener("click",next);
+  }
+
+  function onPick(e){
+    if(answered)return; answered=true;
+    var Q=pool[idx], chosen=+this.getAttribute("data-i"), correct=Q.a;
+    var opts=body.querySelectorAll(".qz-opt");
+    for(var i=0;i<opts.length;i++){
+      opts[i].disabled=true;
+      var oi=+opts[i].getAttribute("data-i");
+      if(oi===correct) opts[i].classList.add("correct");
+      else if(oi===chosen) opts[i].classList.add("wrong");
+    }
+    var ok=(chosen===correct);
+    if(ok)score++;
+    results.push({t:Q.t,ok:ok});
+    var exp=document.getElementById("qzExp");
+    exp.className="qz-exp"+(ok?"":" miss");
+    exp.innerHTML='<span class="lbl">'+(ok?"Correct":"Not quite")+'</span>'+Q.e;
+    M(exp);
+    body.querySelector(".qz-score").innerHTML='Score <b>'+score+'</b> / '+results.length+' answered';
+    var nb=document.getElementById("qzNext");
+    nb.style.visibility="visible";
+    nb.textContent = (idx+1>=pool.length)?"See results ›":"Next ›";
+    setProg((idx+1)/pool.length);
+  }
+
+  function next(){
+    if(idx+1>=pool.length){ results_screen(); return; }
+    idx++; render();
+  }
+
+  function results_screen(){
+    setProg(1);
+    var byT={}; for(var k in TOPICS) byT[k]={c:0,n:0};
+    results.forEach(function(r){ byT[r.t].n++; if(r.ok)byT[r.t].c++; });
+    var pct=Math.round(100*score/Math.max(1,results.length));
+    var verdict = pct>=85?"Exam-ready. Trust these reflexes.":pct>=65?"Solid. Drill the misses below.":pct>=45?"Getting there — revisit the flagged areas.":"Rebuild from the playbook, then retry.";
+    var html='<div class="qz-result"><div class="big">'+score+' / '+results.length+'</div>'
+      +'<div class="sub">'+pct+'% · '+verdict+'</div><div class="qz-break">';
+    for(var t in TOPICS){ if(byT[t].n===0)continue;
+      var f=byT[t].c/byT[t].n;
+      html+='<div class="row"><span class="nm">'+TOPICS[t]+'</span>'
+        +'<span class="bar"><i style="width:'+Math.round(f*100)+'%"></i></span>'
+        +'<span class="fr">'+byT[t].c+'/'+byT[t].n+'</span></div>';
+    }
+    html+='</div></div><div class="qz-foot" style="justify-content:center;gap:12px">'
+      +'<button class="btn ghost" id="qzRestart">Restart</button>';
+    var missed=results.some(function(r){return !r.ok;});
+    if(missed) html+='<button class="btn" id="qzRetry">Retry missed only</button>';
+    html+='</div>';
+    body.innerHTML=html;
+    M(body);
+    document.getElementById("qzRestart").addEventListener("click",function(){ startFrom(currentFilter()); });
+    if(missed){
+      var missSet={}; results.forEach(function(r,i){ if(!r.ok)missSet[i]=1; });
+      var wrongQ=pool.filter(function(q,i){return missSet[i];});
+      document.getElementById("qzRetry").addEventListener("click",function(){ pool=wrongQ; idx=0;score=0;results=[]; render(); });
+    }
+  }
+
+  function currentFilter(){ var on=topicSeg.querySelector("button.on"); return on?on.getAttribute("data-t"):"all"; }
+  function startFrom(t){
+    pool = (t==="all")?BANK.slice():BANK.filter(function(q){return q.t===t;});
+    if(pool.length===0)pool=BANK.slice();
+    idx=0;score=0;results=[]; render();
+  }
+
+  topicSeg.addEventListener("click",function(e){
+    var b=e.target.closest("button"); if(!b)return;
+    var btns=topicSeg.querySelectorAll("button");
+    for(var i=0;i<btns.length;i++)btns[i].classList.remove("on");
+    b.classList.add("on");
+    startFrom(b.getAttribute("data-t"));
+  });
+
+  render();
+})();
+
+/* ================= HEAVY-TAIL RUNNING MEAN ================= */
+(function(){
+  var cv=document.getElementById("htCanvas"); if(!cv)return;
+  var alpha=1.6, N=600;
+  function draw(){
+    var s=setup(cv,300),ctx=s.ctx; ctx.clearRect(0,0,s.w,s.h);
+    var k=(alpha-1)/alpha; // sets Pareto mean to 1
+    var me=[],mp=[],se=0,sp=0,maxClaim=0,maxMean=2.2;
+    for(var n=1;n<=N;n++){
+      se+=rexp(1);
+      var pc=rpareto(alpha,k); sp+=pc; if(pc>maxClaim)maxClaim=pc;
+      me.push([n,se/n]); mp.push([n,sp/n]);
+      if(sp/n>maxMean)maxMean=sp/n;
+    }
+    var ymax=Math.min(Math.max(maxMean*1.1,2.2),6);
+    var P=Plot(ctx,s.w,s.h,[1,N],[0,ymax],{l:44,r:14,t:16,b:30});
+    P.axes("n (claims observed)","running mean",[150,300,450,600],[1,2,3,4,5]);
+    P.line([[1,1],[N,1]],"#CFCBBE",1.6,[5,4]);
+    P.line(me,"#0E787E",1.9);
+    P.line(mp,"#AE3A2C",1.9);
+    var vf = alpha>2 ? "finite" : "infinite";
+    var mf = alpha>1 ? "finite" : "infinite";
+    document.getElementById("htRead").innerHTML=
+      "Pareto \\(\\alpha="+alpha.toFixed(1)+"\\): mean <b>"+mf+"</b>, variance <b>"+vf+"</b>. "+
+      "Largest single claim this run: <b>"+maxClaim.toFixed(1)+"</b> (vs true mean 1). "+
+      "Exponential mean landed at <b>"+me[N-1][1].toFixed(2)+"</b>, Pareto at <b>"+mp[N-1][1].toFixed(2)+"</b>.";
+    if(window.renderMathInElement){ try{ renderMathInElement(document.getElementById("htRead"),{delimiters:[{left:"\\(",right:"\\)",display:false}],throwOnError:false}); }catch(e){} }
+  }
+  draw();
+  document.getElementById("htAlpha").oninput=function(e){alpha=+e.target.value; document.getElementById("htAlphaLbl").textContent=alpha.toFixed(1); draw();};
+  document.getElementById("htRun").onclick=draw;
+  window.addEventListener("resize",function(){clearTimeout(window._htr); window._htr=setTimeout(draw,200);});
+})();
+
+/* ================= NAV ================= */
+(function(){
+  var links=[].slice.call(document.querySelectorAll("#toc a"));
+  var map={}; links.forEach(function(a){var id=a.getAttribute("href").slice(1); map[id]=a;});
+  var obs=new IntersectionObserver(function(ents){
+    ents.forEach(function(en){ if(en.isIntersecting){ links.forEach(function(a){a.classList.remove("active");}); var a=map[en.target.id]; if(a)a.classList.add("active"); }});
+  },{rootMargin:"-20% 0px -70% 0px"});
+  document.querySelectorAll("section[id]").forEach(function(sec){obs.observe(sec);});
+  var side=document.getElementById("side"),tog=document.getElementById("mobToggle");
+  tog.onclick=function(){side.classList.toggle("open");};
+  links.forEach(function(a){a.addEventListener("click",function(){if(window.innerWidth<=920)side.classList.remove("open");});});
+})();
+
+/* KaTeX in nav labels etc */
+if(window.renderMathInElement){
+  renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:true},{left:"\\[",right:"\\]",display:true},{left:"\\(",right:"\\)",display:false}],throwOnError:false});
+}
+});
+</script>
+</body>
+</html>
