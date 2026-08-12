@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stochastic Calculus — Quiz Exam (Revamped Practice Set)</title>
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
+    svg: { fontCache: 'global' },
+    startup: { typeset: false }
+  };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js" id="MathJax-script" async></script>
+<style>
+  :root{
+    --ink:#14243a;          /* fountain-pen navy */
+    --ink-soft:#42597a;
+    --paper:#f5f2ea;        /* warm exam paper */
+    --paper-2:#fbf9f3;
+    --line:#dcd5c6;         /* graph rule */
+    --amber:#b06a1f;        /* marker accent */
+    --amber-soft:#e0a94f;
+    --good:#1e7148;
+    --good-bg:#e2efe6;
+    --bad:#a83a34;
+    --bad-bg:#f4e2df;
+    --shadow:0 1px 0 rgba(20,36,58,.05), 0 14px 34px -20px rgba(20,36,58,.4);
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; color:var(--ink); background:var(--paper);
+    font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+    line-height:1.55;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size:26px 26px; background-position:-1px -1px;
+  }
+  .wrap{max-width:900px;margin:0 auto;padding:0 18px 90px}
+  a{color:var(--amber)}
+
+  header{position:relative;margin:0 -18px 24px;padding:30px 18px 24px;
+    background:var(--ink);color:var(--paper);overflow:hidden;border-bottom:3px solid var(--amber)}
+  header svg{position:absolute;inset:0;width:100%;height:100%;opacity:.42}
+  header .h-inner{position:relative;max-width:900px;margin:0 auto}
+  .eyebrow{font-family:ui-monospace,Menlo,Consolas,monospace;
+    letter-spacing:.28em;text-transform:uppercase;font-size:11px;color:var(--amber-soft);margin:0 0 8px}
+  header h1{margin:0;font-size:clamp(23px,4.6vw,36px);font-weight:600;letter-spacing:.2px;line-height:1.08}
+  header p.sub{margin:10px 0 0;color:#cbd5e2;font-size:14.5px;max-width:64ch}
+
+  .statusbar{display:flex;flex-wrap:wrap;gap:14px 22px;align-items:center;
+    background:var(--paper-2);border:1px solid var(--line);border-radius:10px;
+    padding:12px 16px;margin-bottom:18px;box-shadow:var(--shadow)}
+  .stat{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;color:var(--ink-soft)}
+  .stat b{color:var(--ink);font-size:15px}
+  .stat .good{color:var(--good)} .stat .bad{color:var(--bad)}
+  .progress-track{flex:1 1 150px;height:8px;background:#e7e0d2;border-radius:99px;overflow:hidden;min-width:110px}
+  .progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--amber),var(--amber-soft));transition:width .35s ease}
+  .btn{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;letter-spacing:.04em;
+    cursor:pointer;border:1px solid var(--ink);background:transparent;color:var(--ink);
+    padding:7px 12px;border-radius:8px;transition:background .15s,color .15s}
+  .btn:hover{background:var(--ink);color:var(--paper)}
+  .btn:focus-visible{outline:3px solid var(--amber-soft);outline-offset:2px}
+
+  /* reference sheet */
+  .sheet{border:1px solid var(--line);border-radius:12px;background:var(--paper-2);
+    box-shadow:var(--shadow);margin-bottom:22px;overflow:hidden}
+  .sheet-head{display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none;
+    padding:13px 18px;background:var(--ink);color:var(--paper);border-bottom:3px solid var(--amber)}
+  .sheet-head h2{margin:0;font-size:15px;font-weight:600;flex:1}
+  .sheet-head .sub{font-family:ui-monospace,monospace;font-size:10px;letter-spacing:.13em;
+    text-transform:uppercase;color:var(--amber-soft)}
+  .sheet-head .chev{transition:transform .3s;font-size:13px;color:var(--amber-soft)}
+  .sheet.closed .chev{transform:rotate(-90deg)}
+  .sheet-body{max-height:5000px;overflow:hidden;transition:max-height .5s ease}
+  .sheet.closed .sheet-body{max-height:0}
+  .sheet-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(258px,1fr));gap:15px;padding:18px}
+  .ref{border:1px solid var(--line);border-radius:10px;background:#fff;padding:13px 15px}
+  .ref h3{margin:0 0 6px;font-size:12.5px;font-family:ui-monospace,monospace;
+    letter-spacing:.05em;text-transform:uppercase;color:var(--amber)}
+  .ref p{margin:6px 0;font-size:13.5px;line-height:1.5}
+  .ref mjx-container{overflow-x:auto;max-width:100%}
+
+  .card{background:var(--paper-2);border:1px solid var(--line);border-radius:12px;
+    box-shadow:var(--shadow);overflow:hidden;margin-bottom:16px}
+  .card-top{display:flex;justify-content:space-between;align-items:center;gap:10px;
+    padding:11px 18px;background:var(--ink);color:var(--paper)}
+  .qtag{font-family:ui-monospace,monospace;font-size:12px;letter-spacing:.05em;display:flex;align-items:center}
+  .qtag .num{background:var(--amber);color:#fff;padding:2px 9px;border-radius:6px;margin-right:11px;font-weight:700}
+  .topic{font-family:ui-monospace,monospace;font-size:10.5px;color:#d8c49b;
+    text-transform:uppercase;letter-spacing:.11em;text-align:right}
+  .qmain{padding:20px 20px 6px}
+  .prompt{font-size:18px;margin:0 0 6px;overflow-x:auto}
+  .note{font-size:12.5px;color:var(--ink-soft);margin:0 0 16px;padding:9px 12px;
+    background:#fdfcf8;border:1px dashed var(--line);border-radius:8px;overflow-x:auto}
+
+  .opts{list-style:none;margin:0;padding:0 20px;display:flex;flex-direction:column;gap:9px}
+  .opt{display:flex;align-items:center;gap:12px;padding:11px 14px;border:1px solid var(--line);
+    border-radius:9px;background:#fff;cursor:pointer;transition:border-color .12s,background .12s,box-shadow .12s}
+  .opt:hover{border-color:var(--amber);box-shadow:0 2px 10px -6px rgba(176,106,31,.6)}
+  .opt.sel{border-color:var(--ink);background:#fbf7ee}
+  .opt .mark{flex:0 0 26px;height:26px;border-radius:50%;border:2px solid var(--ink-soft);
+    display:grid;place-items:center;font-family:ui-monospace,monospace;font-size:12px;color:var(--ink-soft)}
+  .opt.sel .mark{background:var(--ink);border-color:var(--ink);color:#fff}
+  .opt .txt{flex:1;min-width:0;overflow-x:auto}
+  .locked .opt{cursor:default}
+  .locked .opt:hover{border-color:var(--line);box-shadow:none}
+  .opt.correct{border-color:var(--good);background:var(--good-bg)}
+  .opt.correct .mark{background:var(--good);border-color:var(--good);color:#fff}
+  .opt.wrong{border-color:var(--bad);background:var(--bad-bg)}
+  .opt.wrong .mark{background:var(--bad);border-color:var(--bad);color:#fff}
+  .opt.correct:hover,.opt.wrong:hover{box-shadow:none}
+
+  .actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:16px 20px 4px}
+  .check{background:var(--amber);border-color:var(--amber);color:#fff}
+  .check:hover{background:#8f5417;border-color:#8f5417;color:#fff}
+  .check:disabled{opacity:.45;cursor:not-allowed}
+  .hint{font-size:13px;color:var(--ink-soft);font-family:ui-monospace,monospace}
+
+  .sol{margin:0;border-top:1px solid var(--line);background:#fcfaf3;max-height:0;overflow:hidden;transition:max-height .4s ease}
+  .sol.open{max-height:5000px}
+  .sol-inner{padding:18px 22px 22px}
+  .sol h3{margin:0 0 4px;font-size:13px;font-family:ui-monospace,monospace;
+    letter-spacing:.08em;text-transform:uppercase;color:var(--amber)}
+  .sol p{margin:9px 0;font-size:15px}
+  mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;max-width:100%;padding:2px 0 6px}
+  .sol .final{background:var(--ink);color:var(--paper);padding:9px 14px;border-radius:8px;
+    display:inline-block;margin-top:6px;font-size:15px}
+  .sol .final .lbl{color:var(--amber-soft);font-family:ui-monospace,monospace;font-size:11px;
+    letter-spacing:.1em;text-transform:uppercase;margin-right:10px}
+
+  .nav{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:16px}
+  .nav .btn{padding:9px 16px}
+  .qgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(36px,1fr));gap:7px;
+    margin-top:14px;padding:16px;border:1px solid var(--line);border-radius:10px;background:var(--paper-2)}
+  .qgrid button{aspect-ratio:1;border:1px solid var(--line);border-radius:7px;background:#fff;
+    font-family:ui-monospace,monospace;font-size:11.5px;color:var(--ink-soft);cursor:pointer}
+  .qgrid button:hover{border-color:var(--amber)}
+  .qgrid button.cur{outline:2px solid var(--ink);outline-offset:1px}
+  .qgrid button.ok{background:var(--good-bg);border-color:var(--good);color:var(--good)}
+  .qgrid button.no{background:var(--bad-bg);border-color:var(--bad);color:var(--bad)}
+  .hidden{display:none}
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--ink-soft);font-family:ui-monospace,monospace}
+
+  @media (max-width:640px){ .topic{display:none} }
+  @media (prefers-reduced-motion:reduce){ *{transition:none!important;animation:none!important} }
+</style>
+</head>
+<body>
+<header>
+  <svg id="bmPath" preserveAspectRatio="none" viewBox="0 0 1200 200" aria-hidden="true"></svg>
+  <div class="h-inner">
+    <p class="eyebrow">Mathematical Finance &amp; Stochastic Processes · Continuous time</p>
+    <h1>Quiz Exam — Revamped Practice Set</h1>
+    <p class="sub">A fresh bank of multiple-choice questions across Brownian motion, conditioning, Itô calculus, quadratic variation and the bracket process, semimartingales, stopping times, finite variation, and the H²/L²(M) integration spaces. Five options each, one correct, no negative marking. Pick an answer and check it to reveal a full worked solution.</p>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="statusbar" role="status">
+    <span class="stat">Question <b id="curNum">1</b> / <span id="totNum">0</span></span>
+    <span class="stat">Score <b id="score">0</b> <span id="scoreOf">/ 0 answered</span></span>
+    <span class="stat">Correct <b class="good" id="nGood">0</b> · Wrong <b class="bad" id="nBad">0</b></span>
+    <div class="progress-track"><div class="progress-fill" id="prog"></div></div>
+    <button class="btn" id="resetBtn">Reset all</button>
+  </div>
+
+  <!-- reference sheet -->
+  <section class="sheet" id="sheet">
+    <div class="sheet-head" id="sheetHead" role="button" tabindex="0" aria-expanded="true">
+      <span style="font-size:18px">📐</span>
+      <h2>Formula reference</h2>
+      <span class="sub">Everything the questions lean on</span>
+      <span class="chev" id="sheetChev">▾</span>
+    </div>
+    <div class="sheet-body" id="sheetBody">
+      <div class="sheet-grid">
+        <div class="ref">
+          <h3>Gaussian structure</h3>
+          <p>\(B_t\sim N(0,t)\), \(\operatorname{cov}(B_s,B_t)=s\wedge t\).</p>
+          <p>Scaling \(B_{cs}\overset{d}{=}\sqrt{c}\,B_s\); increments over disjoint intervals are independent, so their covariance is the <b>overlap length</b>.</p>
+          <p>Moments: \(E[B_t^{2n}]=(2n-1)!!\,t^{n}\) — so \(E[B_t^2]=t,\ E[B_t^4]=3t^2,\ E[B_t^6]=15t^3\); odd moments \(=0\).</p>
+        </div>
+        <div class="ref">
+          <h3>Conditioning</h3>
+          <p>Split \(B_t=B_s+\Delta\), \(\Delta\sim N(0,t-s)\perp\mathcal F_s\).</p>
+          <p>\(E[B_t\mid\mathcal F_s]=B_s\), \(E[B_t^2\mid\mathcal F_s]=B_s^2+(t-s)\).</p>
+          <p>Backward: \(E[B_s\mid B_t]=\tfrac st B_t\), \(\operatorname{var}(B_s\mid B_t)=\tfrac{s(t-s)}{t}\).</p>
+        </div>
+        <div class="ref">
+          <h3>Itô integral</h3>
+          <p><b>Isometry:</b> \(E\big[(\int_0^tH\,dB)^2\big]=\int_0^tE[H_s^2]\,ds\).</p>
+          <p><b>Polarisation:</b> \(E\big[\int H\,dB\int K\,dB\big]=\int_0^tE[H_sK_s]\,ds\).</p>
+          <p>Deterministic \(f\): \(\int_0^t f\,dB\sim N\!\big(0,\int_0^tf^2\big)\) (Wiener integral, Gaussian).</p>
+        </div>
+        <div class="ref">
+          <h3>Itô formula</h3>
+          <p>\(df(B_t)=f'(B_t)\,dB_t+\tfrac12 f''(B_t)\,dt\).</p>
+          <p>\(\int_0^t B\,dB=\tfrac12(B_t^2-t)\); \(d(X_tY_t)=X\,dY+Y\,dX+d\langle X,Y\rangle\).</p>
+          <p>Exp. martingale \(e^{\theta B_t-\theta^2t/2}\); for \(X=B+\mu t\) it is a martingale when \(\theta=-2\mu\).</p>
+        </div>
+        <div class="ref">
+          <h3>Quadratic variation &amp; bracket</h3>
+          <p>\(\langle B,B\rangle_t=t\); \(\langle\int H\,dB\rangle_t=\int_0^tH_s^2\,ds\); \(\langle\int H\,dB,\int K\,dB\rangle_t=\int_0^tH_sK_s\,ds\).</p>
+          <p>Finite variation \(A\): \(\langle A,A\rangle=0\), \(\langle A,M\rangle=0\). Independent BMs: \(\langle B^{(1)},B^{(2)}\rangle=0\).</p>
+          <p>Semimartingale \(X=M+A\): \(\langle X,X\rangle=\langle M,M\rangle\).</p>
+        </div>
+        <div class="ref">
+          <h3>Stopping &amp; paths</h3>
+          <p>\(T\) stopping time: \(\{T\le t\}\in\mathcal F_t\). Two-valued \(a\mathbf1_A+b\mathbf1_{A^c}\) with \(A\in\mathcal F_u\): need \(u\le\min(a,b)\).</p>
+          <p>Reflection: \(P(\max_{s\le t}B_s\ge a)=2P(B_t\ge a)\). Gambler's ruin (barriers \(-a,b\)): \(P(\text{hit }b\text{ first})=\tfrac{a}{a+b}\).</p>
+          <p>Brownian paths: infinite variation, nowhere differentiable; QV over \([0,t]\) equals \(t\).</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="cardMount"></div>
+
+  <div class="nav">
+    <button class="btn" id="prevBtn">◀ Previous</button>
+    <button class="btn" id="overviewBtn">Question overview</button>
+    <button class="btn" id="nextBtn">Next ▶</button>
+  </div>
+  <div class="qgrid hidden" id="qgrid"></div>
+
+  <footer>Revamped study set · new questions, answers &amp; worked solutions · good luck.</footer>
+</div>
+
+<script>
+const DEF = String.raw`Let \(B=(B_t)_{t\ge0}\) be a standard Brownian motion and \((\mathcal F_t)\) its completed canonical filtration. \(s\wedge t=\min(s,t)\).`;
+
+const Q = [
+/* ============ 1 · GAUSSIAN STRUCTURE & MOMENTS ============ */
+{ topic:"Covariance", 
+  q:String.raw`Determine \(\operatorname{cov}(B_3,B_5)\).`,
+  opts:[String.raw`\(3\)`,String.raw`\(5\)`,String.raw`\(8\)`,String.raw`\(4\)`,String.raw`\(15\)`], correct:0,
+  sol:String.raw`<p>For a Brownian motion the covariance is the minimum of the two times:</p>
+  \[\operatorname{cov}(B_s,B_t)=s\wedge t\ \Rightarrow\ \operatorname{cov}(B_3,B_5)=3\wedge5=3.\]` },
+
+{ topic:"Moment table",
+  q:String.raw`Determine \(E[B_t^6]\).`,
+  opts:[String.raw`\(15t^3\)`,String.raw`\(6t^3\)`,String.raw`\(3t^3\)`,String.raw`\(15t^2\)`,String.raw`\(t^6\)`], correct:0,
+  sol:String.raw`<p>\(B_t\sim N(0,t)\), and for a centred Gaussian \(E[B_t^{2n}]=(2n-1)!!\,t^{n}\). With \(n=3\), the double factorial is \(5!!=5\cdot3\cdot1=15\):</p>
+  \[E[B_t^6]=15\,t^3.\]` },
+
+{ topic:"Independent increments",
+  q:String.raw`Determine \(\operatorname{cov}(B_2,\,B_5-B_2)\).`,
+  opts:[String.raw`\(0\)`,String.raw`\(2\)`,String.raw`\(3\)`,String.raw`\(5\)`,String.raw`\(-2\)`], correct:0,
+  sol:String.raw`<p>\(B_2=B_2-B_0\) and \(B_5-B_2\) are increments over the disjoint intervals \((0,2]\) and \((2,5]\), hence independent, so their covariance is \(0\). Directly:</p>
+  \[\operatorname{cov}(B_2,B_5-B_2)=\operatorname{cov}(B_2,B_5)-\operatorname{cov}(B_2,B_2)=2-2=0.\]` },
+
+{ topic:"Covariance of increments",
+  q:String.raw`Determine \(\operatorname{cov}(B_5-B_1,\,B_4-B_2)\).`,
+  opts:[String.raw`\(2\)`,String.raw`\(3\)`,String.raw`\(4\)`,String.raw`\(0\)`,String.raw`\(1\)`], correct:0,
+  sol:String.raw`<p>The covariance of two increments equals the length of the <b>overlap</b> of their time intervals. Here \((1,5]\cap(2,4]=(2,4]\), of length \(2\):</p>
+  \[\operatorname{cov}(B_5-B_1,B_4-B_2)=|(2,4]|=2.\]` },
+
+{ topic:"Scaling",
+  q:String.raw`Which random variable has the same distribution as \(B_4\)?`,
+  opts:[String.raw`\(2B_1\)`,String.raw`\(4B_1\)`,String.raw`\(\sqrt2\,B_1\)`,String.raw`\(\tfrac12 B_1\)`,String.raw`\(16B_1\)`], correct:0,
+  sol:String.raw`<p>Brownian scaling: \(B_{cs}\overset{d}{=}\sqrt c\,B_s\). With \(c=4,\,s=1\):</p>
+  \[B_4\overset{d}{=}\sqrt4\,B_1=2B_1.\]
+  <p>Check the variance: \(\operatorname{var}(2B_1)=4=\operatorname{var}(B_4)\). ✓</p>` },
+
+{ topic:"Add & subtract",
+  q:String.raw`Determine \(E[B_1^2\,B_3^2]\).`,
+  opts:[String.raw`\(5\)`,String.raw`\(3\)`,String.raw`\(9\)`,String.raw`\(6\)`,String.raw`\(11\)`], correct:0,
+  sol:String.raw`<p>Write \(B_3=B_1+\Delta\), \(\Delta=B_3-B_1\sim N(0,2)\perp\mathcal F_1\). Then \(B_3^2=\Delta^2+2\Delta B_1+B_1^2\), so</p>
+  \[E[B_1^2B_3^2]=E[B_1^2]E[\Delta^2]+0+E[B_1^4]=1\cdot2+3\cdot1^2=5.\]
+  <p>In general \(E[B_s^2B_t^2]=s(t-s)+3s^2\); here \(s=1,\,t=3\).</p>` },
+
+{ topic:"Symmetry",
+  q:String.raw`Exactly one of the following is non-zero. Which one?`,
+  opts:[String.raw`\(E[B_1^3]\)`,String.raw`\(E[B_1B_2^2]\)`,String.raw`\(E[B_1^2B_2^2]\)`,String.raw`\(E[B_2^3]\)`,String.raw`\(E[B_1B_2B_3]\)`], correct:2,
+  sol:String.raw`<p>As a process \(B\overset{d}{=}-B\), so any monomial of <b>odd total degree</b> has zero expectation. Total degrees: \(3,3,\mathbf 4,3,3\). Only \(E[B_1^2B_2^2]\) has even total degree, and equals \(1\cdot(2-1)+3\cdot1^2=4\neq0\).</p>` },
+
+/* ============ 2 · CONDITIONING & MARTINGALE PROPERTY ============ */
+{ topic:"Tower / projection",
+  q:String.raw`For \(0\le s<t\), determine \(E[B_t\mid\mathcal F_s]\).`,
+  opts:[String.raw`\(B_s\)`,String.raw`\(0\)`,String.raw`\(B_t\)`,String.raw`\(\tfrac st B_t\)`,String.raw`\(B_s+(t-s)\)`], correct:0,
+  sol:String.raw`<p>Split \(B_t=B_s+(B_t-B_s)\); the increment is mean-zero and independent of \(\mathcal F_s\):</p>
+  \[E[B_t\mid\mathcal F_s]=B_s+E[B_t-B_s]=B_s.\]
+  <p>This is exactly the martingale property of \(B\).</p>` },
+
+{ topic:"Conditional second moment",
+  q:String.raw`For \(0\le s<t\), determine \(E[B_t^2\mid\mathcal F_s]\).`,
+  opts:[String.raw`\(B_s^2+(t-s)\)`,String.raw`\(B_s^2\)`,String.raw`\(t\)`,String.raw`\(B_s^2+t\)`,String.raw`\(B_s^2-(t-s)\)`], correct:0,
+  sol:String.raw`<p>With \(\Delta=B_t-B_s\sim N(0,t-s)\perp\mathcal F_s\):</p>
+  \[E[(B_s+\Delta)^2\mid\mathcal F_s]=B_s^2+2B_sE[\Delta]+E[\Delta^2]=B_s^2+(t-s).\]
+  <p>(Consistent with \(B_t^2-t\) being a martingale.)</p>` },
+
+{ topic:"Conditional third moment",
+  q:String.raw`For \(0\le s<t\), determine \(E[B_t^3\mid\mathcal F_s]\).`,
+  opts:[String.raw`\(B_s^3+3(t-s)B_s\)`,String.raw`\(B_s^3\)`,String.raw`\(B_s^3+3tB_s\)`,String.raw`\(B_s^3-3(t-s)B_s\)`,String.raw`\(3(t-s)B_s\)`], correct:0,
+  sol:String.raw`<p>Expand \((B_s+\Delta)^3\), \(\Delta\perp\mathcal F_s\), \(E[\Delta]=E[\Delta^3]=0\), \(E[\Delta^2]=t-s\):</p>
+  \[E[B_t^3\mid\mathcal F_s]=B_s^3+3B_s^2\underbrace{E[\Delta]}_{0}+3B_s\underbrace{E[\Delta^2]}_{t-s}+\underbrace{E[\Delta^3]}_{0}=B_s^3+3(t-s)B_s.\]
+  <p>Since this is \(\neq B_s^3\), the process \(B_t^3\) is <b>not</b> a martingale.</p>` },
+
+{ topic:"Backward projection",
+  q:String.raw`Determine \(E[B_2\mid B_6]\).`,
+  opts:[String.raw`\(\tfrac13 B_6\)`,String.raw`\(3B_6\)`,String.raw`\(\tfrac12 B_6\)`,String.raw`\(B_6\)`,String.raw`\(0\)`], correct:0,
+  sol:String.raw`<p>For a Gaussian pair, \(E[B_s\mid B_t]=\dfrac{\operatorname{cov}(B_s,B_t)}{\operatorname{var}(B_t)}B_t=\dfrac{s}{t}B_t\). With \(s=2,\,t=6\):</p>
+  \[E[B_2\mid B_6]=\tfrac26 B_6=\tfrac13 B_6.\]` },
+
+{ topic:"Bridge variance",
+  q:String.raw`For \(0<s<t\), determine \(\operatorname{var}(B_s\mid B_t)\).`,
+  opts:[String.raw`\(\dfrac{s(t-s)}{t}\)`,String.raw`\(s(t-s)\)`,String.raw`\(t-s\)`,String.raw`\(\dfrac{s^2}{t}\)`,String.raw`\(st\)`], correct:0,
+  sol:String.raw`<p>Gaussian conditioning: \(\operatorname{var}(B_s\mid B_t)=\operatorname{var}(B_s)-\dfrac{\operatorname{cov}(B_s,B_t)^2}{\operatorname{var}(B_t)}=s-\dfrac{s^2}{t}=\dfrac{s(t-s)}{t}.\)</p>` },
+
+{ topic:"Increment variance",
+  q:String.raw`For \(0\le s<t\), determine \(E\big[(B_t-B_s)^2\mid\mathcal F_s\big]\).`,
+  opts:[String.raw`\(t-s\)`,String.raw`\((t-s)^2\)`,String.raw`\(B_s^2+(t-s)\)`,String.raw`\(t\)`,String.raw`\(0\)`], correct:0,
+  sol:String.raw`<p>The increment \(B_t-B_s\sim N(0,t-s)\) is independent of \(\mathcal F_s\), so the conditioning drops out:</p>
+  \[E[(B_t-B_s)^2\mid\mathcal F_s]=E[(B_t-B_s)^2]=t-s.\]` },
+
+/* ============ 3 · ITÔ ISOMETRY & WIENER INTEGRALS ============ */
+{ topic:"Itô isometry",
+  q:String.raw`Determine \(\displaystyle E\!\left[\left(\int_0^t s\,dB_s\right)^{2}\right].\)`,
+  opts:[String.raw`\(\dfrac{t^3}{3}\)`,String.raw`\(\dfrac{t^2}{2}\)`,String.raw`\(t^3\)`,String.raw`\(\dfrac{t^4}{4}\)`,String.raw`\(\dfrac{t^2}{3}\)`], correct:0,
+  sol:String.raw`<p>The integrand \(H_s=s\) is deterministic. Itô isometry replaces the squared integral by the integral of the squared integrand:</p>
+  \[E\!\left[\left(\int_0^t s\,dB_s\right)^2\right]=\int_0^t s^2\,ds=\frac{t^3}{3}.\]` },
+
+{ topic:"Wiener integral is Gaussian",
+  q:String.raw`The random variable \(\displaystyle\int_0^t e^{s}\,dB_s\) has which distribution?`,
+  opts:[String.raw`\(N\!\big(0,\tfrac{e^{2t}-1}{2}\big)\)`,String.raw`\(N\!\big(0,e^{2t}-1\big)\)`,String.raw`\(N\!\big(e^t-1,\,t\big)\)`,String.raw`lognormal`,String.raw`not Gaussian`], correct:0,
+  sol:String.raw`<p>An Itô integral of a <b>deterministic</b> function is a centred Gaussian, with variance given by the isometry:</p>
+  \[\int_0^t e^{s}\,dB_s\sim N\!\Big(0,\ \int_0^t e^{2s}\,ds\Big),\qquad \int_0^t e^{2s}\,ds=\frac{e^{2t}-1}{2}.\]` },
+
+{ topic:"Polarisation",
+  q:String.raw`Determine \(\displaystyle \operatorname{cov}\!\left(\int_0^t dB_s,\ \int_0^t s\,dB_s\right).\)`,
+  opts:[String.raw`\(\dfrac{t^2}{2}\)`,String.raw`\(\dfrac{t^3}{3}\)`,String.raw`\(t\)`,String.raw`\(0\)`,String.raw`\(t^2\)`], correct:0,
+  sol:String.raw`<p>Both integrals have mean zero, so the covariance is the polarised isometry:</p>
+  \[E\!\left[\int_0^t 1\,dB\int_0^t s\,dB\right]=\int_0^t 1\cdot s\,ds=\frac{t^2}{2}.\]
+  <p>(Note the first integral is just \(B_t\), so this is \(\operatorname{cov}(B_t,\int_0^t s\,dB_s)\).)</p>` },
+
+{ topic:"Indicator integrand",
+  q:String.raw`Determine \(\displaystyle E\!\left[\left(\int_0^1 \mathbf 1_{\{B_t\ge0\}}\,dB_t\right)^{2}\right].\)`,
+  opts:[String.raw`\(\dfrac12\)`,String.raw`\(1\)`,String.raw`\(\dfrac14\)`,String.raw`\(\dfrac32\)`,String.raw`\(0\)`], correct:0,
+  sol:String.raw`<p>Even though the integrand is random, the isometry still applies (the indicator squares to itself):</p>
+  \[\int_0^1 E\big[\mathbf 1_{\{B_t\ge0\}}^2\big]\,dt=\int_0^1 P(B_t\ge0)\,dt=\int_0^1\tfrac12\,dt=\frac12.\]` },
+
+{ topic:"Merge into one integral",
+  q:String.raw`Determine \(\displaystyle E\!\left[\left(2B_t+\int_0^t B_s\,dB_s\right)^{2}\right].\)`,
+  opts:[String.raw`\(4t+\dfrac{t^2}{2}\)`,String.raw`\(t+\dfrac{t^2}{2}\)`,String.raw`\(4t+t^2\)`,String.raw`\(2t+\dfrac{t^2}{2}\)`,String.raw`\(4t^2+\dfrac t2\)`], correct:0,
+  sol:String.raw`<p>Write \(2B_t=\int_0^t 2\,dB_s\) and merge the two Itô integrals, then apply the isometry:</p>
+  \[E\!\left[\left(\int_0^t(2+B_s)\,dB_s\right)^2\right]=\int_0^t E[(2+B_s)^2]\,ds=\int_0^t(4+s)\,ds=4t+\frac{t^2}{2}.\]` },
+
+{ topic:"Nested integral",
+  q:String.raw`Let \(\displaystyle X_t=\int_0^t e^{s}\,dB_s\). Determine \(\displaystyle E\!\left[\left(\int_0^t X_s\,dB_s\right)^{2}\right].\)`,
+  opts:[String.raw`\(\dfrac14(e^{2t}-1)-\dfrac t2\)`,String.raw`\(\dfrac14(e^{t}-1)\)`,String.raw`\(\dfrac14(e^{t}-1)-\dfrac t2\)`,String.raw`\(\dfrac14(e^{2t}-1)-t\)`,String.raw`\(\dfrac14(e^{t}-1)-t\)`], correct:0,
+  sol:String.raw`<p>By the isometry with random integrand \(X_s\): \(E[(\int_0^t X\,dB)^2]=\int_0^t E[X_s^2]\,ds\). And \(E[X_s^2]=\int_0^s e^{2u}\,du=\tfrac{e^{2s}-1}{2}\). Therefore</p>
+  \[\int_0^t\frac{e^{2s}-1}{2}\,ds=\frac12\Big[\frac{e^{2s}}{2}-s\Big]_0^t=\frac{e^{2t}-1}{4}-\frac t2.\]` },
+
+{ topic:"Watch the integrator",
+  q:String.raw`Determine \(\displaystyle \operatorname{var}\!\left(\int_0^t B_s\,ds\right).\) <em>(Note: this is a time integral, not \(dB\).)</em>`,
+  opts:[String.raw`\(\dfrac{t^3}{3}\)`,String.raw`\(\dfrac{t^3}{6}\)`,String.raw`\(\dfrac{t^2}{2}\)`,String.raw`\(t^3\)`,String.raw`\(\dfrac{t^2}{3}\)`], correct:0,
+  sol:String.raw`<p>The isometry is for \(dB\) integrals; here the integrator is \(ds\), so integrate the covariance kernel directly:</p>
+  \[\operatorname{var}\!\Big(\int_0^t B_s\,ds\Big)=\int_0^t\!\!\int_0^t E[B_uB_v]\,du\,dv=\int_0^t\!\!\int_0^t (u\wedge v)\,du\,dv=\frac{t^3}{3}.\]
+  <p><b>Trap:</b> it happens to equal \(\int_0^t s^2\,ds\) too, but the reasoning is different — don't apply Itô isometry to a \(ds\) integral.</p>` },
+
+/* ============ 4 · ITÔ FORMULA & INTEGRATION BY PARTS ============ */
+{ topic:"Itô formula",
+  q:String.raw`Determine the stochastic differential \(d(B_t^3)\).`,
+  opts:[String.raw`\(3B_t^2\,dB_t+3B_t\,dt\)`,String.raw`\(3B_t^2\,dB_t\)`,String.raw`\(3B_t^2\,dB_t+3\,dt\)`,String.raw`\(3B_t^2\,dB_t+\tfrac32 B_t\,dt\)`,String.raw`\(B_t^3\,dB_t\)`], correct:0,
+  sol:String.raw`<p>Itô: \(df(B_t)=f'(B_t)\,dB_t+\tfrac12 f''(B_t)\,dt\). With \(f(x)=x^3\), \(f'=3x^2\), \(f''=6x\):</p>
+  \[d(B_t^3)=3B_t^2\,dB_t+\tfrac12(6B_t)\,dt=3B_t^2\,dB_t+3B_t\,dt.\]` },
+
+{ topic:"Closed form of ∫B dB",
+  q:String.raw`Evaluate \(\displaystyle\int_0^t B_s\,dB_s\).`,
+  opts:[String.raw`\(\tfrac12 B_t^2-\tfrac12 t\)`,String.raw`\(\tfrac12 B_t^2\)`,String.raw`\(\tfrac12 B_t^2+\tfrac12 t\)`,String.raw`\(B_t^2-t\)`,String.raw`\(\tfrac12(B_t^2-t^2)\)`], correct:0,
+  sol:String.raw`<p>From \(d(B_t^2)=2B_t\,dB_t+dt\), integrate: \(B_t^2=2\int_0^t B\,dB+t\). Solve:</p>
+  \[\int_0^t B_s\,dB_s=\tfrac12\big(B_t^2-t\big).\]
+  <p>The \(-\tfrac12 t\) is the Itô correction — it is what makes this a martingale (mean \(0\)).</p>` },
+
+{ topic:"Itô formula",
+  q:String.raw`Determine the stochastic differential \(d(e^{B_t})\).`,
+  opts:[String.raw`\(e^{B_t}\,dB_t+\tfrac12 e^{B_t}\,dt\)`,String.raw`\(e^{B_t}\,dB_t\)`,String.raw`\(e^{B_t}\,dB_t-\tfrac12 e^{B_t}\,dt\)`,String.raw`\(e^{B_t}\,dB_t+e^{B_t}\,dt\)`,String.raw`\(\tfrac12 e^{B_t}\,dt\)`], correct:0,
+  sol:String.raw`<p>With \(f(x)=e^x\), \(f'=f''=e^x\):</p>
+  \[d(e^{B_t})=e^{B_t}\,dB_t+\tfrac12 e^{B_t}\,dt.\]
+  <p>The drift term is why \(e^{B_t}\) is a strict submartingale — it needs a correction to become a martingale (next question).</p>` },
+
+{ topic:"Match the drift",
+  q:String.raw`Which of the following is a martingale?`,
+  opts:[String.raw`\(e^{B_t-t/2}\)`,String.raw`\(e^{B_t}\)`,String.raw`\(e^{B_t-t}\)`,String.raw`\(e^{B_t+t/2}\)`,String.raw`\(e^{2B_t-t}\)`], correct:0,
+  sol:String.raw`<p>The exponential martingale is \(e^{\theta B_t-\theta^2t/2}\). Taking \(\theta=1\) gives \(e^{B_t-t/2}\). Equivalently, Itô gives \(d(e^{B_t-t/2})=e^{B_t-t/2}\,dB_t\) — pure martingale, no drift.</p>` },
+
+{ topic:"Integration by parts",
+  q:String.raw`Evaluate \(\displaystyle\int_0^t s\,dB_s\).`,
+  opts:[String.raw`\(tB_t-\displaystyle\int_0^t B_s\,ds\)`,String.raw`\(\displaystyle\int_0^t B_s\,ds\)`,String.raw`\(tB_t\)`,String.raw`\(tB_t+\displaystyle\int_0^t B_s\,ds\)`,String.raw`\(\tfrac12 tB_t\)`], correct:0,
+  sol:String.raw`<p>Take \(X_s=s\) (finite variation) and \(Y_s=B_s\). Since \(\langle s,B\rangle\equiv0\), integration by parts \(d(sB_s)=s\,dB_s+B_s\,ds\) gives, after integrating from \(0\) to \(t\):</p>
+  \[tB_t=\int_0^t s\,dB_s+\int_0^t B_s\,ds\ \Rightarrow\ \int_0^t s\,dB_s=tB_t-\int_0^t B_s\,ds.\]` },
+
+/* ============ 5 · QUADRATIC VARIATION, BRACKET, SEMIMARTINGALE ============ */
+{ topic:"QV of Brownian motion",
+  q:String.raw`Determine the quadratic variation \(\langle B,B\rangle_t\).`,
+  opts:[String.raw`\(t\)`,String.raw`\(t^2\)`,String.raw`\(\tfrac12 t^2\)`,String.raw`\(0\)`,String.raw`\(\sqrt t\)`], correct:0,
+  sol:String.raw`<p>The quadratic sums \(\sum(B_{t_i}-B_{t_{i-1}})^2\to t\) in \(L^2\) as the mesh \(\to0\):</p>
+  \[\langle B,B\rangle_t=t.\]
+  <p>This finite, non-zero limit is exactly what a finite-variation path cannot produce.</p>` },
+
+{ topic:"QV of an Itô integral",
+  q:String.raw`Determine \(\langle X,X\rangle_t\) for \(\displaystyle X_t=\int_0^t B_s\,dB_s\).`,
+  opts:[String.raw`\(\displaystyle\int_0^t B_s^2\,ds\)`,String.raw`\(\tfrac12 t^2\)`,String.raw`\(\displaystyle\int_0^t s^2\,dB_s\)`,String.raw`\(\displaystyle\int_0^t s\,dB_s\)`,String.raw`\(\displaystyle\int_0^t B_s\,ds\)`], correct:0,
+  sol:String.raw`<p>For \(X=\int H\,dB\), the quadratic variation squares the integrand and replaces \(dB\) by \(ds\):</p>
+  \[\langle X,X\rangle_t=\int_0^t H_s^2\,ds=\int_0^t B_s^2\,ds.\]` },
+
+{ topic:"Semimartingale QV",
+  q:String.raw`Determine the quadratic variation \(\langle X,X\rangle_t\) of \(X_t=B_t^{2}\).`,
+  opts:[String.raw`\(4\displaystyle\int_0^t B_s^2\,ds\)`,String.raw`\(\displaystyle\int_0^t B_s^2\,ds\)`,String.raw`\(t\)`,String.raw`\(2\displaystyle\int_0^t B_s^2\,ds\)`,String.raw`\(4t\)`], correct:0,
+  sol:String.raw`<p>Decompose the semimartingale: \(B_t^2=\underbrace{2\int_0^t B\,dB}_{M}+\underbrace{t}_{A}\). The QV is that of the martingale part only:</p>
+  \[\langle X,X\rangle=\langle M,M\rangle=\int_0^t(2B_s)^2\,ds=4\int_0^t B_s^2\,ds.\]
+  <p>The finite-variation part \(A_t=t\) contributes nothing.</p>` },
+
+{ topic:"Semimartingale decomposition",
+  q:String.raw`In the canonical decomposition \(B_t^2=M_t+A_t\) (\(M\) local martingale, \(A\) finite variation, \(A_0=0\)), what are \(M\) and \(A\)?`,
+  opts:[String.raw`\(M_t=2\int_0^t B\,dB,\ A_t=t\)`,String.raw`\(M_t=B_t^2,\ A_t=0\)`,String.raw`\(M_t=t,\ A_t=2\int_0^t B\,dB\)`,String.raw`\(M_t=B_t^2-t,\ A_t=2t\)`,String.raw`\(M_t=0,\ A_t=B_t^2\)`], correct:0,
+  sol:String.raw`<p>Itô: \(d(B_t^2)=2B_t\,dB_t+dt\), i.e. \(B_t^2=2\int_0^t B\,dB+t\). The martingale part is \(M_t=2\int_0^t B\,dB\) (equivalently \(B_t^2-t\)); the finite-variation part is \(A_t=t\). The decomposition is unique.</p>` },
+
+{ topic:"Bracket of two integrals",
+  q:String.raw`Determine the bracket \(\big\langle \int_0^\cdot s\,dB_s,\ B\big\rangle_t\).`,
+  opts:[String.raw`\(\dfrac{t^2}{2}\)`,String.raw`\(\dfrac{t^3}{3}\)`,String.raw`\(0\)`,String.raw`\(t\)`,String.raw`\(\displaystyle\int_0^t s^2\,ds\)`], correct:0,
+  sol:String.raw`<p>Write \(B_t=\int_0^t 1\,dB\). For \(X=\int H\,dB,\ Y=\int K\,dB\), the bracket is \(\int_0^t H_sK_s\,ds\):</p>
+  \[\Big\langle\int s\,dB,\ \int 1\,dB\Big\rangle_t=\int_0^t s\cdot1\,ds=\frac{t^2}{2}.\]` },
+
+{ topic:"Bracket vanishes",
+  q:String.raw`\(A\) is a continuous finite-variation process and \(M\) a continuous local martingale. Determine \(\langle A,M\rangle_t\).`,
+  opts:[String.raw`\(0\)`,String.raw`\(\langle M,M\rangle_t\)`,String.raw`\(\langle A,A\rangle_t\)`,String.raw`\(A_tM_t\)`,String.raw`\(t\)`], correct:0,
+  sol:String.raw`<p>A continuous finite-variation process has zero quadratic variation, and by the Cauchy–Schwarz bound for brackets its covariation with anything is also zero:</p>
+  \[\langle A,M\rangle_t=0\quad\text{for all }t\ge0.\]
+  <p>This is why only the martingale part of a semimartingale carries the bracket.</p>` },
+
+{ topic:"Independent BMs",
+  q:String.raw`\(B^{(1)}\) and \(B^{(2)}\) are independent standard Brownian motions. Determine \(\langle B^{(1)},B^{(2)}\rangle_t\).`,
+  opts:[String.raw`\(0\)`,String.raw`\(t\)`,String.raw`\(\tfrac12 t\)`,String.raw`\(t^2\)`,String.raw`\(s\wedge t\)`], correct:0,
+  sol:String.raw`<p>The cross-variation of two independent Brownian motions vanishes identically:</p>
+  \[\langle B^{(1)},B^{(2)}\rangle_t=0.\]
+  <p>Equivalently \(B^{(1)}B^{(2)}\) is itself a martingale.</p>` },
+
+{ topic:"What the QV sees",
+  q:String.raw`For a continuous semimartingale \(X=M+A\), the quadratic variation \(\langle X,X\rangle\) is determined by:`,
+  opts:[String.raw`the local-martingale part \(M\) only`,String.raw`the finite-variation part \(A\) only`,String.raw`both parts equally`,String.raw`the initial value \(A_0\)`,String.raw`the drift of \(A\)`], correct:0,
+  sol:String.raw`<p>Because \(\langle A,A\rangle=0\) and \(\langle A,M\rangle=0\),</p>
+  \[\langle X,X\rangle=\langle M+A,\,M+A\rangle=\langle M,M\rangle.\]
+  <p>The rough martingale part is the only thing quadratic variation registers.</p>` },
+
+/* ============ 6 · MARTINGALE DICTIONARY & EXPONENTIAL ============ */
+{ topic:"Martingale dictionary",
+  q:String.raw`Which of the following is a martingale?`,
+  opts:[String.raw`\(B_t^2-t\)`,String.raw`\(B_t^2\)`,String.raw`\(B_t^2+t\)`,String.raw`\(tB_t\)`,String.raw`\(e^{B_t}\)`], correct:0,
+  sol:String.raw`<p>Run the mean check: a martingale has constant mean. \(E[B_t^2]=t\) grows, so \(B_t^2\) (and \(B_t^2\pm t\) except the right compensation) fails — but \(E[B_t^2-t]=0\) is constant, and indeed \(B_t^2-t\) is the compensated quadratic variation, a genuine martingale. \(E[tB_t]=0\) but \(tB_t\) is not a martingale (its increments are not orthogonal to the past); \(E[e^{B_t}]=e^{t/2}\) grows.</p>` },
+
+{ topic:"Exponential martingale",
+  q:String.raw`Let \(X_t=B_t+2t\). For which choice below is \(e^{\theta X_t}\) a martingale?`,
+  opts:[String.raw`\(e^{-4X_t}\)`,String.raw`\(e^{-2X_t}\)`,String.raw`\(e^{4X_t}\)`,String.raw`\(e^{2X_t}\)`,String.raw`\(e^{-X_t}\)`], correct:0,
+  sol:String.raw`<p>\(e^{\theta X_t}=e^{\theta B_t+2\theta t}=e^{\theta B_t-\theta^2t/2}\cdot e^{(2\theta+\theta^2/2)t}\). It is a martingale iff the extra drift vanishes: \(2\theta+\tfrac{\theta^2}{2}=0\Rightarrow\theta(4+\theta)/2=0\Rightarrow\theta=-4\). (In general \(\theta=-2\mu\) with \(\mu=2\).)</p>` },
+
+{ topic:"Not a martingale",
+  q:String.raw`Which of the following is <b>not</b> a martingale?`,
+  opts:[String.raw`\(B_t^3\)`,String.raw`\(B_t\)`,String.raw`\(B_t^2-t\)`,String.raw`\(e^{B_t-t/2}\)`,String.raw`\(\int_0^t B_s\,dB_s\)`], correct:0,
+  sol:String.raw`<p>From the conditioning result \(E[B_t^3\mid\mathcal F_s]=B_s^3+3(t-s)B_s\neq B_s^3\), so \(B_t^3\) is not a martingale (the martingale would be \(B_t^3-3tB_t\)). The other four are all martingales — in particular \(\int_0^t B\,dB=\tfrac12(B_t^2-t)\).</p>` },
+
+{ topic:"Membership in H²",
+  q:String.raw`Does \(B=(B_t)_{t\ge0}\) belong to \(\mathbb H^2\) (continuous \(L^2\)-bounded martingales on \([0,\infty)\))?`,
+  opts:[String.raw`No — \(\sup_{t\ge0}E[B_t^2]=\infty\)`,String.raw`Yes — \(E[B_t^2]=t<\infty\) for each \(t\)`,String.raw`Yes — \(B\) is a martingale`,String.raw`No — \(B\) is not continuous`,String.raw`No — \(B_0\neq0\)`], correct:0,
+  sol:String.raw`<p>\(\mathbb H^2\) requires the martingale to be bounded in \(L^2\) over all time: \(\sup_{t\ge0}E[M_t^2]<\infty\). For Brownian motion \(E[B_t^2]=t\to\infty\), so the supremum is infinite and \(B\notin\mathbb H^2\). (Equivalently \(E[\langle B,B\rangle_\infty]=E[\infty]=\infty\).)</p>` },
+
+/* ============ 7 · STOPPING TIMES, OPTIONAL STOPPING, PATHS ============ */
+{ topic:"Stopping time",
+  q:String.raw`Which of the following is a stopping time?`,
+  opts:[String.raw`\(3\cdot\mathbf 1_{\{B_1>0\}}+5\cdot\mathbf 1_{\{B_1\le0\}}\)`,String.raw`\(2\cdot\mathbf 1_{\{B_4>0\}}+4\cdot\mathbf 1_{\{B_4\le0\}}\)`,String.raw`\(1\cdot\mathbf 1_{\{B_2>0\}}+3\cdot\mathbf 1_{\{B_2\le0\}}\)`,String.raw`\(2\cdot\mathbf 1_{\{B_3>0\}}+5\cdot\mathbf 1_{\{B_3\le0\}}\)`,String.raw`\(4\cdot\mathbf 1_{\{B_6>0\}}+2\cdot\mathbf 1_{\{B_6\le0\}}\)`], correct:0,
+  sol:String.raw`<p>A two-valued \(T=a\mathbf1_A+b\mathbf1_{A^c}\) with \(A\) decided at time \(u\) (i.e. \(A\in\mathcal F_u\)) is a stopping time iff \(u\le\min(a,b)\): the information that resolves \(T\) must be available no later than the earliest value \(T\) can take. Checking each: only option (a) has \(u=1\le\min(3,5)=3\). The rest have observation time exceeding their minimum value.</p>` },
+
+{ topic:"Reflection principle",
+  q:String.raw`For \(a>0\), determine \(P\big(\max_{0\le s\le t}B_s\ge a\big)\).`,
+  opts:[String.raw`\(2\,P(B_t\ge a)\)`,String.raw`\(P(B_t\ge a)\)`,String.raw`\(2\,P(B_t\le a)\)`,String.raw`\(P(B_t\ge a)^2\)`,String.raw`\(1-2\,P(B_t\ge a)\)`], correct:0,
+  sol:String.raw`<p>The reflection principle: reflecting the path after it first hits \(a\) gives a bijection showing the running maximum exceeds \(a\) with twice the probability of the endpoint exceeding \(a\):</p>
+  \[P\big(\textstyle\max_{s\le t}B_s\ge a\big)=2P(B_t\ge a)=2\big(1-\Phi(a/\sqrt t)\big).\]` },
+
+{ topic:"Optional stopping",
+  q:String.raw`Brownian motion starts at \(0\) with absorbing barriers at \(-a\) and \(b\) (\(a,b>0\)). Determine \(P(\text{hit }b\text{ before }-a)\).`,
+  opts:[String.raw`\(\dfrac{a}{a+b}\)`,String.raw`\(\dfrac{b}{a+b}\)`,String.raw`\(\dfrac12\)`,String.raw`\(\dfrac ab\)`,String.raw`\(\dfrac{a+b}{2}\)`], correct:0,
+  sol:String.raw`<p>Let \(T\) be the exit time and \(p=P(\text{hit }b\text{ first})\). \(B\) is a bounded martingale up to \(T\), so optional stopping gives \(E[B_T]=B_0=0\):</p>
+  \[b\cdot p+(-a)(1-p)=0\ \Rightarrow\ p=\frac{a}{a+b}.\]` },
+
+{ topic:"Hitting time",
+  q:String.raw`For \(a>0\), let \(T_a=\inf\{t\ge0:B_t=a\}\). Which statement is true?`,
+  opts:[String.raw`\(P(T_a<\infty)=1\) but \(E[T_a]=\infty\)`,String.raw`\(P(T_a<\infty)<1\)`,String.raw`\(E[T_a]=a\)`,String.raw`\(E[T_a]=a^2\)`,String.raw`\(T_a\) is bounded`], correct:0,
+  sol:String.raw`<p>Brownian motion is recurrent — \(\limsup_{t\to\infty}B_t=+\infty\) a.s. — so it reaches any level \(a\) almost surely: \(P(T_a<\infty)=1\). But the hitting time has infinite mean, \(E[T_a]=\infty\) (the tails of \(T_a\) are too heavy, \(P(T_a>t)\sim c/\sqrt t\)).</p>` },
+
+{ topic:"Long-run limit",
+  q:String.raw`Determine \(\displaystyle\lim_{t\to\infty}E\big[\mathbf 1_{\{B_t\le c\}}\big]\) for a fixed constant \(c\).`,
+  opts:[String.raw`\(\dfrac12\)`,String.raw`\(1\)`,String.raw`\(0\)`,String.raw`\(\dfrac14\)`,String.raw`\(\dfrac1{\sqrt2}\)`], correct:0,
+  sol:String.raw`<p>\(E[\mathbf 1_{\{B_t\le c\}}]=P(B_t\le c)=\Phi(c/\sqrt t)\). As \(t\to\infty\), \(c/\sqrt t\to0\):</p>
+  \[\lim_{t\to\infty}\Phi(c/\sqrt t)=\Phi(0)=\tfrac12.\]` },
+
+/* ============ 8 · GAUSSIAN PROCESSES & TIME CHANGE ============ */
+{ topic:"Time-changed BM",
+  q:String.raw`The process \(X_t=e^{-t}B_{e^{2t}}\) is best described as:`,
+  opts:[String.raw`a centred Gaussian process with \(\operatorname{cov}(X_s,X_t)=e^{-(t-s)}\), \(0\le s<t\)`,String.raw`a Gaussian process with \(E[X_t]=e^{-t}\) and \(\operatorname{cov}=e^{2(t-s)}\)`,String.raw`a centred Gaussian process with \(\operatorname{cov}=e^{t-s}\)`,String.raw`a Gaussian process with \(E[X_t]=e^{-t}\) and \(\operatorname{cov}=e^{-(t-s)}\)`,String.raw`a martingale`], correct:0,
+  sol:String.raw`<p>\(X\) is a deterministic scaling of a Gaussian, hence centred Gaussian. Mean: \(E[X_t]=e^{-t}E[B_{e^{2t}}]=0\). Covariance for \(s<t\):</p>
+  \[\operatorname{cov}(X_s,X_t)=e^{-s}e^{-t}\big(e^{2s}\wedge e^{2t}\big)=e^{-s-t}e^{2s}=e^{-(t-s)}.\]
+  <p>This is the stationary Ornstein–Uhlenbeck covariance.</p>` },
+
+{ topic:"Time inversion",
+  q:String.raw`Define \(X_t=tB_{1/t}\) for \(t>0\) and \(X_0=0\). Then \(X\) is:`,
+  opts:[String.raw`a standard Brownian motion`,String.raw`Gaussian with \(\operatorname{var}(X_t)=t^2\)`,String.raw`a martingale but not a Brownian motion`,String.raw`not Gaussian`,String.raw`of finite variation`], correct:0,
+  sol:String.raw`<p>\(X\) is centred Gaussian; for \(0<s<t\),</p>
+  \[\operatorname{cov}(X_s,X_t)=st\,\operatorname{cov}(B_{1/s},B_{1/t})=st\Big(\tfrac1s\wedge\tfrac1t\Big)=st\cdot\tfrac1t=s=s\wedge t.\]
+  <p>A continuous centred Gaussian process with covariance \(s\wedge t\) is a Brownian motion — this is the time-inversion invariance of BM.</p>` },
+
+{ topic:"Brownian bridge",
+  q:String.raw`Let \(X_t=B_t-tB_1\) for \(0\le t\le1\). Determine \(E[X_sX_t]\) for \(0\le s\le t\le1\).`,
+  opts:[String.raw`\(s(1-t)\)`,String.raw`\(t(1-s)\)`,String.raw`\(s(1-s)\)`,String.raw`\(s(1+t)\)`,String.raw`\(st\)`], correct:0,
+  sol:String.raw`<p>Expand and use \(E[B_uB_v]=u\wedge v\):</p>
+  \[E[X_sX_t]=E[B_sB_t]-sE[B_1B_t]-tE[B_sB_1]+st\,E[B_1^2]=s-st-ts+st=s(1-t).\]
+  <p>(The variance \(t(1-t)\) is the special case \(s=t\).)</p>` },
+
+/* ============ 9 · FINITE VARIATION, CADLAG, LEBESGUE–STIELTJES ============ */
+{ topic:"QV of finite variation",
+  q:String.raw`\(A\) is a continuous process of finite variation. Determine its quadratic variation \(\langle A,A\rangle_t\).`,
+  opts:[String.raw`\(0\)`,String.raw`\(|A|(t)\)`,String.raw`\(t\)`,String.raw`\(A_t^2\)`,String.raw`\(\infty\)`], correct:0,
+  sol:String.raw`<p>A continuous finite-variation path is too smooth for the quadratic sums to survive the mesh shrinking:</p>
+  \[\langle A,A\rangle_t=0\quad\text{for all }t.\]
+  <p>This contrasts with Brownian motion, whose roughness gives \(\langle B,B\rangle_t=t\).</p>` },
+
+{ topic:"Variation of Brownian path",
+  q:String.raw`Which statement about the total variation of a Brownian path on \([0,t]\) is correct?`,
+  opts:[String.raw`\(|B|(t)=\infty\) almost surely`,String.raw`\(|B|(t)=t\)`,String.raw`\(|B|(t)=\sqrt t\)`,String.raw`\(B\) has finite variation`,String.raw`\(|B|(t)=\langle B,B\rangle_t\)`], correct:0,
+  sol:String.raw`<p>Because the quadratic variation is a finite non-zero \(t\), the ordinary (first) variation must be infinite:</p>
+  \[|B|(t)=\sup\sum_i|B_{t_i}-B_{t_{i-1}}|=\infty\quad\text{a.s.}\]
+  <p>This is the reason Lebesgue–Stieltjes integration fails for \(dB\) and Itô calculus is needed.</p>` },
+
+{ topic:"CADLAG",
+  q:String.raw`A function \(a:[0,T]\to\mathbb R\) is CADLAG if it is:`,
+  opts:[String.raw`right-continuous with left limits`,String.raw`left-continuous with right limits`,String.raw`continuous and increasing`,String.raw`differentiable everywhere`,String.raw`of bounded variation and continuous`], correct:0,
+  sol:String.raw`<p>CADLAG (from the French <em>continue à droite, limites à gauche</em>) means \(a(t)=a(t+)\) for all \(t\) (right-continuous) and the left limit \(a(t-)\) exists and is finite. Such functions have at most countably many jump times.</p>` },
+
+{ topic:"Jordan decomposition",
+  q:String.raw`A function \(a(\cdot)\) has finite variation on \([0,T]\) if and only if it can be written as:`,
+  opts:[String.raw`the difference of two increasing functions`,String.raw`the sum of two continuous functions`,String.raw`a product of monotone functions`,String.raw`a martingale plus a finite-variation part`,String.raw`a Gaussian process`], correct:0,
+  sol:String.raw`<p>Jordan decomposition (Theorem 6.5): finite variation \(\iff\) difference of two increasing functions. The canonical choice uses the positive and negative variations:</p>
+  \[a(t)=a(0)+|a|_+(t)-|a|_-(t),\qquad |a|(t)=|a|_+(t)+|a|_-(t).\]` },
+
+{ topic:"Why naive integration fails",
+  q:String.raw`The Lebesgue–Stieltjes / Riemann–Stieltjes approach cannot define \(\int_0^t\varphi\,dB\) pathwise because:`,
+  opts:[String.raw`Brownian paths have infinite variation`,String.raw`\(B\) is not measurable`,String.raw`\(B\) is not Gaussian`,String.raw`\(\varphi\) need not be continuous`,String.raw`Brownian paths have jumps`], correct:0,
+  sol:String.raw`<p>Lebesgue–Stieltjes integration requires the integrator to be of finite variation. Since Brownian paths have infinite variation (Corollary 2.17), the Riemann–Stieltjes sums do not converge for all continuous integrands — a genuinely new (Itô) construction, using the \(L^2\) structure, is required.</p>` },
+
+/* ============ 10 · INTEGRATION THEORY: H², L²(M), ELEMENTARY, LÉVY ============ */
+{ topic:"Elementary integral",
+  q:String.raw`Let \(H_t=c\cdot\mathbf 1_{(a,b]}(t)\) with a constant \(c\) (an \(\mathcal F_a\)-measurable constant, \(a<b\)). Determine \(\displaystyle\int_0^\infty H_t\,dB_t\).`,
+  opts:[String.raw`\(c\,(B_b-B_a)\)`,String.raw`\(c\,B_b\)`,String.raw`\(c\,B_a\)`,String.raw`\(c\,(b-a)\)`,String.raw`\(c\,(B_b-B_a)^2\)`], correct:0,
+  sol:String.raw`<p>By definition, the stochastic integral of an elementary process against \(B\) is the sum of the increments weighted by the (predictable) heights:</p>
+  \[\int_0^\infty c\,\mathbf 1_{(a,b]}(t)\,dB_t=c\,(B_b-B_a).\]` },
+
+{ topic:"Itô isometry (H²)",
+  q:String.raw`For \(M\in\mathbb H^2\) and \(H\in L^2(M)\), the Itô isometry states \(\big\|\int_0^\infty H\,dM\big\|_{L^2}^2\) equals:`,
+  opts:[String.raw`\(E\!\big[\int_0^\infty H_t^2\,d\langle M,M\rangle_t\big]\)`,String.raw`\(\int_0^\infty E[H_t]\,d\langle M,M\rangle_t\)`,String.raw`\(E\!\big[\int_0^\infty H_t\,d\langle M,M\rangle_t\big]\)`,String.raw`\(\langle M,M\rangle_\infty\)`,String.raw`\(E[H_\infty^2]\)`], correct:0,
+  sol:String.raw`<p>The stochastic integral is the isometric extension from elementary processes:</p>
+  \[E\!\left[\Big(\int_0^\infty H\,dM\Big)^2\right]=E\!\left[\int_0^\infty H_t^2\,d\langle M,M\rangle_t\right]=\|H\|_{L^2(M)}^2.\]
+  <p>For \(M=B\), \(d\langle M,M\rangle_t=dt\) and this is the familiar \(E[\int H^2\,dt]\).</p>` },
+
+{ topic:"The space H²",
+  q:String.raw`The space \(\mathbb H^2\) consists of:`,
+  opts:[String.raw`continuous \(L^2\)-bounded martingales starting at \(0\)`,String.raw`all continuous martingales`,String.raw`all continuous local martingales`,String.raw`continuous finite-variation processes`,String.raw`all continuous semimartingales`], correct:0,
+  sol:String.raw`<p>\(\mathbb H^2\) is the space of continuous, \(L^2\)-bounded martingales \(M\) with \(M_0=0\) — equivalently \(\sup_tE[M_t^2]<\infty\), equivalently \(E[\langle M,M\rangle_\infty]<\infty\). It is a Hilbert space with inner product \((M,\tilde M)=E[M_\infty\tilde M_\infty]=E[\langle M,\tilde M\rangle_\infty]\).</p>` },
+
+{ topic:"The space L²(M)",
+  q:String.raw`For \(M\in\mathbb H^2\), a progressive process \(H\) belongs to \(L^2(M)\) exactly when:`,
+  opts:[String.raw`\(E\!\big[\int_0^\infty H_t^2\,d\langle M,M\rangle_t\big]<\infty\)`,String.raw`\(E[\int_0^\infty H_t\,dt]<\infty\)`,String.raw`\(H\) is bounded`,String.raw`\(H\) is continuous`,String.raw`\(E[H_t]=0\) for all \(t\)`], correct:0,
+  sol:String.raw`<p>\(L^2(M)\) is defined by finiteness of the norm induced by the quadratic-variation measure \(\mu_M\):</p>
+  \[\|H\|_{L^2(M)}^2=E\!\left[\int_0^\infty H_t^2\,d\langle M,M\rangle_t\right]<\infty.\]
+  <p>It is a Hilbert space, and the integrand lives against \(d\langle M,M\rangle\), not \(dt\), in general.</p>` },
+
+{ topic:"Elementary processes are dense",
+  q:String.raw`Within \(L^2(M)\), the collection \(\mathcal E\) of elementary processes is:`,
+  opts:[String.raw`a dense subspace`,String.raw`a closed subspace`,String.raw`the orthogonal complement of \(L^2(M)\)`,String.raw`all of \(L^2(M)\)`,String.raw`empty`], correct:0,
+  sol:String.raw`<p>Proposition 5.3: \(\mathcal E\) is dense in \(L^2(M)\). Any \(H\in L^2(M)\) is approximated by elementary \(H^n\) with \(\|H^n-H\|_{L^2(M)}\to0\); the integral is then defined by continuity (the isometric extension), which is exactly how the Itô integral is constructed.</p>` },
+
+{ topic:"Lévy characterisation",
+  q:String.raw`A continuous local martingale \(M\) with \(M_0=0\) and \(\langle M,M\rangle_t=t\) for all \(t\) is necessarily:`,
+  opts:[String.raw`a standard Brownian motion`,String.raw`a finite-variation process`,String.raw`not a martingale`,String.raw`deterministic`,String.raw`a Poisson process`], correct:0,
+  sol:String.raw`<p>Lévy's characterisation: a continuous local martingale started at \(0\) whose quadratic variation is exactly \(t\) is a standard Brownian motion. The identity \(\langle M,M\rangle_t=t\) pins down both the Gaussian marginals and the independent-increment structure.</p>` }
+];
+
+/* ---- shuffle options once per session so the answer isn't always "A" ---- */
+(function shuffleOptions(){
+  // seeded RNG for a stable order within a session
+  let seed = 20251021;
+  const rnd = ()=>{ seed = (seed*1103515245 + 12345) & 0x7fffffff; return seed/0x7fffffff; };
+  Q.forEach(q=>{
+    const idx = q.opts.map((_,i)=>i);
+    for(let i=idx.length-1;i>0;i--){ const j=Math.floor(rnd()*(i+1)); [idx[i],idx[j]]=[idx[j],idx[i]]; }
+    q.opts = idx.map(i=>q.opts[i]);
+    q.correct = idx.indexOf(q.correct);
+  });
+})();
+
+/* ============================ ENGINE ============================ */
+const state = Q.map(()=>({picked:null, checked:false}));
+let cur = 0;
+const mount = document.getElementById('cardMount');
+document.getElementById('totNum').textContent = Q.length;
+
+function typeset(el){ if(window.MathJax && MathJax.typesetPromise) MathJax.typesetPromise([el]).catch(()=>{}); }
+
+function render(){
+  const q = Q[cur], s = state[cur];
+  const card = document.createElement('div');
+  card.className = 'card' + (s.checked ? ' locked' : '');
+  card.innerHTML = `
+    <div class="card-top">
+      <span class="qtag"><span class="num">${cur+1}</span>Question ${cur+1} of ${Q.length}</span>
+      <span class="topic">${q.topic||''}</span>
+    </div>
+    <div class="qmain">
+      <p class="prompt">${q.q}</p>
+      <p class="note">${q.note||DEF}</p>
+    </div>
+    <ul class="opts" id="opts"></ul>
+    <div class="actions">
+      <button class="btn check" id="checkBtn">Check answer</button>
+      <span class="hint" id="hint">Select an option, then check.</span>
+    </div>
+    <div class="sol" id="sol"><div class="sol-inner" id="solInner"></div></div>`;
+  mount.innerHTML='';
+  mount.appendChild(card);
+
+  const opts = card.querySelector('#opts');
+  q.opts.forEach((txt,i)=>{
+    const li=document.createElement('li');
+    li.className='opt'+(s.picked===i?' sel':'');
+    li.innerHTML=`<span class="mark">${String.fromCharCode(65+i)}</span><span class="txt">${txt}</span>`;
+    if(!s.checked){
+      li.addEventListener('click',()=>{ s.picked=i; render(); });
+    }
+    if(s.checked){
+      if(i===q.correct) li.className='opt correct';
+      else if(i===s.picked) li.className='opt wrong';
+      li.querySelector('.mark').textContent = (i===q.correct)?'✓':(i===s.picked?'✗':String.fromCharCode(65+i));
+    }
+    opts.appendChild(li);
+  });
+
+  const checkBtn=card.querySelector('#checkBtn');
+  const hint=card.querySelector('#hint');
+  if(s.checked){
+    checkBtn.style.display='none';
+    hint.textContent = (s.picked===q.correct) ? 'Correct.' : 'Not quite — see the worked solution.';
+    hint.style.color = (s.picked===q.correct) ? 'var(--good)' : 'var(--bad)';
+    const solInner=card.querySelector('#solInner');
+    const correctTxt=q.opts[q.correct];
+    solInner.innerHTML=`<h3>Worked solution</h3>${q.sol}
+      <div class="final"><span class="lbl">Answer</span>${String.fromCharCode(65+q.correct)} · ${correctTxt}</div>`;
+    card.querySelector('#sol').classList.add('open');
+  }else{
+    checkBtn.disabled = (s.picked===null);
+    checkBtn.addEventListener('click',()=>{
+      if(s.picked===null) return;
+      s.checked=true; render(); updateStats();
+    });
+  }
+  document.getElementById('curNum').textContent=cur+1;
+  typeset(card);
+  updateStats();
+  renderGrid();
+}
+
+function updateStats(){
+  let answered=0, good=0;
+  state.forEach((s,i)=>{ if(s.checked){ answered++; if(s.picked===Q[i].correct) good++; } });
+  document.getElementById('score').textContent=good;
+  document.getElementById('scoreOf').textContent=`/ ${answered} answered`;
+  document.getElementById('nGood').textContent=good;
+  document.getElementById('nBad').textContent=answered-good;
+  document.getElementById('prog').style.width=(answered/Q.length*100)+'%';
+}
+
+function renderGrid(){
+  const g=document.getElementById('qgrid');
+  g.innerHTML='';
+  Q.forEach((q,i)=>{
+    const b=document.createElement('button');
+    b.textContent=i+1;
+    if(i===cur) b.classList.add('cur');
+    if(state[i].checked) b.classList.add(state[i].picked===q.correct?'ok':'no');
+    b.addEventListener('click',()=>{ cur=i; render(); });
+    g.appendChild(b);
+  });
+}
+
+document.getElementById('prevBtn').addEventListener('click',()=>{ if(cur>0){cur--;render();} });
+document.getElementById('nextBtn').addEventListener('click',()=>{ if(cur<Q.length-1){cur++;render();} });
+document.getElementById('overviewBtn').addEventListener('click',()=>{
+  document.getElementById('qgrid').classList.toggle('hidden');
+});
+document.getElementById('resetBtn').addEventListener('click',()=>{
+  state.forEach(s=>{s.picked=null;s.checked=false;}); cur=0; render();
+});
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT') return;
+  if(e.key==='ArrowRight'&&cur<Q.length-1){cur++;render();}
+  if(e.key==='ArrowLeft'&&cur>0){cur--;render();}
+  if(['1','2','3','4','5'].includes(e.key)&&!state[cur].checked){
+    const i=+e.key-1; if(i<Q[cur].opts.length){ state[cur].picked=i; render(); }
+  }
+  if((e.key==='Enter'||e.key===' ')&&!state[cur].checked&&state[cur].picked!==null){
+    e.preventDefault(); state[cur].checked=true; render();
+  }
+});
+
+/* collapsible reference sheet */
+const sheet=document.getElementById('sheet');
+function toggleSheet(){ sheet.classList.toggle('closed');
+  document.getElementById('sheetHead').setAttribute('aria-expanded', sheet.classList.contains('closed')?'false':'true'); }
+document.getElementById('sheetHead').addEventListener('click',toggleSheet);
+document.getElementById('sheetHead').addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleSheet();} });
+
+/* header Brownian path decoration */
+(function(){
+  const svg=document.getElementById('bmPath'); if(!svg) return;
+  let x=0,y=100,d=`M0,100`;
+  for(let i=1;i<=240;i++){ x=i*5; y+=(Math.random()-0.5)*22; y=Math.max(20,Math.min(180,y)); d+=` L${x},${y.toFixed(1)}`; }
+  const p=document.createElementNS('http://www.w3.org/2000/svg','path');
+  p.setAttribute('d',d); p.setAttribute('fill','none');
+  p.setAttribute('stroke','#e0a94f'); p.setAttribute('stroke-width','1.4'); p.setAttribute('opacity','0.7');
+  svg.appendChild(p);
+})();
+
+render();
+if(window.MathJax){ MathJax.startup.promise.then(()=>typeset(document.body)); }
+</script>
+</body>
+</html>
