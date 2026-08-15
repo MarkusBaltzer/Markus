@@ -1,0 +1,2136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stochastic Calculus &mdash; Practice Quiz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] },
+  svg: { fontCache: 'global' },
+  options: { renderActions: { addMenu: [] } }
+};
+</script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.min.js"></script>
+<style>
+  :root{
+    --ink:#0f2033;          /* deep navy ink */
+    --ink-soft:#41536b;     /* secondary text */
+    --paper:#f2f4f0;        /* graph-paper base */
+    --card:#ffffff;
+    --line:#d9e0dc;         /* grid / hairlines */
+    --line-strong:#c2cbc4;
+    --accent:#1f5c8b;       /* plotted-path blue */
+    --accent-ink:#123a5a;
+    --gold:#b5842f;         /* utility highlight */
+    --correct:#1f7a4d;
+    --correct-bg:#e6f3ec;
+    --wrong:#a83636;
+    --wrong-bg:#f6e7e6;
+    --radius:14px;
+    --maxw:820px;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;color:var(--ink);
+    font-family:"Inter",system-ui,sans-serif;
+    line-height:1.55;
+    background-color:var(--paper);
+    background-image:
+      linear-gradient(var(--line) 1px,transparent 1px),
+      linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:26px 26px;
+    background-position:-1px -1px;
+  }
+  a{color:var(--accent)}
+
+  /* ---------- hero ---------- */
+  .hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line-strong);
+    background:linear-gradient(180deg,#0f2033 0%,#14293f 100%);color:#eef3f4}
+  .hero-inner{max-width:var(--maxw);margin:0 auto;padding:44px 22px 30px;position:relative;z-index:2}
+  .eyebrow{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.28em;
+    text-transform:uppercase;color:#8fb6d6;margin:0 0 14px}
+  h1{font-family:"Fraunces",Georgia,serif;font-weight:600;letter-spacing:-.01em;
+    font-size:clamp(2rem,5.5vw,3.1rem);line-height:1.02;margin:0 0 12px}
+  h1 em{font-style:italic;color:#7fb2dc}
+  .lede{max-width:52ch;color:#c4d3de;margin:0;font-size:1.02rem}
+  .hero svg.walk{position:absolute;inset:0;width:100%;height:100%;z-index:1;opacity:.5}
+  .hero-path{fill:none;stroke:#5fa8d8;stroke-width:1.6;
+    stroke-linejoin:round;stroke-linecap:round}
+  .hero-dot{fill:#a9d3ef}
+
+  /* ---------- controls ---------- */
+  .controls{max-width:var(--maxw);margin:0 auto;padding:20px 22px 0}
+  .scorebar{display:flex;flex-wrap:wrap;align-items:center;gap:14px 20px;
+    background:var(--card);border:1px solid var(--line-strong);border-radius:var(--radius);
+    padding:14px 18px;box-shadow:0 1px 0 rgba(15,32,51,.03)}
+  .stat{display:flex;flex-direction:column;line-height:1.1}
+  .stat b{font-family:"JetBrains Mono",monospace;font-size:1.35rem;color:var(--ink)}
+  .stat span{font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-soft)}
+  .stat.correct b{color:var(--correct)}
+  .track{flex:1 1 160px;min-width:140px}
+  .track .bar{height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+  .track .fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),#3a86c0);
+    border-radius:99px;transition:width .35s ease}
+  .track small{display:block;margin-top:6px;font-size:.72rem;color:var(--ink-soft)}
+  .btn-reset{margin-left:auto;border:1px solid var(--line-strong);background:var(--card);
+    color:var(--ink);font:600 .82rem/1 "Inter",sans-serif;padding:9px 14px;border-radius:9px;
+    cursor:pointer;transition:background .15s,border-color .15s}
+  .btn-reset:hover{background:#f5f7f5;border-color:var(--accent)}
+
+  .chips{max-width:var(--maxw);margin:16px auto 0;padding:0 22px;
+    display:flex;flex-wrap:wrap;gap:8px}
+  .chip{border:1px solid var(--line-strong);background:var(--card);color:var(--ink-soft);
+    font:500 .82rem/1 "Inter",sans-serif;padding:8px 12px;border-radius:99px;cursor:pointer;
+    display:inline-flex;align-items:center;gap:7px;transition:all .15s}
+  .chip:hover{border-color:var(--accent);color:var(--ink)}
+  .chip.active{background:var(--ink);border-color:var(--ink);color:#fff}
+  .chip-n{font-family:"JetBrains Mono",monospace;font-size:.72rem;opacity:.7}
+  .chip.active .chip-n{opacity:.85}
+
+  /* ---------- questions ---------- */
+  main{max-width:var(--maxw);margin:0 auto;padding:26px 22px 90px}
+  .question{background:var(--card);border:1px solid var(--line-strong);border-radius:var(--radius);
+    padding:22px 22px 18px;margin:0 0 20px;scroll-margin-top:16px;
+    box-shadow:0 1px 2px rgba(15,32,51,.04)}
+  .question.hidden{display:none}
+  .q-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .q-num{font-family:"JetBrains Mono",monospace;font-weight:600;font-size:.9rem;
+    color:#fff;background:var(--ink);border-radius:7px;padding:3px 9px;letter-spacing:.02em}
+  .q-topic{font-size:.72rem;text-transform:uppercase;letter-spacing:.14em;color:var(--accent-ink);
+    font-weight:600}
+  .q-status{margin-left:auto;font-size:.8rem;font-weight:600}
+  .q-status.ok{color:var(--correct)}
+  .q-status.no{color:var(--wrong)}
+  .q-prompt{font-size:1.06rem;margin-bottom:16px}
+  .q-prompt b{font-weight:600}
+
+  .options{display:flex;flex-direction:column;gap:9px}
+  .option{display:flex;align-items:center;gap:12px;width:100%;text-align:left;
+    border:1px solid var(--line-strong);background:#fbfcfb;border-radius:11px;
+    padding:11px 14px;cursor:pointer;font-size:1rem;color:var(--ink);
+    transition:border-color .15s,background .15s,box-shadow .15s}
+  .option:hover:not(.locked){border-color:var(--accent);background:#f4f9fd}
+  .opt-key{font-family:"JetBrains Mono",monospace;font-weight:600;font-size:.85rem;
+    color:var(--ink-soft);border:1px solid var(--line-strong);border-radius:6px;
+    width:26px;height:26px;display:grid;place-items:center;flex:none;transition:all .15s}
+  .option:hover:not(.locked) .opt-key{border-color:var(--accent);color:var(--accent)}
+  .opt-body{flex:1}
+  .option.locked{cursor:default}
+  .answered .option:not(.correct):not(.incorrect){opacity:.55}
+  .option.correct{border-color:var(--correct);background:var(--correct-bg)}
+  .option.correct .opt-key{background:var(--correct);border-color:var(--correct);color:#fff}
+  .option.incorrect{border-color:var(--wrong);background:var(--wrong-bg)}
+  .option.incorrect .opt-key{background:var(--wrong);border-color:var(--wrong);color:#fff}
+
+  .sol-toggle{margin-top:16px;border:none;background:none;color:var(--accent);
+    font:600 .9rem/1 "Inter",sans-serif;cursor:pointer;padding:6px 0;
+    display:inline-flex;align-items:center;gap:7px}
+  .sol-toggle::before{content:"";width:0;height:0;border-left:6px solid var(--accent);
+    border-top:4px solid transparent;border-bottom:4px solid transparent;transition:transform .18s}
+  .sol-toggle[aria-expanded="true"]::before{transform:rotate(90deg)}
+  .sol-toggle:hover{color:var(--accent-ink)}
+  .solution{display:none;margin-top:14px;padding:16px 18px;border-radius:11px;
+    background:#f6f8f6;border:1px solid var(--line);border-left:3px solid var(--accent);
+    font-size:.98rem;color:#20303f}
+  .question.show-sol .solution{display:block}
+  .solution :is(p){margin:.4em 0}
+
+  footer{max-width:var(--maxw);margin:0 auto;padding:0 22px 60px;color:var(--ink-soft);
+    font-size:.82rem;text-align:center}
+  footer hr{border:none;border-top:1px solid var(--line);margin:0 0 22px}
+
+  @media (max-width:560px){
+    .q-prompt{font-size:1rem}
+    .option{font-size:.95rem;padding:10px 12px}
+    .scorebar{gap:12px 16px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+  }
+</style>
+</head>
+<body>
+
+  <section class="hero">
+    <svg class="walk" preserveAspectRatio="none" viewBox="0 0 1000 320" aria-hidden="true">
+      <path class="hero-path" id="walkPath" d=""></path>
+      <circle class="hero-dot" id="walkDot" r="4" cx="0" cy="160"></circle>
+    </svg>
+    <div class="hero-inner">
+      <p class="eyebrow">Mathematical Finance &middot; Practice Set</p>
+      <h1>Stochastic Calculus<br><em>Quiz &mdash; 100 questions</em></h1>
+      <p class="lede">One hundred practice questions on the foundations. The first fifty cover Brownian scaling and time inversion, the Brownian bridge, correlated Brownian motions, integrated Brownian motion, exponential martingales and quadratic variation. Fifty new ones push into fresh techniques &mdash; Stein's identity and Gaussian moments, MGF characterisation, Gaussian processes, stopping times, tower-property moment computations, Doob's inequalities, option-payoff convexity and Monte&nbsp;Carlo. Pick an answer to lock it in, then open the worked solution.</p>
+    </div>
+  </section>
+
+  <div class="controls">
+    <div class="scorebar">
+      <div class="stat"><b id="answered">0</b><span>Answered</span></div>
+      <div class="stat correct"><b id="score">0</b><span>Correct</span></div>
+      <div class="stat"><b id="pct">&ndash;</b><span>Accuracy</span></div>
+      <div class="track">
+        <div class="bar"><div class="fill" id="fill"></div></div>
+        <small><span id="answered2">0</span> of 100 answered</small>
+      </div>
+      <button class="btn-reset" id="reset">Reset quiz</button>
+    </div>
+  </div>
+
+  <div class="chips" id="chips">
+        <button class="chip active" data-topic="all">All <span class="chip-n">100</span></button>
+        <button class="chip" data-topic="brownian-transformations">Transformations <span class="chip-n">7</span></button>
+        <button class="chip" data-topic="inversion-limits">Inversion &amp; limits <span class="chip-n">5</span></button>
+        <button class="chip" data-topic="brownian-bridge">Brownian bridge <span class="chip-n">6</span></button>
+        <button class="chip" data-topic="correlated-bm">Correlated BMs <span class="chip-n">6</span></button>
+        <button class="chip" data-topic="integrated-bm">Integrated BM <span class="chip-n">8</span></button>
+        <button class="chip" data-topic="exp-martingales">Exponential martingales <span class="chip-n">7</span></button>
+        <button class="chip" data-topic="quadratic-variation">Quadratic variation <span class="chip-n">6</span></button>
+        <button class="chip" data-topic="convexity">Sub/supermartingales <span class="chip-n">5</span></button>
+        <button class="chip" data-topic="stein">Stein &amp; Gaussian moments <span class="chip-n">7</span></button>
+        <button class="chip" data-topic="mgf">MGF &amp; characterisation <span class="chip-n">6</span></button>
+        <button class="chip" data-topic="gaussian-processes">Gaussian processes <span class="chip-n">7</span></button>
+        <button class="chip" data-topic="stopping-times">Stopping times <span class="chip-n">8</span></button>
+        <button class="chip" data-topic="higher-moments">Higher moments &amp; tower <span class="chip-n">8</span></button>
+        <button class="chip" data-topic="doob">Doob's inequalities <span class="chip-n">5</span></button>
+        <button class="chip" data-topic="option-payoffs">Option payoffs <span class="chip-n">5</span></button>
+        <button class="chip" data-topic="monte-carlo">Monte Carlo <span class="chip-n">4</span></button>
+  </div>
+
+  <main id="quiz">
+      <article class="question" data-answer="2" data-topic="brownian-transformations" id="q1">
+        <header class="q-head">
+          <span class="q-num">01</span>
+          <span class="q-topic">Transformations</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Which of the following processes is a <b>standard</b> Brownian motion?</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(2B_t\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(B_{2t}\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(\sqrt2\,B_{t/2}\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(tB_t\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(B_t/2\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">By the scaling property \(cB_{t/c^2}\) is a standard BM. For \(\sqrt2\,B_{t/2}\) take \(c=\sqrt2\):
+    \[\operatorname{var}(\sqrt2\,B_{t/2})=2\cdot\tfrac{t}{2}=t.\]
+    The others have variance \(4t,\;2t,\;t/4\) or non-stationary increments.</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="brownian-transformations" id="q2">
+        <header class="q-head">
+          <span class="q-num">02</span>
+          <span class="q-topic">Transformations</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">For which constant \(a>0\) is \((5B_{t/a})_{t\ge0}\) a standard Brownian motion?</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(5\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(25\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(1/5\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(1/25\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(10\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Require \(\operatorname{var}(5B_{t/a})=25\cdot\tfrac{t}{a}=t\), i.e. \(a=25\). This is the scaling identity \(cB_{t/c^2}\) with \(c=5\).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="brownian-transformations" id="q3">
+        <header class="q-head">
+          <span class="q-num">03</span>
+          <span class="q-topic">Transformations</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">The process \(M_t=3B_t\) is:</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">a standard Brownian motion</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">a martingale but not a standard Brownian motion</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">not a martingale</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">a strict submartingale</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">a process with non-stationary increments</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(M_t=\sigma B_t\) (here \(\sigma=3\)) is Gaussian, centred and a martingale, but \(\operatorname{var}(M_t)=9t\ne t\), so it is <em>not</em> a standard BM. Same distinction as the scaled martingale \(M_t=\sigma B_t\) in 4.1(a).</div>
+      </article>
+
+      <article class="question" data-answer="2" data-topic="brownian-transformations" id="q4">
+        <header class="q-head">
+          <span class="q-num">04</span>
+          <span class="q-topic">Transformations</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Let \(X_t=2B_t\). What is the distribution of \(X_3-X_1\)?</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(N(0,2)\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(N(0,4)\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(N(0,8)\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(N(0,16)\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(N(0,\sqrt8)\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(X_3-X_1=2(B_3-B_1)\), and \(B_3-B_1\sim N(0,2)\). Scaling by \(2\) multiplies the variance by \(4\):
+    \[\operatorname{var}(X_3-X_1)=4\cdot2=8.\]</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="brownian-transformations" id="q5">
+        <header class="q-head">
+          <span class="q-num">05</span>
+          <span class="q-topic">Transformations</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Let \(Z\sim N(0,1)\) and \(X_t=\sqrt{t}\,Z\). Which statement is correct?</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(X\) is a standard Brownian motion</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">each \(X_t\sim N(0,t)\), but \(X\) is not a Brownian motion</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(X\) has independent increments</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(X\) is a martingale</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(X_t-X_s\) is independent of \(X_s\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">The one-dimensional marginals match (\(X_t\sim N(0,t)\)), but increments \(X_{t}-X_{s}=(\sqrt t-\sqrt s)Z\) and \(X_s=\sqrt s\,Z\) are multiples of the <em>same</em> \(Z\): perfectly correlated, hence not independent. So \(X\) is not a BM (cf. 2.5).</div>
+      </article>
+
+      <article class="question" data-answer="0" data-topic="brownian-transformations" id="q6">
+        <header class="q-head">
+          <span class="q-num">06</span>
+          <span class="q-topic">Transformations</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Fix \(s>0\). The process \((B_{s+t}-B_s)_{t\ge0}\) is:</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">a standard Brownian motion independent of \(\mathcal F_s\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">a Brownian motion but dependent on \(\mathcal F_s\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">not a Brownian motion</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">a martingale that is not a Brownian motion</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">Gaussian with non-stationary increments</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">By stationarity and independence of increments, \((B_{s+t}-B_s)_{t\ge0}\) is again a standard BM, and it is independent of \(\mathcal F_s^B\) (2.3(c)). This is the Markov/restart property.</div>
+      </article>
+
+      <article class="question" data-answer="2" data-topic="brownian-transformations" id="q7">
+        <header class="q-head">
+          <span class="q-num">07</span>
+          <span class="q-topic">Transformations</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Which of the following is <b>not</b> a Brownian motion?</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(-B_t\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(\sqrt2\,B_{t/2}\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(|B_t|\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(B_{s+t}-B_s\ (s>0\text{ fixed})\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(3B_{t/9}\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Reflection \(-B_t\), scaling \(\sqrt2 B_{t/2}\) and \(3B_{t/9}\) (variance \(9\cdot t/9=t\)) and the restarted process are all standard BMs. But \(|B_t|\ge0\) is not Gaussian and cannot be a BM — reflection means negating the path, not taking absolute value.</div>
+      </article>
+
+      <article class="question" data-answer="2" data-topic="inversion-limits" id="q8">
+        <header class="q-head">
+          <span class="q-num">08</span>
+          <span class="q-topic">Inversion &amp; limits</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Let \(W_t=tB_{1/t}\) for \(t>0\) and \(W_0=0\). Compute \(\operatorname{cov}(W_2,W_5)\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(10\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(5\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(2\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(7\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(\sqrt{10}\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(W\) is the time-inverted Brownian motion, itself a standard BM:
+    \[\operatorname{cov}(W_s,W_t)=st\,E[B_{1/s}B_{1/t}]=st\min(\tfrac1s,\tfrac1t)=s\wedge t.\]
+    Hence \(\operatorname{cov}(W_2,W_5)=2\) (2.4(b)).</div>
+      </article>
+
+      <article class="question" data-answer="0" data-topic="inversion-limits" id="q9">
+        <header class="q-head">
+          <span class="q-num">09</span>
+          <span class="q-topic">Inversion &amp; limits</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">What is \(\displaystyle\lim_{t\to\infty}\frac{B_t}{t}\) almost surely?</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(0\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(1\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(\infty\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">the limit does not exist</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(B_1\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">By the strong law of large numbers applied to the i.i.d. unit increments, \(B_t/t\to0\) a.s. (2.4(a)).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="inversion-limits" id="q10">
+        <header class="q-head">
+          <span class="q-num">10</span>
+          <span class="q-topic">Inversion &amp; limits</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Why is \(W_t=tB_{1/t}\) continuous at \(t=0\) (with \(W_0=0\))?</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">because \(B\) has continuous paths for \(t>0\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">because \(\lim_{t\to0}tB_{1/t}=\lim_{u\to\infty}B_u/u=0\) a.s.</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">because \(W\) is a martingale</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">because \(W_0\) is defined to equal \(B_0\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">it is in fact not continuous at \(0\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Continuity for \(t>0\) is clear. At \(0\) substitute \(u=1/t\to\infty\):
+    \[\lim_{t\downarrow0}tB_{1/t}=\lim_{u\to\infty}\frac{B_u}{u}=0=W_0\ \text{a.s.}\]
+    using the SLLN limit from 2.4(a) (see 2.4(b)).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="inversion-limits" id="q11">
+        <header class="q-head">
+          <span class="q-num">11</span>
+          <span class="q-topic">Inversion &amp; limits</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">For \(X_t=B_t+\mu t\) with \(\mu<0\), what is \(\lim_{t\to\infty}X_t\) almost surely?</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(+\infty\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(-\infty\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(0\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(\mu\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">it oscillates without limit</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Write \(X_t=t\big(\tfrac{B_t}{t}+\mu\big)\). Since \(B_t/t\to0\) a.s., the bracket \(\to\mu<0\), so \(X_t\to-\infty\) a.s. (2.4(d)).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="inversion-limits" id="q12">
+        <header class="q-head">
+          <span class="q-num">12</span>
+          <span class="q-topic">Inversion &amp; limits</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Compute \(\displaystyle\lim_{t\to\infty}\frac{B_t+5t}{t}\) almost surely.</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(0\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(5\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(\infty\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(6\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">undefined</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(\dfrac{B_t+5t}{t}=\dfrac{B_t}{t}+5\to0+5=5\) a.s., since \(B_t/t\to0\) (2.4(a)).</div>
+      </article>
+
+      <article class="question" data-answer="0" data-topic="brownian-bridge" id="q13">
+        <header class="q-head">
+          <span class="q-num">13</span>
+          <span class="q-topic">Brownian bridge</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">For the Brownian bridge \(b_t=B_t-tB_1\) on \([0,1]\), what is \(E[b_t]\)?</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(0\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(t\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(-t\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(tB_1\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(1-t\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(E[b_t]=E[B_t]-tE[B_1]=0-0=0\) (2.6(b)). The bridge is a centred Gaussian process.</div>
+      </article>
+
+      <article class="question" data-answer="2" data-topic="brownian-bridge" id="q14">
+        <header class="q-head">
+          <span class="q-num">14</span>
+          <span class="q-topic">Brownian bridge</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">The bridge \(b_t=B_t-tB_1\) has \(\operatorname{cov}(b_s,b_t)=s(1-t)\) for \(s\le t\). Compute \(\operatorname{cov}(b_{1/4},b_{1/2})\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(1/2\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(1/4\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(1/8\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(3/8\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(1/16\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">With \(s=\tfrac14\le t=\tfrac12\):
+    \[\operatorname{cov}(b_{1/4},b_{1/2})=\tfrac14\big(1-\tfrac12\big)=\tfrac14\cdot\tfrac12=\tfrac18\]
+    (covariance from 2.6(c)).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="brownian-bridge" id="q15">
+        <header class="q-head">
+          <span class="q-num">15</span>
+          <span class="q-topic">Brownian bridge</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">For the Brownian bridge, compute \(\operatorname{var}(b_{1/2})\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(1/2\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(1/4\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(1/8\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(1\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(3/4\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(\operatorname{var}(b_t)=t(1-t)\); at \(t=\tfrac12\), \(\tfrac12\cdot\tfrac12=\tfrac14\).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="brownian-bridge" id="q16">
+        <header class="q-head">
+          <span class="q-num">16</span>
+          <span class="q-topic">Brownian bridge</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">What is \(b_1\) for the Brownian bridge \(b_t=B_t-tB_1\)?</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(B_1\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(0\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(1\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(N(0,1)\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(-B_1\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(b_1=B_1-1\cdot B_1=0\) almost surely — the bridge is pinned to \(0\) at both endpoints.</div>
+      </article>
+
+      <article class="question" data-answer="2" data-topic="brownian-bridge" id="q17">
+        <header class="q-head">
+          <span class="q-num">17</span>
+          <span class="q-topic">Brownian bridge</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">At which \(t\in[0,1]\) is the variance \(\operatorname{var}(b_t)=t(1-t)\) of the Brownian bridge maximal?</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(0\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(1/4\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(1/2\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(3/4\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(1\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(t(1-t)\) is a downward parabola maximised at \(t=\tfrac12\), where the variance is \(\tfrac14\).</div>
+      </article>
+
+      <article class="question" data-answer="0" data-topic="brownian-bridge" id="q18">
+        <header class="q-head">
+          <span class="q-num">18</span>
+          <span class="q-topic">Brownian bridge</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Which process has the <b>same</b> finite-dimensional distributions as the Brownian bridge \(b_t=B_t-tB_1\)?</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\((1-t)B_{t/(1-t)}\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(tB_{1/t}\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(B_t-B_1\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(B_{1-t}\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(B_t+tB_1\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(\tilde b_t=(1-t)B_{t/(1-t)}\) is centred Gaussian with
+    \[\operatorname{cov}(\tilde b_s,\tilde b_t)=(1-s)(1-t)\min\!\Big(\tfrac{s}{1-s},\tfrac{t}{1-t}\Big)=s(1-t),\]
+    matching the bridge's covariance, hence the same law (2.6(d)).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="correlated-bm" id="q19">
+        <header class="q-head">
+          <span class="q-num">19</span>
+          <span class="q-topic">Correlated BMs</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Let \(B=(B^{(1)},B^{(2)})\) be independent BMs. For which \(\lambda=(\lambda_1,\lambda_2)\) is \(\lambda_1B^{(1)}+\lambda_2B^{(2)}\) a standard Brownian motion?</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\((1,1)\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\((3/5,4/5)\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\((1/2,1/2)\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\((2,-1)\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\((1/\sqrt3,1/\sqrt3)\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(\langle\lambda,B\rangle\) has increment variance \(\langle\lambda,\lambda\rangle(t-s)\), so it is standard iff \(\langle\lambda,\lambda\rangle=1\). Only \((3/5,4/5)\) satisfies \((3/5)^2+(4/5)^2=1\) (3.2(a)).</div>
+      </article>
+
+      <article class="question" data-answer="2" data-topic="correlated-bm" id="q20">
+        <header class="q-head">
+          <span class="q-num">20</span>
+          <span class="q-topic">Correlated BMs</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">With \(W^{(1)}=\sqrt{1-\rho^2}\,B^{(1)}+\rho B^{(2)}\) and \(\rho=0.6\), what is \(\operatorname{corr}(W^{(1)}_t,B^{(2)}_t)\)?</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(0\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(0.36\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(0.6\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(0.8\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(1\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(\operatorname{cov}(W^{(1)}_t,B^{(2)}_t)=\rho t\) and both variances equal \(t\), so the correlation is exactly \(\rho=0.6\) (3.3(b)).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="correlated-bm" id="q21">
+        <header class="q-head">
+          <span class="q-num">21</span>
+          <span class="q-topic">Correlated BMs</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">With \(W^{(1)}=\sqrt{1-\rho^2}\,B^{(1)}+\rho B^{(2)}\) and \(\rho=\tfrac12\), compute \(\operatorname{cov}(W^{(1)}_2,B^{(2)}_5)\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(5/2\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(1\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(1/2\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(5/4\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(0\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(\operatorname{cov}(W^{(1)}_s,B^{(2)}_t)=\rho(s\wedge t)\). With \(s=2,t=5\): \(\tfrac12\cdot2=1\) (3.3(b)).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="correlated-bm" id="q22">
+        <header class="q-head">
+          <span class="q-num">22</span>
+          <span class="q-topic">Correlated BMs</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">With \(W^{(1)}=\sqrt{1-\rho^2}\,B^{(1)}+\rho B^{(2)}\), which process is a martingale?</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(W^{(1)}_tB^{(2)}_t\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(W^{(1)}_tB^{(2)}_t-\rho t\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(W^{(1)}_tB^{(2)}_t+\rho t\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(W^{(1)}_tB^{(2)}_t-t\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(W^{(1)}_t+B^{(2)}_t-\rho t\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Expanding, \(W^{(1)}_tB^{(2)}_t=\sqrt{1-\rho^2}\,B^{(1)}_tB^{(2)}_t+\rho\big((B^{(2)}_t)^2-t\big)+\rho t\). Both bracketed terms are martingales, so subtracting the drift \(\rho t\) gives the martingale \(W^{(1)}_tB^{(2)}_t-\rho t\) (3.3(c)).</div>
+      </article>
+
+      <article class="question" data-answer="2" data-topic="correlated-bm" id="q23">
+        <header class="q-head">
+          <span class="q-num">23</span>
+          <span class="q-topic">Correlated BMs</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Let \(B^{(1)},B^{(2)},B^{(3)}\) be independent BMs. Which process is a martingale?</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(\|B_t\|^2\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(\|B_t\|^2-t\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(\|B_t\|^2-3t\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(\|B_t\|^2-3t^2\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(\|B_t\|-3t\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(\|B_t\|^2-dt=\sum_{i=1}^d\big((B^{(i)}_t)^2-t\big)\) is a sum of martingales, hence a martingale. For \(d=3\) the compensator is \(3t\) (3.2(b)).</div>
+      </article>
+
+      <article class="question" data-answer="2" data-topic="correlated-bm" id="q24">
+        <header class="q-head">
+          <span class="q-num">24</span>
+          <span class="q-topic">Correlated BMs</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">For \(W^{(1)}=\sqrt{1-\rho^2}\,B^{(1)}+\rho B^{(2)}\), what is \(\operatorname{var}(W^{(1)}_t)\)?</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\((1-\rho^2)t\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(\rho^2 t\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(t\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\((1+\rho^2)t\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(2t\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">By independence, \(\operatorname{var}(W^{(1)}_t)=(1-\rho^2)t+\rho^2 t=t\); the mixing preserves the standard-BM variance (3.3(a)).</div>
+      </article>
+
+      <article class="question" data-answer="0" data-topic="integrated-bm" id="q25">
+        <header class="q-head">
+          <span class="q-num">25</span>
+          <span class="q-topic">Integrated BM</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">For \(I_t=\int_0^t B_s\,\mathrm ds\), compute \(E[I_t]\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(0\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(t\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(t^2/2\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(t^3/3\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(t/2\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">By Fubini, \(E\big[\int_0^t B_s\,\mathrm ds\big]=\int_0^t E[B_s]\,\mathrm ds=0\) (4.3(d)).</div>
+      </article>
+
+      <article class="question" data-answer="0" data-topic="integrated-bm" id="q26">
+        <header class="q-head">
+          <span class="q-num">26</span>
+          <span class="q-topic">Integrated BM</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">For \(I_t=\int_0^t B_s\,\mathrm ds\), compute \(\operatorname{var}(I_2)\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(8/3\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(4/3\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(2\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(8\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(4\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(\operatorname{var}(I_t)=t^3/3\) (4.3(f)); at \(t=2\), \(8/3\).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="integrated-bm" id="q27">
+        <header class="q-head">
+          <span class="q-num">27</span>
+          <span class="q-topic">Integrated BM</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Is \(I_t=\int_0^t B_s\,\mathrm ds\) a martingale?</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">yes, it is a martingale</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">no — it is a continuous finite-variation process that is not constant</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">no — it is not adapted</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">no — it is not integrable</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">yes, because \(E[I_t]=0\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">A continuous martingale of finite variation must be constant. Since \(\operatorname{var}(I_t)=t^3/3\ne0\), \(I\) is non-constant and therefore <em>not</em> a martingale (4.3(e), Thm 4.8).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="integrated-bm" id="q28">
+        <header class="q-head">
+          <span class="q-num">28</span>
+          <span class="q-topic">Integrated BM</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">For \(I_t=\int_0^t B_s\,\mathrm ds\) the covariance is \(\operatorname{cov}(I_s,I_t)=s^2\big(\tfrac t2-\tfrac s6\big)\) for \(s\le t\). Compute \(\operatorname{cov}(I_1,I_2)\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(1/2\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(5/6\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(2/3\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(1\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(7/6\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">With \(s=1,t=2\): \(1\cdot\big(\tfrac22-\tfrac16\big)=1-\tfrac16=\tfrac56\) (4.3(g)).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="integrated-bm" id="q29">
+        <header class="q-head">
+          <span class="q-num">29</span>
+          <span class="q-topic">Integrated BM</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">What is the distribution of \(I_1=\int_0^1 B_s\,\mathrm ds\)?</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(N(0,1)\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(N(0,1/3)\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(N(0,1/2)\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(N(1,1/3)\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(N(0,3)\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(I_1\) is a limit of Gaussian Riemann sums, hence Gaussian, centred, with variance \(1^3/3=1/3\): \(I_1\sim N(0,1/3)\) (4.3(b),(f)).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="integrated-bm" id="q30">
+        <header class="q-head">
+          <span class="q-num">30</span>
+          <span class="q-topic">Integrated BM</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">For \(I_t=\int_0^t B_s\,\mathrm ds\), compute \(\operatorname{var}(I_2-I_1)\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(1/3\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(4/3\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(7/3\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(2/3\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(1\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Using \(\operatorname{var}(I_{s+t}-I_s)=st^2+\tfrac{t^3}{3}\) with \(s=1,t=1\):
+    \[\operatorname{var}(I_2-I_1)=1\cdot1+\tfrac13=\tfrac43.\]
+    (Note this exceeds \(\operatorname{var}(I_1-I_0)=\tfrac13\): increments are not stationary, 4.3(h).)</div>
+      </article>
+
+      <article class="question" data-answer="2" data-topic="integrated-bm" id="q31">
+        <header class="q-head">
+          <span class="q-num">31</span>
+          <span class="q-topic">Integrated BM</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">The increments of the integrated Brownian motion \(I_t=\int_0^t B_s\,\mathrm ds\) are:</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">stationary and independent</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">stationary but not independent</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">neither stationary nor independent</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">independent but not stationary</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">independent and identically distributed</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Variances \(\operatorname{var}(I_{s+t}-I_s)=st^2+t^3/3\) depend on \(s\) (not stationary), and e.g. \(\operatorname{cov}(I_1,\,I_2-I_1)=\tfrac12\ne0\) (not independent) (4.3(h)).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="integrated-bm" id="q32">
+        <header class="q-head">
+          <span class="q-num">32</span>
+          <span class="q-topic">Integrated BM</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">For approximating \(\int_0^t B_s\,\mathrm ds\), which numerical scheme converges faster in the step size \(\Delta\)?</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">left Riemann sum, \(O(\Delta)\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">trapezoidal rule, \(O(\Delta^2)\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">both converge at \(O(\Delta)\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">both converge at \(O(\Delta^2)\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">left Riemann sum, \(O(\Delta^2)\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">The left Riemann sum converges at \(O(\Delta)\); the trapezoidal rule at the steeper \(O(\Delta^2)\), confirmed by the log–log error slopes (4.4(d),(e)).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="exp-martingales" id="q33">
+        <header class="q-head">
+          <span class="q-num">33</span>
+          <span class="q-topic">Exponential martingales</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Which of the following is a martingale for a standard Brownian motion \(B\)?</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(\exp(\theta B_t)\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(\exp(\theta B_t-\tfrac12\theta^2 t)\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(\exp(\theta B_t-\theta t)\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(\exp(\theta B_t+\tfrac12\theta^2 t)\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(\exp(\theta B_t-\theta^2 t)\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">The exponential (Doléans) martingale is \(\exp(\theta B_t-\tfrac12\theta^2 t)\); the compensator \(\tfrac12\theta^2 t\) exactly cancels the MGF growth \(E[e^{\theta(B_t-B_s)}]=e^{\theta^2(t-s)/2}\) (3.1(b)).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="exp-martingales" id="q34">
+        <header class="q-head">
+          <span class="q-num">34</span>
+          <span class="q-topic">Exponential martingales</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">For which constant \(c\) is \(\exp(2B_t-ct)\) a martingale?</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(1\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(2\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(4\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(1/2\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(\sqrt2\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Need \(c=\tfrac12\theta^2\) with \(\theta=2\): \(c=\tfrac12\cdot4=2\).</div>
+      </article>
+
+      <article class="question" data-answer="2" data-topic="exp-martingales" id="q35">
+        <header class="q-head">
+          <span class="q-num">35</span>
+          <span class="q-topic">Exponential martingales</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">The process \(\exp(B_t+\mu t)\) is a martingale if and only if \(\mu=\)?</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(0\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(1/2\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(-1/2\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(-1\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(1\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Here \(\theta=1\); the martingale requires drift \(-\tfrac12\theta^2=-\tfrac12\). Thus \(\mu=-\tfrac12\), giving \(\exp(B_t-t/2)\).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="exp-martingales" id="q36">
+        <header class="q-head">
+          <span class="q-num">36</span>
+          <span class="q-topic">Exponential martingales</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">The process \(\exp(B_t)\) (standard BM) is a:</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">martingale</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">submartingale</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">supermartingale</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">constant</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">non-integrable process</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Write \(\exp(B_t)=\exp(B_t-\tfrac t2)\cdot e^{t/2}\): a martingale times the increasing factor \(e^{t/2}\). Equivalently it matches \(\exp(\theta B_t+(\mu-\theta^2/2)t)\) with \(\theta=1,\mu=\tfrac12>0\), a submartingale (3.1(c)).</div>
+      </article>
+
+      <article class="question" data-answer="0" data-topic="exp-martingales" id="q37">
+        <header class="q-head">
+          <span class="q-num">37</span>
+          <span class="q-topic">Exponential martingales</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">If \(0<\mu<\theta^2/2\), then \(S_t=\exp\!\big(\theta B_t+(\mu-\tfrac12\theta^2)t\big)\) satisfies, almost surely:</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(\lim_{t\to\infty}S_t=0\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(\lim_{t\to\infty}S_t=\infty\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(\lim_{t\to\infty}S_t=1\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(\lim_{t\to\infty}S_t=e^{\mu t}\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(S_t\) does not converge</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(S_t=e^{\theta(B_t+\nu t)}\) with \(\nu=\tfrac\mu\theta-\tfrac\theta2<0\); since \(B_t+\nu t\to-\infty\) a.s., \(S_t\to0\) a.s. — even though \(E[S_t]=e^{\mu t}\to\infty\) (3.1(d)).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="exp-martingales" id="q38">
+        <header class="q-head">
+          <span class="q-num">38</span>
+          <span class="q-topic">Exponential martingales</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Compute \(E\big[e^{\theta B_t}\big]\) for a standard Brownian motion.</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(e^{\theta t}\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(e^{\theta^2 t/2}\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(e^{\theta^2 t}\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(1\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(e^{\theta t/2}\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(B_t\sim N(0,t)\), so this is the Gaussian MGF: \(E[e^{\theta B_t}]=e^{\theta^2 t/2}\).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="exp-martingales" id="q39">
+        <header class="q-head">
+          <span class="q-num">39</span>
+          <span class="q-topic">Exponential martingales</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">For \(S_t=\exp\!\big(\theta B_t+(\mu-\tfrac12\theta^2)t\big)\) with \(\mu=0.2\), compute \(E[S_5]\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(1\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(e\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(e^{5}\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(e^{0.2}\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(e^{-1}\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(E[S_t]=e^{\mu t}E[\exp(\theta B_t-\tfrac12\theta^2 t)]=e^{\mu t}\cdot1=e^{\mu t}\). Thus \(E[S_5]=e^{0.2\cdot5}=e\) (3.1(d)(ii)).</div>
+      </article>
+
+      <article class="question" data-answer="0" data-topic="quadratic-variation" id="q40">
+        <header class="q-head">
+          <span class="q-num">40</span>
+          <span class="q-topic">Quadratic variation</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">What is the quadratic variation \(\langle B,B\rangle_t\) of a standard Brownian motion?</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(t\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(t^2\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(t/2\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(2t\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(\sqrt t\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(B_t^2-t\) is a martingale, so the unique continuous increasing compensator is \(\langle B,B\rangle_t=t\) (4.1(h)).</div>
+      </article>
+
+      <article class="question" data-answer="2" data-topic="quadratic-variation" id="q41">
+        <header class="q-head">
+          <span class="q-num">41</span>
+          <span class="q-topic">Quadratic variation</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">For \(M_t=\sqrt3\,B_t\), what is \(\langle M,M\rangle_t\)?</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(t\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(\sqrt3\,t\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(3t\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(3t^2\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(9t\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(\langle M,M\rangle_t=\Gamma(t,t)=E[M_t^2]=3t\); in general \(\langle\sigma B,\sigma B\rangle_t=\sigma^2 t\) (4.1(h), 4.2(a)).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="quadratic-variation" id="q42">
+        <header class="q-head">
+          <span class="q-num">42</span>
+          <span class="q-topic">Quadratic variation</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">For \(M_t=2B_t\), which process is a martingale?</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(M_t^2\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(M_t^2-4t\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(M_t^2-t\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(M_t^2-2t\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(M_t^2-4t^2\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(M_t^2-\langle M,M\rangle_t\) is a martingale, and \(\langle M,M\rangle_t=4t\). So \(M_t^2-4t=4(B_t^2-t)\) is a martingale (4.1(h)).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="quadratic-variation" id="q43">
+        <header class="q-head">
+          <span class="q-num">43</span>
+          <span class="q-topic">Quadratic variation</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Compute \(\operatorname{cov}(B_2,\,B_7-B_5)\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(2\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(0\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(5\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(7\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(-2\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">For \(s<t<u\), a centred martingale has orthogonal increments: \(\operatorname{cov}(M_s,M_u-M_t)=0\). Here \(2<5<7\), so the covariance is \(0\) (4.1(e)).</div>
+      </article>
+
+      <article class="question" data-answer="0" data-topic="quadratic-variation" id="q44">
+        <header class="q-head">
+          <span class="q-num">44</span>
+          <span class="q-topic">Quadratic variation</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Compute \(E\big[B_5^2-B_2^2\,\big|\,\mathcal F_2\big]\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(3\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(0\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(21\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(25\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(B_2^2\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Since \(E[M_t^2-M_s^2\mid\mathcal F_s]=\Gamma(t,t)-\Gamma(s,s)\), for BM \(E[B_t^2-B_s^2\mid\mathcal F_s]=t-s\). Here \(5-2=3\) (4.1(g)).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="quadratic-variation" id="q45">
+        <header class="q-head">
+          <span class="q-num">45</span>
+          <span class="q-topic">Quadratic variation</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">For independent Brownian motions \(B^{(1)},B^{(2)}\), what is the cross-variation \(\langle B^{(1)},B^{(2)}\rangle_t\)?</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(t\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(0\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(\rho t\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(t^2\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(\min(s,t)\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Setting \(\rho=0\) in 3.3(c), \(B^{(1)}_tB^{(2)}_t\) is itself a martingale, so its compensator vanishes: \(\langle B^{(1)},B^{(2)}\rangle_t=0\). Independent BMs are orthogonal.</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="convexity" id="q46">
+        <header class="q-head">
+          <span class="q-num">46</span>
+          <span class="q-topic">Sub/supermartingales</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">If \(M\) is a martingale and \(\varphi\) is convex (with \(\varphi(M_t)\) integrable), then \(\varphi(M)\) is a:</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">martingale</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">submartingale</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">supermartingale</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">non-adapted process</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">constant</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">By conditional Jensen, \(E[\varphi(M_t)\mid\mathcal F_s]\ge\varphi(E[M_t\mid\mathcal F_s])=\varphi(M_s)\): a submartingale (Prop 3.12).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="convexity" id="q47">
+        <header class="q-head">
+          <span class="q-num">47</span>
+          <span class="q-topic">Sub/supermartingales</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">The process \(\big((e^{B_t}-K)^+\big)_{t\ge0}\) is a:</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">martingale</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">submartingale</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">supermartingale</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">constant</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">non-integrable process</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(g(x)=(e^{x}-K)^+\) is convex (increasing convex \(y\mapsto y^+\) composed with convex \(e^x-K\)). Applied to the martingale \(B\), \(g(B_t)\) is a submartingale (3.1(e)).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="convexity" id="q48">
+        <header class="q-head">
+          <span class="q-num">48</span>
+          <span class="q-topic">Sub/supermartingales</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">The process \(|B_t|\) is a:</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">martingale</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">submartingale</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">supermartingale</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">process with independent increments</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">Gaussian process</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(x\mapsto|x|\) is convex, so by Jensen \(|B_t|\) is a submartingale (it is not Gaussian and has no independent increments).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="convexity" id="q49">
+        <header class="q-head">
+          <span class="q-num">49</span>
+          <span class="q-topic">Sub/supermartingales</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">For a square-integrable martingale \(M\), the map \(t\mapsto E[M_t^2]\) is:</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">constant</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">nondecreasing</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">nonincreasing</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">identically \(0\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">always unbounded</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(M_t^2\) is a submartingale (convexity), so \(t\mapsto E[M_t^2]=\Gamma(t,t)\) is nondecreasing (4.1(d)).</div>
+      </article>
+
+      <article class="question" data-answer="4" data-topic="convexity" id="q50">
+        <header class="q-head">
+          <span class="q-num">50</span>
+          <span class="q-topic">Sub/supermartingales</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">For which \(\mu\) is \(S_t=\exp\!\big(B_t+(\mu-\tfrac12)t\big)\) a supermartingale?</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(\mu=2\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(\mu=1\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(\mu=1/2\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(\mu=0\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(\mu=-1\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">This matches \(\exp(\theta B_t+(\mu-\tfrac12\theta^2)t)\) with \(\theta=1\); it is a supermartingale iff \(\mu<0\). Only \(\mu=-1\) qualifies (3.1(c)(ii)).</div>
+      </article>
+      <article class="question" data-answer="1" data-topic="stein" id="q51">
+        <header class="q-head">
+          <span class="q-num">51</span>
+          <span class="q-topic">Stein &amp; Gaussian moments</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">For \(X\sim N(0,1)\) and a differentiable \(f\), <b>Stein's identity</b> states \(E[Xf(X)]=\):</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(E[f(X)]\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(E[f'(X)]\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(E[f''(X)]\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(f'(0)\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(0\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Gaussian integration by parts: \(E[Xf(X)]=E[f'(X)]\), proved from \(\varphi'(x)=-x\varphi(x)\) (1.1(a),(b)).</div>
+      </article>
+
+      <article class="question" data-answer="2" data-topic="stein" id="q52">
+        <header class="q-head">
+          <span class="q-num">52</span>
+          <span class="q-topic">Stein &amp; Gaussian moments</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">For \(X\sim N(0,1)\), compute \(E[X^4]\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(1\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(2\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(3\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(6\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(15\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Even moments satisfy \(E[X^{2n}]=(2n-1)!!\). For \(n=2\): \(3\cdot1=3\) (1.1(c)).</div>
+      </article>
+
+      <article class="question" data-answer="2" data-topic="stein" id="q53">
+        <header class="q-head">
+          <span class="q-num">53</span>
+          <span class="q-topic">Stein &amp; Gaussian moments</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">For \(X\sim N(0,1)\), compute \(E[X^6]\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(6\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(9\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(15\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(45\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(105\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(E[X^{2n}]=(2n-1)!!\); for \(n=3\): \(5!!=5\cdot3\cdot1=15\) (1.1(c)).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="stein" id="q54">
+        <header class="q-head">
+          <span class="q-num">54</span>
+          <span class="q-topic">Stein &amp; Gaussian moments</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">For \(X\sim N(0,1)\), every odd moment \(E[X^{2n-1}]\) equals:</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(1\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(0\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\((2n-1)!!\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(n\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">undefined</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">By symmetry (and the Stein induction), all odd moments of a centred Gaussian vanish (1.1(c)).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="stein" id="q55">
+        <header class="q-head">
+          <span class="q-num">55</span>
+          <span class="q-topic">Stein &amp; Gaussian moments</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Applying Stein with \(f(x)=e^{\lambda x}\), the MGF \(M(\lambda)=E[e^{\lambda X}]\) of \(N(0,1)\) satisfies:</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(M'(\lambda)=M(\lambda)\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(M'(\lambda)=\lambda M(\lambda)\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(M'(\lambda)=\lambda^2 M(\lambda)\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(M'(\lambda)=-\lambda M(\lambda)\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(M''(\lambda)=M(\lambda)\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(E[Xe^{\lambda X}]=E[\lambda e^{\lambda X}]\Rightarrow M'(\lambda)=\lambda M(\lambda)\), \(M(0)=1\Rightarrow M(\lambda)=e^{\lambda^2/2}\) (1.1(d)).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="stein" id="q56">
+        <header class="q-head">
+          <span class="q-num">56</span>
+          <span class="q-topic">Stein &amp; Gaussian moments</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Use Stein with \(f(x)=x\) to compute \(E[X^2]\) for \(X\sim N(0,1)\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(0\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(1\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(2\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(1/2\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(3\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(E[X\cdot X]=E[f'(X)]=E[1]=1\) with \(f(x)=x\) (1.1(b)).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="stein" id="q57">
+        <header class="q-head">
+          <span class="q-num">57</span>
+          <span class="q-topic">Stein &amp; Gaussian moments</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">For standard BM (\(B_t\sim N(0,t)\)) and differentiable \(f\), Stein's identity gives \(E[B_t f(B_t)]=\):</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(E[f'(B_t)]\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(t\,E[f'(B_t)]\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(t\,E[f(B_t)]\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(E[f'(B_t)]/t\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(0\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">For \(X\sim N(0,\sigma^2)\), \(E[Xf(X)]=\sigma^2E[f'(X)]\). With \(\sigma^2=t\): \(t\,E[f'(B_t)]\).</div>
+      </article>
+
+      <article class="question" data-answer="2" data-topic="mgf" id="q58">
+        <header class="q-head">
+          <span class="q-num">58</span>
+          <span class="q-topic">MGF &amp; characterisation</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">The moment generating function of \(N(0,\sigma^2)\) is \(M(\lambda)=\):</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(e^{\sigma^2/2}\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(e^{\lambda\sigma^2/2}\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(e^{\lambda^2\sigma^2/2}\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(e^{\lambda^2\sigma^2}\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\((1-\lambda\sigma^2)^{-1}\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(M(\lambda)=e^{\lambda^2\sigma^2/2}\), which uniquely determines the \(N(0,\sigma^2)\) law (1.2(a)).</div>
+      </article>
+
+      <article class="question" data-answer="0" data-topic="mgf" id="q59">
+        <header class="q-head">
+          <span class="q-num">59</span>
+          <span class="q-topic">MGF &amp; characterisation</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">A random variable \(X\) has \(M(\lambda)=e^{\lambda^2/2}\) for all \(\lambda\). Its distribution is:</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(N(0,1)\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(N(1,1)\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(N(0,2)\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">Exponential</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">not determined by the MGF</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">The MGF determines the distribution uniquely; \(e^{\lambda^2/2}\) is the standard normal MGF (1.1(d)).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="mgf" id="q60">
+        <header class="q-head">
+          <span class="q-num">60</span>
+          <span class="q-topic">MGF &amp; characterisation</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">In Problem 1.2, \(X\) and \(\mathbf 1_G\) are shown to be independent because:</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">they are uncorrelated</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">their joint MGF factorises</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(P(G)=1/2\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(X\) is bounded</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(\mathbf 1_G\) is Gaussian</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">The joint MGF factorises as \(E[e^{\lambda X}]\,E[e^{\tilde\lambda\mathbf1_G}]\), which is equivalent to independence (1.2(d),(e)).</div>
+      </article>
+
+      <article class="question" data-answer="0" data-topic="mgf" id="q61">
+        <header class="q-head">
+          <span class="q-num">61</span>
+          <span class="q-topic">MGF &amp; characterisation</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Suppose \(E[e^{\lambda X}\mid\mathcal G]=e^{\lambda^2\sigma^2/2}\) (a.s.) for all \(\lambda\). Then:</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(X\sim N(0,\sigma^2)\) and \(X\) is independent of \(\mathcal G\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(X\) is \(\mathcal G\)-measurable</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(X=\sigma^2\) a.s.</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(X\sim N(\sigma^2,0)\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">nothing can be concluded</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">A deterministic conditional MGF equal to the \(N(0,\sigma^2)\) MGF forces \(X\sim N(0,\sigma^2)\) independent of \(\mathcal G\) (1.2(a),(e)).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="mgf" id="q62">
+        <header class="q-head">
+          <span class="q-num">62</span>
+          <span class="q-topic">MGF &amp; characterisation</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">For the exponential martingale \(Y_t=\exp(\theta B_t-\tfrac12\theta^2 t)\), the mean \(E[Y_t]\) equals:</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(e^{\theta^2 t/2}\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(1\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(e^{\theta B_t}\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(e^{-\theta^2 t/2}\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(t\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(E[Y_t]=E[Y_0]=1\); equivalently the compensator \(\tfrac12\theta^2t\) cancels \(E[e^{\theta B_t}]=e^{\theta^2 t/2}\) (3.1(b)).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="mgf" id="q63">
+        <header class="q-head">
+          <span class="q-num">63</span>
+          <span class="q-topic">MGF &amp; characterisation</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Using the Gaussian MGF, \(E[e^{\theta B_t}]\) for standard BM equals:</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(e^{\theta t}\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(e^{\theta^2 t/2}\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(e^{\theta^2 t}\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(1\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(e^{\theta^2/2}\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(B_t\sim N(0,t)\), so \(E[e^{\theta B_t}]=e^{\theta^2 t/2}\) (1.2(a)).</div>
+      </article>
+
+      <article class="question" data-answer="0" data-topic="gaussian-processes" id="q64">
+        <header class="q-head">
+          <span class="q-num">64</span>
+          <span class="q-topic">Gaussian processes</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">For \(X_t=\cos(ct)X+\sin(ct)\tilde X\) with \(X,\tilde X\) iid \(N(0,1)\), the covariance \(\Gamma(s,t)=\):</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(\cos(c(s-t))\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(\cos(cs)\cos(ct)\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(\min(s,t)\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(s(1-t)\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(\cos(cs+ct)\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(\Gamma(s,t)=\cos(cs)\cos(ct)+\sin(cs)\sin(ct)=\cos(c(s-t))\) (1.3(c)).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="gaussian-processes" id="q65">
+        <header class="q-head">
+          <span class="q-num">65</span>
+          <span class="q-topic">Gaussian processes</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">A process \((X_t)\) is called <b>Gaussian</b> if:</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">each \(X_t\) is Gaussian</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">every finite linear combination \(\sum c_i X_{t_i}\) is Gaussian</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">it has independent increments</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">it is a martingale</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">it has continuous paths</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Definition: all finite-dimensional linear combinations are Gaussian random variables (1.3(a)).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="gaussian-processes" id="q66">
+        <header class="q-head">
+          <span class="q-num">66</span>
+          <span class="q-topic">Gaussian processes</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">The finite-dimensional distributions of a <b>centred</b> Gaussian process are completely determined by:</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">the mean function</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">the covariance function</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">the sample paths</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">the first moment</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">the quadratic variation</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">A centred Gaussian process is characterised entirely by its covariance function (used in 2.6(d)).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="gaussian-processes" id="q67">
+        <header class="q-head">
+          <span class="q-num">67</span>
+          <span class="q-topic">Gaussian processes</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Two centred Gaussian processes with the same covariance function necessarily have:</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">the same sample paths</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">the same finite-dimensional distributions</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">independent increments</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">the same quadratic variation only</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">nothing in common</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Equal covariance \(\Rightarrow\) equal finite-dimensional distributions for centred Gaussian processes (2.6(d)).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="gaussian-processes" id="q68">
+        <header class="q-head">
+          <span class="q-num">68</span>
+          <span class="q-topic">Gaussian processes</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">For the time inversion \(W_t=tB_{1/t}\) (\(t>0\)), compute \(\operatorname{cov}(W_s,W_t)\) for \(s<t\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(st\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(s=\min(s,t)\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(t\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(s(1-t)\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(st^2\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(\operatorname{cov}(W_s,W_t)=st\,\min(1/s,1/t)=st\cdot\tfrac1t=s=\min(s,t)\), so \(W\) is a standard BM (2.4(b)).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="gaussian-processes" id="q69">
+        <header class="q-head">
+          <span class="q-num">69</span>
+          <span class="q-topic">Gaussian processes</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Why is \(W_t=tB_{1/t}\) continuous at \(t=0\) (with \(W_0=0\))?</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">because \(B\) is bounded</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">because \(tB_{1/t}=B_u/u\to0\) as \(u\to\infty\) by the SLLN</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">because \(W_0\) is Gaussian</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">it is not continuous at \(0\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">because \(\operatorname{var}(W_t)=t\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Continuity at \(0\) follows from \(B_u/u\to0\) a.s. (2.4(a),(b)).</div>
+      </article>
+
+      <article class="question" data-answer="0" data-topic="gaussian-processes" id="q70">
+        <header class="q-head">
+          <span class="q-num">70</span>
+          <span class="q-topic">Gaussian processes</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">For standard BM the covariance is \(\operatorname{cov}(B_s,B_t)=\min(s,t)\). Compute \(\operatorname{cov}(B_3,B_7)\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(3\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(7\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(10\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(21\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(0\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(\operatorname{cov}(B_s,B_t)=s\wedge t=3\).</div>
+      </article>
+
+      <article class="question" data-answer="0" data-topic="stopping-times" id="q71">
+        <header class="q-head">
+          <span class="q-num">71</span>
+          <span class="q-topic">Stopping times</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Let \(T=\inf\{t\ge0:\,B_t-t=-1\}\). Is \(T\) a stopping time?</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">yes &mdash; it is the first hitting time of a closed set</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">no &mdash; it depends on the future</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">no &mdash; it is not measurable</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">only if \(B\) is bounded</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">only for the raw filtration</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(X_t=B_t-t\) is continuous and adapted; the first hitting time of the closed set \(\{-1\}\) is a stopping time (3.4(a), Prop 3.9).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="stopping-times" id="q72">
+        <header class="q-head">
+          <span class="q-num">72</span>
+          <span class="q-topic">Stopping times</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Let \(\theta=\arg\max_{t\in[0,1]}B_t\) be the time the maximum on \([0,1]\) is attained. Is \(\theta\) a stopping time?</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">yes</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">no &mdash; deciding \(\{\theta\le t\}\) requires the future path on \((t,1]\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">yes, because \(B\) is continuous</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">no, because it is not integrable</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">yes, for the completed filtration</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Knowing the max was attained by time \(t\) needs the path after \(t\); \(\{\theta\le t\}\notin\mathcal F_t\) (3.4(b)).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="stopping-times" id="q73">
+        <header class="q-head">
+          <span class="q-num">73</span>
+          <span class="q-topic">Stopping times</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">For a random time \(T\), the map \(t\mapsto T\wedge t\) is:</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">never adapted</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">adapted to \((\mathcal F_t)\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">a martingale</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">only measurable for constant \(T\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">independent of \(\mathcal F_t\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(T\wedge t\) is adapted; consequently \(T\) is an \((\mathcal F_{t+})\)-stopping time (2.1(d)).</div>
+      </article>
+
+      <article class="question" data-answer="0" data-topic="stopping-times" id="q74">
+        <header class="q-head">
+          <span class="q-num">74</span>
+          <span class="q-topic">Stopping times</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">To verify that \(T\) is a stopping time one checks that, for all \(u\ge0\):</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(\{T\le u\}\in\mathcal F_u\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(\{T=u\}\in\mathcal F_0\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(T\) is bounded</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(E[T]<\infty\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(T\) is Gaussian</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Definition 3.1: \(\{T\le u\}\in\mathcal F_u\) for every \(u\ge0\) (2.2(a)).</div>
+      </article>
+
+      <article class="question" data-answer="0" data-topic="stopping-times" id="q75">
+        <header class="q-head">
+          <span class="q-num">75</span>
+          <span class="q-topic">Stopping times</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Fix \(A\in\mathcal F_t\) and set \(T^A=t\) on \(A\), \(T^A=+\infty\) off \(A\). \(T^A\) is a stopping time because:</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">for \(u<t\), \(\{T^A\le u\}=\varnothing\); for \(u\ge t\), \(\{T^A\le u\}=A\in\mathcal F_t\subseteq\mathcal F_u\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(A\) has probability \(1\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(t\) is deterministic</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(T^A\) is bounded</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">it is never a stopping time</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Check \(\{T^A\le u\}\): empty for \(u<t\), equal to \(A\in\mathcal F_u\) for \(u\ge t\) (2.2(a)).</div>
+      </article>
+
+      <article class="question" data-answer="0" data-topic="stopping-times" id="q76">
+        <header class="q-head">
+          <span class="q-num">76</span>
+          <span class="q-topic">Stopping times</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">The \(\sigma\)-algebra \(\sigma(T\wedge t)\) is generated by events of the form:</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(\{T\wedge t<u\},\ u>0\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(\{T=u\}\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(\{B_t<u\}\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(\{T>t\}\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(\{T\wedge t=0\}\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">The Borel \(\sigma\)-algebra on \([0,\infty]\) is generated by \([0,u)\), so \(\sigma(T\wedge t)=\sigma(\{T\wedge t<u\}:u>0)\) (2.1(b)).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="stopping-times" id="q77">
+        <header class="q-head">
+          <span class="q-num">77</span>
+          <span class="q-topic">Stopping times</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">First hitting times of an <b>open</b> set are, in general, stopping times with respect to:</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">the raw filtration \(\mathcal F_t\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">the right-continuous filtration \(\mathcal F_{t+}\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(\mathcal F_0\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">no filtration</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">the tail \(\sigma\)-algebra</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Hitting times of open sets are \(\mathcal F_{t+}\)-stopping times; the right-continuous enlargement is the natural setting (Prop 3.6, 2.1(d)).</div>
+      </article>
+
+      <article class="question" data-answer="2" data-topic="stopping-times" id="q78">
+        <header class="q-head">
+          <span class="q-num">78</span>
+          <span class="q-topic">Stopping times</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Which of the following is <b>not</b> a stopping time?</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">first time \(B\) hits level \(3\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">first time \(B_t-t\) hits \(-1\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">the time the maximum of \(B\) on \([0,1]\) is attained</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(T\wedge5\) for a stopping time \(T\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">the deterministic time \(t=2\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">The arg-max time needs future information; the others are first hitting times or trivially stopping times (3.4(a),(b)).</div>
+      </article>
+
+      <article class="question" data-answer="0" data-topic="higher-moments" id="q79">
+        <header class="q-head">
+          <span class="q-num">79</span>
+          <span class="q-topic">Higher moments &amp; tower</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Compute \(E[B_s(B_t-B_s)^2]\) for \(s<t\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(0\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(s(t-s)\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(t-s\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(s\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(t-s^2\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">By independence of increments, \(E[B_s]\,E[(B_t-B_s)^2]=0\cdot(t-s)=0\) (3.4(c)).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="higher-moments" id="q80">
+        <header class="q-head">
+          <span class="q-num">80</span>
+          <span class="q-topic">Higher moments &amp; tower</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Compute \(E[B_s^2 B_t]\) for \(s<t\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(s\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(0\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(st\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(s^2\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(t\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(E[B_s^2(B_t-B_s)]+E[B_s^3]=E[B_s^2]\,E[B_t-B_s]+0=0\) (3.4(d)).</div>
+      </article>
+
+      <article class="question" data-answer="0" data-topic="higher-moments" id="q81">
+        <header class="q-head">
+          <span class="q-num">81</span>
+          <span class="q-topic">Higher moments &amp; tower</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Compute \(E[B_s B_t B_u]\) for \(s<t<u\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(0\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(stu\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(s\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(st\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(\min(s,t,u)\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Tower property with \(E[B_u\mid\mathcal F_t]=B_t\) then \(E[B_t^2\mid\mathcal F_s]=B_s^2+(t-s)\) gives \(E[B_s^3]-sE[B_s]+tE[B_s]=0\) (3.4(f)).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="higher-moments" id="q82">
+        <header class="q-head">
+          <span class="q-num">82</span>
+          <span class="q-topic">Higher moments &amp; tower</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Compute \(E[(B_t-B_s)B_u]\) for \(s<t<u\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(0\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(t-s\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(u-t\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(t\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(s\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(E[B_tB_u]-E[B_sB_u]=(t\wedge u)-(s\wedge u)=t-s\) (3.4(e)).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="higher-moments" id="q83">
+        <header class="q-head">
+          <span class="q-num">83</span>
+          <span class="q-topic">Higher moments &amp; tower</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Compute the mixed fourth moment \(E[B_3^2 B_5^2]\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(15\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(33\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(45\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(30\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(25\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">By Wick's formula \(E[B_s^2B_t^2]=E[B_s^2]E[B_t^2]+2(E[B_sB_t])^2=st+2s^2\). With \(s=3,t=5\): \(15+18=33\).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="higher-moments" id="q84">
+        <header class="q-head">
+          <span class="q-num">84</span>
+          <span class="q-topic">Higher moments &amp; tower</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Compute \(E[B_2^4]\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(4\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(12\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(16\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(8\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(48\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(B_t\sim N(0,t)\Rightarrow E[B_t^4]=3t^2=3\cdot4=12\) (Gaussian moments, 1.1(c)).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="higher-moments" id="q85">
+        <header class="q-head">
+          <span class="q-num">85</span>
+          <span class="q-topic">Higher moments &amp; tower</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Which technique most directly yields \(E[B_sB_tB_u]=0\) for \(s<t<u\)?</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">the reflection principle</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">the tower property with the martingale properties of \(B\) and of \(B^2-t\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">It&ocirc;'s formula</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">Doob's inequality</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">the scaling property</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Condition successively on \(\mathcal F_t\) then \(\mathcal F_s\), using \(E[B_u\mid\mathcal F_t]=B_t\) and \(E[B_t^2\mid\mathcal F_s]=B_s^2+(t-s)\) (3.4(f)).</div>
+      </article>
+
+      <article class="question" data-answer="0" data-topic="higher-moments" id="q86">
+        <header class="q-head">
+          <span class="q-num">86</span>
+          <span class="q-topic">Higher moments &amp; tower</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Compute \(E[B_2^3]\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(0\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(8\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(2\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(6\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(12\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(B_2\sim N(0,2)\); every odd moment of a centred Gaussian vanishes (1.1(c)).</div>
+      </article>
+
+      <article class="question" data-answer="2" data-topic="doob" id="q87">
+        <header class="q-head">
+          <span class="q-num">87</span>
+          <span class="q-topic">Doob's inequalities</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Doob's \(L^2\) maximal inequality states, for a martingale \(M\) and \(T>0\), that \(E[\sup_{s\le T}M_s^2]\le\):</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(E[M_T^2]\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(2E[M_T^2]\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(4E[M_T^2]\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(\tfrac14 E[M_T^2]\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(\infty\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(E[\sup_{s\le T}M_s^2]\le4E[M_T^2]\) (Prop 3.15).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="doob" id="q88">
+        <header class="q-head">
+          <span class="q-num">88</span>
+          <span class="q-topic">Doob's inequalities</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">In Sheet 4, Doob's \(L^2\) inequality was used to justify:</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">independence of increments</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">a dominating integrable variable for the DCT, giving continuity of \(t\mapsto\Gamma(t,t)\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">the reflection principle</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">that \(B_t\) is Gaussian</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">the scaling property</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(E[\sup_s M_s^2]\le4E[M_T^2]<\infty\) dominates \(M_s^2\); the DCT then gives continuity of \(t\mapsto E[M_t^2]\) (4.1(d)).</div>
+      </article>
+
+      <article class="question" data-answer="2" data-topic="doob" id="q89">
+        <header class="q-head">
+          <span class="q-num">89</span>
+          <span class="q-topic">Doob's inequalities</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">For the martingale \((B_{n+t}-B_n)_{t\in[0,1]}\) and \(S_n=\sup_{t\in[0,1]}|B_{n+t}-B_n|\), Doob's \(L^2\) inequality bounds \(E[S_n^2]\) by:</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(1\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(2\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(4\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(8\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(\infty\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(E[S_n^2]\le4E[(B_{n+1}-B_n)^2]=4\cdot1=4\) (2.4(a)(iv)).</div>
+      </article>
+
+      <article class="question" data-answer="2" data-topic="doob" id="q90">
+        <header class="q-head">
+          <span class="q-num">90</span>
+          <span class="q-topic">Doob's inequalities</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">The general Doob \(L^p\) inequality (\(p>1\)) reads \(\big\|\sup_{s\le T}|M_s|\big\|_p\le C\,\|M_T\|_p\) with constant \(C=\):</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(1\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(p\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(p/(p-1)\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(p-1\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(2\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">The sharp constant is the conjugate exponent \(q=p/(p-1)\) (Prop 3.15).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="doob" id="q91">
+        <header class="q-head">
+          <span class="q-num">91</span>
+          <span class="q-topic">Doob's inequalities</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Why does \(E[\sup_{s\le T}M_s^2]<\infty\) help prove \(t\mapsto E[M_t^2]\) is continuous?</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">it makes \(M\) a Brownian motion</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">it provides an integrable dominating variable for the dominated convergence theorem</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">it shows \(M_t\) is Gaussian</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">it implies independent increments</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">it bounds the quadratic variation</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">The finite supremum dominates \(M_s^2\), so the DCT lets us exchange limit and expectation (4.1(d)).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="option-payoffs" id="q92">
+        <header class="q-head">
+          <span class="q-num">92</span>
+          <span class="q-topic">Option payoffs</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">The payoff map \(g(x)=(e^x-K)^+\) is:</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">concave</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">convex</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">linear</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">neither</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">decreasing</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">It is \(h(f(x))\) with \(f(x)=e^x-K\) convex and \(h(y)=y^+\) increasing and convex, hence convex (3.1(e)).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="option-payoffs" id="q93">
+        <header class="q-head">
+          <span class="q-num">93</span>
+          <span class="q-topic">Option payoffs</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Since \(B\) is a martingale and \(g(x)=(e^x-K)^+\) is convex, the process \(g(B_t)\) is a:</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">martingale</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">submartingale</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">supermartingale</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">constant</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">finite-variation process</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Jensen's conditional inequality (Prop 3.12): a convex function of a martingale is a submartingale (3.1(e)).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="option-payoffs" id="q94">
+        <header class="q-head">
+          <span class="q-num">94</span>
+          <span class="q-topic">Option payoffs</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">For a convex \(\varphi\) and a martingale \(M\), Jensen's conditional inequality gives:</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(E[\varphi(M_t)\mid\mathcal F_s]\le\varphi(M_s)\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(E[\varphi(M_t)\mid\mathcal F_s]\ge\varphi(M_s)\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(E[\varphi(M_t)\mid\mathcal F_s]=\varphi(M_s)\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(\varphi(M_t)=M_t\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(\varphi(M_s)=0\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(E[\varphi(M_t)\mid\mathcal F_s]\ge\varphi(E[M_t\mid\mathcal F_s])=\varphi(M_s)\): a submartingale (Prop 3.12).</div>
+      </article>
+
+      <article class="question" data-answer="4" data-topic="option-payoffs" id="q95">
+        <header class="q-head">
+          <span class="q-num">95</span>
+          <span class="q-topic">Option payoffs</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">For a martingale \(M\), which of the following is <b>not</b> necessarily a submartingale?</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(M^2\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(|M|\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\((e^{M}-K)^+\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(e^{M}\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(-M^2\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(-M^2\) is a concave function of \(M\), giving a supermartingale, not a submartingale (3.1, 4.1(d)).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="option-payoffs" id="q96">
+        <header class="q-head">
+          <span class="q-num">96</span>
+          <span class="q-topic">Option payoffs</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">\(|B_t|\) is a submartingale because:</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">it is Gaussian</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(x\mapsto|x|\) is convex and \(B\) is a martingale</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">it has independent increments</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">it is itself a Brownian motion</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">it is decreasing</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">By Jensen, the convex map \(|\cdot|\) of the martingale \(B\) is a submartingale (it is neither Gaussian nor has independent increments) (3.1(e)).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="monte-carlo" id="q97">
+        <header class="q-head">
+          <span class="q-num">97</span>
+          <span class="q-topic">Monte Carlo</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">The sample variance divides by \(N-1\) (Bessel's correction) because:</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">it reduces the variance of the estimator</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">it makes the estimator unbiased for \(\sigma^2\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(N-1\) is faster to compute</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">it removes all error</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">the true mean is known</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Dividing by \(N-1\) corrects for using the sample mean, giving \(E[\hat\sigma_N^2]=\sigma^2\) (1.5(a)).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="monte-carlo" id="q98">
+        <header class="q-head">
+          <span class="q-num">98</span>
+          <span class="q-topic">Monte Carlo</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">A Monte&nbsp;Carlo estimate of \(\operatorname{var}(I_1)\), where \(I_1=\int_0^1 B_s\,\mathrm ds\), should be close to:</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(0\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(1/3\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(1\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(1/2\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(2/3\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(\operatorname{var}(I_t)=t^3/3\), so at \(t=1\) it is \(1/3\approx0.333\) (4.4(b), 4.3(f)).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="monte-carlo" id="q99">
+        <header class="q-head">
+          <span class="q-num">99</span>
+          <span class="q-topic">Monte Carlo</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">When estimating \(\int_0^t B_s\,\mathrm ds\) numerically, the trapezoidal rule's sample variance is:</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">farther from \(1/3\) than the left Riemann sum</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">closer to \(1/3\) than the left Riemann sum</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">identical to the left Riemann sum</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">always exactly \(1/3\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">zero</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">The trapezoidal rule (\(O(\Delta^2)\)) is more accurate than the left Riemann sum (\(O(\Delta)\)), so its estimate is closer to \(1/3\) (4.4(d)).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="monte-carlo" id="q100">
+        <header class="q-head">
+          <span class="q-num">100</span>
+          <span class="q-topic">Monte Carlo</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">On a log&ndash;log plot of approximation error against step size \(\Delta\), the left Riemann sum for \(\int_0^t B_s\,\mathrm ds\) has slope \(\approx\):</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(0\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(1\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(2\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(1/2\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(-1\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(O(\Delta)\) convergence gives slope \(\approx1\); the trapezoidal rule gives slope \(\approx2\) (4.4(e)).</div>
+      </article>
+  </main>
+
+  <footer>
+    <hr>
+    Notation: \(B=(B_t)_{t\ge0}\) is a standard Brownian motion and \(\mathcal F=(\mathcal F_t)_{t\ge0}\) its completed canonical filtration. \(\Phi\) denotes the standard normal CDF. Single correct answer per question.
+  </footer>
+
+<script>
+(function(){
+  "use strict";
+  var total = document.querySelectorAll('.question').length;
+  var answered = 0, score = 0;
+  var elA = document.getElementById('answered');
+  var elA2 = document.getElementById('answered2');
+  var elS = document.getElementById('score');
+  var elP = document.getElementById('pct');
+  var elFill = document.getElementById('fill');
+
+  function refresh(){
+    elA.textContent = answered;
+    elA2.textContent = answered;
+    elS.textContent = score;
+    elP.textContent = answered ? Math.round(100*score/answered) + '%' : '\u2013';
+    elFill.style.width = (100*answered/total) + '%';
+  }
+
+  document.querySelectorAll('.question').forEach(function(q){
+    var ans = parseInt(q.dataset.answer,10);
+    var opts = q.querySelectorAll('.option');
+    var status = q.querySelector('.q-status');
+    q._done = false;
+
+    opts.forEach(function(opt){
+      opt.addEventListener('click', function(){
+        if(q._done) return;
+        q._done = true;
+        var chosen = parseInt(opt.dataset.i,10);
+        q.classList.add('answered');
+        opts.forEach(function(o,j){
+          o.classList.add('locked');
+          if(j===ans) o.classList.add('correct');
+          else if(j===chosen) o.classList.add('incorrect');
+        });
+        answered++;
+        if(chosen===ans){ score++; status.textContent='Correct'; status.className='q-status ok'; }
+        else { status.textContent='Not quite'; status.className='q-status no'; }
+        refresh();
+      });
+    });
+
+    var toggle = q.querySelector('.sol-toggle');
+    toggle.addEventListener('click', function(){
+      var open = q.classList.toggle('show-sol');
+      toggle.setAttribute('aria-expanded', open ? 'true':'false');
+      toggle.textContent = open ? 'Hide solution' : 'Show solution';
+    });
+  });
+
+  // topic filter
+  var chips = document.querySelectorAll('.chip');
+  chips.forEach(function(chip){
+    chip.addEventListener('click', function(){
+      chips.forEach(function(c){ c.classList.remove('active'); });
+      chip.classList.add('active');
+      var t = chip.dataset.topic;
+      document.querySelectorAll('.question').forEach(function(q){
+        q.classList.toggle('hidden', !(t==='all' || q.dataset.topic===t));
+      });
+      window.scrollTo({top: document.getElementById('quiz').offsetTop-10, behavior:'smooth'});
+    });
+  });
+
+  // reset
+  document.getElementById('reset').addEventListener('click', function(){
+    answered = 0; score = 0;
+    document.querySelectorAll('.question').forEach(function(q){
+      q._done = false;
+      q.classList.remove('answered','show-sol');
+      var st = q.querySelector('.q-status'); st.textContent=''; st.className='q-status';
+      q.querySelectorAll('.option').forEach(function(o){
+        o.classList.remove('locked','correct','incorrect');
+      });
+      var tg = q.querySelector('.sol-toggle');
+      tg.setAttribute('aria-expanded','false'); tg.textContent='Show solution';
+    });
+    refresh();
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+
+  refresh();
+
+  // --- signature: animated Brownian path in the hero ---
+  (function(){
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var W=1000, H=320, N=180, mid=H/2;
+    var xs=[], ys=[]; var y=mid; var seed=20251021;
+    function rnd(){ seed=(seed*1103515245+12345)&0x7fffffff; return seed/0x7fffffff; }
+    for(var i=0;i<=N;i++){
+      xs.push(i*W/N);
+      // Gaussian-ish step via sum of uniforms
+      var g=(rnd()+rnd()+rnd()+rnd()-2)*10;
+      y += g; if(y<24) y=24+(24-y)*0.5; if(y>H-24) y=(H-24)-((y-(H-24))*0.5);
+      ys.push(y);
+    }
+    var path=document.getElementById('walkPath');
+    var dot=document.getElementById('walkDot');
+    function d(k){ var s='M '+xs[0].toFixed(1)+' '+ys[0].toFixed(1);
+      for(var i=1;i<=k;i++) s+=' L '+xs[i].toFixed(1)+' '+ys[i].toFixed(1); return s; }
+    if(reduce){ path.setAttribute('d', d(N)); dot.setAttribute('cx',xs[N]); dot.setAttribute('cy',ys[N]); return; }
+    var k=0;
+    (function step(){
+      k+=1; if(k>N) k=N;
+      path.setAttribute('d', d(k));
+      dot.setAttribute('cx', xs[k].toFixed(1)); dot.setAttribute('cy', ys[k].toFixed(1));
+      if(k<N) requestAnimationFrame(step);
+    })();
+  })();
+})();
+</script>
+</body>
+</html>
