@@ -1,0 +1,2094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Week 1 — Technique Lab · full derivations</title>
+<script>
+window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['\\[','\\]']]},svg:{fontCache:'global'},
+ options:{renderActions:{addMenu:[]}}};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js" async></script>
+<style>
+:root{
+  --paper:#f3f4f1;--card:#fff;--ink:#132437;--ink2:#2d4257;--muted:#5d6d7c;
+  --line:#e2e2da;--line2:#eceae2;--wash:#f8f8f5;
+  --conv:#0f766e;--as:#a1531b;--clt:#3f3ac9;--proc:#7b2d8e;--app:#146b3a;--mic:#0d5c7a;
+  --gold:#9a6b12;--rose:#a4123f;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);
+ font:400 17px/1.6 "Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif}
+.sans{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1,h2,h3,h4{line-height:1.2;font-weight:600}
+a{color:var(--clt)}
+header.bar{position:sticky;top:0;z-index:30;background:rgba(243,244,241,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.bar-in{max-width:1060px;margin:0 auto;padding:11px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.brand{font-weight:600;font-size:18px;display:flex;align-items:baseline;gap:9px}
+.brand i{width:10px;height:10px;background:var(--conv);display:inline-block;border-radius:2px;transform:rotate(14deg)}
+.tabs{margin-left:auto;display:flex;gap:5px;flex-wrap:wrap}
+.tab{font-family:system-ui,sans-serif;font-size:13.5px;font-weight:500;cursor:pointer;border:1px solid var(--line);
+ background:var(--card);color:var(--muted);padding:7px 13px;border-radius:7px}
+.tab[aria-selected="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.tab:focus-visible,.chip:focus-visible,.opt:focus-visible,.btn:focus-visible,.search:focus-visible,summary:focus-visible{outline:2.5px solid var(--clt);outline-offset:2px}
+.hero{max-width:860px;margin:0 auto;padding:34px 20px 6px}
+.hero h1{font-size:32px;margin:0 0 10px}
+.hero .lead{font-size:18px;color:var(--ink2);max-width:66ch;margin:0 0 14px}
+.hero .map{font-family:system-ui,sans-serif;font-size:13.5px;color:var(--muted);display:flex;gap:8px 16px;flex-wrap:wrap}
+.hero .map b{color:var(--ink);font-weight:600}
+main{max-width:860px;margin:0 auto;padding:16px 20px 90px}
+section[hidden]{display:none}
+.controls{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin:6px 0 16px}
+.search{font-family:system-ui,sans-serif;font-size:15px;flex:1 1 230px;min-width:190px;padding:10px 13px;
+ border:1px solid var(--line);border-radius:9px;background:var(--card);color:var(--ink)}
+.chips{display:flex;gap:5px;flex-wrap:wrap}
+.chip{font-family:system-ui,sans-serif;font-size:12.5px;cursor:pointer;border:1px solid var(--line);
+ background:var(--card);color:var(--muted);padding:6px 11px;border-radius:20px}
+.chip[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.count{font-family:system-ui,sans-serif;font-size:13px;color:var(--muted);margin:0 0 14px}
+.tech{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--conv);
+ border-radius:10px;padding:19px 21px;margin:0 0 15px}
+.tech[data-cat=conv]{border-left-color:var(--conv)}.tech[data-cat=as]{border-left-color:var(--as)}
+.tech[data-cat=clt]{border-left-color:var(--clt)}.tech[data-cat=proc]{border-left-color:var(--proc)}
+.tech[data-cat=app]{border-left-color:var(--app)}.tech[data-cat=mic]{border-left-color:var(--mic)}
+.tech h3{margin:0;font-size:20.5px;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.pill{font-family:system-ui,sans-serif;font-size:11.5px;font-weight:600;color:#fff;padding:2px 9px;border-radius:20px}
+.tech[data-cat=conv] .pill{background:var(--conv)}.tech[data-cat=as] .pill{background:var(--as)}
+.tech[data-cat=clt] .pill{background:var(--clt)}.tech[data-cat=proc] .pill{background:var(--proc)}
+.tech[data-cat=app] .pill{background:var(--app)}.tech[data-cat=mic] .pill{background:var(--mic)}
+.ref{font-family:system-ui,sans-serif;font-size:12px;color:var(--muted);font-weight:400}
+.mech{margin:9px 0 0;color:var(--ink2)}
+.cue{display:flex;gap:6px;flex-wrap:wrap;margin:11px 0 6px}
+.cue span{font-family:system-ui,sans-serif;font-size:12.5px;color:#3b4b5a;background:var(--line2);
+ border:1px solid var(--line);padding:3px 9px;border-radius:6px}
+.lab{font-family:system-ui,sans-serif;font-weight:600;font-size:12.5px;margin:15px 0 3px;letter-spacing:.02em}
+.lab.steps{color:var(--clt)}.lab.work{color:var(--gold)}.lab.xfer{color:var(--proc)}.lab.trap{color:var(--rose)}
+.tech ol,.tech ul{margin:2px 0;padding-left:21px}.tech li{margin:5px 0}
+.workbox{background:#fdf8ee;border:1px solid #f0e3c9;border-left:4px solid var(--gold);border-radius:8px;padding:11px 14px;font-size:16px}
+.xferbox{background:#f8f2fb;border:1px solid #e8d9f0;border-left:4px solid var(--proc);border-radius:8px;padding:11px 14px;font-size:16px}
+.trapbox{background:#fceef2;border:1px solid #f2d1dc;border-left:4px solid var(--rose);border-radius:8px;padding:11px 14px;font-size:16px}
+details.deriv{margin-top:13px;border:1px solid var(--line);border-radius:9px;background:var(--wash);padding:0}
+details.deriv>summary{font-family:system-ui,sans-serif;font-size:13.5px;color:var(--clt);cursor:pointer;
+ font-weight:600;padding:10px 14px;list-style:none;display:flex;align-items:center;gap:8px}
+details.deriv>summary::-webkit-details-marker{display:none}
+details.deriv>summary:before{content:"▸";color:var(--clt);font-size:12px}
+details.deriv[open]>summary:before{content:"▾"}
+details.deriv .body{padding:2px 16px 14px;font-size:16.2px;border-top:1px solid var(--line2)}
+details.deriv .body ol{padding-left:20px}
+details.deriv .body li{margin:9px 0}
+.why{display:block;font-family:system-ui,sans-serif;font-size:13px;color:var(--muted);margin-top:3px}
+.why b{color:var(--ink2);font-weight:600}
+.noresults{font-family:system-ui,sans-serif;color:var(--muted);padding:22px 4px}
+/* proofs */
+.proof{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:20px 22px;margin:0 0 16px}
+.proof h3{font-size:20px;margin:0 0 3px}
+.proof .goal{color:var(--ink2);margin:6px 0 12px}
+.chain{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0 14px;align-items:center}
+.node{font-family:system-ui,sans-serif;font-size:12.5px;background:var(--wash);border:1px solid var(--line);
+ border-radius:6px;padding:5px 10px;color:var(--ink2)}
+.node b{color:var(--ink)}
+.arrow{color:var(--muted);font-size:13px}
+.proof ol{padding-left:21px;margin:4px 0}.proof ol li{margin:8px 0}
+.moral{background:var(--wash);border-left:3px solid var(--conv);padding:10px 14px;border-radius:0 8px 8px 0;margin-top:13px;font-size:16px}
+/* quiz */
+.qwrap{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:25px;margin-top:6px}
+.qtop{display:flex;justify-content:space-between;font-family:system-ui,sans-serif;font-size:13.5px;color:var(--muted);margin-bottom:9px}
+.qtop b{color:var(--ink)}
+.pbar{height:6px;background:var(--line2);border-radius:99px;overflow:hidden;margin-bottom:18px}
+.pbar>i{display:block;height:100%;width:0;background:var(--conv);transition:width .3s}
+.qtag{font-family:system-ui,sans-serif;font-size:11.5px;font-weight:600;color:#fff;background:var(--muted);padding:2px 9px;border-radius:20px;display:inline-block;margin-bottom:9px}
+.qtag[data-cat=conv]{background:var(--conv)}.qtag[data-cat=as]{background:var(--as)}
+.qtag[data-cat=clt]{background:var(--clt)}.qtag[data-cat=proc]{background:var(--proc)}
+.qtag[data-cat=app]{background:var(--app)}.qtag[data-cat=mic]{background:var(--mic)}
+.qtext{font-size:18.5px;margin:0 0 15px}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{text-align:left;font-family:inherit;font-size:16.5px;cursor:pointer;border:1.5px solid var(--line);
+ background:#fbfbf9;color:var(--ink);padding:11px 14px;border-radius:9px;display:flex;gap:10px;align-items:flex-start}
+.opt .key{font-family:system-ui,sans-serif;font-weight:700;color:var(--muted)}
+.opt:hover:not(:disabled){border-color:var(--clt)}
+.opt:disabled{cursor:default}
+.opt.correct{background:#e8f4f0;border-color:var(--conv)}.opt.correct .key{color:var(--conv)}
+.opt.wrong{background:#fceef2;border-color:var(--rose)}.opt.wrong .key{color:var(--rose)}
+.opt.mute{opacity:.55}
+.explain{margin-top:15px;border-top:1px solid var(--line);padding-top:13px;font-size:16.5px}
+.verdict{font-family:system-ui,sans-serif;font-weight:600;margin-bottom:3px}
+.verdict.ok{color:var(--conv)}.verdict.no{color:var(--rose)}
+.qnav{display:flex;justify-content:space-between;margin-top:19px;gap:10px}
+.btn{font-family:system-ui,sans-serif;font-size:15px;font-weight:600;cursor:pointer;border-radius:9px;
+ padding:11px 19px;border:1.5px solid var(--ink);background:var(--ink);color:#fff}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn:disabled{opacity:.4;cursor:default}
+.center{text-align:center}
+.ring{font-size:46px;font-weight:600;margin:4px 0}
+.ring small{display:block;font-family:system-ui,sans-serif;font-size:15px;font-weight:500;color:var(--muted)}
+.review{margin-top:20px;text-align:left}
+.review h4{font-family:system-ui,sans-serif;font-size:13.5px;margin:0 0 7px;color:var(--muted)}
+.review li{margin:6px 0;font-size:15.5px}
+.review a{cursor:pointer;text-decoration:underline}
+mjx-container{overflow-x:auto;overflow-y:hidden;max-width:100%}
+@media (max-width:560px){.hero h1{font-size:26px}.qtext{font-size:17px}.tech{padding:16px 15px}.qwrap{padding:17px}
+ details.deriv .body{padding:2px 11px 12px;font-size:15.6px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.tech[data-fam] .fampill{font-family:system-ui,sans-serif;font-size:11px;font-weight:600;color:#fff;padding:2px 8px;border-radius:20px}
+.tech[data-fam=ineq] .fampill{background:#9a3412}.tech[data-fam=alg] .fampill{background:#0d5c7a}
+.tech[data-fam=meas] .fampill{background:#4c1d95}.tech[data-fam=lim] .fampill{background:#065f46}
+.tech[data-fam=ineq]{border-left-color:#9a3412}.tech[data-fam=alg]{border-left-color:#0d5c7a}
+.tech[data-fam=meas]{border-left-color:#4c1d95}.tech[data-fam=lim]{border-left-color:#065f46}
+.trig{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 4px}
+.trig span{font-family:system-ui,sans-serif;font-size:12.5px;color:#3b4b5a;background:#eef2f4;
+ border:1px solid var(--line);padding:3px 9px;border-radius:6px}
+.trig span:before{content:"▸ ";color:var(--muted)}
+.lab.when{color:#0d5c7a}
+
+.trigtable{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:6px 4px 10px;margin:0 0 22px;overflow-x:auto}
+.trigtable h4{font-family:system-ui,sans-serif;font-size:13.5px;color:var(--muted);margin:12px 16px 8px;font-weight:600}
+.trigtable table{border-collapse:collapse;width:100%;font-size:15.6px}
+.trigtable td{padding:7px 16px;vertical-align:top;border-top:1px solid var(--line2)}
+.trigtable td.sym{color:var(--ink2);width:52%}
+.trigtable td.mv{font-family:system-ui,sans-serif;font-size:14px;color:var(--mic);font-weight:600}
+.trigtable tr:first-child td{border-top:none}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="bar-in">
+    <div class="brand"><i></i> Week 1 · Technique Lab</div>
+    <div class="tabs" role="tablist">
+      <button class="tab" id="t-lib" role="tab" aria-selected="true" onclick="show('lib')">Techniques</button>
+      <button class="tab" id="t-mic" role="tab" aria-selected="false" onclick="show('mic')">Micro-tricks</button>
+      <button class="tab" id="t-pf" role="tab" aria-selected="false" onclick="show('pf')">Classic proofs</button>
+      <button class="tab" id="t-qz" role="tab" aria-selected="false" onclick="show('qz')">Quiz · 30</button>
+    </div>
+  </div>
+</header>
+
+<!-- ================= LIBRARY ================= -->
+<section id="v-lib">
+<div class="hero">
+  <h1>The moves behind Chapter 1</h1>
+  <p class="lead">Each technique carries a full derivation — every intermediate line, with a note on why that line is legal. Open <em>Full derivation</em> on any card to see the algebra that textbooks compress into "a direct computation gives".</p>
+  <div class="map">
+    <span><b>§1.1–1.2</b> convergence, LLN, CLT</span>
+    <span><b>§1.3</b> exploratory functionals</span>
+    <span><b>§1.4</b> processes, entropy, Hadamard</span>
+    <span><b>§1.5–1.6</b> quantiles, copulas, simulation</span>
+  </div>
+</div>
+<main>
+  <div class="controls">
+    <input class="search" id="search" type="search" placeholder="Search: Borel–Cantelli, entropy, Hadamard, mean excess…" oninput="filt()" aria-label="Search techniques">
+    <div class="chips" id="chips">
+      <button class="chip" aria-pressed="true" data-cat="all" onclick="cat('all')">All</button>
+      <button class="chip" aria-pressed="false" data-cat="conv" onclick="cat('conv')">Convergence</button>
+      <button class="chip" aria-pressed="false" data-cat="as" onclick="cat('as')">A.s. &amp; tails</button>
+      <button class="chip" aria-pressed="false" data-cat="clt" onclick="cat('clt')">LLN / CLT</button>
+      <button class="chip" aria-pressed="false" data-cat="proc" onclick="cat('proc')">Processes</button>
+      <button class="chip" aria-pressed="false" data-cat="app" onclick="cat('app')">Applications</button>
+    </div>
+  </div>
+  <p class="count" id="count"></p>
+  <div id="lib">
+
+  <!-- ============ CONVERGENCE ============ -->
+  <article class="tech" data-cat="conv" data-key="portmanteau open closed liminf limsup fatou monotone convergence lipschitz approximation indicator">
+    <h3>Portmanteau<span class="pill">Convergence</span><span class="ref">Thm 1.1</span></h3>
+    <p class="mech"><b>Mechanism.</b> Indicators are not continuous, so you cannot test them directly. Approximate \(\mathbf 1_G\) from below by explicit Lipschitz functions built from the distance to \(G^c\) — open sets are exactly those where this one-sided approximation works.</p>
+    <div class="cue"><span>you have set probabilities</span><span>proving CMT or an approximation theorem</span></div>
+    <div class="lab work">Statement</div>
+    <div class="workbox">\(Z_n\xrightarrow{d}Z\iff\liminf_nP(Z_n\in G)\ge P(Z\in G)\ \forall G\) open \(\iff\limsup_nP(Z_n\in F)\le P(Z\in F)\ \forall F\) closed.</div>
+
+    <details class="deriv"><summary>Full derivation — every line</summary><div class="body">
+    <ol>
+      <li><b>Build the approximating functions.</b> For \(G\) open put
+      \[f_m(s)=\min\{1,\;m\,d(s,G^c)\},\qquad m\ge1.\]
+      <span class="why"><b>Why legal:</b> \(s\mapsto d(s,G^c)\) is 1-Lipschitz, so \(f_m\) is \(m\)-Lipschitz, hence continuous and bounded. Also \(0\le f_m\le\mathbf 1_G\) (if \(s\notin G\) then \(d=0\)), and \(f_m\uparrow\mathbf 1_G\) pointwise because \(G\) open \(\Rightarrow d(s,G^c)&gt;0\) for \(s\in G\).</span></li>
+
+      <li><b>One-sided bound at level \(n\).</b> Since \(f_m\le\mathbf 1_G\),
+      \[E[f_m(Z_n)]\le P(Z_n\in G).\]</li>
+
+      <li><b>Take \(\liminf_n\).</b> The left side converges by assumption:
+      \[E[f_m(Z)]=\lim_n E[f_m(Z_n)]\le\liminf_n P(Z_n\in G).\]
+      <span class="why"><b>Why:</b> \(f_m\in C_b\), so \(\xrightarrow{d}\) applies. The right-hand side does not depend on \(m\).</span></li>
+
+      <li><b>Take \(m\to\infty\).</b> Monotone convergence gives \(E[f_m(Z)]\uparrow P(Z\in G)\), hence
+      \[P(Z\in G)\le\liminf_n P(Z_n\in G).\]</li>
+
+      <li><b>Closed sets by complement.</b> With \(F=G^c\), \(P(Z_n\in F)=1-P(Z_n\in G)\) and \(\liminf(-a_n)=-\limsup a_n\) flips the inequality.</li>
+
+      <li><b>Converse, step 1 (non-negative \(f\)).</b> For continuous \(f\ge0\), the set \(\{f&gt;t\}\) is open for each \(t&gt;0\), so the assumption gives \(P(f(Z)&gt;t)\le\liminf_nP(f(Z_n)&gt;t)\). Then
+      \[E[f(Z)]=\int_0^\infty P(f(Z)&gt;t)\,dt\le\int_0^\infty\liminf_n P(f(Z_n)&gt;t)\,dt\le\liminf_n\int_0^\infty P(f(Z_n)&gt;t)\,dt=\liminf_nE[f(Z_n)].\]
+      <span class="why"><b>Why:</b> first equality is the layer-cake identity; the last inequality is Fatou applied to the functions \(t\mapsto P(f(Z_n)&gt;t)\).</span></li>
+
+      <li><b>Converse, step 2 (bounded \(f\)).</b> Let \(|f|\le c\). Apply step 6 to the non-negative functions \(c+f\) and \(c-f\):
+      \[c+E[f(Z)]\le\liminf_n\big(c+E[f(Z_n)]\big),\qquad c-E[f(Z)]\le\liminf_n\big(c-E[f(Z_n)]\big).\]
+      The first gives \(E[f(Z)]\le\liminf_nE[f(Z_n)]\); the second gives \(\limsup_nE[f(Z_n)]\le E[f(Z)]\). Together \(E[f(Z_n)]\to E[f(Z)]\).
+      <span class="why"><b>The trick:</b> "apply the one-sided result to \(c\pm f\)" converts a one-sided inequality into a two-sided limit. It reappears in every proof where you only have a \(\liminf\) bound.</span></li>
+    </ol>
+    </div></details>
+
+    <div class="lab xfer">Transfers to</div>
+    <div class="xferbox"><b>CMT</b> (pull a closed set back through \(g\)) · <b>Theorem 1.5</b> (uses closed \(\varepsilon\)-enlargements \(F^\varepsilon\)) · <b>\(Z_n\xrightarrow{d}c\Rightarrow Z_n\xrightarrow{P}c\)</b> · tightness/Prokhorov arguments in metric spaces.</div>
+    <div class="lab trap">Pitfall</div>
+    <div class="trapbox">Equality for a general Borel \(A\) needs \(P(Z\in\partial A)=0\). The asymmetry (liminf for open, limsup for closed) is not cosmetic — it is what the one-sided approximation buys you.</div>
+  </article>
+
+  <article class="tech" data-cat="conv" data-key="subsequence trick dominated convergence probability implies distribution 2^-j summable">
+    <h3>The subsequence trick<span class="pill">Convergence</span><span class="ref">Lem. 1.2 proof</span></h3>
+    <p class="mech"><b>Mechanism.</b> A real sequence converges to \(L\) iff every subsequence has a further subsequence converging to \(L\). This lets you upgrade \(\xrightarrow{P}\) to a.s. <em>along a sub-subsequence</em>, where pointwise tools (dominated convergence) become available.</p>
+    <div class="cue"><span>you need a.s. tools but have only \(\xrightarrow{P}\)</span></div>
+    <details class="deriv"><summary>Full derivation — \(\xrightarrow{P}\Rightarrow\xrightarrow{d}\)</summary><div class="body">
+    <ol>
+      <li><b>Fix a test function and an arbitrary subsequence.</b> Let \(f\) be bounded continuous and take any subsequence \((Z_{n_k})\). Goal: show \(E[f(Z_{n_k})]\) has a further subsequence converging to \(E f(Z)\).</li>
+      <li><b>Extract a fast sub-subsequence.</b> Since \(Z_{n_k}\xrightarrow{P}Z\), for each \(j\) choose \(k_j\) increasing with
+      \[P\big(\|Z_{n_{k_j}}-Z\|&gt;2^{-j}\big)&lt;2^{-j}.\]
+      <span class="why"><b>Why possible:</b> for fixed \(\varepsilon=2^{-j}\) the probability tends to 0, so some index makes it \(&lt;2^{-j}\).</span></li>
+      <li><b>Summability \(\Rightarrow\) a.s.</b> \(\sum_j 2^{-j}=1&lt;\infty\), so by Borel–Cantelli (convergent half) the events \(\{\|Z_{n_{k_j}}-Z\|&gt;2^{-j}\}\) occur finitely often a.s. Hence \(\|Z_{n_{k_j}}-Z\|\le2^{-j}\) eventually, i.e. \(Z_{n_{k_j}}\xrightarrow{a.s.}Z\).</li>
+      <li><b>Push through \(f\), then integrate.</b> Continuity gives \(f(Z_{n_{k_j}})\xrightarrow{a.s.}f(Z)\); boundedness \(|f|\le B\) lets dominated convergence apply:
+      \[E[f(Z_{n_{k_j}})]\to E[f(Z)].\]</li>
+      <li><b>Close the loop.</b> Every subsequence of the numerical sequence \(E[f(Z_n)]\) has a further subsequence converging to \(E f(Z)\); therefore \(E[f(Z_n)]\to E f(Z)\). As \(f\) was arbitrary, \(Z_n\xrightarrow{d}Z\).
+      <span class="why"><b>Note:</b> the final statement is about numbers, not random variables — the original \(Z_n\) need not converge a.s.</span></li>
+    </ol>
+    </div></details>
+    <div class="lab xfer">Transfers to</div>
+    <div class="xferbox"><b>\(L^p\Rightarrow\) a.s. along a subsequence</b> (Riesz–Fischer) · <b>\(\xrightarrow{P}\) preserved by continuous maps</b> · consistency proofs in M-estimation · uniqueness of limits in probability.</div>
+    <div class="lab trap">Pitfall</div>
+    <div class="trapbox">The typewriter sequence shows the original sequence really can fail to converge a.s. — only the extracted subsequence does.</div>
+  </article>
+
+  <article class="tech" data-cat="conv" data-key="oP OP transfer rule taylor remainder set inclusion quantifier bonferroni">
+    <h3>\(o_P/O_P\) calculus and the transfer rule<span class="pill">Convergence</span><span class="ref">Def. 1.4, Ex. 1.5</span></h3>
+    <p class="mech"><b>Mechanism.</b> A remainder is usually small <em>relative to</em> the fluctuation \(\|Z_n\|\). The transfer rule converts that into an absolute rate once \(Z_n=O_P(a_n)\) is known. One set inclusion plus a Bonferroni bound does all the work.</p>
+    <div class="cue"><span>a Taylor remainder appears</span><span>"show this term is negligible"</span></div>
+    <details class="deriv"><summary>Full derivation — \(O_P(a_n)\) and \(o_P(\|Z_n\|)\Rightarrow o_P(a_n)\)</summary><div class="body">
+    <ol>
+      <li><b>Unpack the three statements.</b>
+      \[\lim_{M\to\infty}\limsup_n P\Big(\tfrac{\|Z_n\|}{a_n}&gt;M\Big)=0,\qquad
+      \forall\varepsilon&gt;0:\ P\Big(\tfrac{\|W_n\|}{\|Z_n\|}&gt;\varepsilon\Big)\to0,\]
+      and the goal \(\forall\varepsilon&gt;0:\ P\big(\|W_n\|/a_n&gt;\varepsilon\big)\to0\).</li>
+      <li><b>Factor the ratio.</b> On \(\{Z_n\neq0\}\),
+      \[\frac{\|W_n\|}{a_n}=\frac{\|W_n\|}{\|Z_n\|}\cdot\frac{\|Z_n\|}{a_n}.\]</li>
+      <li><b>Set inclusion.</b> For any auxiliary \(\varepsilon_1&gt;0\),
+      \[\Big\{\tfrac{\|W_n\|}{\|Z_n\|}&lt;\varepsilon_1\Big\}\cap\Big\{\tfrac{\|Z_n\|}{a_n}&lt;\tfrac{\varepsilon}{\varepsilon_1}\Big\}\subseteq\Big\{\tfrac{\|W_n\|}{a_n}&lt;\varepsilon\Big\},\]
+      because on the intersection the product is \(&lt;\varepsilon_1\cdot\varepsilon/\varepsilon_1=\varepsilon\).</li>
+      <li><b>Bonferroni.</b> \(P(A\cap B)\ge P(A)+P(B)-1\), which follows from \(P(A\cup B)\le1\) and inclusion–exclusion. So
+      \[P\Big(\tfrac{\|W_n\|}{a_n}&lt;\varepsilon\Big)\ \ge\ P\Big(\tfrac{\|W_n\|}{\|Z_n\|}&lt;\varepsilon_1\Big)+P\Big(\tfrac{\|Z_n\|}{a_n}&lt;\tfrac{\varepsilon}{\varepsilon_1}\Big)-1.\]</li>
+      <li><b>Choose constants in the right order.</b> Fix \(\delta&gt;0\). First use \(O_P\): pick \(M_0\) with \(\limsup_nP(\|Z_n\|/a_n&gt;M_0)&lt;\delta/2\), and <em>set \(\varepsilon_1:=\varepsilon/M_0\)</em>, so \(\varepsilon/\varepsilon_1=M_0\). Then \(\exists L_1\) with, for \(n\ge L_1\),
+      \[P\big(\|Z_n\|/a_n&lt;M_0\big)\ge1-P\big(\|Z_n\|/a_n&gt;M_0\big)&gt;1-\tfrac\delta2.\]
+      <em>Now</em> use \(o_P\) with this frozen \(\varepsilon_1\): \(\exists L_2\) with \(P(\|W_n\|/\|Z_n\|&lt;\varepsilon_1)&gt;1-\delta/2\) for \(n\ge L_2\).
+      <span class="why"><b>Why the order matters:</b> \(\varepsilon_1\) depends on \(M_0\); invoking \(o_P\) first would leave \(\varepsilon_1\) undetermined and the argument circular.</span></li>
+      <li><b>Combine.</b> For \(n\ge\max(L_1,L_2)\), the bound in step 4 gives \(\ge(1-\delta/2)+(1-\delta/2)-1=1-\delta\). Hence \(P(\|W_n\|/a_n\ge\varepsilon)\le\delta\) eventually; \(\varepsilon,\delta\) arbitrary gives \(W_n=o_P(a_n)\).</li>
+    </ol>
+    <p><b>Immediate consequence used everywhere.</b> If \(\sqrt n(T_n-c)\xrightarrow{d}Z\) then \(T_n-c=O_P(n^{-1/2})\) (Example 1.4), so a Taylor remainder \(R_n=o_P(\|T_n-c\|)\) satisfies \(R_n=o_P(n^{-1/2})\) and \(\sqrt n R_n=o_P(1)\to0\).</p>
+    </div></details>
+    <div class="lab xfer">Transfers to</div>
+    <div class="xferbox"><b>Every delta-method proof</b> · <b>M/Z-estimator expansions</b> · <b>heavy-tail product expansions</b> \((1+a)(1+b)(1+c)\) where cross terms are dropped by rate comparison · profile likelihood remainders.</div>
+  </article>
+
+  <article class="tech" data-cat="conv" data-key="slutsky proof continuous mapping cramer wold constant limit joint">
+    <h3>Slutsky, CMT, Cramér–Wold<span class="pill">Convergence</span><span class="ref">Lem. 1.3, Thm 1.4</span></h3>
+    <p class="mech"><b>Mechanism.</b> Slutsky works because convergence to a <em>constant</em> is equivalent in probability and in distribution; so a two-component vector can be handled by comparing it to a deterministic-second-coordinate version.</p>
+    <div class="cue"><span>studentising</span><span>ratio or product of estimators</span></div>
+    <details class="deriv"><summary>Full derivation — Slutsky in two moves</summary><div class="body">
+    <ol>
+      <li><b>Compare to the constant version.</b>
+      \[\big\|(Z_n,W_n)-(Z_n,c)\big\|=\|W_n-c\|\xrightarrow{P}0,\]
+      using \(W_n\xrightarrow{d}c\Rightarrow W_n\xrightarrow{P}c\) (Lemma 1.2, part 3 — itself proved by Portmanteau on the closed set \(\{\|x-c\|\ge\varepsilon\}\)).</li>
+      <li><b>The constant version converges.</b> For bounded continuous \(f\), the map \(g(x):=f(x,c)\) is bounded continuous, so
+      \[E[f(Z_n,c)]=E[g(Z_n)]\to E[g(Z)]=E[f(Z,c)],\]
+      i.e. \((Z_n,c)\xrightarrow{d}(Z,c)\).</li>
+      <li><b>Glue with converging-together.</b> Two sequences that differ by \(o_P(1)\), one of which converges in distribution, have the same limit (Exercise 6). Hence \((Z_n,W_n)\xrightarrow{d}(Z,c)\).</li>
+      <li><b>Consequences via CMT.</b> Apply continuous maps \((a,b)\mapsto a+b\), \(ab\), \(a/b\) (the last continuous at \(b=c\neq0\)):
+      \[Z_n+W_n\xrightarrow{d}Z+c,\qquad W_nZ_n\xrightarrow{d}cZ,\qquad Z_n/W_n\xrightarrow{d}Z/c.\]</li>
+    </ol>
+    <p><b>Worked instance (the \(t\)-statistic).</b>
+    \[\frac{\sqrt n(\bar Z_n-\mu)}{\hat\sigma_n}=\underbrace{\frac{\sqrt n(\bar Z_n-\mu)}{\sigma}}_{\xrightarrow{d}N(0,1)}\cdot\underbrace{\frac{\sigma}{\hat\sigma_n}}_{\xrightarrow{P}1}\xrightarrow{d}N(0,1).\]</p>
+    </div></details>
+    <div class="lab xfer">Transfers to</div>
+    <div class="xferbox"><b>Wald / score tests</b> · <b>\(\chi^2\) limits</b> via \(x^\top\Sigma^{-1}x\) · <b>Kolmogorov–Smirnov</b> via \(\sup|\cdot|\) · bootstrap consistency · any plug-in of a nuisance parameter.</div>
+    <div class="lab trap">Pitfall</div>
+    <div class="trapbox">The second limit must be constant. Two genuine distributional limits give no joint information — you must prove joint convergence directly (Cramér–Wold).</div>
+  </article>
+
+  <!-- ============ A.S. & TAILS ============ -->
+  <article class="tech" data-cat="as" data-key="borel cantelli infinitely often summable independent 1-x exp monotone convergence">
+    <h3>Borel–Cantelli, both halves<span class="pill">A.s. &amp; tails</span><span class="ref">Lem. 1.1, Cor. 1.1</span></h3>
+    <p class="mech"><b>Mechanism.</b> Convergent half: a non-negative integer-valued sum with finite expectation is a.s. finite. Divergent half: independence turns a sum into a product, and \(1-x\le e^{-x}\) turns the product into an exponential of the divergent sum.</p>
+    <div class="cue"><span>"almost surely" in the conclusion</span><span>show a limit theorem fails</span></div>
+    <details class="deriv"><summary>Full derivation — both directions and the corollary</summary><div class="body">
+    <p><b>Part 1: \(\sum P(A_n)&lt;\infty\Rightarrow P(A_n\text{ i.o.})=0\).</b></p>
+    <ol>
+      <li>Count occurrences with \(N=\sum_{n\ge1}\mathbf 1_{A_n}\). By monotone convergence (terms \(\ge0\)),
+      \[E[N]=E\Big[\sum_{n=1}^\infty\mathbf 1_{A_n}\Big]=\sum_{n=1}^\infty E[\mathbf 1_{A_n}]=\sum_{n=1}^\infty P(A_n)&lt;\infty.\]
+      <span class="why"><b>Why legal:</b> exchanging \(E\) and \(\sum\) needs non-negativity only — no integrability assumption.</span></li>
+      <li>A random variable with finite expectation is a.s. finite, so \(N&lt;\infty\) a.s.: only finitely many \(A_n\) occur, i.e. \(P(A_n\text{ i.o.})=0\).</li>
+    </ol>
+    <p><b>Part 2: independence and \(\sum P(A_n)=\infty\Rightarrow P(A_n\text{ i.o.})=1\).</b></p>
+    <ol start="3">
+      <li>For \(m\ge n\), independence of the complements gives
+      \[P\Big(\bigcup_{k=n}^m A_k\Big)=1-\prod_{k=n}^m P(A_k^c)=1-\prod_{k=n}^m\big(1-P(A_k)\big).\]</li>
+      <li>Apply \(1-x\le e^{-x}\) termwise:
+      \[\prod_{k=n}^m\big(1-P(A_k)\big)\le\exp\Big(-\sum_{k=n}^m P(A_k)\Big)\xrightarrow[m\to\infty]{}0,\]
+      since the tail of a divergent series of non-negative terms is still \(\infty\).</li>
+      <li>Continuity from below: \(P(\bigcup_{k\ge n}A_k)=1\) for <em>every</em> \(n\). These sets decrease in \(n\), so continuity from above gives
+      \[P(A_n\text{ i.o.})=P\Big(\bigcap_{n\ge1}\bigcup_{k\ge n}A_k\Big)=\lim_n P\Big(\bigcup_{k\ge n}A_k\Big)=1.\]</li>
+    </ol>
+    <p><b>Part 3: Corollary 1.1 (a.s. convergence criterion).</b></p>
+    <ol start="6">
+      <li>Suppose \(\sum_nP(\|Z_n-Z\|&gt;\varepsilon)&lt;\infty\) for every \(\varepsilon&gt;0\). Fix \(m\in\mathbb N\) and apply Part 1 to \(A^{1/m}_n=\{\|Z_n-Z\|&gt;1/m\}\): a.s. only finitely many occur, so \(\exists N_m&lt;\infty\) with \(\|Z_n-Z\|\le1/m\) for all \(n\ge N_m\).</li>
+      <li>Intersect over \(m\in\mathbb N\) — a countable intersection of probability-one events has probability one. On it, \(\|Z_n-Z\|\to0\). Hence \(Z_n\xrightarrow{a.s.}Z\).
+      <span class="why"><b>The trick:</b> "do it for \(1/m\), then intersect over \(m\)" upgrades a per-\(\varepsilon\) statement to a single a.s. statement. Reused verbatim in Exercise 2 to go from "\(\limsup\ge M\) for each \(M\)" to "\(\limsup=\infty\)".</span></li>
+    </ol>
+    </div></details>
+    <div class="lab xfer">Transfers to</div>
+    <div class="xferbox"><b>Rates:</b> choose \(\varepsilon_n\downarrow0\) with \(\sum_nP(|Z_n-Z|&gt;\varepsilon_n)&lt;\infty\) to get \(Z_n-Z=o(\varepsilon_n)\) a.s. · <b>records/extremes</b> dichotomies · <b>the subsequence trick</b> · LIL scaffolding · Kolmogorov 0–1 law companions.</div>
+    <div class="lab trap">Pitfall</div>
+    <div class="trapbox">The divergent half <em>needs independence</em>. This is exactly why the Glivenko–Cantelli counterexample \(Z_n=Z_1\) cannot be repaired.</div>
+  </article>
+
+  <article class="tech" data-cat="as" data-key="layer cake tail integral fubini moment finite pareto p series">
+    <h3>Layer-cake identity and tail integrals<span class="pill">A.s. &amp; tails</span><span class="ref">§1.8 throughout</span></h3>
+    <p class="mech"><b>Mechanism.</b> Write \(Y=\int_0^\infty\mathbf 1_{Y&gt;z}\,dz\) and take expectations under Tonelli. It converts a moment into a tail integral, which is the form heavy-tail assumptions arrive in.</p>
+    <div class="cue"><span>you know the tail, not the density</span><span>"is this moment finite?"</span></div>
+    <details class="deriv"><summary>Full derivation — identity, general \(p\), and the Pareto computation</summary><div class="body">
+    <ol>
+      <li><b>Pointwise identity.</b> For \(Y\ge0\), \(\displaystyle Y(\omega)=\int_0^\infty\mathbf 1_{\{z&lt;Y(\omega)\}}\,dz\) — the length of the interval \([0,Y)\).</li>
+      <li><b>Tonelli.</b> The integrand \((\omega,z)\mapsto\mathbf 1_{\{z&lt;Y(\omega)\}}\) is non-negative and jointly measurable, so
+      \[E[Y]=E\!\int_0^\infty\mathbf 1_{\{Y&gt;z\}}dz=\int_0^\infty E[\mathbf 1_{\{Y&gt;z\}}]\,dz=\int_0^\infty P(Y&gt;z)\,dz.\]</li>
+      <li><b>General power.</b> Apply the same to \(Y^p\) after substituting \(z=y^p\):
+      \[E[Y^p]=\int_0^\infty P(Y^p&gt;z)\,dz=\int_0^\infty P(Y&gt;y)\,p\,y^{p-1}dy.\]</li>
+      <li><b>Pareto, \(P(Y&gt;z)=z^{-\alpha}\) on \([1,\infty)\).</b> The tail is 1 below the support:
+      \[E[Y]=\underbrace{\int_0^1 1\,dz}_{=1}+\int_1^\infty z^{-\alpha}dz
+      =1+\lim_{b\to\infty}\Big[\frac{z^{1-\alpha}}{1-\alpha}\Big]_1^b=1+\lim_{b\to\infty}\frac{b^{1-\alpha}-1}{1-\alpha}.\]
+      For \(\alpha&lt;1\): \(1-\alpha&gt;0\Rightarrow b^{1-\alpha}\to\infty\Rightarrow E[Y]=\infty\).
+      For \(\alpha&gt;1\): \(b^{1-\alpha}\to0\Rightarrow E[Y]=1+\frac{1}{\alpha-1}=\frac{\alpha}{\alpha-1}\).</li>
+      <li><b>Second moment via the density.</b> Differentiating \(1-z^{-\alpha}\) gives \(f(z)=\alpha z^{-\alpha-1}\), so
+      \[E[Y^2]=\int_1^\infty z^2\alpha z^{-\alpha-1}dz=\alpha\int_1^\infty z^{1-\alpha}dz,\]
+      finite iff \(1-\alpha&lt;-1\), i.e. \(\alpha&gt;2\).
+      <span class="why"><b>Rule to memorise:</b> \(\int_1^\infty z^q\,dz&lt;\infty\iff q&lt;-1\). Every heavy-tail moment question reduces to reading off \(q\).</span></li>
+      <li><b>Truncated tail moment (the Lindeberg input).</b> On \(\{|Y|&gt;a\}\) we have \(Y^2&gt;a^2\), so
+      \[E[Y^2;\,Y&gt;a]\ \ge\ a^2P(Y&gt;a)=a^2\cdot a^{-\alpha}=a^{2-\alpha}\xrightarrow[a\to\infty]{}\infty\quad(\alpha&lt;2).\]</li>
+    </ol>
+    </div></details>
+    <div class="lab xfer">Transfers to</div>
+    <div class="xferbox"><b>Mean excess</b> \(e_F(u)=\frac1{\bar F(u)}\int_u^\infty\bar F\) · <b>expected shortfall / Lorenz curves</b> as quantile integrals · <b>the mean-excess rewriting</b> that makes \(\hat e_n\) a functional of \(F^{(n)}\) · Fubini arguments generally.</div>
+  </article>
+
+  <article class="tech" data-cat="as" data-key="bernstein chernoff optimise exponential moment generating cumulant sample size symmetrisation">
+    <h3>Concentration: Chernoff, Bernstein, and inverting the level<span class="pill">A.s. &amp; tails</span><span class="ref">Thm 1.3</span></h3>
+    <p class="mech"><b>Mechanism.</b> Exponentiate, apply Markov, then optimise over the free parameter. The moment condition \(\frac1n\sum E|\gamma|^m\le\frac{m!}2\kappa^{m-2}\) is designed so the exponential series sums to a geometric expression.</p>
+    <div class="cue"><span>non-asymptotic bound</span><span>choose \(n\) for target accuracy</span></div>
+    <details class="deriv"><summary>Full derivation — from the cumulant bound to a usable sample size</summary><div class="body">
+    <ol>
+      <li><b>An elementary cumulant bound.</b> For centred \(X\) and \(c&gt;0\), from \(e^{u}\le\frac{e^{u}}{1+c}\cdot(1+c)\) one gets
+      \[\log E[e^X]\le c:=E[e^{|X|}]-1-E[|X|].\]
+      <span class="why">The point: the right side involves only <em>absolute</em> moments of order \(\ge2\), since \(e^{|x|}-1-|x|=\sum_{m\ge2}|x|^m/m!\).</span></li>
+      <li><b>Insert the moment condition.</b> With \(X_i=\gamma(Z_i)/L\) and \(S_n=\sum_i\gamma(Z_i)\),
+      \[\log E\big[e^{S_n/L}\big]\le\sum_{i=1}^n\sum_{m\ge2}\frac{E|\gamma(Z_i)|^m}{L^m m!}
+      \le\sum_{m\ge2}\frac{1}{L^mm!}\cdot n\frac{m!}{2}\kappa^{m-2}
+      =\frac{n}{2L^2}\sum_{m\ge2}\Big(\frac{\kappa}{L}\Big)^{m-2}.\]</li>
+      <li><b>Sum the geometric series</b> (requires \(L&gt;\kappa\)):
+      \[\sum_{m\ge2}(\kappa/L)^{m-2}=\frac{1}{1-\kappa/L}\quad\Longrightarrow\quad\log E[e^{S_n/L}]\le\frac{n}{2L^2(1-\kappa/L)}=\frac{n}{2(L^2-L\kappa)}.\]</li>
+      <li><b>Markov on the exponential (Chernoff).</b>
+      \[P(S_n\ge a)=P\big(e^{S_n/L}\ge e^{a/L}\big)\le e^{-a/L}E[e^{S_n/L}]\le\exp\Big(-\frac aL+\frac{n}{2(L^2-L\kappa)}\Big).\]</li>
+      <li><b>Optimise over \(L\).</b> Taking \(\kappa/L=1-(1+2a\kappa/n)^{-1/2}\) and then writing \(a/n=\kappa t+\sqrt{2t}\) collapses the exponent to \(-nt\):
+      \[P\Big(\tfrac1n\sum_i\gamma(Z_i)\ge\kappa t+\sqrt{2t}\Big)\le e^{-nt}.\]</li>
+      <li><b>Symmetrise.</b> \(-\gamma\) satisfies the same hypotheses with the same \(\kappa\) (since \(|-\gamma|^m=|\gamma|^m\)), so the union bound gives the factor 2:
+      \[P\big(|\bar\gamma_n|\ge\kappa t+\sqrt{2t}\big)\le2e^{-nt}.\]</li>
+      <li><b>Invert the level.</b> Set \(\kappa t+\sqrt{2t}=\varepsilon\) and substitute \(s=\sqrt{2t}\) (so \(t=s^2/2\)), then \(x=\kappa s\):
+      \[\varepsilon=\kappa\tfrac{s^2}{2}+s=s\big(1+\tfrac x2\big),\quad
+      1+\kappa\varepsilon=1+x+\tfrac{x^2}{2},\quad \varepsilon^2=s^2\big(1+\tfrac x2\big)^2.\]
+      Therefore
+      \[\frac{t(1+\kappa\varepsilon)}{\varepsilon^2}=\frac{\tfrac{s^2}{2}\big(1+x+\tfrac{x^2}{2}\big)}{s^2\big(1+x+\tfrac{x^2}{4}\big)}=\frac{\tfrac12\big(1+x+\tfrac{x^2}{2}\big)}{1+x+\tfrac{x^2}{4}}\ \ge\ \frac12,\]
+      the last step because \(\tfrac{x^2}{2}\ge\tfrac{x^2}{4}\). Hence \(t\ge\frac{\varepsilon^2}{2(1+\kappa\varepsilon)}\) and
+      \[P(|\bar\gamma_n|\ge\varepsilon)\le2\exp\Big(-\frac{n\varepsilon^2}{2(1+\kappa\varepsilon)}\Big).\]</li>
+      <li><b>Solve for the sample size.</b> Requiring the bound \(\le\eta\):
+      \[2e^{-n\varepsilon^2/(2(1+\kappa\varepsilon))}\le\eta\iff n\ \ge\ \frac{2(1+\kappa\varepsilon)}{\varepsilon^2}\log\frac2\eta.\]</li>
+    </ol>
+    <p><b>Two regimes.</b> Small \(\varepsilon\): denominator \(\approx1\), exponent \(\approx-n\varepsilon^2/2\) (sub-Gaussian). Large \(\varepsilon\): denominator \(\approx\kappa\varepsilon\), exponent \(\approx-n\varepsilon/(2\kappa)\) (sub-exponential).</p>
+    </div></details>
+    <div class="lab xfer">Transfers to</div>
+    <div class="xferbox"><b>Hoeffding / Azuma</b> · <b>DKW</b> for \(\sup_t|F^{(n)}-F|\) · <b>VC / Rademacher bounds</b> · simulation sizing · a.s. convergence when paired with Borel–Cantelli.</div>
+  </article>
+
+  <!-- ============ LLN / CLT ============ -->
+  <article class="tech" data-cat="clt" data-key="fourth moment expansion markov cross terms vanish independence pi squared over six">
+    <h3>Fourth-moment SLLN: the expansion in full<span class="pill">LLN/CLT</span><span class="ref">Ex. 1.1</span></h3>
+    <p class="mech"><b>Mechanism.</b> Under independence and mean zero, only index patterns where every index appears at least twice survive in \(E(\sum Z_i)^4\). Counting them gives the \(n^2\) rate that makes the Borel–Cantelli sum converge.</p>
+    <div class="cue"><span>you may assume high moments</span><span>want a.s. cheaply</span></div>
+    <details class="deriv"><summary>Full derivation — why \(nEZ^4+3n(n-1)(EZ^2)^2\)</summary><div class="body">
+    <ol>
+      <li><b>Expand the fourth power.</b>
+      \[E\Big(\sum_{i=1}^nZ_i\Big)^4=\sum_{i,j,k,l}E[Z_iZ_jZ_kZ_l].\]</li>
+      <li><b>Kill terms with a lone index.</b> If some index (say \(i\)) differs from all others, independence factorises the expectation and \(E[Z_i]=0\) makes the whole term vanish. So only patterns where each distinct index appears \(\ge2\) times contribute.</li>
+      <li><b>Enumerate surviving patterns.</b> With four slots, the possibilities are:
+      <ul>
+        <li>all four equal, \(i=j=k=l\): \(n\) terms, each \(E[Z_1^4]\);</li>
+        <li>two distinct values each appearing twice: choose the pair of values (\(n(n-1)\) ordered) and choose which 2 of the 4 slots carry the first value — \(\binom42/…\) giving the multiplicity \(3\) per ordered pair. Each term is \(E[Z_1^2]^2\).</li>
+      </ul>
+      Hence
+      \[E\Big(\sum_iZ_i\Big)^4=nE[Z_1^4]+3n(n-1)\big(E[Z_1^2]\big)^2.\]</li>
+      <li><b>Normalise.</b> With \(S_n=\frac1n\sum_iZ_i\),
+      \[E[S_n^4]=\frac{nE[Z_1^4]+3n(n-1)(E[Z_1^2])^2}{n^4}\le\frac{C}{n^2},\qquad C:=E[Z_1^4]+3(E[Z_1^2])^2.\]
+      <span class="why">Leading behaviour is \(3(EZ_1^2)^2/n^2\): the \(n^2\) pairings beat the \(n\) diagonal terms.</span></li>
+      <li><b>Markov at the fourth power.</b> \(P(|S_n|&gt;\varepsilon)\le E[S_n^4]/\varepsilon^4\le C/(n^2\varepsilon^4)\), so \(S_n\xrightarrow{P}0\).</li>
+      <li><b>Summability and Borel–Cantelli.</b> \(\sum_n n^{-2}=\pi^2/6&lt;\infty\), so Corollary 1.1 upgrades to \(S_n\xrightarrow{a.s.}0\).
+      <span class="why"><b>Why the fourth and not the second moment:</b> Chebyshev gives only \(C/(n\varepsilon^2)\), and \(\sum1/n=\infty\) — not summable. The fourth moment is the cheapest power that makes the series converge.</span></li>
+    </ol>
+    </div></details>
+    <div class="lab xfer">Transfers to</div>
+    <div class="xferbox"><b>Complete convergence</b> results · <b>U-statistics</b> variance computations (same "which indices coincide" bookkeeping) · <b>method of moments</b> proofs of limit laws · Wick/Isserlis formulas in the Gaussian case.</div>
+  </article>
+
+  <article class="tech" data-cat="clt" data-key="characteristic function taylor phi double prime dominated convergence exponential limit cramer wold">
+    <h3>CLT via characteristic functions<span class="pill">LLN/CLT</span><span class="ref">Thm 1.6</span></h3>
+    <p class="mech"><b>Mechanism.</b> Two derivatives of \(\varphi\) exist exactly when \(E\xi^2&lt;\infty\); Taylor to second order and the limit \((1-c/n+o(1/n))^n\to e^{-c}\) do the rest. Cramér–Wold lifts it to \(\mathbb R^p\).</p>
+    <div class="cue"><span>iid, finite second moment</span></div>
+    <details class="deriv"><summary>Full derivation — including the differentiation-under-the-integral step</summary><div class="body">
+    <ol>
+      <li><b>Project to one dimension.</b> Fix \(a\in\mathbb R^p\), set \(\xi_k=a^\top(Z_k-\mu)\). Then \(E\xi_1=0\) and \(E\xi_1^2=a^\top\mathrm{Var}(Z_1)a&lt;\infty\).</li>
+      <li><b>Differentiate \(\varphi(t)=E[e^{it\xi_1}]\) twice.</b> The difference quotient of \(e^{it\xi}\) is bounded by \(|\xi|\) using \(|e^{ih}-1|\le|h|\); since \(E|\xi_1|\le(E\xi_1^2)^{1/2}&lt;\infty\), dominated convergence justifies
+      \[\varphi'(t)=E[i\xi_1e^{it\xi_1}],\qquad \varphi''(t)=E[(i\xi_1)^2e^{it\xi_1}].\]</li>
+      <li><b>Evaluate at 0.</b> \(\varphi(0)=1\), \(\varphi'(0)=iE[\xi_1]=0\), \(\varphi''(0)=-E[\xi_1^2]\). Taylor with Peano remainder:
+      \[\varphi(t)=1-\frac{t^2}{2}E[\xi_1^2]+o(t^2),\qquad t\to0.\]</li>
+      <li><b>Characteristic function of the normalised sum.</b> By independence,
+      \[E\Big[\exp\Big(\tfrac{it}{\sqrt n}\sum_{k\le n}\xi_k\Big)\Big]=\varphi\Big(\frac{t}{\sqrt n}\Big)^{\!n}
+      =\Big(1-\frac{t^2}{2n}E[\xi_1^2]+o(n^{-1})\Big)^{\!n}.\]
+      <span class="why"><b>Why \(o(n^{-1})\):</b> substituting \(t/\sqrt n\) into \(o(t^2)\) gives \(o(t^2/n)\), and \(t\) is fixed.</span></li>
+      <li><b>Take the limit.</b> Using \((1+c_n/n)^n\to e^c\) whenever \(c_n\to c\),
+      \[\varphi(t/\sqrt n)^n\longrightarrow\exp\Big(-\frac{t^2}{2}E[\xi_1^2]\Big)=\exp\Big(-\frac{t^2}{2}a^\top\mathrm{Var}(Z_1)a\Big),\]
+      the characteristic function of \(N(0,a^\top\mathrm{Var}(Z_1)a)\).</li>
+      <li><b>Cramér–Wold.</b> Since this holds for every \(a\), \(\sqrt n(\bar Z_n-\mu)\xrightarrow{d}N(0,\mathrm{Var}(Z_1))\).</li>
+    </ol>
+    </div></details>
+    <div class="lab xfer">Transfers to</div>
+    <div class="xferbox"><b>Lévy continuity</b> generally · <b>stable / infinitely divisible limits</b> (same expansion, different exponent) · <b>Poisson limits</b> · <b>Fourier inversion for simulation</b> (§1.6.3) · CF-based goodness-of-fit tests.</div>
+    <div class="lab trap">Pitfall</div>
+    <div class="trapbox">With \(\alpha\in(1,2)\) tails, \(\varphi''\) does not exist and the expansion is \(1-c|t|^\alpha+o(|t|^\alpha)\) — giving a stable law at scale \(n^{1/\alpha}\), not a normal one.</div>
+  </article>
+
+  <article class="tech" data-cat="clt" data-key="lindeberg proof telescoping product bound complex exponential remainder gaussian replacement">
+    <h3>Lindeberg arrays: the replacement argument<span class="pill">LLN/CLT</span><span class="ref">Thm 1.7</span></h3>
+    <p class="mech"><b>Mechanism.</b> Replace the array entries one at a time by matched Gaussians. A telescoping product bound converts "the products differ" into "the individual characteristic functions differ", and each difference is controlled by a third-order Taylor remainder that the Lindeberg condition kills.</p>
+    <div class="cue"><span>non-identically distributed</span><span>weights or bandwidths depending on \(n\)</span></div>
+    <details class="deriv"><summary>Full derivation — the four inequalities that carry the proof</summary><div class="body">
+    <ol>
+      <li><b>Reduce to one dimension and set notation.</b> \(X_{nm}=a^\top Z_{nm}\), \(c_{nm}=E[X_{nm}^2]\), \(c_n=\sum_mc_{nm}\to a^\top\Sigma a\). Introduce independent \(\zeta_{nm}\sim N(0,c_{nm})\), so \(\sum_m\zeta_{nm}\sim N(0,c_n)\) exactly.</li>
+      <li><b>Uniform smallness of row variances.</b> For any \(\varepsilon&gt;0\),
+      \[\sup_m c_{nm}\le\varepsilon^2+\sup_mE[X_{nm}^2;|X_{nm}|&gt;\varepsilon]\le\varepsilon^2+\sum_mE[X_{nm}^2;|X_{nm}|&gt;\varepsilon]\to\varepsilon^2,\]
+      so \(\sup_mc_{nm}\to0\) by letting \(\varepsilon\downarrow0\).
+      <span class="why">Splitting a second moment at a threshold — small part bounded by \(\varepsilon^2\), large part is the Lindeberg sum — is the recurring move.</span></li>
+      <li><b>Telescoping product bound.</b> For complex numbers with \(|z_m|,|z'_m|\le1\),
+      \[\Big|\prod_{m=1}^nz_m-\prod_{m=1}^nz'_m\Big|\le\sum_{m=1}^n|z_m-z'_m|,\]
+      proved by induction (write \(\prod z-\prod z'=\prod' (z_1-z_1')+z_1'(\prod_{m\ge2}z-\prod_{m\ge2}z')\)).
+      <span class="why">This is what makes "replace one factor at a time" rigorous.</span></li>
+      <li><b>Complex-exponential remainder.</b> With \(h_m(x)=e^{ix}-\sum_{k=0}^m(ix)^k/k!\), the recursion \(h_m(x)=i\int_0^xh_{m-1}(s)ds\) together with \(|h_{-1}|\equiv1\), \(|h_0|\le2\) gives by induction
+      \[\Big|e^{ix}-\sum_{k=0}^m\frac{(ix)^k}{k!}\Big|\le\frac{2|x|^m}{m!}\wedge\frac{|x|^{m+1}}{(m+1)!}.\]
+      With \(m=2\): \(\big|e^{itx}-1-itx+\tfrac12t^2x^2\big|\le|tx|^2(1\wedge|tx|)\).
+      <span class="why"><b>Why the minimum matters:</b> the \(|x|^3\) branch is used for small \(x\), the \(|x|^2\) branch for large \(x\) — exactly the split Lindeberg controls.</span></li>
+      <li><b>Apply to both families.</b> Taking expectations (\(E X_{nm}=0\), \(EX_{nm}^2=c_{nm}\)):
+      \[\big|\varphi_{nm}(t)-1+\tfrac12t^2c_{nm}\big|\le t^2E\big[X_{nm}^2(1\wedge|tX_{nm}|)\big],\]
+      and identically for \(\psi_{nm}(t)=e^{-t^2c_{nm}/2}\) with \(\zeta_{nm}\) in place of \(X_{nm}\).</li>
+      <li><b>Combine 3 and 5.</b>
+      \[\Big|\prod_m\varphi_{nm}-\prod_m\psi_{nm}\Big|\le t^2\sum_mE\big[X_{nm}^2(1\wedge|tX_{nm}|)\big]+t^2\sum_mE\big[\zeta_{nm}^2(1\wedge|t\zeta_{nm}|)\big].\]</li>
+      <li><b>Kill the first sum with Lindeberg.</b> Split at \(\varepsilon\):
+      \[\sum_mE\big[X_{nm}^2(1\wedge|tX_{nm}|)\big]\le\varepsilon|t|\sum_mc_{nm}+\sum_mE\big[X_{nm}^2;|X_{nm}|&gt;\varepsilon\big]\to\varepsilon|t|\,a^\top\Sigma a,\]
+      then \(\varepsilon\downarrow0\).</li>
+      <li><b>Kill the second sum with the third moment.</b> Using \(1\wedge u\le u\) and \(E|\zeta_{nm}|^3=E|\xi|^3c_{nm}^{3/2}\),
+      \[\sum_mE\big[\zeta_{nm}^2(1\wedge|t\zeta_{nm}|)\big]\le|t|^3E|\xi|^3\sum_mc_{nm}^{3/2}\le|t|^3E|\xi|^3\,c_n\sup_mc_{nm}^{1/2}\to0\]
+      by step 2. Hence the characteristic functions agree in the limit, and \(\sum_mZ_{nm}\xrightarrow{d}N(0,\Sigma)\) by Cramér–Wold.</li>
+    </ol>
+    <p><b>Lyapounov shortcut.</b> On \(\{\|Z_{nm}\|&gt;c\}\), \(\|Z_{nm}\|^2\le c^{2-\alpha}\|Z_{nm}\|^\alpha\) for \(\alpha&gt;2\), so
+    \(\sum_mE[\|Z_{nm}\|^2;\|Z_{nm}\|&gt;c]\le c^{2-\alpha}\sum_mE\|Z_{nm}\|^\alpha\to0\).</p>
+    </div></details>
+    <div class="lab xfer">Transfers to</div>
+    <div class="xferbox"><b>Kernel-smoothing CLTs</b> (arrays indexed by bandwidth) · <b>martingale CLTs</b> (conditional Lindeberg, same replacement scheme) · <b>weighted regression</b> · <b>Stein's method</b> (a modern re-derivation of the same replacement idea) · finite-population limits.</div>
+  </article>
+
+  <article class="tech" data-cat="clt" data-key="delta method taylor gradient sandwich variance stabilising fisher z second order">
+    <h3>The delta method — and where the variance comes from<span class="pill">LLN/CLT</span><span class="ref">Thm 1.10</span></h3>
+    <p class="mech"><b>Mechanism.</b> Linearise at \(c\); the rate makes the remainder \(o_P\); the limit variance is the quadratic form \(\nabla h^\top\Sigma\nabla h\). Choosing \(h\) so that this cancels the parameter gives a stabilising transform.</p>
+    <div class="cue"><span>a smooth function of averages</span></div>
+    <details class="deriv"><summary>Full derivation — the proof, then the sample-variance computation line by line</summary><div class="body">
+    <p><b>The proof (Thm 1.10).</b></p>
+    <ol>
+      <li>\(\nabla h(c)^\top\) is linear and continuous, so by CMT applied to \(a_n(T_n-c)\xrightarrow{d}Z\):
+      \(\nabla h(c)^\top a_n(T_n-c)\xrightarrow{d}\nabla h(c)^\top Z\).</li>
+      <li>Convergence in distribution gives boundedness: \(a_n(T_n-c)=O_P(1)\), i.e. \(T_n-c=O_P(a_n^{-1})\) (Example 1.4).</li>
+      <li>Differentiability at \(c\) means \(h(T_n)-h(c)=\nabla h(c)^\top(T_n-c)+o(\|T_n-c\|)\), and the transfer rule converts \(o(\|T_n-c\|)\) into \(o_P(a_n^{-1})\).</li>
+      <li>Multiply by \(a_n\): \(a_n(h(T_n)-h(c))=\nabla h(c)^\top a_n(T_n-c)+o_P(1)\), and converging-together (Exercise 6) gives the limit \(\nabla h(c)^\top Z\).</li>
+    </ol>
+    <p><b>Worked: sample variance, all steps.</b></p>
+    <ol start="5">
+      <li><b>Write it as a smooth function of averages.</b>
+      \[\hat\sigma_n^2=\frac1n\sum_i(Z_i-\bar Z_n)^2=\frac1n\sum_iZ_i^2-\bar Z_n^2=h(T_n),\quad T_n=\Big(\bar Z_n,\ \tfrac1n\sum_iZ_i^2\Big)^\top,\ h(x,y)=y-x^2.\]</li>
+      <li><b>CLT for the pair.</b> Laplace applied to the iid vectors \((Z_i,Z_i^2)^\top\) gives \(\sqrt n(T_n-(\mu_1,\mu_2)^\top)\xrightarrow{d}N(0,\Sigma)\) with
+      \[\Sigma=\begin{pmatrix}\mu_2-\mu_1^2&amp;\mu_3-\mu_1\mu_2\\ \mu_3-\mu_1\mu_2&amp;\mu_4-\mu_2^2\end{pmatrix},\qquad \mu_k=E[Z_1^k].\]</li>
+      <li><b>Gradient.</b> \(\nabla h(x,y)=(-2x,1)^\top\).</li>
+      <li><b>Sandwich (centred case \(\mu_1=0\), so \(\mu_2=\mu^{(2)}\), \(\mu_4=\mu^{(4)}\)).</b> Then \(\nabla h=(0,1)^\top\), which simply selects \(\Sigma_{22}\):
+      \[\nabla h^\top\Sigma\nabla h=\Sigma_{22}=\mu_4-\mu_2^2=\mu^{(4)}-(\mu^{(2)})^2.\]
+      <span class="why">In the general (non-centred) case the same computation gives
+      \((-2\mu_1)^2\Sigma_{11}+2(-2\mu_1)\Sigma_{12}+\Sigma_{22}\), which reduces to \(\mu^{(4)}-(\mu^{(2)})^2\) in central moments.</span></li>
+      <li><b>Conclusion.</b> \(\sqrt n(\hat\sigma_n^2-\mu^{(2)})\xrightarrow{d}N\big(0,\mu^{(4)}-(\mu^{(2)})^2\big)\).</li>
+    </ol>
+    <p><b>Variance stabilisation (Fisher's \(z\)).</b> From \(\sqrt n(r_n-\rho)\xrightarrow{d}N(0,(1-\rho^2)^2)\), choose \(h\) with \(h'(\rho)=1/(1-\rho^2)\), i.e. \(h(r)=\tfrac12\log\frac{1+r}{1-r}\). Then the sandwich gives \(h'(\rho)^2(1-\rho^2)^2=1\): the limit is \(N(0,1)\), free of \(\rho\).</p>
+    <p><b>Degenerate case.</b> If \(\nabla h(c)=0\), expand to second order: \(n(h(T_n)-h(c))\xrightarrow{d}\tfrac12Z^\top\nabla^2h(c)Z\), a quadratic form (\(\chi^2\)-type), not normal.</p>
+    </div></details>
+    <div class="lab xfer">Transfers to</div>
+    <div class="xferbox"><b>Mean excess, cumulative hazard, IQR</b> (§1.3, §1.5) · <b>log/sqrt transforms</b> for rates and counts · <b>log-odds in GLMs</b> · <b>second-order delta method</b> for degenerate gradients · the functional delta method as the process analogue.</div>
+  </article>
+
+  <!-- ============ PROCESSES ============ -->
+  <article class="tech" data-cat="proc" data-key="abstract glivenko cantelli partition grid oscillation monotone left limits dini">
+    <h3>Partition-then-sup (pointwise ⟶ uniform)<span class="pill">Processes</span><span class="ref">Lem. 1.5, Thm 1.15</span></h3>
+    <p class="mech"><b>Mechanism.</b> Monotonicity lets a value at an arbitrary \(x\) be sandwiched between values at neighbouring grid points. Boundedness of the limit lets the grid be chosen so the limit moves by \(\le\varepsilon\) per cell — so the whole supremum costs only \(\max\) over finitely many points plus \(\varepsilon\).</p>
+    <div class="cue"><span>upgrade pointwise to uniform</span><span>monotone / càdlàg object</span></div>
+    <details class="deriv"><summary>Full derivation — the sandwich, written out</summary><div class="body">
+    <ol>
+      <li><b>Choose the grid.</b> Given \(\varepsilon&gt;0\), pick \(-\infty=x_0&lt;x_1&lt;\dots&lt;x_K=\infty\) with
+      \[T(x_j-)-T(x_{j-1})&lt;\varepsilon\qquad (j=1,\dots,K).\]
+      <span class="why"><b>Why possible:</b> \(T\) is non-decreasing and <em>bounded</em>, so its total increase is finite; include any jumps larger than \(\varepsilon\) as grid points, and subdivide the rest.</span></li>
+      <li><b>Grid error.</b> Define \(\Delta^{(n)}=\max_{j=1,\dots,K-1}\big\{|T^{(n)}(x_j)-T(x_j)|,\ |T^{(n)}(x_j-)-T(x_j-)|\big\}\). By hypothesis each entry \(\xrightarrow{a.s.}0\), and a maximum of finitely many null sequences is null: \(\Delta^{(n)}\xrightarrow{a.s.}0\).</li>
+      <li><b>Upper sandwich.</b> For arbitrary \(x\), pick \(j\) with \(x\in[x_{j-1},x_j)\). Monotonicity of \(T^{(n)}\) and of \(T\) gives
+      \[T^{(n)}(x)-T(x)\ \le\ T^{(n)}(x_j-)-T(x_{j-1})\ =\ \underbrace{\big[T^{(n)}(x_j-)-T(x_j-)\big]}_{\le\Delta^{(n)}}+\underbrace{\big[T(x_j-)-T(x_{j-1})\big]}_{&lt;\varepsilon}.\]</li>
+      <li><b>Lower sandwich.</b> Symmetrically,
+      \[T^{(n)}(x)-T(x)\ \ge\ T^{(n)}(x_{j-1})-T(x_j-)=\big[T^{(n)}(x_{j-1})-T(x_{j-1})\big]-\big[T(x_j-)-T(x_{j-1})\big]\ \ge\ -\Delta^{(n)}-\varepsilon.\]</li>
+      <li><b>Take the supremum.</b> \(x\) was arbitrary, so
+      \[\sup_{x\in\mathbb R}\big|T^{(n)}(x)-T(x)\big|\ \le\ \Delta^{(n)}+\varepsilon.\]</li>
+      <li><b>Let \(n\to\infty\), then \(\varepsilon\downarrow0\).</b> \(\limsup_n\sup_x|T^{(n)}-T|\le\varepsilon\) a.s. for each \(\varepsilon\); intersecting over \(\varepsilon=1/m\) gives \(\sup_x|T^{(n)}-T|\xrightarrow{a.s.}0\).</li>
+    </ol>
+    <p><b>Glivenko–Cantelli follows.</b> Take \(T^{(n)}=F^{(n)}\), \(T=F\): pointwise a.s. convergence at \(x\) and \(x-\) is the SLLN applied to \(\mathbf 1_{Z_i\le x}\) and \(\mathbf 1_{Z_i&lt;x}\).</p>
+    <p><b>Dini variant (Thm 1.15).</b> Same grid argument for monotone <em>processes</em> converging in probability to a continuous \(f\): choose the partition so \(f(s_i)-f(s_{i-1})\le\eta/2\), then
+    \(\sup_{s\in[a,b]}|X_n(s)-f(s)|\le\max_{k\le K}|X_n(s_k)-f(s_k)|+\eta/2\), and the finitely many terms vanish in probability.</p>
+    </div></details>
+    <div class="lab xfer">Transfers to</div>
+    <div class="xferbox"><b>Uniform consistency of empirical quantiles</b> · <b>Kaplan–Meier / Nelson–Aalen</b> · <b>Pólya's theorem</b> · <b>uniform LLNs for monotone or convex criterion functions</b> in M-estimation · Dini's classical theorem.</div>
+    <div class="lab trap">Pitfall</div>
+    <div class="trapbox">Only the <em>limit</em> must be bounded; the approximants need not be. That asymmetry is what lets the lemma cover the unbounded cumulative hazard.</div>
+  </article>
+
+  <article class="tech" data-cat="proc" data-key="bracketing number entropy integral donsker indicator half lines epsilon squared spacing">
+    <h3>Bracketing numbers and the entropy integral<span class="pill">Processes</span><span class="ref">Defs 1.16, Thms 1.18–1.19</span></h3>
+    <p class="mech"><b>Mechanism.</b> Cover the class by \(\varepsilon\)-brackets; a finite \(L^1\) count gives a uniform LLN, a finite \(L^2\) entropy <em>integral</em> gives a functional CLT. For indicator half-lines the count is \(O(\varepsilon^{-2})\), and \(\sqrt{\log(\cdot)}\) is integrable.</p>
+    <div class="cue"><span>uniformity over a function class</span><span>prove Donsker</span></div>
+    <details class="deriv"><summary>Full derivation — brackets for half-lines and the integral computation</summary><div class="body">
+    <ol>
+      <li><b>The class.</b> \(\mathcal F=\{f_t=\mathbf 1_{[0,t]}:t\in[0,\infty)\}\), so that \(\mathbb G^{(n)}f_t=\sqrt n(F^{(n)}(t)-F(t))\).</li>
+      <li><b>Construct brackets.</b> Given \(\varepsilon&gt;0\), choose \(0=t_0&lt;t_1&lt;\dots&lt;t_k=\infty\) with
+      \[F(t_j-)-F(t_{j-1})&lt;\varepsilon^2,\qquad j=1,\dots,k,\]
+      possible since \(F\) is non-decreasing, càdlàg and bounded by 1. Set \(l_j=\mathbf 1_{[0,t_{j-1})}\), \(u_j=\mathbf 1_{[0,t_j)}\).</li>
+      <li><b>Check the bracket covers.</b> For \(t\in[t_{j-1},t_j)\), \(l_j\le\mathbf 1_{[0,t]}\le u_j\) pointwise.</li>
+      <li><b>Measure the bracket in \(L^2\).</b> Since \(u_j-l_j=\mathbf 1_{[t_{j-1},t_j)}\) is an indicator, \((u_j-l_j)^2=u_j-l_j\), so
+      \[\|u_j-l_j\|_{L^2(P)}=\big(E[u_j-l_j]\big)^{1/2}=\big(F(t_j-)-F(t_{j-1})\big)^{1/2}&lt;\varepsilon.\]
+      <span class="why"><b>This is why the spacing is \(\varepsilon^2\):</b> the \(L^2\) length is the <em>square root</em> of the probability gap.</span></li>
+      <li><b>Count.</b> Total increase of \(F\) is 1 and each cell uses up \(\approx\varepsilon^2\), so \(k\le\lceil2/\varepsilon^2\rceil\), i.e.
+      \[N_{[\,]}\big(\varepsilon,\mathcal F,L^2(P)\big)\le\lceil2/\varepsilon^2\rceil.\]</li>
+      <li><b>Entropy integral converges.</b>
+      \[\int_{(0,1)}\sqrt{\log N_{[\,]}(\varepsilon)}\,d\varepsilon\le\int_0^1\sqrt{\log\big(2/\varepsilon^2+1\big)}\,d\varepsilon&lt;\infty.\]
+      <em>Why finite:</em> \(\log(2/\varepsilon^2+1)\le C+2\log(1/\varepsilon)\) for small \(\varepsilon\), and substituting \(u=\log(1/\varepsilon)\), \(\varepsilon=e^{-u}\), \(d\varepsilon=-e^{-u}du\),
+      \[\int_0^1\sqrt{\log(1/\varepsilon)}\,d\varepsilon=\int_0^\infty\sqrt u\,e^{-u}du=\Gamma(3/2)=\frac{\sqrt\pi}{2}&lt;\infty.\]
+      <span class="why"><b>The moral:</b> polynomial bracketing numbers \(\varepsilon^{-p}\) always give a convergent entropy integral, since \(\sqrt{\log}\) grows too slowly to matter.</span></li>
+      <li><b>Conclusion.</b> \(\mathcal F\) is \(P\)-Donsker, so \(\sqrt n(F^{(n)}-F)\xrightarrow{d}\mathbb G\) in \(\ell^\infty\), and matching covariances identifies \(\mathbb G=B\circ F\).</li>
+    </ol>
+    <p><b>Other classes, same recipe.</b> Parametric \(\{f_\theta:\theta\in\Theta\subset\mathbb R^d\}\) with \(|f_{\theta_1}-f_{\theta_2}|\le m\|\theta_1-\theta_2\|\) gives \(N_{[\,]}\lesssim\varepsilon^{-d}\); Hölder balls of smoothness \(s\) on \([0,1]^d\) give \(\log N_{[\,]}\asymp\varepsilon^{-d/s}\), Donsker iff \(s&gt;d/2\).</p>
+    </div></details>
+    <div class="lab xfer">Transfers to</div>
+    <div class="xferbox"><b>VC classes</b> · <b>M-estimation rates</b> via maximal inequalities in the same entropy · <b>changing classes</b> (Thm 1.20, needed when a bandwidth enters the function) · sieve estimation.</div>
+    <div class="lab trap">Pitfall</div>
+    <div class="trapbox">The criterion is the integral, not the count at one \(\varepsilon\). And if the envelope's second moment blows up (e.g. \(O(h^{-1})\) for kernel classes), the changing-class theorem simply does not apply.</div>
+  </article>
+
+  <article class="tech" data-cat="proc" data-key="hadamard differentiability inverse map quantile chain rule functional delta method g_n rescaling">
+    <h3>Hadamard differentiability &amp; the functional delta method<span class="pill">Processes</span><span class="ref">Def. 1.12, Thms 1.16–1.17</span></h3>
+    <p class="mech"><b>Mechanism.</b> Hadamard differentiability = the difference quotient converges along <em>any</em> perturbing sequence \(h_n\to h\). That is exactly the hypothesis of the general continuous mapping theorem applied to the rescaling maps \(g_n(h)=r_n(\phi(\theta+r_n^{-1}h)-\phi(\theta))\).</p>
+    <div class="cue"><span>functional of \(F^{(n)}\)</span><span>quantiles, copulas, Lorenz, ES</span></div>
+    <details class="deriv"><summary>Full derivation — the theorem, the ratio map, and the inverse map</summary><div class="body">
+    <p><b>1. Why the theorem is a two-line consequence of CMT.</b></p>
+    <ol>
+      <li>Define \(g_n(h)=r_n\big(\phi(\theta+r_n^{-1}h)-\phi(\theta)\big)\) on \(\mathbb D_n=\{h:\theta+r_n^{-1}h\in\mathbb D_\phi\}\).</li>
+      <li>Hadamard differentiability says precisely: \(h_n\to h\in\mathbb D_0\Rightarrow g_n(h_n)\to\phi'_\theta(h)\) (take \(t_n=r_n^{-1}\)).</li>
+      <li>The extended CMT (Thm 1.14) then gives, from \(r_n(X_n-\theta)\xrightarrow{d}X\),
+      \[r_n\big(\phi(X_n)-\phi(\theta)\big)=g_n\big(r_n(X_n-\theta)\big)\xrightarrow{d}\phi'_\theta(X).\]
+      <span class="why"><b>Why Gâteaux is not enough:</b> it only allows the fixed direction \(h_n\equiv h\), but \(r_n(X_n-\theta)\) is a genuinely varying random element. Why not Fréchet: the inverse map is not Fréchet differentiable in sup-norm.</span></li>
+    </ol>
+    <p><b>2. The ratio map \(\phi(f,g)=f/g\).</b> With \(u_n\to0\) and \((h_{1n},h_{2n})\to(h_1,h_2)\):</p>
+    \[\frac{\phi\big((f,g)+u_n(h_{1n},h_{2n})\big)-\phi(f,g)}{u_n}
+    =\frac{1}{u_n}\left[\frac{f+u_nh_{1n}}{g+u_nh_{2n}}-\frac fg\right]
+    =\frac{(f+u_nh_{1n})g-f(g+u_nh_{2n})}{u_n\,g\,(g+u_nh_{2n})}\]
+    \[=\frac{u_n\big(h_{1n}g-fh_{2n}\big)}{u_n\,g\,(g+u_nh_{2n})}
+    =\frac{h_{1n}g-fh_{2n}}{g\,(g+u_nh_{2n})}\ \longrightarrow\ \frac{h_1g-fh_2}{g^2}=\frac{h_1}{g}-\frac{f h_2}{g^2}.\]
+    <p class="why"><b>Conditions used:</b> \(u_nh_{2n}\to0\) uniformly and \(\inf|g|&gt;0\) on a compact index set, so the denominator stays bounded away from 0 and the convergence is in sup-norm. Note the answer is the same shape as \(\nabla(x/y)=(1/y,-x/y^2)\).</p>
+    <p><b>3. The inverse map (quantiles), pointwise expansion.</b> Let \(q_u=F^{-1}(u)\), \(q_{u,n}=(F+t_nh_n)^{-1}(u)\).</p>
+    <ol start="4">
+      <li>By definition of the generalised inverse, for small \(\epsilon_n=o(t_n)\),
+      \[(F+t_nh_n)(q_{u,n}-\epsilon_n)\ \le\ u\ \le\ (F+t_nh_n)(q_{u,n}).\]</li>
+      <li>Since \((h_n)\) is uniformly bounded, this reads \(F(q_{u,n}-\epsilon_n)+O(t_n)\le u\le F(q_{u,n})+O(t_n)\); as \(F\) is continuous, strictly increasing near \(q_u\) with \(F(q_u)=u\), this forces \(q_{u,n}\to q_u\).</li>
+      <li>Taylor \(F\) at \(q_u\) (using \(F'=f&gt;0\)):
+      \[u+(q_{u,n}-q_u)f(q_u)+o(|q_{u,n}-q_u|)+O(\epsilon_n)+t_nh(q_u)+o(t_n)\ \gtrless\ u,\]
+      which gives first \(q_{u,n}-q_u=O(t_n)\) and then
+      \[\frac{q_{u,n}-q_u}{t_n}\longrightarrow-\frac{h(q_u)}{f(q_u)}.\]</li>
+      <li><b>Uniformity.</b> On \([u_1,u_2]\subset(0,1)\), \(f\) is continuous and bounded below, so the Taylor remainder is uniform and
+      \[\sup_{u\in[u_1,u_2]}\Big|\frac{q_{u,n}-q_u}{t_n}+\frac{h(q_u)}{f(q_u)}\Big|\to0,\]
+      i.e. \(\phi'_F(h)=-(h/f)\circ F^{-1}\) as a map into \(\ell^\infty([u_1,u_2])\).</li>
+    </ol>
+    <p><b>4. Chain rule.</b> For \(\psi\circ\phi\), rewrite the quotient as
+    \[\frac{\psi\big(\phi(\theta)+t_n\{\frac{\phi(\theta+t_nh_n)-\phi(\theta)}{t_n}\}\big)-\psi(\phi(\theta))}{t_n},\]
+    recognise the braced term \(\to\phi'_\theta(h)\), and apply Hadamard differentiability of \(\psi\) at \(\phi(\theta)\) with perturbing direction that braced sequence. Derivative: \(\psi'_{\phi(\theta)}\circ\phi'_\theta\).</p>
+    </div></details>
+    <div class="lab xfer">Transfers to</div>
+    <div class="xferbox"><b>Quantile process</b> and <b>empirical copula</b> · <b>Kaplan–Meier via the product integral</b> (Duhamel equation) · <b>L-statistics, trimmed means</b> · <b>Lorenz / Gini / expected shortfall</b> · <b>bootstrap validity</b>, which transfers through \(\phi\) automatically.</div>
+    <div class="lab trap">Pitfall</div>
+    <div class="trapbox">Always state the norm and the tangent set. Ratio maps need \(\inf|g|&gt;0\); quantile maps need \(f&gt;0\) — which is why results live on compact \([p,q]\subset(0,1)\).</div>
+  </article>
+
+  <!-- ============ APPLICATIONS ============ -->
+  <article class="tech" data-cat="app" data-key="vectorise indicators empirical cdf covariance minimum brownian bridge multinomial">
+    <h3>Vectorise indicators<span class="pill">Applications</span><span class="ref">Eq. (1.4), Ex. 1.8.8</span></h3>
+    <p class="mech"><b>Mechanism.</b> Pack indicators at several thresholds into one iid vector. Then the multivariate CLT needs only a mean and a covariance, and \(\mathbf 1_A\mathbf 1_B=\mathbf 1_{A\cap B}\) generates the \(\min\) structure automatically.</p>
+    <div class="cue"><span>joint behaviour at several points</span></div>
+    <details class="deriv"><summary>Full derivation — mean, covariance, and why it is the bridge</summary><div class="body">
+    <ol>
+      <li><b>Define the vector.</b> \(\xi_i=\big(\mathbf 1_{\{Z_i\le t_1\}},\dots,\mathbf 1_{\{Z_i\le t_M\}}\big)^\top\), iid since the \(Z_i\) are. Averaging coordinatewise gives \(\bar\xi_n=(F^{(n)}(t_1),\dots,F^{(n)}(t_M))^\top\).</li>
+      <li><b>Mean.</b> \(E[\mathbf 1_{\{Z_i\le t_k\}}]=P(Z_i\le t_k)=F(t_k)\), so \(E\xi_1=(F(t_1),\dots,F(t_M))^\top\).</li>
+      <li><b>Second moment.</b> Indicators multiply to the intersection, and for \(t_k\le t_l\) the intersection is the smaller event:
+      \[E\big[\mathbf 1_{\{Z_1\le t_k\}}\mathbf 1_{\{Z_1\le t_l\}}\big]=E\big[\mathbf 1_{\{Z_1\le t_k\wedge t_l\}}\big]=F(t_k\wedge t_l).\]</li>
+      <li><b>Covariance.</b>
+      \[\Sigma_{kl}=F(t_k\wedge t_l)-F(t_k)F(t_l),\qquad\text{so }\Sigma_{kk}=F(t_k)-F(t_k)^2=F(t_k)\big(1-F(t_k)\big).\]
+      <span class="why">The diagonal is the Bernoulli variance, since \(\mathbf 1^2=\mathbf 1\).</span></li>
+      <li><b>Second moment finite.</b> \(E\|\xi_1\|^2=\sum_kE[\mathbf 1^2]=\sum_kF(t_k)\le M&lt;\infty\), so Laplace's CLT applies:
+      \(\sqrt n(\bar\xi_n-\mu)\xrightarrow{d}N(0,\Sigma)\).</li>
+      <li><b>Identify the limit process.</b> A standard Brownian bridge \(B\) has \(\mathrm{Cov}(B(s),B(t))=s\wedge t-st\). Substituting \(s=F(t_k)\), \(t=F(t_l)\) and using \(F(t_k)\wedge F(t_l)=F(t_k\wedge t_l)\) (monotonicity) reproduces \(\Sigma_{kl}\) exactly. Hence the fidis are those of \(B\circ F\).</li>
+    </ol>
+    <p><b>Bivariate version.</b> Same computation with \(\mathbf 1_{\{Z\le s,W\le t\}}\) gives
+    \(\mathrm{Cov}=H(s\wedge u,\ t\wedge v)-H(s,t)H(u,v)\).</p>
+    <p><b>Multinomial version (Example 1.11).</b> With \(g_j=\mathbf 1_{\{Y=j\}}\), disjointness gives \(g_jg_r=0\) for \(j\ne r\), hence \([\Sigma]_{jr}=p_j\mathbf 1_{(j=r)}-p_jp_r\) — the multinomial covariance.</p>
+    </div></details>
+    <div class="lab xfer">Transfers to</div>
+    <div class="xferbox"><b>Pearson's \(\chi^2\)</b> · <b>survival/hazard estimators at several times</b> · <b>categorical \(k\)-NN probabilities</b> · goodness-of-fit statistics · any counting functional of an empirical measure.</div>
+  </article>
+
+  <article class="tech" data-cat="app" data-key="mean excess cumulative hazard delta method sandwich sigma matrix conditional variance">
+    <h3>§1.3 functionals: mean excess and cumulative hazard<span class="pill">Applications</span><span class="ref">Thms 1.11–1.12</span></h3>
+    <p class="mech"><b>Mechanism.</b> Both are smooth functions of two sample averages, so both are one bivariate CLT plus one gradient computation. The only work is assembling \(\Sigma\) and multiplying out the sandwich.</p>
+    <div class="cue"><span>tail diagnostics with confidence bands</span></div>
+    <details class="deriv"><summary>Full derivation — both variances computed explicitly</summary><div class="body">
+    <p><b>A. Mean excess \(e_n(u)=\dfrac{\frac1n\sum_iZ_i\mathbf 1_{Z_i&gt;u}}{\frac1n\sum_i\mathbf 1_{Z_i&gt;u}}-u\).</b></p>
+    <ol>
+      <li><b>Two averages.</b> \(T_n=\big(\frac1n\sum_iZ_i\mathbf 1_{Z_i&gt;u},\ \frac1n\sum_i\mathbf 1_{Z_i&gt;u}\big)^\top\to(a,b)\) with \(a=E[Z\mathbf 1_{Z&gt;u}]\), \(b=P(Z&gt;u)\).</li>
+      <li><b>Covariance entries.</b> Using \(\mathbf 1^2=\mathbf 1\) and \(Z\mathbf 1\cdot\mathbf 1=Z\mathbf 1\):
+      \[\sigma_1^2=E[Z^2\mathbf 1_{Z&gt;u}]-a^2,\quad \sigma_2^2=b(1-b),\quad \sigma_{12}=E[Z\mathbf 1_{Z&gt;u}]-ab=a(1-b).\]</li>
+      <li><b>Gradient of \(h(x,y)=x/y\):</b> \(\nabla h=(1/y,\ -x/y^2)^\top\), evaluated at \((a,b)\).</li>
+      <li><b>Sandwich.</b>
+      \[\nabla h^\top\Sigma\nabla h=\frac{\sigma_1^2}{b^2}-\frac{2a\sigma_{12}}{b^3}+\frac{a^2\sigma_2^2}{b^4}.\]
+      Substituting \(\sigma_{12}=a(1-b)\), \(\sigma_2^2=b(1-b)\) and simplifying (the \((1-b)\) terms cancel):
+      \[=\frac{E[Z^2\mathbf 1_{Z&gt;u}]-a^2}{b^2}-\frac{2a^2(1-b)}{b^3}+\frac{a^2(1-b)}{b^3}
+      =\frac{E[Z^2\mathbf 1_{Z&gt;u}]}{b^2}-\frac{a^2}{b^3}.\]
+      Writing conditionally, \(E[Z^2\mathbf 1_{Z&gt;u}]=b\,E[Z^2\mid Z&gt;u]\) and \(a=b\,E[Z\mid Z&gt;u]\):
+      \[=\frac{E[Z^2\mid Z&gt;u]-\big(E[Z\mid Z&gt;u]\big)^2}{b}=\frac{\mathrm{Var}(Z\mid Z&gt;u)}{1-F(u)}
+      =\frac{e^{(2)}_F(u)-e_F(u)^2}{1-F(u)}.\]
+      <span class="why">Shifting by \(-u\) does not change a variance, so the same expression holds for \(e_n(u)\).</span></li>
+    </ol>
+    <p><b>B. Cumulative hazard \(\Lambda^{(n)}(t)=-\log(1-F^{(n)}(t))\).</b></p>
+    <ol start="5">
+      <li>One average only: \(\sqrt n(F^{(n)}(t)-F(t))\xrightarrow{d}N\big(0,F(t)(1-F(t))\big)\).</li>
+      <li>\(h(x)=-\log(1-x)\Rightarrow h'(x)=\dfrac{1}{1-x}\).</li>
+      <li>Sandwich in one dimension:
+      \[h'(F(t))^2\,F(t)(1-F(t))=\frac{F(t)(1-F(t))}{(1-F(t))^2}=\frac{F(t)}{1-F(t)}.\]</li>
+    </ol>
+    <p><b>C. Interquartile range.</b> From the quantile limit \(\sqrt n(\hat q_p-q_p)\xrightarrow{d}-B(p)/f(q_p)\) and \(\mathrm{Cov}(B(p_1),B(p_2))=p_1\wedge p_2-p_1p_2\), with \(p=\tfrac14,q=\tfrac34\):
+    \[\mathrm{Var}=\frac{3/16}{f(q_{1/4})^2},\quad \frac{3/16}{f(q_{3/4})^2},\quad \mathrm{Cov}=\frac{1/4\cdot(1-3/4)}{f(q_{1/4})f(q_{3/4})}=\frac{1/16}{f(q_{1/4})f(q_{3/4})}.\]
+    The map \((x,y)\mapsto y-x\) has gradient \((-1,1)\), so
+    \[\sigma^2_{\mathrm{IQR}}=\frac{3}{16}\Big(\frac{1}{f(q_{3/4})^2}+\frac{1}{f(q_{1/4})^2}\Big)-\frac{2}{16}\cdot\frac{1}{f(q_{1/4})f(q_{3/4})}.\]</p>
+    </div></details>
+    <div class="lab xfer">Transfers to</div>
+    <div class="xferbox"><b>Any ratio-of-averages estimator</b>: Nadaraya–Watson, conditional distributions, hazard ratios — same gradient \((1/y,-x/y^2)\) · <b>expected shortfall</b> and other conditional-tail functionals.</div>
+  </article>
+
+  <article class="tech" data-cat="app" data-key="generalised inverse quantile VaR probability integral transform inversion acceptance rejection fourier">
+    <h3>Generalised inverse and the simulation trio<span class="pill">Applications</span><span class="ref">Prop. 1.3–1.6</span></h3>
+    <p class="mech"><b>Mechanism.</b> One equivalence, \(u\le F(z)\iff F^{-1}(u)\le z\), yields the PIT, inversion sampling, and VaR. Rejection sampling is a geometric-trials computation; Fourier methods replace an unavailable density by its transform.</p>
+    <div class="cue"><span>quantiles / VaR</span><span>simulate from \(F\)</span></div>
+    <details class="deriv"><summary>Full derivation — inversion, rejection, and the Fourier envelope constants</summary><div class="body">
+    <p><b>1. The equivalence and inversion.</b></p>
+    <ol>
+      <li>\(F^{-1}(u)=\inf\{y:F(y)\ge u\}\). Right-continuity of \(F\) makes \(\{y:F(y)\ge u\}\) a closed half-line \([F^{-1}(u),\infty)\), whence
+      \[u\le F(z)\iff F^{-1}(u)\le z.\]</li>
+      <li>Therefore \(P(F^{-1}(U)\le z)=P(U\le F(z))=F(z)\): inversion sampling works with <em>no</em> continuity assumption.</li>
+      <li>Conversely, if \(F\) is continuous, \(P(F(Z)\ge u)=P(Z\ge F^{-1}(u))=1-F(F^{-1}(u))=1-u\), using \(F(F^{-1}(u))=u\) (which needs continuity). So \(F(Z)\sim\mathrm{Unif}(0,1)\).</li>
+    </ol>
+    <p><b>2. Acceptance–rejection: why the accepted draw has density \(f\).</b></p>
+    <ol start="4">
+      <li>Acceptance probability, conditioning on \(Y_1\):
+      \[p=P(A_1)=E\Big[\frac{f(Y_1)}{Cg(Y_1)}\Big]=\int\frac{f(y)}{Cg(y)}g(y)\,dy=\frac1C\int f=\frac1C.\]</li>
+      <li>Joint event on a set \(B\):
+      \[P(A_1,Y_1\in B)=\int_Bg(y)\frac{f(y)}{Cg(y)}dy=\frac1C\int_Bf=p\int_Bf.\]</li>
+      <li>Sum over the geometric trial index (independence across trials):
+      \[P(Z\in B)=\sum_{n\ge1}(1-p)^{n-1}P(A_1,Y_1\in B)=p\int_Bf\cdot\frac{1}{1-(1-p)}=\int_Bf.\]
+      Expected number of proposals \(=1/p=C\).</li>
+    </ol>
+    <p><b>3. Fourier envelope: where \(b=\sqrt{k/c}\) and \(A=4\sqrt{kc}\) come from.</b></p>
+    <ol start="7">
+      <li>From \(f(z)=\frac{1}{2\pi}\int\psi(s)e^{-isz}ds\), the trivial bound is \(|f(z)|\le\frac{1}{2\pi}\int|\psi|=:c\).</li>
+      <li>Integrating by parts twice (legal since \(\psi,\psi',\psi''\in L^1\Rightarrow\psi,\psi'\to0\)):
+      \[f(z)=-\frac{1}{2\pi z^2}\int\psi''(s)e^{-isz}ds\ \Longrightarrow\ |f(z)|\le\frac{k}{z^2},\quad k:=\frac{1}{2\pi}\int|\psi''|.\]</li>
+      <li>So \(f\le c\wedge kz^{-2}\). The two branches cross where \(c=k/z^2\), i.e. at \(z=\pm b\) with \(b=\sqrt{k/c}\).</li>
+      <li>Total mass of the envelope:
+      \[A=\int_{-\infty}^\infty(c\wedge kz^{-2})dz=2\int_0^bc\,dz+2\int_b^\infty kz^{-2}dz=2cb+\frac{2k}{b}
+      =2c\sqrt{k/c}+2k\sqrt{c/k}=4\sqrt{kc}.\]
+      Hence \(g=(c\mathbf 1_{|z|\le b}+kz^{-2}\mathbf 1_{|z|&gt;b})/A\) is a density and \(f\le Ag\).</li>
+    </ol>
+    </div></details>
+    <div class="lab xfer">Transfers to</div>
+    <div class="xferbox"><b>Sklar / copulas</b> via the PIT · <b>quantile regression</b> and rank statistics · <b>MCMC</b> (Metropolis accept ratio) and <b>importance sampling</b> · <b>Laplace-transform inversion</b> for aggregate claims.</div>
+    <div class="lab trap">Pitfall</div>
+    <div class="trapbox">A heavy-tailed target with a light-tailed proposal gives \(C=\infty\) and the method silently fails — compare tails, not modes.</div>
+  </article>
+
+  </div>
+  <p class="noresults" id="noresults" hidden>Nothing matches. Try a broader word.</p>
+</main>
+</section>
+
+<!-- ================= MICRO-TRICKS ================= -->
+<section id="v-mic" hidden>
+<div class="hero">
+  <h1>The small moves inside the big proofs</h1>
+  <p class="lead">Every derivation in this course is assembled from a few dozen one-line manipulations. Each card gives the move, the <em>trigger</em> that should make you reach for it, and the places in Chapter 1 where it actually fires.</p>
+</div>
+<main>
+<div class="trigtable">
+<h4>Trigger index — if the problem shows this, reach for that</h4>
+<table>
+<tr><td class="sym">Two complicated objects to compare, no direct bound</td><td class="mv">Insert a pivot</td></tr>
+<tr><td class="sym">An unknown constant sits in a denominator</td><td class="mv">Multiply &amp; divide · Slutsky</td></tr>
+<tr><td class="sym">Several conditions must hold simultaneously</td><td class="mv">Bonferroni \(P(A\cap B)\ge P(A)+P(B)-1\)</td></tr>
+<tr><td class="sym">A one-sided tail bound, two-sided wanted</td><td class="mv">Symmetrise + union bound</td></tr>
+<tr><td class="sym">An expectation with no uniform bound</td><td class="mv">Split at a threshold</td></tr>
+<tr><td class="sym">A product \(\prod(1-p_k)\), or a maximum \(M_n\)</td><td class="mv">\(1-x\le e^{-x}\)</td></tr>
+<tr><td class="sym">A cross term \(E[XY]\); or need \(L^1\) from \(L^2\)</td><td class="mv">Cauchy–Schwarz / Hölder</td></tr>
+<tr><td class="sym">Given a high moment, need a lower one</td><td class="mv">Jensen / moment monotonicity</td></tr>
+<tr><td class="sym">Centring would force redoing a moment bound</td><td class="mv">\(c_r\)-inequality</td></tr>
+<tr><td class="sym">Need summability for Borel–Cantelli</td><td class="mv">Markov with a chosen \(\varphi\)</td></tr>
+<tr><td class="sym">A bound holds "for every \(\lambda&gt;0\)"</td><td class="mv">Optimise the free parameter</td></tr>
+<tr><td class="sym">A root ties two quantities; or a stray \(1/h\)</td><td class="mv">Substitute &amp; cancel</td></tr>
+<tr><td class="sym">A rate claim you cannot justify</td><td class="mv">Track the powers</td></tr>
+<tr><td class="sym">A \(\min\) or \(\wedge\) should appear in a covariance</td><td class="mv">Indicator algebra</td></tr>
+<tr><td class="sym">Randomness enters in stages</td><td class="mv">Tower property</td></tr>
+<tr><td class="sym">An integral inside an expectation, integrand \(\ge0\)</td><td class="mv">Tonelli</td></tr>
+<tr><td class="sym">An "i.o.", "eventually", or \(\varepsilon\)-enlargement event</td><td class="mv">Continuity of measures</td></tr>
+<tr><td class="sym">Swapping a limit/derivative with \(E\)</td><td class="mv">Name the dominating function</td></tr>
+<tr><td class="sym">Event unchanged by finitely many coordinates</td><td class="mv">Tail \(\sigma\)-field, 0–1 law</td></tr>
+<tr><td class="sym">Need the <em>order</em> of an approximation</td><td class="mv">Taylor with explicit remainder</td></tr>
+<tr><td class="sym">"Show this map is Lipschitz"</td><td class="mv">Mean value theorem</td></tr>
+<tr><td class="sym">Transform has integrable derivatives; need decay</td><td class="mv">Integrate by parts</td></tr>
+<tr><td class="sym">Comparing two products of many factors</td><td class="mv">Product-difference bound</td></tr>
+<tr><td class="sym">"For each \(\varepsilon\), a.s." but you want one a.s. event</td><td class="mv">Do it for \(1/m\), intersect</td></tr>
+<tr><td class="sym">Bound holds only asymptotically; or complementing</td><td class="mv">\(\limsup/\liminf\) manipulation</td></tr>
+<tr><td class="sym">A sup reduced to finitely many points</td><td class="mv">Max of finitely many nulls</td></tr>
+<tr><td class="sym">Your argument is inherently one-sided</td><td class="mv">Squeeze (apply to \(-X\))</td></tr>
+<tr><td class="sym">A power-law tail; "is this moment finite?"</td><td class="mv">Read off the exponent</td></tr>
+<tr><td class="sym">Need a counterexample separating modes</td><td class="mv">Dyadic blocks (typewriter)</td></tr>
+<tr><td class="sym">Approximation error next to set membership</td><td class="mv">\(\varepsilon\)-enlargement \(F^\varepsilon\)</td></tr>
+<tr><td class="sym">A location/scale parameter clutters the algebra</td><td class="mv">Reduce to standard case (WLOG)</td></tr>
+<tr><td class="sym">Object defined by an infimum / first passage</td><td class="mv">Turn \(\inf\) into an equivalence</td></tr>
+<tr><td class="sym">Show a distance stays \(\ge\) some constant</td><td class="mv">\(\max\{a,1-a\}\ge\tfrac12\)</td></tr>
+<tr><td class="sym">A maximum is intractable, or one term dominates</td><td class="mv">Bound max by sum / sum by term</td></tr>
+<tr><td class="sym">An algorithm repeats until success</td><td class="mv">Geometric trials</td></tr>
+<tr><td class="sym">A tuning parameter trades bias vs variance</td><td class="mv">MSE = Var + bias²</td></tr>
+</table>
+</div>
+  <div class="controls">
+    <input class="search" id="msearch" type="search" placeholder="Search a move: Jensen, telescoping, tower, dyadic…" oninput="mfilt()" aria-label="Search micro-tricks">
+    <div class="chips" id="mchips">
+      <button class="chip" aria-pressed="true" data-fam="all" onclick="mcat('all')">All</button>
+      <button class="chip" aria-pressed="false" data-fam="ineq" onclick="mcat('ineq')">Inequalities</button>
+      <button class="chip" aria-pressed="false" data-fam="alg" onclick="mcat('alg')">Algebraic rewrites</button>
+      <button class="chip" aria-pressed="false" data-fam="meas" onclick="mcat('meas')">Measure-theoretic</button>
+      <button class="chip" aria-pressed="false" data-fam="lim" onclick="mcat('lim')">Limit bookkeeping</button>
+    </div>
+  </div>
+  <p class="count" id="mcount"></p>
+  <div id="miclist">
+
+  <article class="tech" data-cat="mic" data-fam="alg" data-key="add subtract pivot telescoping insert term bias variance split">
+    <h3>Insert a pivot (add and subtract)<span class="fampill">Rewrite</span></h3>
+    <p class="mech">To compare \(a\) with \(c\), route through \(b\): \(a-c=(a-b)+(b-c)\). Choose \(b\) so that one gap is stochastic and the other deterministic.</p>
+    <div class="lab when">Reach for it when</div>
+    <div class="trig"><span>two objects are hard to compare directly</span><span>you want to separate randomness from bias</span><span>a limit theorem exists for a nearby object</span></div>
+    <div class="lab work">Instances</div>
+    <div class="workbox">
+      <b>Converging-together:</b> \(Ef(W_n)-Ef(Z)=[Ef(W_n)-Ef(Z_n)]+[Ef(Z_n)-Ef(Z)]\).<br>
+      <b>Bias/variance split:</b> \(\hat\theta-\theta=(\hat\theta-E\hat\theta)+(E\hat\theta-\theta)\) — the \(A_n+B_n\) decomposition.<br>
+      <b>Ratio linearisation:</b> \(\frac{\hat a}{\hat b}-\frac ab=\big[\frac{\hat a}{\hat b}-\frac{E\hat a}{E\hat b}\big]+\big[\frac{E\hat a}{E\hat b}-\frac ab\big]\).<br>
+      <b>Lindeberg:</b> \(\prod\varphi-\prod\psi\) swaps one factor at a time.
+    </div>
+  <details class="deriv"><summary>Worked example — the move in action</summary><div class="body"><ol>
+<li><b>Goal.</b> Show \(\hat a/\hat b\xrightarrow{P}A/B\) is not enough — we want the <em>size</em> of the error.</li>
+<li><b>Write the perturbations.</b> \(\hat a=A+u\), \(\hat b=B+v\) with \(u,v\xrightarrow{P}0\).</li>
+<li><b>Pivot through \(A/\hat b\):</b>
+\[\frac{\hat a}{\hat b}-\frac AB=\underbrace{\Big(\frac{\hat a}{\hat b}-\frac{A}{\hat b}\Big)}_{=u/\hat b}+\underbrace{\Big(\frac{A}{\hat b}-\frac AB\Big)}_{=-Av/(B\hat b)}
+=\frac{uB-Av}{B\hat b}.\]</li>
+<li><b>Read off the answer.</b> Since \(\hat b\xrightarrow{P}B\), Slutsky gives
+\[\frac{\hat a}{\hat b}-\frac AB=\frac{1}{B}u-\frac{A}{B^2}v+o_P(|u|+|v|),\]
+whose coefficients \((1/B,\,-A/B^2)\) are exactly \(\nabla(x/y)\).</li>
+</ol><p><b>Employ it when</b> a difference of two complicated objects has no direct bound but a well-chosen intermediate makes each gap elementary.</p></div></details></article>
+
+  <article class="tech" data-cat="mic" data-fam="alg" data-key="multiply divide insert one ratio studentise normalise">
+    <h3>Multiply and divide by the same thing<span class="fampill">Rewrite</span></h3>
+    <p class="mech">Insert \(1=\frac{x}{x}\) to expose a factor with a known limit. The multiplicative analogue of inserting a pivot.</p>
+    <div class="lab when">Reach for it when</div>
+    <div class="trig"><span>an unknown constant sits in a denominator</span><span>you want Slutsky to apply</span><span>a normalisation is missing</span></div>
+    <div class="lab work">Instances</div>
+    <div class="workbox">
+      <b>Studentising:</b> \(\dfrac{\sqrt n(\bar Z_n-\mu)}{\hat\sigma_n}=\dfrac{\sqrt n(\bar Z_n-\mu)}{\sigma}\cdot\dfrac{\sigma}{\hat\sigma_n}\) — first factor \(\xrightarrow{d}N(0,1)\), second \(\xrightarrow{P}1\).<br>
+      <b>Heavy-tail factorisation:</b> \(\frac{\hat Q}{Q}=A_nB_nC_n\) is built by inserting telescoping ratios, each isolating one error source.<br>
+      <b>Rate extraction:</b> \(W_n=\frac{W_n}{\|Z_n\|}\cdot\frac{\|Z_n\|}{a_n}\cdot a_n\) — the factorisation behind the \(o_P/O_P\) transfer rule.
+    </div>
+  <details class="deriv"><summary>Worked example — the move in action</summary><div class="body"><ol>
+<li><b>Situation.</b> \(\sqrt n(\bar Z_n-\mu)\xrightarrow{d}N(0,\sigma^2)\) but \(\sigma\) is unknown; we have \(\hat\sigma_n^2\xrightarrow{P}\sigma^2\).</li>
+<li><b>Insert \(1=\sigma/\sigma\):</b>
+\[\frac{\sqrt n(\bar Z_n-\mu)}{\hat\sigma_n}=\frac{\sqrt n(\bar Z_n-\mu)}{\sigma}\cdot\frac{\sigma}{\hat\sigma_n}.\]</li>
+<li><b>Identify the two factors.</b> First \(\xrightarrow{d}N(0,1)\) by the CLT; second \(\xrightarrow{P}1\) by CMT applied to \(x\mapsto\sigma/\sqrt x\) (continuous at \(\sigma^2&gt;0\)).</li>
+<li><b>Slutsky.</b> Product \(\xrightarrow{d}N(0,1)\cdot1=N(0,1)\).</li>
+</ol><p><b>Employ it when</b> an unknown constant blocks a limit theorem: manufacture it in the numerator and cancel it with a consistent estimator in the denominator.</p></div></details></article>
+
+  <article class="tech" data-cat="mic" data-fam="ineq" data-key="bonferroni intersection probability union bound complement">
+    <h3>Union bound and its Bonferroni twin<span class="fampill">Inequality</span></h3>
+    <p class="mech">\(P(A\cup B)\le P(A)+P(B)\) bounds a <em>bad</em> event from above; \(P(A\cap B)\ge P(A)+P(B)-1\) bounds a <em>good</em> event from below.</p>
+    <div class="lab when">Reach for it when</div>
+    <div class="trig"><span>several things must go right at once</span><span>you have two events each of probability near 1</span><span>a two-sided bound from a one-sided one</span></div>
+    <div class="lab work">Derivation and uses</div>
+    <div class="workbox">
+      From \(P(A\cup B)=P(A)+P(B)-P(A\cap B)\le1\), rearrange for the second form.<br>
+      <b>Uses:</b> the factor 2 in two-sided Bernstein; combining the two high-probability events in the transfer rule; controlling finitely many grid points simultaneously.
+    </div>
+  <details class="deriv"><summary>Worked example — the move in action</summary><div class="body"><ol>
+<li><b>Two-sided from one-sided.</b> If \(P(T_n\ge a)\le\eta\) and the same bound holds for \(-T_n\), then
+\[P(|T_n|\ge a)=P(\{T_n\ge a\}\cup\{T_n\le-a\})\le\eta+\eta=2\eta.\]</li>
+<li><b>Good events (Bonferroni).</b> Suppose \(P(E_1)&gt;1-\tfrac\delta2\) and \(P(E_2)&gt;1-\tfrac\delta2\). Then
+\[P(E_1\cap E_2)\ge P(E_1)+P(E_2)-1&gt;\big(1-\tfrac\delta2\big)+\big(1-\tfrac\delta2\big)-1=1-\delta.\]</li>
+<li><b>Finitely many at once.</b> For \(K\) events each failing with probability \(\le\delta/K\), all hold simultaneously with probability \(\ge1-\delta\) — this is why a <em>finite</em> grid is affordable in partition-then-sup.</li>
+</ol><p><b>Employ it when</b> the conclusion needs several conditions to hold at the same time, or when you must upgrade a one-tailed bound.</p></div></details></article>
+
+  <article class="tech" data-cat="mic" data-fam="ineq" data-key="split expectation threshold small large event epsilon truncation">
+    <h3>Split an expectation at a threshold<span class="fampill">Inequality</span></h3>
+    <p class="mech">\(E[X]=E[X;|X|\le\varepsilon]+E[X;|X|&gt;\varepsilon]\): bound the small part by <em>size</em>, the large part by <em>probability</em>.</p>
+    <div class="lab when">Reach for it when</div>
+    <div class="trig"><span>an expectation has no uniform bound</span><span>Lindeberg-type conditions appear</span><span>a rare event would ruin a bound</span></div>
+    <div class="lab work">Instances</div>
+    <div class="workbox">
+      <b>Converging-together:</b> \(L\delta\) on the good event, \(2B\) on the rare one.<br>
+      <b>Lindeberg:</b> \(\sup_mc_{nm}\le\varepsilon^2+\sum_mE[X_{nm}^2;|X_{nm}|&gt;\varepsilon]\).<br>
+      <b>Lyapounov:</b> on \(\{\|Z\|&gt;c\}\), \(\|Z\|^2\le c^{2-\alpha}\|Z\|^\alpha\) — same split, trading a power.<br>
+      <b>Truncation CLT:</b> \(Z_i=Z_i\mathbf 1_{|Z_i|\le k}+Z_i\mathbf 1_{|Z_i|&gt;k}\).
+    </div>
+  <details class="deriv"><summary>Worked example — the move in action</summary><div class="body"><ol>
+<li><b>Claim.</b> For an iid array \(Z_{nm}=Z_m/\sqrt n\) with \(EZ_1^2&lt;\infty\), Lindeberg's condition holds.</li>
+<li><b>Compute the Lindeberg sum.</b> Each of the \(n\) terms is identically distributed, so
+\[\sum_{m=1}^nE\Big[\tfrac{Z_m^2}{n};\ \tfrac{|Z_m|}{\sqrt n}&gt;c\Big]=n\cdot\tfrac1nE\big[Z_1^2;|Z_1|&gt;c\sqrt n\big]=E\big[Z_1^2;|Z_1|&gt;c\sqrt n\big].\]</li>
+<li><b>Split and let \(n\to\infty\).</b> The integrand \(Z_1^2\mathbf 1_{|Z_1|&gt;c\sqrt n}\to0\) pointwise and is dominated by \(Z_1^2\in L^1\), so by dominated convergence the expression \(\to0\).</li>
+<li><b>Conclusion.</b> The classical CLT is a special case of Lindeberg's — and the whole verification was one threshold split.</li>
+</ol><p><b>Employ it when</b> an expectation is uncontrolled globally: bound it by <em>size</em> where the variable is small and by <em>probability</em> where it is large.</p></div></details></article>
+
+  <article class="tech" data-cat="mic" data-fam="ineq" data-key="1-x exp inequality product exponential bound maxima">
+    <h3>\(1-x\le e^{-x}\)<span class="fampill">Inequality</span></h3>
+    <p class="mech">Converts a product of near-one factors into an exponential of a sum, turning "does the series diverge?" into "does the product vanish?".</p>
+    <div class="lab when">Reach for it when</div>
+    <div class="trig"><span>a product \(\prod(1-p_k)\) appears</span><span>independence gives \(P(\text{none occur})\)</span><span>maxima of iid variables</span></div>
+    <div class="lab work">Instances</div>
+    <div class="workbox">
+      <b>Borel–Cantelli II:</b> \(\prod_{k=n}^m(1-P(A_k))\le\exp(-\sum_kP(A_k))\to0\).<br>
+      <b>Maxima:</b> \(P(M_n\le t)=(1-q_n)^n\le e^{-nq_n}\) — the engine of extreme-value limits.<br>
+      Companions: \(e^x\ge1+x\), and \(e^x=1+x+\tfrac12x^2e^{\theta x}\) when you need an explicit remainder.
+    </div>
+  <details class="deriv"><summary>Worked example — the move in action</summary><div class="body"><ol>
+<li><b>Setting.</b> \(Z_i\) iid \(\mathrm{Exp}(1)\), \(M_n=\max_{i\le n}Z_i\). Take \(t_n=\log n+x\).</li>
+<li><b>Exact product.</b> \(P(M_n\le t_n)=\big(1-e^{-t_n}\big)^n=\big(1-\tfrac{e^{-x}}{n}\big)^n\).</li>
+<li><b>Bound and limit.</b> \(\big(1-\tfrac{e^{-x}}{n}\big)^n\le\exp(-e^{-x})\), and in fact \(\to\exp(-e^{-x})\).</li>
+<li><b>Read the conclusion.</b> \(M_n-\log n\xrightarrow{d}\) Gumbel. The same two lines with \(q_n=(2K\sqrt n)^{-\alpha}\) give \(P(M_n\le 2K\sqrt n)\le e^{-nq_n}\to0\) in the heavy-tail counterexample.</li>
+</ol><p><b>Employ it when</b> independence turns "nothing happens" into a product of \((1-p_k)\) and you need to know whether it vanishes.</p></div></details></article>
+
+  <article class="tech" data-cat="mic" data-fam="ineq" data-key="cauchy schwarz holder cross term second moment absolute">
+    <h3>Cauchy–Schwarz and Hölder<span class="fampill">Inequality</span></h3>
+    <p class="mech">\(E|XY|\le(EX^2)^{1/2}(EY^2)^{1/2}\), and generally \(E|XY|\le\|X\|_p\|Y\|_q\) with \(1/p+1/q=1\). Also \(E|X|\le(EX^2)^{1/2}\) (take \(Y=1\)).</p>
+    <div class="lab when">Reach for it when</div>
+    <div class="trig"><span>a cross term \(E[XY]\) must be bounded</span><span>you have second moments but need first</span><span>separating a product into known pieces</span></div>
+    <div class="lab work">Instances</div>
+    <div class="workbox">
+      <b>CLT proof:</b> \(E|\xi_1|\le(E\xi_1^2)^{1/2}&lt;\infty\) supplies the dominating function for differentiating \(\varphi\).<br>
+      <b>Bracketing:</b> \(\|g\|_{L^1}\le\|g\|_{L^2}\), which is why finite \(L^2\)-bracketing implies finite \(L^1\)-bracketing — Donsker \(\Rightarrow\) Glivenko–Cantelli.<br>
+      <b>Covariance bounds:</b> \(|\mathrm{Cov}(X,Y)|\le\sigma_X\sigma_Y\), used when checking a limiting \(\Sigma\) is well defined.
+    </div>
+  <details class="deriv"><summary>Worked example — the move in action</summary><div class="body"><ol>
+<li><b>Claim.</b> Finite \(L^2\)-bracketing numbers give finite \(L^1\)-bracketing numbers, so Donsker \(\Rightarrow\) Glivenko–Cantelli.</li>
+<li><b>Apply Cauchy–Schwarz with \(Y=1\):</b> for any \(g\),
+\[\|g\|_{L^1}=E|g\cdot1|\le\big(E g^2\big)^{1/2}\big(E1^2\big)^{1/2}=\|g\|_{L^2}.\]</li>
+<li><b>Transfer the brackets.</b> If \([l_j,u_j]\) has \(\|u_j-l_j\|_{L^2}&lt;\varepsilon\), then \(\|u_j-l_j\|_{L^1}&lt;\varepsilon\) too, so the same brackets work:
+\[N_{[\,]}\big(\varepsilon,\mathcal F,L^1(P)\big)\le N_{[\,]}\big(\varepsilon,\mathcal F,L^2(P)\big)&lt;\infty.\]</li>
+<li><b>Conclude</b> via Theorem 1.18 that \(\mathcal F\) is \(P\)-Glivenko–Cantelli.</li>
+</ol><p><b>Employ it when</b> you must move between norms, bound a cross term, or trade a first moment for a second.</p></div></details></article>
+
+  <article class="tech" data-cat="mic" data-fam="ineq" data-key="jensen convex moments monotone variance nonnegative">
+    <h3>Jensen and moment monotonicity<span class="fampill">Inequality</span></h3>
+    <p class="mech">For convex \(\varphi\): \(\varphi(EX)\le E\varphi(X)\). Consequence: \(p\mapsto(E|X|^p)^{1/p}\) is non-decreasing, so higher moments control lower ones.</p>
+    <div class="lab when">Reach for it when</div>
+    <div class="trig"><span>you assume a high moment and need a lower one</span><span>an expectation sits inside a convex function</span><span>justifying "finite fourth ⇒ finite second"</span></div>
+    <div class="lab work">Instances</div>
+    <div class="workbox">
+      <b>Fourth-moment SLLN:</b> \(EZ^4&lt;\infty\Rightarrow EZ^2&lt;\infty\Rightarrow E|Z|&lt;\infty\), so the hypotheses of the theorem are consistent.<br>
+      <b>Variance non-negativity:</b> \((EX)^2\le EX^2\) is Jensen with \(\varphi(x)=x^2\).<br>
+      <b>Lyapounov ordering:</b> the condition of order \(\alpha\) gets stronger as \(\alpha\) grows, which is why \(\alpha=3\) is usually tried first.
+    </div>
+  <details class="deriv"><summary>Worked example — the move in action</summary><div class="body"><ol>
+<li><b>Claim.</b> \(EZ^4&lt;\infty\Rightarrow EZ^2&lt;\infty\Rightarrow E|Z|&lt;\infty\), so the fourth-moment SLLN's hypotheses are consistent.</li>
+<li><b>Apply Jensen to \(\varphi(x)=x^2\) and the variable \(Z^2\):</b>
+\[\big(EZ^2\big)^2\le E\big[(Z^2)^2\big]=EZ^4&lt;\infty\ \Longrightarrow\ EZ^2\le\big(EZ^4\big)^{1/2}&lt;\infty.\]</li>
+<li><b>Repeat one level down.</b> \(\big(E|Z|\big)^2\le EZ^2&lt;\infty\).</li>
+<li><b>General statement.</b> \(p\mapsto(E|Z|^p)^{1/p}\) is non-decreasing, so assuming a high moment is always safe.</li>
+</ol><p><b>Employ it when</b> a theorem assumes a low moment and you were given a high one — or when an expectation sits inside a convex function.</p></div></details></article>
+
+  <article class="tech" data-cat="mic" data-fam="ineq" data-key="cr inequality convexity power sum 2^{p-1} triangle Lp">
+    <h3>The \(c_r\)-inequality<span class="fampill">Inequality</span></h3>
+    <p class="mech">\(|a+b|^p\le 2^{p-1}(|a|^p+|b|^p)\) for \(p\ge1\) (convexity of \(x\mapsto x^p\)); for \(p\le1\) the constant is 1.</p>
+    <div class="lab when">Reach for it when</div>
+    <div class="trig"><span>a centred variable \(X-EX\) must be bounded in \(L^p\)</span><span>a moment of a sum of two terms</span><span>Lyapounov checks</span></div>
+    <div class="lab work">Instances</div>
+    <div class="workbox">
+      <b>Centring cost:</b> \(E|X-EX|^3\le 4\big(E|X|^3+|EX|^3\big)\) — the reason a Lyapounov bound for the centred array costs only a constant factor (the \(2^3=8\) in \(\sum_iE|Y_{ni}|^3\le8\sum_iE|\tilde Y_{ni}|^3\)).<br>
+      <b>Triangular arrays:</b> lets you verify moment conditions for the raw variable and transfer them to the centred one.
+    </div>
+  <details class="deriv"><summary>Worked example — the move in action</summary><div class="body"><ol>
+<li><b>Goal.</b> Check a Lyapounov condition for the <em>centred</em> array \(Y_{ni}=\tilde Y_{ni}-E\tilde Y_{ni}\) when you can only bound the raw \(\tilde Y_{ni}\).</li>
+<li><b>Apply \(c_r\) with \(p=3\)</b> (so \(2^{p-1}=4\)):
+\[|\tilde Y-E\tilde Y|^3\le 4\big(|\tilde Y|^3+|E\tilde Y|^3\big).\]</li>
+<li><b>Take expectations and use Jensen</b> on the second term (\(|E\tilde Y|^3\le E|\tilde Y|^3\)):
+\[E|Y_{ni}|^3\le 4\big(E|\tilde Y_{ni}|^3+E|\tilde Y_{ni}|^3\big)=8\,E|\tilde Y_{ni}|^3.\]</li>
+<li><b>Conclusion.</b> \(\sum_iE|Y_{ni}|^3\le8\sum_iE|\tilde Y_{ni}|^3\): centring costs only a factor 8, so it suffices to verify Lyapounov for the uncentred variable.</li>
+</ol><p><b>Employ it when</b> centring, splitting, or symmetrising would otherwise force you to redo a moment computation.</p></div></details></article>
+
+  <article class="tech" data-cat="mic" data-fam="ineq" data-key="markov chebyshev increasing function phi generalised chernoff">
+    <h3>Markov with a chosen \(\varphi\)<span class="fampill">Inequality</span></h3>
+    <p class="mech">For increasing \(\varphi\ge0\): \(P(\|Z_n-Z\|&gt;\varepsilon)\le\dfrac{E[\varphi(\|Z_n-Z\|)]}{\varphi(\varepsilon)}\). You <em>choose</em> \(\varphi\) to match the moments you have.</p>
+    <div class="lab when">Reach for it when</div>
+    <div class="trig"><span>converting a moment into a tail probability</span><span>you need summability for Borel–Cantelli</span><span>an exponential bound is wanted</span></div>
+    <div class="lab work">Which \(\varphi\) to pick</div>
+    <div class="workbox">
+      \(\varphi(x)=x^2\): Chebyshev, bound \(\sim1/n\) — not summable, gives only \(\xrightarrow{P}\).<br>
+      \(\varphi(x)=x^4\): bound \(\sim1/n^2\) — summable, gives \(\xrightarrow{a.s.}\).<br>
+      \(\varphi(x)=e^{\lambda x}\): Chernoff, exponential bounds, then optimise over \(\lambda\).<br>
+      <span class="why"><b>Rule of thumb:</b> pick the smallest power that makes \(\sum_n(\text{bound})&lt;\infty\).</span>
+    </div>
+  <details class="deriv"><summary>Worked example — the move in action</summary><div class="body"><ol>
+<li><b>Setting.</b> iid centred \(Z_i\), \(S_n=\tfrac1n\sum_iZ_i\). Compare two choices of \(\varphi\).</li>
+<li><b>\(\varphi(x)=x^2\) (Chebyshev).</b> \(E S_n^2=\sigma^2/n\), so
+\[P(|S_n|&gt;\varepsilon)\le\frac{\sigma^2}{n\varepsilon^2},\qquad \sum_n\frac{\sigma^2}{n\varepsilon^2}=\infty.\]
+Not summable — only \(\xrightarrow{P}\).</li>
+<li><b>\(\varphi(x)=x^4\).</b> \(ES_n^4\le C/n^2\), so
+\[P(|S_n|&gt;\varepsilon)\le\frac{C}{n^2\varepsilon^4},\qquad \sum_n\frac{C}{n^2\varepsilon^4}=\frac{C\pi^2}{6\varepsilon^4}&lt;\infty.\]
+Summable — Borel–Cantelli gives \(\xrightarrow{a.s.}\).</li>
+<li><b>\(\varphi(x)=e^{\lambda x}\).</b> Exponential bounds \(2e^{-cn\varepsilon^2}\); summable for every \(\varepsilon\), and additionally gives a usable finite-\(n\) sample size.</li>
+</ol><p><b>Employ it when</b> you must convert moments into tail probabilities — and choose \(\varphi\) by asking which power makes \(\sum_n\) converge.</p></div></details></article>
+
+  <article class="tech" data-cat="mic" data-fam="alg" data-key="optimise free parameter chernoff lambda L minimise exponent grid epsilon">
+    <h3>Introduce a free parameter, then optimise it<span class="fampill">Rewrite</span></h3>
+    <p class="mech">Bound uniformly in an auxiliary parameter, then choose its best value. The parameter is free precisely because the bound holds for all of its values.</p>
+    <div class="lab when">Reach for it when</div>
+    <div class="trig"><span>a bound holds "for every \(L&gt;0\)"</span><span>a grid mesh or truncation level is yours to choose</span><span>you want the sharpest constant</span></div>
+    <div class="lab work">Instances</div>
+    <div class="workbox">
+      <b>Chernoff/Bernstein:</b> \(P(S_n\ge a)\le e^{-a/L}E[e^{S_n/L}]\) for every \(L&gt;\kappa\); optimising gives the \(\kappa t+\sqrt{2t}\) form.<br>
+      <b>Grid mesh \(\varepsilon\)</b> in partition-then-sup: free, so send it to 0 after \(n\to\infty\).<br>
+      <b>Truncation level \(k\)</b> in the approximation theorem.
+    </div>
+  <details class="deriv"><summary>Worked example — the move in action</summary><div class="body"><ol>
+<li><b>Goal (Hoeffding-style).</b> \(X_i\) iid, mean 0, \(|X_i|\le1\). Bound \(P(\sum_iX_i\ge n\varepsilon)\).</li>
+<li><b>Exponential Markov, for every \(\lambda&gt;0\):</b>
+\[P\Big(\sum_iX_i\ge n\varepsilon\Big)\le e^{-\lambda n\varepsilon}\,\big(E e^{\lambda X_1}\big)^n.\]</li>
+<li><b>Bound the mgf.</b> For \(|X|\le1\) and \(EX=0\), \(Ee^{\lambda X}\le e^{\lambda^2/2}\), so the right side is \(\exp\big(-\lambda n\varepsilon+n\lambda^2/2\big)\).</li>
+<li><b>Optimise.</b> Minimise \(-\lambda\varepsilon+\lambda^2/2\) over \(\lambda\): derivative \(-\varepsilon+\lambda=0\Rightarrow\lambda=\varepsilon\), value \(-\varepsilon^2/2\). Hence
+\[P\Big(\tfrac1n\sum_iX_i\ge\varepsilon\Big)\le e^{-n\varepsilon^2/2}.\]</li>
+</ol><p><b>Employ it when</b> a bound holds "for all \(\lambda\)" or "for all \(L\)" — the freedom is the whole point, so differentiate the exponent and set it to zero.</p></div></details></article>
+
+  <article class="tech" data-cat="mic" data-fam="alg" data-key="substitution remove root change variables kernel bandwidth cancel scaling">
+    <h3>Substitute to remove a root or cancel a factor<span class="fampill">Rewrite</span></h3>
+    <p class="mech">One well-chosen substitution linearises an awkward relation and lets a common factor cancel.</p>
+    <div class="lab when">Reach for it when</div>
+    <div class="trig"><span>a square root ties two quantities</span><span>an integral has a scaling parameter</span><span>the prefactor looks wrong</span></div>
+    <div class="lab work">Instances</div>
+    <div class="workbox">
+      <b>Bernstein inversion:</b> \(\varepsilon=\kappa t+\sqrt{2t}\); set \(s=\sqrt{2t}\), then \(x=\kappa s\), and \(s^2\) cancels:
+      \[\frac{t(1+\kappa\varepsilon)}{\varepsilon^2}=\frac{\tfrac12(1+x+\tfrac{x^2}2)}{1+x+\tfrac{x^2}4}\ge\tfrac12.\]
+      <b>Kernel integrals:</b> \(t=(x-s)/h\) gives \(ds=h\,dt\), cancelling a \(1/h\) — this is why the bias has no \(1/h\) and the variance is \(O(1/(nh))\), not \(O(1/(nh^2))\).<br>
+      <b>Entropy integral:</b> \(u=\log(1/\varepsilon)\) turns \(\int_0^1\sqrt{\log(1/\varepsilon)}d\varepsilon\) into \(\Gamma(3/2)\).
+    </div>
+  <details class="deriv"><summary>Worked example — the move in action</summary><div class="body"><ol>
+<li><b>Kernel change of variables.</b> Start from the bias integral and substitute \(t=(x-s)/h\), i.e. \(s=x-th\), \(ds=h\,dt\):
+\[\frac1h\int \ell(s)K\Big(\frac{x-s}{h}\Big)ds=\frac1h\int\ell(x-th)K(t)\,h\,dt=\int\ell(x-th)K(t)\,dt.\]
+The \(1/h\) is gone — this is why the bias is \(O(h^2)\), not \(O(1/h)\).</li>
+<li><b>Same move in the variance.</b> The prefactor \(1/(nh^2)\) loses one \(h\) the same way, leaving \(\tfrac1{nh}\int K^2(t)g(x-th)dt=O\big(\tfrac1{nh}\big)\).</li>
+<li><b>Entropy integral.</b> Substituting \(u=\log(1/\varepsilon)\), \(\varepsilon=e^{-u}\), \(d\varepsilon=-e^{-u}du\):
+\[\int_0^1\sqrt{\log(1/\varepsilon)}\,d\varepsilon=\int_0^\infty\sqrt u\,e^{-u}du=\Gamma(3/2)=\tfrac{\sqrt\pi}{2}.\]</li>
+</ol><p><b>Employ it when</b> a scaling parameter or a root makes an expression opaque — one substitution usually cancels a prefactor or removes the root entirely.</p></div></details></article>
+
+  <article class="tech" data-cat="mic" data-fam="alg" data-key="scaling bookkeeping powers of n h rate arithmetic nh^{-1/2}">
+    <h3>Track the powers<span class="fampill">Rewrite</span></h3>
+    <p class="mech">Most "rate" claims are pure exponent arithmetic. Write each factor's power of \(n\) and \(h\) (or \(k\)) and add them up.</p>
+    <div class="lab when">Reach for it when</div>
+    <div class="trig"><span>a claimed rate looks unmotivated</span><span>bandwidth or threshold conditions appear</span><span>you must decide if a term is negligible</span></div>
+    <div class="lab work">Instances</div>
+    <div class="workbox">
+      <b>Lyapounov for kernels:</b> \(n\cdot(nh)^{-3/2}\cdot h=(nh)^{-1/2}\to0\) iff \(nh\to\infty\).<br>
+      <b>Bias vs rate:</b> \(\sqrt{nh}\cdot O(h^2)=O(\sqrt{nh^5})\to0\) iff \(nh^5\to0\).<br>
+      <b>Heavy tails:</b> \(nP(|Z_1|&gt;\varepsilon\sqrt n)=n\cdot\varepsilon^{-\alpha}n^{-\alpha/2}=\varepsilon^{-\alpha}n^{1-\alpha/2}\).<br>
+      <span class="why"><b>Discipline:</b> never say "clearly negligible" — write the two exponents and compare.</span>
+    </div>
+  <details class="deriv"><summary>Worked example — the move in action</summary><div class="body"><ol>
+<li><b>Question.</b> Does the kernel array \(Y_{ni}=(nh)^{-1/2}K\big(\tfrac{x-X_i}{h}\big)\{\cdots\}\) satisfy Lyapounov with \(\alpha=3\)?</li>
+<li><b>Count the factors.</b> There are \(n\) summands; each carries \((nh)^{-3/2}\) from the normalisation; the change of variables in the integral contributes one \(h\):
+\[\sum_{i=1}^nE|Y_{ni}|^3\ \asymp\ n\cdot(nh)^{-3/2}\cdot h.\]</li>
+<li><b>Simplify the exponents.</b>
+\[n\cdot(nh)^{-3/2}\cdot h=n^{1-3/2}h^{1-3/2}=n^{-1/2}h^{-1/2}=(nh)^{-1/2}.\]</li>
+<li><b>Conclude.</b> \((nh)^{-1/2}\to0\iff nh\to\infty\) — precisely the standard bandwidth condition.</li>
+</ol><p><b>Employ it when</b> you are tempted to write "clearly negligible": instead write both exponents and compare them.</p></div></details></article>
+
+  <article class="tech" data-cat="mic" data-fam="meas" data-key="indicator algebra square intersection minimum disjoint bernoulli">
+    <h3>Indicator algebra<span class="fampill">Measure</span></h3>
+    <p class="mech">\(\mathbf 1_A^2=\mathbf 1_A\), \(\mathbf 1_A\mathbf 1_B=\mathbf 1_{A\cap B}\), and for nested events the intersection is the smaller one.</p>
+    <div class="lab when">Reach for it when</div>
+    <div class="trig"><span>computing a covariance of indicators</span><span>a \(\min\) or \(\wedge\) should appear</span><span>measuring a bracket</span></div>
+    <div class="lab work">Instances</div>
+    <div class="workbox">
+      <b>Empirical cdf:</b> \(\{Z\le s\}\cap\{Z\le t\}=\{Z\le s\wedge t\}\) produces the \(\min\), hence the Brownian bridge.<br>
+      <b>Bernoulli variance:</b> \(E[\mathbf 1^2]-E[\mathbf 1]^2=F(1-F)\).<br>
+      <b>Brackets:</b> \(u_j-l_j\) is an indicator, so \(\|u_j-l_j\|_{L^2}=(E[u_j-l_j])^{1/2}\) — the source of the \(\varepsilon^2\) spacing.<br>
+      <b>Multinomial:</b> disjointness gives \(g_jg_r=0\), hence \(-p_jp_r\) off the diagonal.
+    </div>
+  <details class="deriv"><summary>Worked example — the move in action</summary><div class="body"><ol>
+<li><b>Goal.</b> Compute \(\mathrm{Cov}\big(\mathbf 1_{\{Z\le s\}},\mathbf 1_{\{Z\le t\}}\big)\) for \(s\le t\).</li>
+<li><b>Product is the intersection.</b>
+\[\mathbf 1_{\{Z\le s\}}\mathbf 1_{\{Z\le t\}}=\mathbf 1_{\{Z\le s\}\cap\{Z\le t\}}=\mathbf 1_{\{Z\le s\wedge t\}}=\mathbf 1_{\{Z\le s\}}.\]</li>
+<li><b>Take expectations.</b> \(E[\mathbf 1\mathbf 1]=F(s\wedge t)\) and \(E[\mathbf 1_{\{Z\le s\}}]=F(s)\).</li>
+<li><b>Covariance.</b>
+\[\mathrm{Cov}=F(s\wedge t)-F(s)F(t),\quad\text{and on the diagonal}\quad F(t)-F(t)^2=F(t)(1-F(t)).\]
+Matching \(\mathrm{Cov}(B(u),B(v))=u\wedge v-uv\) at \(u=F(s)\), \(v=F(t)\) identifies the limit as \(B\circ F\).</li>
+</ol><p><b>Employ it when</b> a covariance of events is wanted, or whenever a \(\min\) "appears from nowhere" in a limit — it came from an intersection.</p></div></details></article>
+
+  <article class="tech" data-cat="mic" data-fam="meas" data-key="tower property conditioning smoothing iterated expectation">
+    <h3>Condition, then average (tower property)<span class="fampill">Measure</span></h3>
+    <p class="mech">\(E[X]=E\big[E[X\mid Y]\big]\). Condition on whatever makes the inner expectation computable.</p>
+    <div class="lab when">Reach for it when</div>
+    <div class="trig"><span>the variable depends on a covariate</span><span>an acceptance probability depends on a proposal</span><span>a conditional distribution is given</span></div>
+    <div class="lab work">Instances</div>
+    <div class="workbox">
+      <b>Rejection sampling:</b> \(p=E\big[P(U\le\tfrac{f(Y)}{Cg(Y)}\mid Y)\big]=E\big[\tfrac{f(Y)}{Cg(Y)}\big]=\tfrac1C\).<br>
+      <b>Kernel bias:</b> \(E[g(Z)K(\cdot)]=\int E[g(Z)\mid X=s]K(\tfrac{x-s}{h})f_X(s)ds\) — conditioning is what creates the function \(\ell\) you then Taylor-expand.<br>
+      <b>Conditional variance:</b> \(\mathrm{Var}(X)=E[\mathrm{Var}(X\mid Y)]+\mathrm{Var}(E[X\mid Y])\), used to split local variance from bias.
+    </div>
+  <details class="deriv"><summary>Worked example — the move in action</summary><div class="body"><ol>
+<li><b>Goal.</b> The acceptance probability in rejection sampling, where the accept event depends on both \(Y\) and an independent \(U\).</li>
+<li><b>Condition on \(Y\)</b> (given \(Y\), the only randomness is \(U\sim\mathrm{Unif}(0,1)\)):
+\[P\Big(U\le\frac{f(Y)}{Cg(Y)}\ \Big|\ Y\Big)=\frac{f(Y)}{Cg(Y)}.\]</li>
+<li><b>Average out \(Y\sim g\).</b>
+\[p=E\Big[\frac{f(Y)}{Cg(Y)}\Big]=\int\frac{f(y)}{Cg(y)}g(y)\,dy=\frac1C\int f(y)\,dy=\frac1C.\]</li>
+<li><b>Same move in kernel bias.</b> \(E\big[g(Z)K(\tfrac{x-X}{h})\big]=\int E[g(Z)\mid X=s]\,K(\tfrac{x-s}{h})f_X(s)\,ds\) — conditioning is what produces the smooth \(\ell(s)\) you then Taylor-expand.</li>
+</ol><p><b>Employ it when</b> randomness enters in stages, or when a conditional law is exactly what the model gives you.</p></div></details></article>
+
+  <article class="tech" data-cat="mic" data-fam="meas" data-key="fubini tonelli exchange sum integral layer cake nonnegative">
+    <h3>Exchange \(E\) and \(\int\) (or \(\sum\))<span class="fampill">Measure</span></h3>
+    <p class="mech">Tonelli needs only non-negativity; Fubini needs integrability. For indicators and counts you are always in the Tonelli case.</p>
+    <div class="lab when">Reach for it when</div>
+    <div class="trig"><span>an integral sits inside an expectation</span><span>you want a tail representation</span><span>summing infinitely many indicators</span></div>
+    <div class="lab work">Instances</div>
+    <div class="workbox">
+      <b>Layer cake:</b> \(E[Y]=\int_0^\infty P(Y&gt;z)dz\).<br>
+      <b>Borel–Cantelli I:</b> \(E\sum_n\mathbf 1_{A_n}=\sum_nP(A_n)\).<br>
+      <b>Mean excess as a functional:</b> \(Z-u=\int_u^\infty\mathbf 1_{Z&gt;z}dz\) turns the numerator into \(\int_u^\infty(1-F^{(n)}(z))dz\) — the step that makes the functional delta method applicable.
+    </div>
+  <details class="deriv"><summary>Worked example — the move in action</summary><div class="body"><ol>
+<li><b>Goal.</b> Prove \(EY=\int_0^\infty P(Y&gt;z)\,dz\) for \(Y\ge0\).</li>
+<li><b>Pointwise identity.</b> \(Y(\omega)=\int_0^\infty\mathbf 1_{\{z&lt;Y(\omega)\}}dz\) — the length of \([0,Y(\omega))\).</li>
+<li><b>Tonelli (integrand \(\ge0\), jointly measurable) swaps the order:</b>
+\[EY=E\int_0^\infty\mathbf 1_{\{Y&gt;z\}}dz=\int_0^\infty E\big[\mathbf 1_{\{Y&gt;z\}}\big]dz=\int_0^\infty P(Y&gt;z)\,dz.\]</li>
+<li><b>Second use.</b> Same swap gives \(E\sum_n\mathbf 1_{A_n}=\sum_nP(A_n)\), the first half of Borel–Cantelli.</li>
+</ol><p><b>Employ it when</b> the integrand is non-negative — then no integrability check is needed, and the identity is valid even if the answer is \(+\infty\).</p></div></details></article>
+
+  <article class="tech" data-cat="mic" data-fam="meas" data-key="continuity from above below monotone events decreasing limits measure">
+    <h3>Continuity of measures along monotone events<span class="fampill">Measure</span></h3>
+    <p class="mech">\(A_n\uparrow A\Rightarrow P(A_n)\uparrow P(A)\); \(A_n\downarrow A\) with \(P(A_1)&lt;\infty\Rightarrow P(A_n)\downarrow P(A)\).</p>
+    <div class="lab when">Reach for it when</div>
+    <div class="trig"><span>an "i.o." or \(\liminf\) event appears</span><span>you built an \(\varepsilon\)-enlargement</span><span>a countable intersection of events</span></div>
+    <div class="lab work">Instances</div>
+    <div class="workbox">
+      <b>Borel–Cantelli II:</b> \(P(\bigcup_{k\ge n}A_k)=1\) for each \(n\); these sets decrease, so \(P(A_n\ \text{i.o.})=\lim_nP(\bigcup_{k\ge n}A_k)=1\).<br>
+      <b>Theorem 1.5:</b> \(F^\varepsilon\downarrow F\) as \(\varepsilon\downarrow0\), so \(P(Z\in F^\varepsilon)\downarrow P(Z\in F)\).
+    </div>
+  <details class="deriv"><summary>Worked example — the move in action</summary><div class="body"><ol>
+<li><b>Setting.</b> Finish Borel–Cantelli II: we know \(P\big(\bigcup_{k\ge n}A_k\big)=1\) for every \(n\).</li>
+<li><b>Identify the monotone structure.</b> \(B_n:=\bigcup_{k\ge n}A_k\) is <em>decreasing</em> in \(n\), with \(\bigcap_nB_n=\{A_n\ \text{i.o.}\}\).</li>
+<li><b>Continuity from above</b> (legitimate since \(P(B_1)\le1&lt;\infty\)):
+\[P(A_n\ \text{i.o.})=P\Big(\bigcap_nB_n\Big)=\lim_{n\to\infty}P(B_n)=\lim_{n\to\infty}1=1.\]</li>
+<li><b>Mirror use.</b> In Theorem 1.5, \(F^\varepsilon\downarrow F\) as \(\varepsilon\downarrow0\) gives \(P(Z\in F^\varepsilon)\downarrow P(Z\in F)\).</li>
+</ol><p><b>Employ it when</b> the event you care about is an increasing or decreasing limit — "i.o.", "eventually", or an \(\varepsilon\)-enlargement.</p></div></details></article>
+
+  <article class="tech" data-cat="mic" data-fam="meas" data-key="dominated convergence explicit dominating function bounded f">
+    <h3>Name the dominating function<span class="fampill">Measure</span></h3>
+    <p class="mech">Dominated convergence is only usable if you can exhibit the dominating function. In this course it is nearly always "\(f\) is bounded" or "\(E\xi^2&lt;\infty\)".</p>
+    <div class="lab when">Reach for it when</div>
+    <div class="trig"><span>swapping a limit with an expectation</span><span>differentiating under \(E\)</span><span>a.s. convergence must become convergence of means</span></div>
+    <div class="lab work">Instances</div>
+    <div class="workbox">
+      <b>Subsequence trick:</b> \(f(Z_{n_{k_j}})\xrightarrow{a.s.}f(Z)\) with \(|f|\le B\) gives \(Ef(Z_{n_{k_j}})\to Ef(Z)\).<br>
+      <b>Differentiating \(\varphi\):</b> the difference quotient of \(e^{it\xi}\) is dominated by \(|\xi|\), integrable since \(E\xi^2&lt;\infty\).<br>
+      <b>\(a.s.\Rightarrow P\):</b> \(0\le\mathbf 1_{A_n}\le1\) with \(\mathbf 1_{A_n}\to0\) a.s. gives \(P(A_n)\to0\).
+    </div>
+  <details class="deriv"><summary>Worked example — the move in action</summary><div class="body"><ol>
+<li><b>Goal.</b> Justify \(\varphi'(t)=E[i\xi e^{it\xi}]\), i.e. differentiating under the expectation.</li>
+<li><b>Write the difference quotient.</b>
+\[\frac{\varphi(t+\delta)-\varphi(t)}{\delta}=E\Big[e^{it\xi}\frac{e^{i\delta\xi}-1}{\delta}\Big].\]</li>
+<li><b>Exhibit the dominating function.</b> Using \(|e^{ih}-1|\le|h|\),
+\[\Big|e^{it\xi}\frac{e^{i\delta\xi}-1}{\delta}\Big|\le\frac{|\delta\xi|}{|\delta|}=|\xi|,\]
+and \(E|\xi|\le(E\xi^2)^{1/2}&lt;\infty\) — this is exactly where the second-moment hypothesis enters.</li>
+<li><b>Apply DCT</b> along any \(\delta\to0\) to get \(\varphi'(t)=E[i\xi e^{it\xi}]\); repeat for \(\varphi''\).</li>
+</ol><p><b>Employ it when</b> swapping a limit, derivative, or infinite sum with an expectation — and always <em>write down</em> the dominating function.</p></div></details></article>
+
+  <article class="tech" data-cat="mic" data-fam="meas" data-key="generating class monotone class tail sigma field independence 0-1">
+    <h3>Generating-class / tail-\(\sigma\)-field arguments<span class="fampill">Measure</span></h3>
+    <p class="mech">Verify a property on a generating \(\pi\)-system, then extend to the whole \(\sigma\)-field. An event in the tail \(\sigma\)-field is independent of itself, so has probability 0 or 1.</p>
+    <div class="lab when">Reach for it when</div>
+    <div class="trig"><span>an event does not depend on finitely many variables</span><span>you need "probability is 0 or 1"</span><span>extending independence from a small class</span></div>
+    <div class="lab work">Instances</div>
+    <div class="workbox">
+      <b>SLLN:</b> \(A_\varepsilon=\{\limsup_nS_n/n&gt;\varepsilon\}\) is measurable w.r.t. \(\mathcal T=\bigcap_n\sigma(Z_i:i&gt;n)\); a generating-class argument gives \(\mathcal T\perp\!\!\!\perp\mathcal T\), hence \(P(A_\varepsilon)\in\{0,1\}\). The maximal inequality then forces \(-\varepsilon P(A_\varepsilon)\ge0\), so it is 0.<br>
+      <span class="why">Recognise the pattern: <em>shift-invariant event + independence ⇒ trivial probability</em>.</span>
+    </div>
+  <details class="deriv"><summary>Worked example — the move in action</summary><div class="body"><ol>
+<li><b>Setting.</b> In the SLLN, \(A_\varepsilon=\{\limsup_nS_n/n&gt;\varepsilon\}\).</li>
+<li><b>Tail measurability.</b> Changing finitely many \(Z_i\) does not change \(\limsup_nS_n/n\), so \(A_\varepsilon\in\mathcal T:=\bigcap_n\sigma(Z_i:i&gt;n)\).</li>
+<li><b>Independence of the tail from itself.</b> \(Z_1,\dots,Z_n\) are independent of \(\mathcal T\) for every \(n\); a generating-class (π–λ) argument extends this to \(\sigma(Z_n:n\ge1)\perp\!\!\!\perp\mathcal T\). Since \(\mathcal T\subseteq\sigma(Z_n:n\ge1)\), we get \(\mathcal T\perp\!\!\!\perp\mathcal T\).</li>
+<li><b>0–1 conclusion.</b> \(P(A_\varepsilon)=P(A_\varepsilon\cap A_\varepsilon)=P(A_\varepsilon)^2\), so \(P(A_\varepsilon)\in\{0,1\}\). The maximal inequality then gives \(0\le-\varepsilon P(A_\varepsilon)\), forcing \(P(A_\varepsilon)=0\).</li>
+</ol><p><b>Employ it when</b> an event is unchanged by finitely many coordinates — then its probability is 0 or 1 and you only need to rule out one of them.</p></div></details></article>
+
+  <article class="tech" data-cat="mic" data-fam="alg" data-key="taylor explicit remainder peano lagrange integral form complex exponential">
+    <h3>Taylor with an explicit remainder<span class="fampill">Rewrite</span></h3>
+    <p class="mech">Always carry the remainder in a form you can bound: Peano \(o(\cdot)\) for limits, Lagrange \(\tfrac12f''(\xi)\) for uniform bounds, integral form for exactness.</p>
+    <div class="lab when">Reach for it when</div>
+    <div class="trig"><span>a smooth function of an estimator</span><span>an expansion near 1 or near 0</span><span>you need the size of the error, not just its existence</span></div>
+    <div class="lab work">Instances</div>
+    <div class="workbox">
+      <b>Characteristic function:</b> \(\varphi(t)=1-\tfrac{t^2}2E\xi^2+o(t^2)\).<br>
+      <b>Delta method:</b> \(h(T_n)-h(c)=\nabla h(c)^\top(T_n-c)+o(\|T_n-c\|)\).<br>
+      <b>Complex exponential:</b> \(\big|e^{ix}-\sum_{k\le m}\frac{(ix)^k}{k!}\big|\le\frac{2|x|^m}{m!}\wedge\frac{|x|^{m+1}}{(m+1)!}\) — the two-branch bound Lindeberg needs.<br>
+      <b>Kernel bias:</b> \(\ell(x-th)=\ell(x)-th\ell'(x)+\tfrac{t^2h^2}{2}\ell''(x)+o(h^2)\).
+    </div>
+  <details class="deriv"><summary>Worked example — the move in action</summary><div class="body"><ol>
+<li><b>Goal.</b> The leading kernel bias, with the remainder tracked.</li>
+<li><b>Expand \(\ell\) at \(x\) to second order:</b>
+\[\ell(x-th)=\ell(x)-th\,\ell'(x)+\tfrac{(th)^2}{2}\ell''(x)+o(h^2).\]</li>
+<li><b>Integrate against \(K\), using \(\int K=1\), \(\int tK=0\), \(\int t^2K=\mu_2\):</b>
+\[\int K(t)\big(\ell(x-th)-\ell(x)\big)dt=-h\ell'(x)\underbrace{\int tK}_{=0}+\frac{h^2}{2}\ell''(x)\underbrace{\int t^2K}_{=\mu_2}+o(h^2).\]</li>
+<li><b>Result.</b> bias \(=\tfrac{h^2}{2}\mu_2\ell''(x)+o(h^2)=O(h^2)\). Note the symmetry of \(K\) is what removed the \(O(h)\) term.</li>
+</ol><p><b>Employ it when</b> you need the <em>order</em> of an approximation, not merely that it is small — always carry the remainder in a boundable form.</p></div></details></article>
+
+  <article class="tech" data-cat="mic" data-fam="alg" data-key="mean value theorem lipschitz constant supremum derivative">
+    <h3>Mean value theorem for a Lipschitz constant<span class="fampill">Rewrite</span></h3>
+    <p class="mech">\(|g(x)-g(y)|=|g'(\xi)||x-y|\le\big(\sup|g'|\big)|x-y|\). The cheapest way to produce a Lipschitz bound is to bound one derivative.</p>
+    <div class="lab when">Reach for it when</div>
+    <div class="trig"><span>"show this map is Lipschitz"</span><span>bracketing a class indexed by a parameter</span><span>controlling an increment</span></div>
+    <div class="lab work">Instances</div>
+    <div class="workbox">
+      <b>Kernel:</b> \(K(u)=\tfrac34(1-u^2)\), \(K'(u)=-\tfrac32u\), so \(\sup_{|u|\le1}|K'|=\tfrac32\): Lipschitz with constant \(3/2\).<br>
+      <b>Potter-type control:</b> the mean value theorem applied to \(x^{\pm\varepsilon}\) near \(x=1\) gives \(|x^\varepsilon-1|\le C_\varepsilon|x-1|\).<br>
+      <b>Bracketing in a parameter:</b> Lipschitz in \(\theta\) gives \(N_{[\,]}\lesssim\varepsilon^{-d}\).
+    </div>
+  <details class="deriv"><summary>Worked example — the move in action</summary><div class="body"><ol>
+<li><b>Goal.</b> Show \(K(u)=\tfrac34(1-u^2)\) on \([-1,1]\) is Lipschitz, with the best constant.</li>
+<li><b>Differentiate.</b> \(K'(u)=\tfrac34\cdot(-2u)=-\tfrac32u\).</li>
+<li><b>Apply the MVT.</b> For \(x,y\in[-1,1]\) there is \(\xi\) between them with
+\[|K(x)-K(y)|=|K'(\xi)|\,|x-y|\le\Big(\sup_{|u|\le1}\tfrac32|u|\Big)|x-y|=\tfrac32|x-y|.\]</li>
+<li><b>Sharpness and endpoints.</b> The bound is attained as \(x,y\to\pm1\). Outside \([-1,1]\), \(K\equiv0\), and the one-sided slopes at \(\pm1\) are bounded by \(3/2\), so \(K\) is \(\tfrac32\)-Lipschitz on all of \(\mathbb R\).</li>
+</ol><p><b>Employ it when</b> a modulus of continuity is needed — one derivative bound gives it, and the constant feeds directly into bracketing counts.</p></div></details></article>
+
+  <article class="tech" data-cat="mic" data-fam="alg" data-key="integration by parts boundary terms transform psi double prime hadamard">
+    <h3>Integrate by parts (and watch the boundary)<span class="fampill">Rewrite</span></h3>
+    <p class="mech">Moves derivatives between factors, trading a hard integrand for an easier one plus boundary terms — which vanish exactly when the integrability assumptions hold.</p>
+    <div class="lab when">Reach for it when</div>
+    <div class="trig"><span>a transform has integrable derivatives</span><span>you need extra decay in \(z\)</span><span>a Stieltjes integral against a bounded-variation function</span></div>
+    <div class="lab work">Instances</div>
+    <div class="workbox">
+      <b>Fourier envelope:</b> two integrations by parts turn \(f(z)=\frac1{2\pi}\int\psi e^{-isz}ds\) into \(f(z)=-\frac{1}{2\pi z^2}\int\psi''e^{-isz}ds\), giving the \(k/z^2\) tail bound. Boundary terms vanish because \(\psi,\psi'\to0\) (a consequence of \(\psi,\psi',\psi''\in L^1\)).<br>
+      <b>Hadamard derivative of \(\int\psi(F_1)dF_2\):</b> integration by parts produces the \(h_2(s)\psi(F_1(s))\big|\) boundary term and the \(\int h_2(s-)d\psi(F_1(s))\) term.
+    </div>
+  <details class="deriv"><summary>Worked example — the move in action</summary><div class="body"><ol>
+<li><b>Goal.</b> Upgrade the crude bound \(|f(z)|\le c\) to a tail bound \(|f(z)|\le k/z^2\).</li>
+<li><b>Start from the inversion formula.</b> \(f(z)=\frac1{2\pi}\int\psi(s)e^{-isz}ds\).</li>
+<li><b>Integrate by parts once.</b> Since \(\psi,\psi'\in L^1\Rightarrow\psi(s)\to0\) as \(|s|\to\infty\), the boundary term vanishes:
+\[f(z)=\frac{1}{2\pi i z}\int\psi'(s)e^{-isz}\,ds.\]</li>
+<li><b>Again</b> (now using \(\psi'(s)\to0\)):
+\[f(z)=-\frac{1}{2\pi z^2}\int\psi''(s)e^{-isz}\,ds\ \Longrightarrow\ |f(z)|\le\frac{k}{z^2},\quad k=\frac{1}{2\pi}\int|\psi''|.\]</li>
+<li><b>Payoff.</b> Combining, \(f\le c\wedge kz^{-2}\), which is the exact envelope used for transform-based rejection sampling.</li>
+</ol><p><b>Employ it when</b> you need extra decay and the <em>derivatives</em> of the transform are integrable — each integration by parts buys one power of \(1/z\).</p></div></details></article>
+
+  <article class="tech" data-cat="mic" data-fam="alg" data-key="telescoping product bound induction complex modulus one replacement">
+    <h3>Product-difference bound<span class="fampill">Rewrite</span></h3>
+    <p class="mech">For \(|z_m|,|z'_m|\le1\): \(\big|\prod_mz_m-\prod_mz'_m\big|\le\sum_m|z_m-z'_m|\).</p>
+    <div class="lab when">Reach for it when</div>
+    <div class="trig"><span>comparing two products</span><span>characteristic functions of independent sums</span><span>a "replace one at a time" argument</span></div>
+    <div class="lab work">Why true, where used</div>
+    <div class="workbox">
+      Induction: \(\prod z-\prod z'=(z_1-z_1')\prod_{m\ge2}z_m+z_1'\big(\prod_{m\ge2}z_m-\prod_{m\ge2}z'_m\big)\), then bound each modulus by 1.<br>
+      <b>Used in:</b> Lindeberg's CLT, replacing each \(\varphi_{nm}\) by its Gaussian partner. The hypothesis \(|\varphi|\le1\) is automatic for characteristic functions.
+    </div>
+  <details class="deriv"><summary>Worked example — the move in action</summary><div class="body"><ol>
+<li><b>Claim.</b> \(\big|\prod_{m\le n}z_m-\prod_{m\le n}z'_m\big|\le\sum_{m\le n}|z_m-z'_m|\) when all \(|z_m|,|z'_m|\le1\).</li>
+<li><b>Base case \(n=1\).</b> Trivial.</li>
+<li><b>Induction step.</b> Write, with \(P=\prod_{m\ge2}z_m\), \(P'=\prod_{m\ge2}z'_m\):
+\[\prod_{m\le n}z_m-\prod_{m\le n}z'_m=(z_1-z_1')P+z_1'(P-P').\]
+Taking moduli and using \(|P|\le1\), \(|z_1'|\le1\):
+\[\Big|\prod z-\prod z'\Big|\le|z_1-z_1'|+|P-P'|\le|z_1-z_1'|+\sum_{m\ge2}|z_m-z'_m|.\]</li>
+<li><b>Use.</b> With \(z_m=\varphi_{nm}(t)\), \(z'_m=\psi_{nm}(t)\) (characteristic functions, so modulus \(\le1\) automatically), this reduces "the two products differ" to "each factor differs a little".</li>
+</ol><p><b>Employ it when</b> comparing two products of many factors — typically characteristic functions of independent sums.</p></div></details></article>
+
+  <article class="tech" data-cat="mic" data-fam="lim" data-key="countable intersection probability one 1/m epsilon rationals null sets">
+    <h3>Do it for \(1/m\), then intersect<span class="fampill">Limits</span></h3>
+    <p class="mech">A per-\(\varepsilon\) almost-sure statement becomes a single almost-sure statement by intersecting over a countable set of \(\varepsilon\)'s.</p>
+    <div class="lab when">Reach for it when</div>
+    <div class="trig"><span>you proved something "for each \(\varepsilon&gt;0\), a.s."</span><span>the conclusion should be one a.s. event</span></div>
+    <div class="lab work">Instances</div>
+    <div class="workbox">
+      <b>Corollary 1.1:</b> \(\|Z_n-Z\|\le1/m\) eventually for every \(m\), on one probability-one set.<br>
+      <b>Exercise 2:</b> \(\limsup S_n\ge k\) for every \(k\in\mathbb N\) gives \(\limsup S_n=\infty\) a.s.<br>
+      <b>Partition-then-sup:</b> \(\limsup_n\sup_x|\cdot|\le1/m\) for every \(m\).<br>
+      <span class="why">A countable union of null sets is null — the trick fails for uncountably many \(\varepsilon\), which is why you must use a sequence.</span>
+    </div>
+  <details class="deriv"><summary>Worked example — the move in action</summary><div class="body"><ol>
+<li><b>Situation.</b> Suppose \(\sum_nP(\|Z_n-Z\|&gt;\varepsilon)&lt;\infty\) for <em>every</em> \(\varepsilon&gt;0\). Borel–Cantelli gives, for each fixed \(\varepsilon\), an a.s. event \(\Omega_\varepsilon\) on which \(\|Z_n-Z\|\le\varepsilon\) eventually.</li>
+<li><b>Problem.</b> There are uncountably many \(\varepsilon\), and an uncountable intersection of probability-one sets need not have probability one.</li>
+<li><b>Fix: use a sequence.</b> Take \(\varepsilon=1/m\), \(m\in\mathbb N\), and set \(\Omega_0=\bigcap_{m\ge1}\Omega_{1/m}\). Then
+\[P(\Omega_0^c)=P\Big(\bigcup_m\Omega_{1/m}^c\Big)\le\sum_mP\big(\Omega_{1/m}^c\big)=0.\]</li>
+<li><b>Conclude.</b> On \(\Omega_0\): for every \(m\) there is \(N_m\) with \(\|Z_n-Z\|\le1/m\) for \(n\ge N_m\), i.e. \(Z_n\to Z\). Hence \(Z_n\xrightarrow{a.s.}Z\).</li>
+</ol><p><b>Employ it when</b> a proof produced "for each \(\varepsilon&gt;0\), almost surely…" and the statement you want is "almost surely, for each \(\varepsilon&gt;0\)…".</p></div></details></article>
+
+  <article class="tech" data-cat="mic" data-fam="lim" data-key="limsup liminf manipulation sign flip subadditive order of limits">
+    <h3>\(\limsup\) / \(\liminf\) manipulation<span class="fampill">Limits</span></h3>
+    <p class="mech">\(\liminf(-a_n)=-\limsup a_n\); \(\limsup(a_n+b_n)\le\limsup a_n+\limsup b_n\); if \(\limsup a_n\le\varepsilon\) for every \(\varepsilon&gt;0\) and \(a_n\ge0\), then \(a_n\to0\).</p>
+    <div class="lab when">Reach for it when</div>
+    <div class="trig"><span>converting an open-set bound to a closed-set bound</span><span>a bound holds only in the limit</span><span>closing an \(\varepsilon\)-argument</span></div>
+    <div class="lab work">Instances</div>
+    <div class="workbox">
+      <b>Portmanteau:</b> the open-set \(\liminf\) form becomes the closed-set \(\limsup\) form by complementation and the sign flip.<br>
+      <b>Partition-then-sup:</b> \(\limsup_n\sup_x|T^{(n)}-T|\le\varepsilon\) for every \(\varepsilon\) closes the argument.<br>
+      <b>Transfer rule:</b> \(O_P\) is defined through \(\lim_M\limsup_n\) — the order of the two is essential.
+    </div>
+  <details class="deriv"><summary>Worked example — the move in action</summary><div class="body"><ol>
+<li><b>Goal.</b> Derive the closed-set half of Portmanteau from the open-set half.</li>
+<li><b>Complement.</b> Let \(F\) be closed, \(G=F^c\) open. Then \(P(Z_n\in F)=1-P(Z_n\in G)\).</li>
+<li><b>Flip the sign.</b> Using \(\limsup_n(-a_n)=-\liminf_na_n\),
+\[\limsup_nP(Z_n\in F)=1-\liminf_nP(Z_n\in G)\le1-P(Z\in G)=P(Z\in F).\]</li>
+<li><b>Closing an \(\varepsilon\)-argument.</b> If \(a_n\ge0\) and \(\limsup_na_n\le\varepsilon\) for every \(\varepsilon&gt;0\), then \(\limsup_na_n\le0\le\liminf_na_n\), so \(a_n\to0\). This is the last line of partition-then-sup.</li>
+</ol><p><b>Employ it when</b> a bound only holds asymptotically, or when passing between an event and its complement.</p></div></details></article>
+
+  <article class="tech" data-cat="mic" data-fam="lim" data-key="max of finitely many null sequences grid finite terms vanish">
+    <h3>A max of finitely many null sequences is null<span class="fampill">Limits</span></h3>
+    <p class="mech">Finiteness is the whole point: \(\max_{j\le K}|a_n^{(j)}|\to0\) if each \(a_n^{(j)}\to0\), but this fails for a supremum over infinitely many indices.</p>
+    <div class="lab when">Reach for it when</div>
+    <div class="trig"><span>you reduced a sup to a finite grid</span><span>finitely many terms each converge</span><span>proving a uniform statement</span></div>
+    <div class="lab work">Instances</div>
+    <div class="workbox">
+      <b>Glivenko–Cantelli:</b> \(\Delta^{(n)}=\max_{j\le K}\{|T^{(n)}(x_j)-T(x_j)|,\,|T^{(n)}(x_j-)-T(x_j-)|\}\xrightarrow{a.s.}0\).<br>
+      <b>Dini:</b> \(\max_{k\le K}|X_n(s_k)-f(s_k)|\xrightarrow{P}0\).<br>
+      <span class="why">This is exactly why the grid must be <em>finite</em> — and why entropy conditions are needed when no finite grid suffices.</span>
+    </div>
+  <details class="deriv"><summary>Worked example — the move in action</summary><div class="body"><ol>
+<li><b>Setting.</b> In Glivenko–Cantelli the grid has \(K\) points and
+\[\Delta^{(n)}=\max_{j\le K-1}\Big\{\big|F^{(n)}(x_j)-F(x_j)\big|,\ \big|F^{(n)}(x_j-)-F(x_j-)\big|\Big\}.\]</li>
+<li><b>Each entry is null.</b> By the SLLN applied to \(\mathbf 1_{Z_i\le x_j}\) and \(\mathbf 1_{Z_i&lt;x_j}\), every one of the \(2(K-1)\) sequences \(\to0\) a.s.</li>
+<li><b>Finite max.</b> Intersecting \(2(K-1)\) probability-one events (a finite, hence countable, intersection) gives \(\Delta^{(n)}\xrightarrow{a.s.}0\).</li>
+<li><b>Why finiteness is essential.</b> \(\sup_{x\in\mathbb R}|F^{(n)}(x)-F(x)|\) is a supremum over uncountably many \(x\) and does <em>not</em> follow this way — that is precisely why the grid step (and, in the process setting, an entropy condition) is needed.</li>
+</ol><p><b>Employ it when</b> you have reduced a uniform claim to finitely many pointwise claims — and stop if the reduction left infinitely many.</p></div></details></article>
+
+  <article class="tech" data-cat="mic" data-fam="lim" data-key="squeeze sandwich two bounds same limit upper lower">
+    <h3>Squeeze between two matching bounds<span class="fampill">Limits</span></h3>
+    <p class="mech">Produce an upper and a lower bound with the same limit. Often the lower bound is the "mirror image" of the upper one, obtained by applying the same argument to \(-X\).</p>
+    <div class="lab when">Reach for it when</div>
+    <div class="trig"><span>you have a one-sided bound only</span><span>a monotone object between grid points</span><span>an inverse defined by an infimum</span></div>
+    <div class="lab work">Instances</div>
+    <div class="workbox">
+      <b>SLLN:</b> \(\limsup_nS_n/n\le0\) a.s.; apply the same argument to \(-S_n\) to get \(\liminf\ge0\), hence convergence.<br>
+      <b>Partition-then-sup:</b> upper and lower sandwich give \(|T^{(n)}(x)-T(x)|\le\Delta^{(n)}+\varepsilon\).<br>
+      <b>Quantile expansion:</b> \((F+t_nh_n)(q_{u,n}-\epsilon_n)\le u\le(F+t_nh_n)(q_{u,n})\) traps \(q_{u,n}\) from both sides.
+    </div>
+  <details class="deriv"><summary>Worked example — the move in action</summary><div class="body"><ol>
+<li><b>Goal.</b> Finish the SLLN once you know \(\limsup_nS_n/n\le0\) a.s.</li>
+<li><b>Mirror the argument.</b> The sequence \((-Z_n)\) is also iid with mean 0, so the same proof gives \(\limsup_n(-S_n)/n\le0\) a.s.</li>
+<li><b>Flip.</b> \(\limsup_n(-S_n/n)=-\liminf_n(S_n/n)\), hence \(\liminf_nS_n/n\ge0\) a.s.</li>
+<li><b>Squeeze.</b> \(0\le\liminf_nS_n/n\le\limsup_nS_n/n\le0\), so \(S_n/n\to0\) a.s.</li>
+</ol><p><b>Employ it when</b> your argument is inherently one-sided: apply it to \(-X\) and intersect the two conclusions.</p></div></details></article>
+
+  <article class="tech" data-cat="mic" data-fam="lim" data-key="p series divergence exponent integral test comparison">
+    <h3>Read convergence off an exponent<span class="fampill">Limits</span></h3>
+    <p class="mech">\(\sum_nn^{-p}&lt;\infty\iff p&gt;1\) and \(\int_1^\infty z^q\,dz&lt;\infty\iff q&lt;-1\). Most heavy-tail questions reduce to one of these.</p>
+    <div class="lab when">Reach for it when</div>
+    <div class="trig"><span>a Pareto or power-law tail</span><span>checking a Borel–Cantelli sum</span><span>"is this moment finite?"</span></div>
+    <div class="lab work">Instances</div>
+    <div class="workbox">
+      \(\sum n^{-\alpha}=\infty\) for \(\alpha&lt;1\) drives Borel–Cantelli II in Exercise 2.<br>
+      \(\sum n^{-2}&lt;\infty\) is why the fourth moment suffices for the SLLN.<br>
+      \(\int_1^\infty z^{1-\alpha}dz=\infty\) for \(\alpha&lt;2\) is why the variance is infinite.<br>
+      \(\int_1^\infty z^{-\alpha}dz&lt;\infty\) iff \(\alpha&gt;1\) is why the mean exists.
+    </div>
+  <details class="deriv"><summary>Worked example — the move in action</summary><div class="body"><ol>
+<li><b>Question.</b> For \(P(|Z|&gt;z)=z^{-\alpha}\) on \([1,\infty)\), which moments are finite?</li>
+<li><b>Density and integral.</b> \(f(z)=\alpha z^{-\alpha-1}\), so
+\[E|Z|^p=\int_1^\infty z^p\,\alpha z^{-\alpha-1}dz=\alpha\int_1^\infty z^{\,p-\alpha-1}dz.\]</li>
+<li><b>Apply the rule</b> \(\int_1^\infty z^q dz&lt;\infty\iff q&lt;-1\), here \(q=p-\alpha-1\):
+\[p-\alpha-1&lt;-1\iff p&lt;\alpha.\]</li>
+<li><b>Read off everything at once.</b> Mean finite iff \(\alpha&gt;1\); variance finite iff \(\alpha&gt;2\). Hence \(\alpha\in(0,1)\) breaks the SLLN and \(\alpha\in(1,2)\) breaks the CLT.</li>
+</ol><p><b>Employ it when</b> a power law appears — one exponent comparison answers every moment question simultaneously.</p></div></details></article>
+
+  <article class="tech" data-cat="mic" data-fam="lim" data-key="dyadic blocks peeling typewriter sequence 2^m indices">
+    <h3>Dyadic blocks / peeling<span class="fampill">Limits</span></h3>
+    <p class="mech">Group indices into blocks \(B_m=\{2^m,\dots,2^{m+1}-1\}\). Within a block the behaviour is nearly constant, and there are only \(\log_2n\) blocks up to \(n\).</p>
+    <div class="lab when">Reach for it when</div>
+    <div class="trig"><span>a sum over \(n\) is not summable but is over blocks</span><span>you construct a counterexample</span><span>uniform control over a range of scales</span></div>
+    <div class="lab work">Instances</div>
+    <div class="workbox">
+      <b>Typewriter sequence:</b> with \(n=2^m+j\), each block \(B_m\) sweeps \([0,1)\) exactly once, so for every \(u\) precisely one \(n\in B_m\) has \(Z_n(u)=1\). Hence \(\limsup_nZ_n(u)=1\), \(\liminf=0\): convergence in probability without a.s. convergence.<br>
+      <b>General use:</b> converting \(\sum_n\) into \(\sum_m\sum_{n\in B_m}\), where the inner sum is bounded by its largest term times \(2^m\).
+    </div>
+  <details class="deriv"><summary>Worked example — the move in action</summary><div class="body"><ol>
+<li><b>Construction.</b> For \(n=2^m+j\) with \(0\le j&lt;2^m\), let \(A_n=[j2^{-m},(j+1)2^{-m})\) and \(Z_n=\mathbf 1_{A_n}(U)\), \(U\sim\mathrm{Unif}(0,1)\).</li>
+<li><b>Convergence in probability.</b> \(P(Z_n=1)=|A_n|=2^{-m}\to0\) as \(n\to\infty\), so \(Z_n\xrightarrow{P}0\).</li>
+<li><b>Block analysis.</b> The block \(B_m=\{2^m,\dots,2^{m+1}-1\}\) has \(2^m\) indices whose intervals partition \([0,1)\). So for each \(u\), <em>exactly one</em> \(n\in B_m\) has \(Z_n(u)=1\).</li>
+<li><b>Conclusion.</b> Every block contributes a 1 and \(2^m-1\) zeros, so \(\limsup_nZ_n(u)=1\) and \(\liminf_nZ_n(u)=0\) for all \(u\): no a.s. convergence. Hence \(\xrightarrow{P}\not\Rightarrow\xrightarrow{a.s.}\).</li>
+</ol><p><b>Employ it when</b> you need a counterexample separating modes of convergence, or when a sum is best controlled scale by scale.</p></div></details></article>
+
+  <article class="tech" data-cat="mic" data-fam="lim" data-key="epsilon enlargement closed set F epsilon approximation error absorb">
+    <h3>\(\varepsilon\)-enlargement of a closed set<span class="fampill">Limits</span></h3>
+    <p class="mech">\(F^\varepsilon=\{s:d(s,F)\le\varepsilon\}\) is closed and decreases to \(F\). It absorbs an approximation error into the set before you take limits.</p>
+    <div class="lab when">Reach for it when</div>
+    <div class="trig"><span>an approximation sits inside a probability</span><span>Portmanteau needs a closed set</span><span>proving a limit by truncation</span></div>
+    <div class="lab work">Instance</div>
+    <div class="workbox">
+      Theorem 1.5: \(P(Z_n\in F)\le P(Y_n^{(k)}\in F^\varepsilon)+P(d(Y_n^{(k)},Z_n)&gt;\varepsilon)\). Apply Portmanteau to the closed \(F^\varepsilon\), let \(k\to\infty\) to kill the error term, then \(\varepsilon\downarrow0\) using \(F^\varepsilon\downarrow F\).
+    </div>
+  <details class="deriv"><summary>Worked example — the move in action</summary><div class="body"><ol>
+<li><b>Setting.</b> Prove \(Z_n\xrightarrow{d}Z\) from approximants \(Y_n^{(k)}\) (Theorem 1.5). Fix \(F\) closed.</li>
+<li><b>Absorb the error into the set.</b> If \(Y_n^{(k)}\) is within \(\varepsilon\) of \(Z_n\) and \(Z_n\in F\), then \(Y_n^{(k)}\in F^\varepsilon\). Therefore
+\[P(Z_n\in F)\le P\big(Y_n^{(k)}\in F^\varepsilon\big)+P\big(d(Y_n^{(k)},Z_n)&gt;\varepsilon\big).\]</li>
+<li><b>Portmanteau on the closed set \(F^\varepsilon\)</b> (for fixed \(k\), as \(n\to\infty\)):
+\[\limsup_nP(Z_n\in F)\le P\big(Y^{(k)}\in F^\varepsilon\big)+\limsup_nP\big(d(Y_n^{(k)},Z_n)&gt;\varepsilon\big).\]</li>
+<li><b>Two limits, in order.</b> Let \(k\to\infty\): the second term vanishes by hypothesis and \(Y^{(k)}\xrightarrow{d}Z\) gives \(\limsup_kP(Y^{(k)}\in F^\varepsilon)\le P(Z\in F^\varepsilon)\). Then \(\varepsilon\downarrow0\) with \(F^\varepsilon\downarrow F\) yields \(\limsup_nP(Z_n\in F)\le P(Z\in F)\).</li>
+</ol><p><b>Employ it when</b> an approximation error sits next to a set membership — widen the set by \(\varepsilon\), then shrink it back at the very end.</p></div></details></article>
+
+  <article class="tech" data-cat="mic" data-fam="alg" data-key="wlog centering reduce mean zero symmetry standardise">
+    <h3>Reduce to the standard case (WLOG)<span class="fampill">Rewrite</span></h3>
+    <p class="mech">Centre, scale, or use symmetry to remove parameters before doing any work. The general case follows by translating back.</p>
+    <div class="lab when">Reach for it when</div>
+    <div class="trig"><span>a mean or scale clutters the algebra</span><span>the statement is translation/scale equivariant</span><span>a symmetric law is available</span></div>
+    <div class="lab work">Instances</div>
+    <div class="workbox">
+      <b>SLLN proof:</b> "it is enough to treat \(EZ_1=0\)" — subtract the mean.<br>
+      <b>Sample variance:</b> taking \(\mu_1=0\) reduces \(\nabla h=(-2\mu_1,1)^\top\) to \((0,1)^\top\), so the sandwich just selects \(\Sigma_{22}\).<br>
+      <b>Symmetrisation:</b> applying a one-sided bound to \(-\gamma\) yields the two-sided version with the same \(\kappa\).<br>
+      <b>Heterogeneous risks:</b> "w.l.o.g. mean zero" before applying Lindeberg.
+    </div>
+  <details class="deriv"><summary>Worked example — the move in action</summary><div class="body"><ol>
+<li><b>Centring in the SLLN.</b> To prove \(\bar Z_n\to EZ_1\), set \(Z_i'=Z_i-EZ_1\). Then \(EZ_1'=0\) and \(\bar Z_n-EZ_1=\bar Z_n'\), so it suffices to treat the mean-zero case.</li>
+<li><b>Centring in the delta method.</b> With \(\mu_1=EZ_1=0\), the gradient of \(h(x,y)=y-x^2\) at \((\mu_1,\mu_2)\) becomes
+\[\nabla h=(-2\mu_1,\ 1)^\top=(0,1)^\top,\]
+so the sandwich \(\nabla h^\top\Sigma\nabla h\) collapses to a single entry \(\Sigma_{22}=\mathrm{Var}(Z_1^2)=\mu^{(4)}-(\mu^{(2)})^2\) instead of a three-term expression.</li>
+<li><b>Symmetry.</b> Applying a one-sided bound to \(-\gamma\) — legitimate because \(|-\gamma|^m=|\gamma|^m\) leaves the moment condition and \(\kappa\) unchanged — gives the two-sided version for free.</li>
+</ol><p><b>Employ it when</b> a location or scale parameter clutters the algebra and the statement is equivariant — normalise first, translate back at the end.</p></div></details></article>
+
+  <article class="tech" data-cat="mic" data-fam="meas" data-key="infimum definition generalised inverse half line right continuity">
+    <h3>Turn an infimum definition into an inequality<span class="fampill">Measure</span></h3>
+    <p class="mech">An object defined by \(\inf\{y:\text{property}\}\) becomes usable once you identify the set as a half-line and convert the definition into an equivalence.</p>
+    <div class="lab when">Reach for it when</div>
+    <div class="trig"><span>quantiles, hitting times, generalised inverses</span><span>you need \(P(F^{-1}(U)\le z)\)</span></div>
+    <div class="lab work">Instance</div>
+    <div class="workbox">
+      Right-continuity of \(F\) makes \(\{y:F(y)\ge u\}\) closed, hence equal to \([F^{-1}(u),\infty)\). Therefore
+      \[u\le F(z)\iff F^{-1}(u)\le z,\]
+      which instantly gives \(P(F^{-1}(U)\le z)=P(U\le F(z))=F(z)\) — inversion sampling, VaR, and the probability integral transform all at once.
+    </div>
+  <details class="deriv"><summary>Worked example — the move in action</summary><div class="body"><ol>
+<li><b>Definition.</b> \(F^{-1}(u)=\inf\{y:F(y)\ge u\}\) — an infimum, awkward to use directly.</li>
+<li><b>Identify the set.</b> \(F\) is non-decreasing and right-continuous, so \(S_u=\{y:F(y)\ge u\}\) is closed upward and contains its infimum: \(S_u=[F^{-1}(u),\infty)\).</li>
+<li><b>Read off the equivalence.</b> \(z\in S_u\iff F^{-1}(u)\le z\), that is
+\[u\le F(z)\iff F^{-1}(u)\le z.\]</li>
+<li><b>Harvest three results at once.</b> With \(U\sim\mathrm{Unif}(0,1)\):
+\[P\big(F^{-1}(U)\le z\big)=P\big(U\le F(z)\big)=F(z)\]
+— inversion sampling. The same equivalence defines \(\mathrm{VaR}_\alpha=F^{-1}(\alpha)\), and (with \(F\) continuous) gives \(F(Z)\sim\mathrm{Unif}(0,1)\).</li>
+</ol><p><b>Employ it when</b> an object is defined by an infimum or a first-passage condition — convert the definition into a two-sided inequality before doing anything else.</p></div></details></article>
+
+  <article class="tech" data-cat="mic" data-fam="ineq" data-key="max a 1-a averaging bound one half elementary counterexample">
+    <h3>Averaging bound: \(\max\{a,1-a\}\ge\tfrac12\)<span class="fampill">Inequality</span></h3>
+    <p class="mech">The larger of two numbers is at least their mean. Trivial, but it is the entire punchline of a counterexample.</p>
+    <div class="lab when">Reach for it when</div>
+    <div class="trig"><span>showing a distance stays bounded away from 0</span><span>constructing a counterexample</span></div>
+    <div class="lab work">Instance</div>
+    <div class="workbox">
+      Glivenko–Cantelli without independence: \(\sup_t|F^{(n)}-F|=\max\{F(Z_1),1-F(Z_1)\}\ge\tfrac{a+(1-a)}2=\tfrac12\), a constant that never vanishes.
+    </div>
+  <details class="deriv"><summary>Worked example — the move in action</summary><div class="body"><ol>
+<li><b>Setting.</b> \(Z_n=Z_1\) for all \(n\) (independence broken), \(F\) continuous. Then \(F^{(n)}(t)=\mathbf 1_{\{Z_1\le t\}}\).</li>
+<li><b>Compute the sup on each side of \(Z_1\).</b> For \(t&lt;Z_1\) the difference is \(F(t)\), with supremum \(F(Z_1)\) by continuity; for \(t\ge Z_1\) it is \(1-F(t)\), with supremum \(1-F(Z_1)\).</li>
+<li><b>Apply the averaging bound.</b> With \(a=F(Z_1)\in[0,1]\),
+\[\sup_t\big|F^{(n)}(t)-F(t)\big|=\max\{a,1-a\}\ \ge\ \frac{a+(1-a)}2=\frac12.\]</li>
+<li><b>Conclusion.</b> The sup-distance is \(\ge\tfrac12\) for every \(n\), so Glivenko–Cantelli fails. (In fact \(a\sim\mathrm{Unif}(0,1)\), so the distance is \(\max\{U,1-U\}\in[\tfrac12,1]\).)</li>
+</ol><p><b>Employ it when</b> you must show a quantity stays bounded away from zero and it has the shape "one of two complementary numbers".</p></div></details></article>
+
+  <article class="tech" data-cat="mic" data-fam="ineq" data-key="bound max by sum drop nonnegative terms keep largest">
+    <h3>Bound a max by a sum — and a sum by its largest term<span class="fampill">Inequality</span></h3>
+    <p class="mech">\(\max_j a_j\le\sum_j a_j\) for \(a_j\ge0\) (crude but often enough), and conversely \(\sum_j a_j\ge\max_j a_j\) gives a lower bound from one term.</p>
+    <div class="lab when">Reach for it when</div>
+    <div class="trig"><span>a maximum is hard to compute</span><span>one term dominates (heavy tails)</span><span>a lower bound on a sum</span></div>
+    <div class="lab work">Instances</div>
+    <div class="workbox">
+      <b>Lindeberg:</b> \(\sup_mc_{nm}\le\varepsilon^2+\sum_mE[X_{nm}^2;|X_{nm}|&gt;\varepsilon]\) — the max is bounded by the full sum.<br>
+      <b>Heavy tails:</b> \(\sum_iZ_i\ge Z_n\), so \(S_n\ge Z_n/n\) — a sum bounded below by one term.<br>
+      <b>Non-tightness:</b> \(|Z_k|\le2\max_j|S_j|\) links a single summand to the maximal partial sum.
+    </div>
+  <details class="deriv"><summary>Worked example — the move in action</summary><div class="body"><ol>
+<li><b>Direction 1: max \(\le\) sum (upper bound on a maximum).</b> In Lindeberg's proof, for each \(m\),
+\[c_{nm}=E[X_{nm}^2]\le\varepsilon^2+E\big[X_{nm}^2;|X_{nm}|&gt;\varepsilon\big]\le\varepsilon^2+\sum_{m'}E\big[X_{nm'}^2;|X_{nm'}|&gt;\varepsilon\big],\]
+and taking the max over \(m\) preserves it, giving \(\sup_mc_{nm}\to\varepsilon^2\), then \(\to0\).</li>
+<li><b>Direction 2: sum \(\ge\) one term (lower bound on a sum).</b> With \(Z_i\ge1\),
+\[\sum_{i\le n}Z_i\ge Z_n\ \Longrightarrow\ S_n\ge\frac{Z_n}{n},\]
+so \(\{Z_n&gt;Mn\}\subseteq\{S_n&gt;M\}\) and Borel–Cantelli transfers "one big term recurs" to "the average is unbounded".</li>
+<li><b>Direction 3: single term \(\le\) max of partial sums.</b> \(|Z_k|=|S_k-S_{k-1}|\le2\max_{j\le n}|S_j|\), the bridge from a large summand to non-tightness via Lévy's inequality.</li>
+</ol><p><b>Employ it when</b> a maximum is intractable (bound it by the sum) or when heavy tails mean one term carries the sum (bound the sum below by that term).</p></div></details></article>
+
+  <article class="tech" data-cat="mic" data-fam="lim" data-key="geometric trials expected number acceptance probability series first success">
+    <h3>Geometric trials<span class="fampill">Limits</span></h3>
+    <p class="mech">Independent trials with success probability \(p\): the first success occurs at a geometric time with mean \(1/p\), and \(\sum_{n\ge1}(1-p)^{n-1}=1/p\).</p>
+    <div class="lab when">Reach for it when</div>
+    <div class="trig"><span>a repeat-until-success algorithm</span><span>counting expected work</span><span>summing over the first success index</span></div>
+    <div class="lab work">Instance</div>
+    <div class="workbox">
+      Acceptance–rejection: \(P(Z\in B)=\sum_{n\ge1}(1-p)^{n-1}p\int_Bf=\int_Bf\), and the expected number of proposals per accepted draw is \(1/p=C\).
+    </div>
+  <details class="deriv"><summary>Worked example — the move in action</summary><div class="body"><ol>
+<li><b>Setting.</b> iid trials \((Y_n,U_n)\); \(A_n\) is the accept event, \(p=P(A_1)=1/C\); output \(Z=Y_T\) with \(T=\inf\{n:A_n\}\).</li>
+<li><b>Decompose over the first success.</b> Independence across trials gives
+\[P(Z\in B)=\sum_{n\ge1}P\big(A_1^c,\dots,A_{n-1}^c,A_n,Y_n\in B\big)=\sum_{n\ge1}(1-p)^{n-1}P(A_1,Y_1\in B).\]</li>
+<li><b>Sum the geometric series.</b> \(\sum_{n\ge1}(1-p)^{n-1}=\dfrac{1}{1-(1-p)}=\dfrac1p\), and \(P(A_1,Y_1\in B)=p\int_Bf\). So
+\[P(Z\in B)=\frac1p\cdot p\int_Bf=\int_Bf,\]
+i.e. \(Z\) has density \(f\).</li>
+<li><b>Cost.</b> \(T\) is geometric with mean \(1/p=C\): expected \(C\) proposals per accepted draw.</li>
+</ol><p><b>Employ it when</b> an algorithm repeats until success — decompose over the index of the first success and sum the geometric series.</p></div></details></article>
+
+  <article class="tech" data-cat="mic" data-fam="alg" data-key="variance decomposition mse bias squared cross term zero">
+    <h3>MSE = variance + bias²<span class="fampill">Rewrite</span></h3>
+    <p class="mech">\(E|\hat\theta-\theta|^2=\mathrm{Var}(\hat\theta)+(E\hat\theta-\theta)^2\); the cross term vanishes because \(E[\hat\theta-E\hat\theta]=0\).</p>
+    <div class="lab when">Reach for it when</div>
+    <div class="trig"><span>proving consistency of a smoother</span><span>a bandwidth or tuning parameter trade-off</span><span>Chebyshev needs a second moment</span></div>
+    <div class="lab work">Instances</div>
+    <div class="workbox">
+      <b>Kernel consistency:</b> bias \(=O(h^2)\) and variance \(=O(1/(nh))\); both vanish iff \(h\to0\) and \(nh\to\infty\), and Chebyshev converts this to \(\xrightarrow{P}\).<br>
+      <b>Optimal bandwidth:</b> minimising \(h^4+1/(nh)\) gives \(h\asymp n^{-1/5}\) — and explains why the CLT then <em>needs</em> the undersmoothing \(nh^5\to0\) to kill the bias.
+    </div>
+  <details class="deriv"><summary>Worked example — the move in action</summary><div class="body"><ol>
+<li><b>Identity.</b> Insert the pivot \(E\hat\theta\):
+\[E|\hat\theta-\theta|^2=E\big|(\hat\theta-E\hat\theta)+(E\hat\theta-\theta)\big|^2=\mathrm{Var}(\hat\theta)+(E\hat\theta-\theta)^2,\]
+the cross term vanishing since \(E[\hat\theta-E\hat\theta]=0\).</li>
+<li><b>Kernel case.</b> \(\mathrm{Var}=O\big(\tfrac1{nh}\big)\), \(\text{bias}^2=O(h^4)\), so
+\[\mathrm{MSE}\asymp\frac{c_1}{nh}+c_2h^4.\]</li>
+<li><b>Optimal bandwidth.</b> Differentiate in \(h\): \(-c_1/(nh^2)+4c_2h^3=0\Rightarrow h^5\asymp1/n\), i.e. \(h\asymp n^{-1/5}\).</li>
+<li><b>Consequence for inference.</b> At that \(h\), \(nh^5\asymp1\) — so bias and variance are of the same order and the CLT would be <em>biased</em>. That is exactly why asymptotic normality assumes the undersmoothing condition \(nh^5\to0\).</li>
+</ol><p><b>Employ it when</b> a tuning parameter trades bias against variance, or when Chebyshev needs a second moment you must assemble.</p></div></details></article>
+
+  <article class="tech" data-cat="mic" data-fam="alg" data-key="drop the square keep upper bound second moment variance">
+    <h3>Drop the subtracted square<span class="fampill">Rewrite</span></h3>
+    <p class="mech">\(\mathrm{Var}(X)=E[X^2]-(EX)^2\le E[X^2]\). When you only need an upper bound, discard the mean term — but check first that it really is of smaller order.</p>
+    <div class="lab when">Reach for it when</div>
+    <div class="trig"><span>a variance appears with a messy squared mean</span><span>you need only the leading order</span></div>
+    <div class="lab work">Instance</div>
+    <div class="workbox">
+      <b>Kernel variance:</b> \(\frac{1}{nh^2}\big(E[(gK)^2]-(E[gK])^2\big)\). The first term is \(O(1/(nh))\) after the change of variables; the second is \(O(1/n)\), smaller by a factor \(h\), so it does not affect the leading constant \(\|K\|_2^2g(x)\).<br>
+      <span class="why"><b>Watch out:</b> only legitimate once you have <em>compared the orders</em> — write both and see.</span>
+    </div>
+  <details class="deriv"><summary>Worked example — the move in action</summary><div class="body"><ol>
+<li><b>Setting.</b> The exact kernel variance is
+\[\mathrm{Var}=\frac{1}{nh^2}\Big(E\big[(gK)^2\big]-\big(E[gK]\big)^2\Big).\]</li>
+<li><b>Order of the first term.</b> Change variables (\(s=x-th\), \(ds=h\,dt\)): \(\frac{1}{nh^2}E[(gK)^2]=\frac1{nh}\int K^2(t)g_2(x-th)dt=O\big(\tfrac1{nh}\big)\).</li>
+<li><b>Order of the second term.</b> \(E[gK]=h\int K(t)\ell(x-th)dt=O(h)\), so \(\frac{1}{nh^2}(E[gK])^2=\frac{O(h^2)}{nh^2}=O\big(\tfrac1n\big)\).</li>
+<li><b>Compare, then discard.</b> \(\dfrac{O(1/n)}{O(1/(nh))}=O(h)\to0\), so the subtracted square is of strictly smaller order and does not affect the leading constant \(\|K\|_2^2\,g_2(x)\).</li>
+</ol><p><b>Employ it when</b> only the leading order matters — but always compute both orders first; discarding without comparing is where sign and rate errors originate.</p></div></details></article>
+
+  </div>
+  <p class="noresults" id="mnores" hidden>No move matches that search.</p>
+</main>
+</section>
+
+<!-- ================= CLASSIC PROOFS ================= -->
+<section id="v-pf" hidden>
+<div class="hero">
+  <h1>Classic proofs as chains of moves</h1>
+  <p class="lead">Learn the chain, not the prose. In an exam you reconstruct an argument by recalling which move comes next and why the previous one made it possible.</p>
+</div>
+<main>
+
+  <article class="proof">
+    <h3>Strong law under a fourth moment</h3>
+    <p class="goal">\(EZ_1=0\), \(EZ_1^4&lt;\infty\Rightarrow\bar S_n\xrightarrow{a.s.}0\), with no maximal inequality.</p>
+    <div class="chain"><span class="node"><b>4th-moment expansion</b></span><span class="arrow">→</span><span class="node"><b>Markov</b></span><span class="arrow">→</span><span class="node"><b>\(\sum n^{-2}&lt;\infty\)</b></span><span class="arrow">→</span><span class="node"><b>Borel–Cantelli</b></span></div>
+    <ol>
+      <li>Only index patterns where each index repeats survive: \(E(\sum_iZ_i)^4=nEZ_1^4+3n(n-1)(EZ_1^2)^2\).</li>
+      <li>Divide by \(n^4\): \(E[\bar S_n^4]\le C/n^2\). Markov: \(P(|\bar S_n|&gt;\varepsilon)\le C/(n^2\varepsilon^4)\).</li>
+      <li>\(\sum_nn^{-2}=\pi^2/6&lt;\infty\), so Corollary 1.1 gives a.s. convergence.</li>
+    </ol>
+    <div class="moral">Chebyshev would give \(C/(n\varepsilon^2)\) and \(\sum1/n=\infty\) — not summable. The fourth moment is the cheapest power that makes Borel–Cantelli fire.</div>
+  </article>
+
+  <article class="proof">
+    <h3>Glivenko–Cantelli</h3>
+    <p class="goal">\(\sup_t|F^{(n)}(t)-F(t)|\xrightarrow{a.s.}0\).</p>
+    <div class="chain"><span class="node"><b>SLLN pointwise</b></span><span class="arrow">→</span><span class="node"><b>grid with \(\varepsilon\)-cells</b></span><span class="arrow">→</span><span class="node"><b>monotone sandwich</b></span><span class="arrow">→</span><span class="node"><b>intersect over \(1/m\)</b></span></div>
+    <ol>
+      <li>Fixed \(t\): SLLN on \(\mathbf 1_{Z_i\le t}\) and \(\mathbf 1_{Z_i&lt;t}\) gives a.s. convergence at \(t\) and \(t-\).</li>
+      <li>Grid: \(F(x_j-)-F(x_{j-1})&lt;\varepsilon\), possible since \(F\) is bounded and monotone (put jumps on the grid).</li>
+      <li>Sandwich: \(|F^{(n)}(x)-F(x)|\le\Delta^{(n)}+\varepsilon\) for all \(x\), with \(\Delta^{(n)}\) a max of finitely many null sequences.</li>
+      <li>\(\varepsilon=1/m\), intersect over \(m\).</li>
+    </ol>
+    <div class="moral">Two ingredients only: pointwise convergence and monotonicity. Kill independence and the pointwise step dies (\(Z_n=Z_1\) keeps the sup at \(\ge\frac12\)); kill monotonicity and the sandwich has nothing to grip.</div>
+  </article>
+
+  <article class="proof">
+    <h3>Empirical process → Brownian bridge</h3>
+    <p class="goal">\(\sqrt n(F^{(n)}-F)\xrightarrow{d}B\circ F\) in \(\ell^\infty\).</p>
+    <div class="chain"><span class="node"><b>vectorise indicators</b></span><span class="arrow">→</span><span class="node"><b>brackets, \(\varepsilon^2\) spacing</b></span><span class="arrow">→</span><span class="node"><b>entropy integral</b></span><span class="arrow">→</span><span class="node"><b>Donsker + fidis</b></span></div>
+    <ol>
+      <li>Fidis: \(\Sigma_{kl}=F(t_k\wedge t_l)-F(t_k)F(t_l)\), matching \(\mathrm{Cov}(B(s),B(t))=s\wedge t-st\) under \(s=F(t_k)\).</li>
+      <li>Brackets: spacing \(F(t_j-)-F(t_{j-1})&lt;\varepsilon^2\) gives \(L^2\)-length \(&lt;\varepsilon\) because \(u_j-l_j\) is an indicator. Count \(\le\lceil2/\varepsilon^2\rceil\).</li>
+      <li>\(\int_0^1\sqrt{\log(2/\varepsilon^2+1)}\,d\varepsilon&lt;\infty\) since \(\int_0^1\sqrt{\log(1/\varepsilon)}d\varepsilon=\Gamma(3/2)\).</li>
+      <li>Donsker gives tightness; with the fidis, weak convergence of paths follows.</li>
+    </ol>
+    <div class="moral">Fidis identify <em>which</em> process; entropy proves there <em>is</em> a process limit. Neither alone suffices — that is the content of Figure 1.3.</div>
+  </article>
+
+  <article class="proof">
+    <h3>Quantile process, then the IQR</h3>
+    <p class="goal">\(\sqrt n([F^{(n)}]^{-1}-F^{-1})\xrightarrow{d}-B/(f\circ F^{-1})\) on \([p,q]\).</p>
+    <div class="chain"><span class="node"><b>Donsker</b></span><span class="arrow">→</span><span class="node"><b>Hadamard: inverse map</b></span><span class="arrow">→</span><span class="node"><b>functional delta</b></span><span class="arrow">→</span><span class="node"><b>CMT</b></span></div>
+    <ol>
+      <li>Start from \(\sqrt n(F^{(n)}-F)\xrightarrow{d}B\circ F\); the limit has continuous paths, so it lives in the tangent set \(C[a,b]\).</li>
+      <li>Inverse map Hadamard differentiable with \(\phi'_F(h)=-(h/f)\circ F^{-1}\), needing \(f&gt;0\) and continuously differentiable \(F\) on a neighbourhood.</li>
+      <li>Theorem 1.17 transfers the limit.</li>
+      <li>IQR: apply \((x,y)\mapsto y-x\); with \(\mathrm{Cov}(B(p_1),B(p_2))=p_1\wedge p_2-p_1p_2\) the variance is \(\frac3{16}\big(f(q_{3/4})^{-2}+f(q_{1/4})^{-2}\big)-\frac18\big(f(q_{1/4})f(q_{3/4})\big)^{-1}\).</li>
+    </ol>
+    <div class="moral">The \(1/f\) in the derivative is why the result needs a compact \([p,q]\subset(0,1)\): at the endpoints \(f\) can vanish and the theory hands over to extreme value theory.</div>
+  </article>
+
+  <article class="proof">
+    <h3>Why the CLT fails for \(\alpha\in(1,2)\)</h3>
+    <p class="goal">\(n^{-1/2}\sum_iZ_i\) has no non-degenerate normal limit.</p>
+    <div class="chain"><span class="node"><b>tail integral</b></span><span class="arrow">→</span><span class="node"><b>diagnostic \(nP(|Z_1|&gt;\varepsilon\sqrt n)\)</b></span><span class="arrow">→</span><span class="node"><b>\(1-x\le e^{-x}\)</b></span><span class="arrow">→</span><span class="node"><b>Lévy ⇒ non-tight</b></span></div>
+    <ol>
+      <li>\(EZ_1^2=\alpha\int_1^\infty z^{1-\alpha}dz=\infty\) since \(1-\alpha&gt;-1\).</li>
+      <li>Diagnostic: \(nP(|Z_1|&gt;\varepsilon\sqrt n)=\varepsilon^{-\alpha}n^{1-\alpha/2}\to\infty\).</li>
+      <li>\(P(M_n\le2K\sqrt n)=(1-q_n)^n\le e^{-nq_n}\to0\) with \(q_n=(2K)^{-\alpha}n^{-\alpha/2}\).</li>
+      <li>Lévy's inequality plus \(|Z_k|\le2\max_j|S_j|\) gives \(P(|S_n|\ge K)\ge\frac12P(M_n\ge2K\sqrt n)\to\frac12\) for every \(K\): not tight, so no normal limit.</li>
+    </ol>
+    <div class="moral">Memorise the diagnostic. Vanishing → normal limit plausible; diverging → stable limit at scale \(n^{1/\alpha}\).</div>
+  </article>
+
+  <article class="proof">
+    <h3>The generic ratio-estimator skeleton</h3>
+    <p class="goal">\(\hat\theta_n=\hat A_n/\hat B_n\): consistency, then a CLT. Covers mean excess, Nadaraya–Watson, conditional cdfs, hazard ratios.</p>
+    <div class="chain"><span class="node"><b>bias→0</b></span><span class="arrow">→</span><span class="node"><b>variance→0</b></span><span class="arrow">→</span><span class="node"><b>Chebyshev</b></span><span class="arrow">→</span><span class="node"><b>Slutsky</b></span><span class="arrow">→</span><span class="node"><b>CMT</b></span><span class="arrow">→</span><span class="node"><b>delta method</b></span></div>
+    <ol>
+      <li>Each component: \(E|\hat A_n-A|^2=\mathrm{Var}+\mathrm{bias}^2\to0\), so Chebyshev gives \(\xrightarrow{P}\).</li>
+      <li>Slutsky assembles the pair; CMT with \(g(x,y)=x/y\) (continuous at \(B\neq0\)) gives consistency.</li>
+      <li>For the limit law, linearise with \(\nabla g=(1/y,-x/y^2)\). Those two coefficients are exactly the weights \(\lambda_1=-A/B^2\), \(\lambda_2=1/B\) you would choose in a Cramér–Wold combination.</li>
+      <li>Bias term scaled by the rate must vanish — the undersmoothing condition (\(nh^5\to0\) in kernel settings).</li>
+    </ol>
+    <div class="moral">Recognising this skeleton converts a page of work into four named steps. The only creative choices are the two averages and the function \(g\).</div>
+  </article>
+
+</main>
+</section>
+
+<!-- ================= QUIZ ================= -->
+<section id="v-qz" hidden>
+<main>
+  <div class="qwrap start center" id="qStart">
+    <div class="ring" style="font-size:36px">30 questions</div>
+    <p class="sans" style="color:var(--ink2);max-width:56ch;margin:8px auto 20px">Mixed: named theorems, the middle calculations, and the micro-tricks. Instant feedback with a worked reason, and a review list at the end.</p>
+    <button class="btn" onclick="startQ()">Start quiz</button>
+  </div>
+  <div class="qwrap" id="qRun" hidden>
+    <div class="qtop"><span id="qpos">Question 1 of 30</span><span>Score <b id="qsc">0</b></span></div>
+    <div class="pbar"><i id="pbar"></i></div>
+    <div id="qHost"></div>
+    <div class="qnav">
+      <button class="btn ghost" id="bPrev" onclick="prevQ()" disabled>Previous</button>
+      <button class="btn" id="bNext" onclick="nextQ()" disabled>Next</button>
+    </div>
+  </div>
+  <div class="qwrap center" id="qRes" hidden>
+    <div class="ring" id="rScore">0/30<small id="rPct"></small></div>
+    <p id="rMsg" class="sans" style="color:var(--ink2)"></p>
+    <button class="btn" onclick="again()">Restart</button>
+    <button class="btn ghost" onclick="show('lib')">Back to techniques</button>
+    <div class="review" id="rRev"></div>
+  </div>
+</main>
+</section>
+
+<div id="bank" hidden>
+
+<div class="qc" data-cat="conv" data-correct="2" data-label="Portmanteau approximating functions">
+<div class="qtag" data-cat="conv">Convergence</div>
+<div class="qtext">In proving Portmanteau, one uses \(f_m(s)=\min\{1,m\,d(s,G^c)\}\). The key properties are:</div>
+<div class="opts">
+<button class="opt"><span class="key">A</span><span>\(f_m\) is discontinuous but bounded</span></button>
+<button class="opt"><span class="key">B</span><span>\(f_m\ge\mathbf 1_G\) and \(f_m\downarrow\mathbf 1_G\)</span></button>
+<button class="opt"><span class="key">C</span><span>\(f_m\) is continuous, \(0\le f_m\le\mathbf 1_G\), and \(f_m\uparrow\mathbf 1_G\)</span></button>
+<button class="opt"><span class="key">D</span><span>\(f_m\) is a density</span></button>
+</div>
+<div class="explain" hidden>\(d(\cdot,G^c)\) is 1-Lipschitz so \(f_m\) is continuous; it approximates \(\mathbf 1_G\) <em>from below</em> and increases to it because \(G\) is open. That one-sided approximation is why open sets give a \(\liminf\) inequality.</div>
+</div>
+
+<div class="qc" data-cat="conv" data-correct="1" data-label="c plus or minus f trick">
+<div class="qtag" data-cat="conv">Convergence</div>
+<div class="qtext">Having proved \(E[f(Z)]\le\liminf_nE[f(Z_n)]\) for continuous \(f\ge0\), how do you get a two-sided limit for bounded \(f\) with \(|f|\le c\)?</div>
+<div class="opts">
+<button class="opt"><span class="key">A</span><span>apply Fatou again</span></button>
+<button class="opt"><span class="key">B</span><span>apply the inequality to \(c+f\) and to \(c-f\)</span></button>
+<button class="opt"><span class="key">C</span><span>use monotone convergence</span></button>
+<button class="opt"><span class="key">D</span><span>restrict to indicator functions</span></button>
+</div>
+<div class="explain" hidden>\(c\pm f\ge0\), so the one-sided result applies to both; the \(+\) version gives \(E f(Z)\le\liminf Ef(Z_n)\) and the \(-\) version gives \(\limsup Ef(Z_n)\le Ef(Z)\).</div>
+</div>
+
+<div class="qc" data-cat="conv" data-correct="0" data-label="Subsequence 2^-j">
+<div class="qtag" data-cat="conv">Convergence</div>
+<div class="qtext">In the subsequence trick one picks indices with \(P(\|Z_{n_{k_j}}-Z\|&gt;2^{-j})&lt;2^{-j}\). The reason for the specific choice \(2^{-j}\) is:</div>
+<div class="opts">
+<button class="opt"><span class="key">A</span><span>it makes the probabilities summable, so Borel–Cantelli applies</span></button>
+<button class="opt"><span class="key">B</span><span>it makes the variables independent</span></button>
+<button class="opt"><span class="key">C</span><span>it is required by dominated convergence</span></button>
+<button class="opt"><span class="key">D</span><span>it guarantees monotonicity</span></button>
+</div>
+<div class="explain" hidden>\(\sum_j2^{-j}&lt;\infty\) triggers the convergent half of Borel–Cantelli, upgrading to a.s. convergence along that sub-subsequence. Any summable sequence would do.</div>
+</div>
+
+<div class="qc" data-cat="conv" data-correct="3" data-label="Transfer rule inclusion">
+<div class="qtag" data-cat="conv">Convergence</div>
+<div class="qtext">The transfer rule uses the inclusion \(\{\frac{\|W_n\|}{\|Z_n\|}&lt;\varepsilon_1\}\cap\{\frac{\|Z_n\|}{a_n}&lt;\frac{\varepsilon}{\varepsilon_1}\}\subseteq\{\frac{\|W_n\|}{a_n}&lt;\varepsilon\}\) together with:</div>
+<div class="opts">
+<button class="opt"><span class="key">A</span><span>the union bound \(P(A\cup B)\le P(A)+P(B)\)</span></button>
+<button class="opt"><span class="key">B</span><span>Markov's inequality</span></button>
+<button class="opt"><span class="key">C</span><span>Jensen's inequality</span></button>
+<button class="opt"><span class="key">D</span><span>\(P(A\cap B)\ge P(A)+P(B)-1\)</span></button>
+</div>
+<div class="explain" hidden>The Bonferroni form bounds a "good" intersection from below, which is what you need since both events have probability near 1.</div>
+</div>
+
+
+<div class="qc" data-cat="as" data-correct="2" data-label="Borel-Cantelli I mechanism">
+<div class="qtag" data-cat="as">A.s. &amp; tails</div>
+<div class="qtext">The convergent half of Borel–Cantelli works because:</div>
+<div class="opts">
+<button class="opt"><span class="key">A</span><span>the events are independent</span></button>
+<button class="opt"><span class="key">B</span><span>of Markov's inequality</span></button>
+<button class="opt"><span class="key">C</span><span>\(E[\sum_n\mathbf 1_{A_n}]=\sum_nP(A_n)&lt;\infty\), so the count is a.s. finite</span></button>
+<button class="opt"><span class="key">D</span><span>of dominated convergence</span></button>
+</div>
+<div class="explain" hidden>Monotone convergence exchanges \(E\) and \(\sum\) (non-negative terms), and a variable with finite mean is a.s. finite. No independence is used.</div>
+</div>
+
+<div class="qc" data-cat="as" data-correct="0" data-label="Borel-Cantelli II inequality">
+<div class="qtag" data-cat="as">A.s. &amp; tails</div>
+<div class="qtext">Which inequality converts the product \(\prod_{k=n}^m(1-P(A_k))\) into something that vanishes?</div>
+<div class="opts">
+<button class="opt"><span class="key">A</span><span>\(1-x\le e^{-x}\)</span></button>
+<button class="opt"><span class="key">B</span><span>Cauchy–Schwarz</span></button>
+<button class="opt"><span class="key">C</span><span>Jensen</span></button>
+<button class="opt"><span class="key">D</span><span>Chebyshev</span></button>
+</div>
+<div class="explain" hidden>It gives \(\prod\le\exp(-\sum_kP(A_k))\to0\) when the series diverges. The same inequality drives \(P(M_n\le t)=(1-q_n)^n\le e^{-nq_n}\) in extreme-value arguments.</div>
+</div>
+
+<div class="qc" data-cat="as" data-correct="1" data-label="Intersect over 1/m">
+<div class="qtag" data-cat="as">A.s. &amp; tails</div>
+<div class="qtext">Corollary 1.1 concludes with "intersect over \(m\ge1\)". This step is valid because:</div>
+<div class="opts">
+<button class="opt"><span class="key">A</span><span>the events are independent</span></button>
+<button class="opt"><span class="key">B</span><span>a countable intersection of probability-one events has probability one</span></button>
+<button class="opt"><span class="key">C</span><span>the sequence is monotone</span></button>
+<button class="opt"><span class="key">D</span><span>of continuity from below</span></button>
+</div>
+<div class="explain" hidden>Equivalently, a countable union of null sets is null. It fails for uncountably many \(\varepsilon\), which is why one uses \(\varepsilon=1/m\).</div>
+</div>
+
+<div class="qc" data-cat="as" data-correct="3" data-label="Layer cake justification">
+<div class="qtag" data-cat="as">A.s. &amp; tails</div>
+<div class="qtext">The identity \(EY=\int_0^\infty P(Y&gt;z)dz\) for \(Y\ge0\) follows from \(Y=\int_0^\infty\mathbf 1_{Y&gt;z}dz\) together with:</div>
+<div class="opts">
+<button class="opt"><span class="key">A</span><span>dominated convergence</span></button>
+<button class="opt"><span class="key">B</span><span>integration by parts</span></button>
+<button class="opt"><span class="key">C</span><span>the CLT</span></button>
+<button class="opt"><span class="key">D</span><span>Tonelli's theorem (non-negative integrand)</span></button>
+</div>
+<div class="explain" hidden>Non-negativity means no integrability hypothesis is needed — Tonelli, not Fubini. This is why the identity is safe even when \(EY=\infty\).</div>
+</div>
+
+<div class="qc" data-cat="as" data-correct="2" data-label="Exponent rule">
+<div class="qtag" data-cat="as">A.s. &amp; tails</div>
+<div class="qtext">\(\int_1^\infty z^q\,dz\) is finite exactly when:</div>
+<div class="opts">
+<button class="opt"><span class="key">A</span><span>\(q&lt;0\)</span></button>
+<button class="opt"><span class="key">B</span><span>\(q&gt;-1\)</span></button>
+<button class="opt"><span class="key">C</span><span>\(q&lt;-1\)</span></button>
+<button class="opt"><span class="key">D</span><span>always</span></button>
+</div>
+<div class="explain" hidden>Antiderivative \(z^{q+1}/(q+1)\) converges at \(\infty\) iff \(q+1&lt;0\). Every heavy-tail moment question reduces to reading off \(q\): e.g. \(E Z^2=\alpha\int z^{1-\alpha}\) needs \(1-\alpha&lt;-1\), i.e. \(\alpha&gt;2\).</div>
+</div>
+
+<div class="qc" data-cat="as" data-correct="0" data-label="Bernstein geometric series">
+<div class="qtag" data-cat="as">A.s. &amp; tails</div>
+<div class="qtext">In Bernstein's proof, the moment condition \(\frac1n\sum_iE|\gamma(Z_i)|^m\le\frac{m!}2\kappa^{m-2}\) is designed so that:</div>
+<div class="opts">
+<button class="opt"><span class="key">A</span><span>the \(m!\) cancels the \(1/m!\) in the exponential series, leaving a geometric series in \(\kappa/L\)</span></button>
+<button class="opt"><span class="key">B</span><span>all odd moments vanish</span></button>
+<button class="opt"><span class="key">C</span><span>the variable is bounded</span></button>
+<button class="opt"><span class="key">D</span><span>Markov's inequality applies</span></button>
+</div>
+<div class="explain" hidden>\(\sum_{m\ge2}\frac{1}{L^mm!}\cdot n\frac{m!}{2}\kappa^{m-2}=\frac{n}{2L^2}\sum_{m\ge2}(\kappa/L)^{m-2}=\frac{n}{2(L^2-L\kappa)}\), which requires \(L&gt;\kappa\) for convergence.</div>
+</div>
+
+<div class="qc" data-cat="as" data-correct="1" data-label="Substitution in Bernstein inversion">
+<div class="qtag" data-cat="as">A.s. &amp; tails</div>
+<div class="qtext">Inverting \(\varepsilon=\kappa t+\sqrt{2t}\) is made easy by the substitution:</div>
+<div class="opts">
+<button class="opt"><span class="key">A</span><span>\(t=\varepsilon^2\)</span></button>
+<button class="opt"><span class="key">B</span><span>\(s=\sqrt{2t}\), then \(x=\kappa s\)</span></button>
+<button class="opt"><span class="key">C</span><span>\(u=\log(1/\varepsilon)\)</span></button>
+<button class="opt"><span class="key">D</span><span>\(t=1/n\)</span></button>
+</div>
+<div class="explain" hidden>It removes the square root (\(t=s^2/2\)) and the common factor \(s^2\) cancels in the ratio \(t(1+\kappa\varepsilon)/\varepsilon^2\), leaving a rational function of \(x\) bounded below by \(\frac12\).</div>
+</div>
+
+<div class="qc" data-cat="clt" data-correct="2" data-label="Fourth moment expansion">
+<div class="qtag" data-cat="clt">LLN/CLT</div>
+<div class="qtext">In \(E(\sum_{i\le n}Z_i)^4\) with iid centred \(Z_i\), a term \(E[Z_iZ_jZ_kZ_l]\) survives only if:</div>
+<div class="opts">
+<button class="opt"><span class="key">A</span><span>all four indices are distinct</span></button>
+<button class="opt"><span class="key">B</span><span>exactly three indices coincide</span></button>
+<button class="opt"><span class="key">C</span><span>every distinct index appears at least twice</span></button>
+<button class="opt"><span class="key">D</span><span>all terms survive</span></button>
+</div>
+<div class="explain" hidden>A lone index factorises out an \(E[Z_i]=0\). Counting the survivors gives \(nEZ^4+3n(n-1)(EZ^2)^2\), hence \(E\bar S_n^4\le C/n^2\).</div>
+</div>
+
+
+<div class="qc" data-cat="clt" data-correct="1" data-label="CF differentiation justification">
+<div class="qtag" data-cat="clt">LLN/CLT</div>
+<div class="qtext">Differentiating \(\varphi(t)=E[e^{it\xi}]\) twice under the expectation is justified by:</div>
+<div class="opts">
+<button class="opt"><span class="key">A</span><span>monotone convergence</span></button>
+<button class="opt"><span class="key">B</span><span>dominated convergence, using \(|e^{ih}-1|\le|h|\) and \(E\xi^2&lt;\infty\)</span></button>
+<button class="opt"><span class="key">C</span><span>Fubini</span></button>
+<button class="opt"><span class="key">D</span><span>the CLT itself</span></button>
+</div>
+<div class="explain" hidden>The bound provides an integrable dominating function; this is exactly where the finite second moment enters, and where it fails for \(\alpha&lt;2\) tails.</div>
+</div>
+
+<div class="qc" data-cat="clt" data-correct="3" data-label="Exponential limit">
+<div class="qtag" data-cat="clt">LLN/CLT</div>
+<div class="qtext">In the CLT proof, \(\big(1-\frac{t^2}{2n}E\xi^2+o(n^{-1})\big)^n\) converges to:</div>
+<div class="opts">
+<button class="opt"><span class="key">A</span><span>\(1\)</span></button>
+<button class="opt"><span class="key">B</span><span>\(0\)</span></button>
+<button class="opt"><span class="key">C</span><span>\(1-\frac{t^2}{2}E\xi^2\)</span></button>
+<button class="opt"><span class="key">D</span><span>\(\exp(-\frac{t^2}{2}E\xi^2)\)</span></button>
+</div>
+<div class="explain" hidden>Using \((1+c_n/n)^n\to e^c\) when \(c_n\to c\). The limit is the characteristic function of \(N(0,E\xi^2)\).</div>
+</div>
+
+<div class="qc" data-cat="clt" data-correct="2" data-label="Product bound in Lindeberg">
+<div class="qtag" data-cat="clt">LLN/CLT</div>
+<div class="qtext">The bound \(\big|\prod_mz_m-\prod_mz'_m\big|\le\sum_m|z_m-z'_m|\) (for \(|z_m|,|z'_m|\le1\)) is used in Lindeberg's proof to:</div>
+<div class="opts">
+<button class="opt"><span class="key">A</span><span>bound the variance</span></button>
+<button class="opt"><span class="key">B</span><span>prove tightness</span></button>
+<button class="opt"><span class="key">C</span><span>replace each \(\varphi_{nm}\) by its Gaussian partner \(\psi_{nm}\) one factor at a time</span></button>
+<button class="opt"><span class="key">D</span><span>verify the Lindeberg condition</span></button>
+</div>
+<div class="explain" hidden>Characteristic functions have modulus \(\le1\), so the hypothesis is automatic. This is the "replacement" architecture, also the core idea of Stein's method.</div>
+</div>
+
+<div class="qc" data-cat="clt" data-correct="0" data-label="Two-branch remainder">
+<div class="qtag" data-cat="clt">LLN/CLT</div>
+<div class="qtext">The remainder bound \(\big|e^{ix}-\sum_{k\le m}\frac{(ix)^k}{k!}\big|\le\frac{2|x|^m}{m!}\wedge\frac{|x|^{m+1}}{(m+1)!}\) has two branches because:</div>
+<div class="opts">
+<button class="opt"><span class="key">A</span><span>the \(|x|^{m+1}\) branch is used for small \(x\) and the \(|x|^m\) branch for large \(x\)</span></button>
+<button class="opt"><span class="key">B</span><span>the function is complex-valued</span></button>
+<button class="opt"><span class="key">C</span><span>of Jensen's inequality</span></button>
+<button class="opt"><span class="key">D</span><span>the array is triangular</span></button>
+</div>
+<div class="explain" hidden>That split matches the Lindeberg truncation exactly: small summands get the sharper cubic bound, large ones the quadratic bound whose contribution the Lindeberg sum controls.</div>
+</div>
+
+<div class="qc" data-cat="clt" data-correct="1" data-label="sup c_nm to 0">
+<div class="qtag" data-cat="clt">LLN/CLT</div>
+<div class="qtext">The step \(\sup_mc_{nm}\le\varepsilon^2+\sum_mE[X_{nm}^2;|X_{nm}|&gt;\varepsilon]\) shows that:</div>
+<div class="opts">
+<button class="opt"><span class="key">A</span><span>the variances sum to \(\Sigma\)</span></button>
+<button class="opt"><span class="key">B</span><span>the maximal row variance vanishes — uniform asymptotic negligibility</span></button>
+<button class="opt"><span class="key">C</span><span>the array is bounded</span></button>
+<button class="opt"><span class="key">D</span><span>Lyapounov holds</span></button>
+</div>
+<div class="explain" hidden>Split each second moment at \(\varepsilon\): the small part contributes \(\le\varepsilon^2\), the large part is dominated by the Lindeberg sum. Letting \(\varepsilon\downarrow0\) gives \(\sup_mc_{nm}\to0\).</div>
+</div>
+
+<div class="qc" data-cat="clt" data-correct="3" data-label="Lyapounov implication">
+<div class="qtag" data-cat="clt">LLN/CLT</div>
+<div class="qtext">Lyapounov's condition implies Lindeberg's via the inequality, valid on \(\{\|Z_{nm}\|&gt;c\}\):</div>
+<div class="opts">
+<button class="opt"><span class="key">A</span><span>\(\|Z\|^2\ge c^2\)</span></button>
+<button class="opt"><span class="key">B</span><span>\(\|Z\|^\alpha\le\|Z\|^2\)</span></button>
+<button class="opt"><span class="key">C</span><span>\(\|Z\|^2\le\|Z\|^\alpha\)</span></button>
+<button class="opt"><span class="key">D</span><span>\(\|Z\|^2\le c^{2-\alpha}\|Z\|^\alpha\)</span></button>
+</div>
+<div class="explain" hidden>Since \(\alpha&gt;2\) and \(\|Z\|&gt;c\), multiplying by \((\|Z\|/c)^{\alpha-2}&gt;1\) gives the bound; summing yields \(c^{2-\alpha}\sum_mE\|Z_{nm}\|^\alpha\to0\).</div>
+</div>
+
+<div class="qc" data-cat="clt" data-correct="1" data-label="Delta method sandwich sample variance">
+<div class="qtag" data-cat="clt">LLN/CLT</div>
+<div class="qtext">For \(\hat\sigma_n^2=h(\bar Z_n,\overline{Z^2}_n)\) with \(h(x,y)=y-x^2\) and \(EZ_1=0\), the gradient at the limit point is \((0,1)^\top\). The sandwich \(\nabla h^\top\Sigma\nabla h\) therefore:</div>
+<div class="opts">
+<button class="opt"><span class="key">A</span><span>equals \(\Sigma_{11}\)</span></button>
+<button class="opt"><span class="key">B</span><span>selects \(\Sigma_{22}=\mathrm{Var}(Z_1^2)=\mu^{(4)}-(\mu^{(2)})^2\)</span></button>
+<button class="opt"><span class="key">C</span><span>equals \(2\Sigma_{12}\)</span></button>
+<button class="opt"><span class="key">D</span><span>vanishes</span></button>
+</div>
+<div class="explain" hidden>With \(\mu_1=0\) the \(-2x\) entry is zero, so the quadratic form picks out the bottom-right entry: the variance of \(Z_1^2\).</div>
+</div>
+
+<div class="qc" data-cat="clt" data-correct="2" data-label="Fisher z construction">
+<div class="qtag" data-cat="clt">LLN/CLT</div>
+<div class="qtext">To stabilise the variance in \(\sqrt n(r_n-\rho)\xrightarrow{d}N(0,(1-\rho^2)^2)\), you choose \(h\) with:</div>
+<div class="opts">
+<button class="opt"><span class="key">A</span><span>\(h'(\rho)=1-\rho^2\)</span></button>
+<button class="opt"><span class="key">B</span><span>\(h'(\rho)=\rho\)</span></button>
+<button class="opt"><span class="key">C</span><span>\(h'(\rho)=1/(1-\rho^2)\), giving \(h(r)=\frac12\log\frac{1+r}{1-r}\)</span></button>
+<button class="opt"><span class="key">D</span><span>\(h'(\rho)=1/\rho\)</span></button>
+</div>
+<div class="explain" hidden>The sandwich gives \(h'(\rho)^2(1-\rho^2)^2=1\), so the limit is \(N(0,1)\) free of \(\rho\). This is the general recipe: solve \(h'=1/\text{sd}\).</div>
+</div>
+
+<div class="qc" data-cat="proc" data-correct="0" data-label="GC grid possible">
+<div class="qtag" data-cat="proc">Processes</div>
+<div class="qtext">In partition-then-sup, a grid with \(T(x_j-)-T(x_{j-1})&lt;\varepsilon\) exists because \(T\) is:</div>
+<div class="opts">
+<button class="opt"><span class="key">A</span><span>non-decreasing and bounded (so its total increase is finite)</span></button>
+<button class="opt"><span class="key">B</span><span>continuous</span></button>
+<button class="opt"><span class="key">C</span><span>differentiable</span></button>
+<button class="opt"><span class="key">D</span><span>a probability density</span></button>
+</div>
+<div class="explain" hidden>Bounded total variation lets you chop the range into \(\varepsilon\)-cells; jumps larger than \(\varepsilon\) are simply placed on the grid. Continuity is not needed.</div>
+</div>
+
+<div class="qc" data-cat="proc" data-correct="1" data-label="Sandwich inequality direction">
+<div class="qtag" data-cat="proc">Processes</div>
+<div class="qtext">For \(x\in[x_{j-1},x_j)\), the upper sandwich uses monotonicity to write \(T^{(n)}(x)-T(x)\le\):</div>
+<div class="opts">
+<button class="opt"><span class="key">A</span><span>\(T^{(n)}(x_{j-1})-T(x_j-)\)</span></button>
+<button class="opt"><span class="key">B</span><span>\(T^{(n)}(x_j-)-T(x_{j-1})\)</span></button>
+<button class="opt"><span class="key">C</span><span>\(T^{(n)}(x_j)-T(x_j)\)</span></button>
+<button class="opt"><span class="key">D</span><span>\(\Delta^{(n)}\) alone</span></button>
+</div>
+<div class="explain" hidden>Increase the first term to the right end of the cell and decrease the subtracted term to the left end. Splitting it gives \(\le\Delta^{(n)}+\varepsilon\).</div>
+</div>
+
+<div class="qc" data-cat="proc" data-correct="2" data-label="Bracket L2 length">
+<div class="qtag" data-cat="proc">Processes</div>
+<div class="qtext">For indicator brackets, \(\|u_j-l_j\|_{L^2(P)}\) equals:</div>
+<div class="opts">
+<button class="opt"><span class="key">A</span><span>\(F(t_j-)-F(t_{j-1})\)</span></button>
+<button class="opt"><span class="key">B</span><span>\((F(t_j-)-F(t_{j-1}))^2\)</span></button>
+<button class="opt"><span class="key">C</span><span>\((F(t_j-)-F(t_{j-1}))^{1/2}\)</span></button>
+<button class="opt"><span class="key">D</span><span>\(1\)</span></button>
+</div>
+<div class="explain" hidden>\(u_j-l_j\) is an indicator, so its square equals itself and \(\|\cdot\|_{L^2}=(E[\cdot])^{1/2}\). Hence spacing the thresholds by \(\varepsilon^2\) yields \(\varepsilon\)-brackets.</div>
+</div>
+
+<div class="qc" data-cat="proc" data-correct="3" data-label="Entropy integral computation">
+<div class="qtag" data-cat="proc">Processes</div>
+<div class="qtext">The computation \(\int_0^1\sqrt{\log(1/\varepsilon)}\,d\varepsilon=\Gamma(3/2)=\frac{\sqrt\pi}{2}\) uses the substitution:</div>
+<div class="opts">
+<button class="opt"><span class="key">A</span><span>\(u=\varepsilon^2\)</span></button>
+<button class="opt"><span class="key">B</span><span>\(u=1/\varepsilon\)</span></button>
+<button class="opt"><span class="key">C</span><span>\(u=\sqrt\varepsilon\)</span></button>
+<button class="opt"><span class="key">D</span><span>\(u=\log(1/\varepsilon)\), so \(\varepsilon=e^{-u}\), \(d\varepsilon=-e^{-u}du\)</span></button>
+</div>
+<div class="explain" hidden>It turns the integral into \(\int_0^\infty\sqrt u\,e^{-u}du=\Gamma(3/2)\). The moral: polynomial bracketing numbers always give a finite entropy integral.</div>
+</div>
+
+<div class="qc" data-cat="proc" data-correct="1" data-label="Hadamard vs Gateaux">
+<div class="qtag" data-cat="proc">Processes</div>
+<div class="qtext">Gâteaux differentiability is insufficient for the functional delta method because:</div>
+<div class="opts">
+<button class="opt"><span class="key">A</span><span>it requires linearity</span></button>
+<button class="opt"><span class="key">B</span><span>it allows only a fixed direction \(h\), whereas \(r_n(X_n-\theta)\) is a varying random element requiring \(h_n\to h\)</span></button>
+<button class="opt"><span class="key">C</span><span>it is not defined on function spaces</span></button>
+<button class="opt"><span class="key">D</span><span>it implies Fréchet differentiability</span></button>
+</div>
+<div class="explain" hidden>The extended CMT needs \(g_n(h_n)\to\phi'_\theta(h)\) for <em>every</em> convergent sequence of directions — exactly Hadamard. Fréchet would work but fails for the inverse map in sup-norm.</div>
+</div>
+
+<div class="qc" data-cat="proc" data-correct="0" data-label="Ratio map condition">
+<div class="qtag" data-cat="proc">Processes</div>
+<div class="qtext">In deriving \(\phi'_{(f,g)}(h_1,h_2)=\frac{h_1}{g}-\frac{fh_2}{g^2}\), the denominator \(g(g+u_nh_{2n})\) is handled by assuming:</div>
+<div class="opts">
+<button class="opt"><span class="key">A</span><span>\(\inf|g|&gt;0\) on a compact index set, so the denominator stays bounded away from 0</span></button>
+<button class="opt"><span class="key">B</span><span>\(g\) is monotone</span></button>
+<button class="opt"><span class="key">C</span><span>\(h_2=0\)</span></button>
+<button class="opt"><span class="key">D</span><span>\(f\) is bounded</span></button>
+</div>
+<div class="explain" hidden>Otherwise the fraction is neither well defined nor bounded, and sup-norm convergence fails. This is why mean-excess results are stated on a compact interval with \(\inf(1-F)&gt;0\).</div>
+</div>
+
+<div class="qc" data-cat="app" data-correct="2" data-label="Mean excess variance">
+<div class="qtag" data-cat="app">Applications</div>
+<div class="qtext">The asymptotic variance of the empirical mean excess \(e_n(u)\) is:</div>
+<div class="opts">
+<button class="opt"><span class="key">A</span><span>\(\mathrm{Var}(Z\mid Z&gt;u)\)</span></button>
+<button class="opt"><span class="key">B</span><span>\(\frac{F(u)}{1-F(u)}\)</span></button>
+<button class="opt"><span class="key">C</span><span>\(\frac{e_F^{(2)}(u)-e_F(u)^2}{1-F(u)}=\frac{\mathrm{Var}(Z\mid Z&gt;u)}{1-F(u)}\)</span></button>
+<button class="opt"><span class="key">D</span><span>\(e_F(u)^2\)</span></button>
+</div>
+<div class="explain" hidden>The sandwich \(\frac{\sigma_1^2}{b^2}-\frac{2a\sigma_{12}}{b^3}+\frac{a^2\sigma_2^2}{b^4}\) simplifies, the \((1-b)\) terms cancelling, to the conditional variance divided by \(P(Z&gt;u)\).</div>
+</div>
+
+<div class="qc" data-cat="app" data-correct="1" data-label="Hazard variance">
+<div class="qtag" data-cat="app">Applications</div>
+<div class="qtext">For \(\Lambda^{(n)}=-\log(1-F^{(n)})\), the delta method with \(h'(x)=1/(1-x)\) gives asymptotic variance:</div>
+<div class="opts">
+<button class="opt"><span class="key">A</span><span>\(F(t)(1-F(t))\)</span></button>
+<button class="opt"><span class="key">B</span><span>\(\frac{F(t)}{1-F(t)}\)</span></button>
+<button class="opt"><span class="key">C</span><span>\(\frac{1-F(t)}{F(t)}\)</span></button>
+<button class="opt"><span class="key">D</span><span>\(\frac{1}{1-F(t)}\)</span></button>
+</div>
+<div class="explain" hidden>\(h'(F)^2\cdot F(1-F)=\frac{F(1-F)}{(1-F)^2}=\frac{F}{1-F}\) — one factor of \(1-F\) cancels.</div>
+</div>
+
+<div class="qc" data-cat="app" data-correct="3" data-label="Fourier envelope constants">
+<div class="qtag" data-cat="app">Applications</div>
+<div class="qtext">In the transform-based envelope \(f\le c\wedge kz^{-2}\), the crossover \(b\) and total mass \(A\) are:</div>
+<div class="opts">
+<button class="opt"><span class="key">A</span><span>\(b=k/c\), \(A=2\sqrt{kc}\)</span></button>
+<button class="opt"><span class="key">B</span><span>\(b=\sqrt{c/k}\), \(A=4kc\)</span></button>
+<button class="opt"><span class="key">C</span><span>\(b=c/k\), \(A=2cb\)</span></button>
+<button class="opt"><span class="key">D</span><span>\(b=\sqrt{k/c}\), \(A=4\sqrt{kc}\)</span></button>
+</div>
+<div class="explain" hidden>Crossover solves \(c=k/z^2\). Then \(A=2cb+2k/b=2c\sqrt{k/c}+2k\sqrt{c/k}=4\sqrt{kc}\).</div>
+</div>
+
+<div class="qc" data-cat="app" data-correct="0" data-label="Rejection acceptance probability">
+<div class="qtag" data-cat="app">Applications</div>
+<div class="qtext">The acceptance probability in rejection sampling is computed by conditioning on \(Y_1\), giving:</div>
+<div class="opts">
+<button class="opt"><span class="key">A</span><span>\(E\big[\frac{f(Y_1)}{Cg(Y_1)}\big]=\frac1C\int f=\frac1C\)</span></button>
+<button class="opt"><span class="key">B</span><span>\(C\)</span></button>
+<button class="opt"><span class="key">C</span><span>\(\int fg\)</span></button>
+<button class="opt"><span class="key">D</span><span>\(1-1/C\)</span></button>
+</div>
+<div class="explain" hidden>The \(g\) cancels against the proposal density in the integral. Hence the expected number of proposals per accepted draw is \(C\).</div>
+</div>
+
+</div>
+
+<script>
+function show(v){
+  ['lib','mic','pf','qz'].forEach(k=>{
+    document.getElementById('v-'+k).hidden=(k!==v);
+    document.getElementById('t-'+k).setAttribute('aria-selected',k===v);
+  });
+  window.scrollTo(0,0);
+}
+let cur='all';
+function cat(c){cur=c;document.querySelectorAll('#chips .chip').forEach(x=>x.setAttribute('aria-pressed',x.dataset.cat===c));filt();}
+function filt(){
+  const q=document.getElementById('search').value.trim().toLowerCase();let n=0;
+  document.querySelectorAll('#lib .tech').forEach(c=>{
+    const okc=(cur==='all'||c.dataset.cat===cur);
+    const hay=(c.dataset.key+' '+c.textContent).toLowerCase();
+    const v=okc&&(q===''||hay.includes(q));
+    c.style.display=v?'':'none';if(v)n++;
+  });
+  document.getElementById('noresults').hidden=n>0;
+  const tot=document.querySelectorAll('#lib .tech').length;
+  document.getElementById('count').textContent=n===tot?tot+' techniques':n+' of '+tot+' techniques';
+}
+let cards=[],idx=0,score=0,ans=[];
+function build(){
+  const host=document.getElementById('qHost');host.innerHTML='';
+  [...document.querySelectorAll('#bank .qc')].forEach(n=>{const c=n.cloneNode(true);c.hidden=true;host.appendChild(c);});
+  cards=[...host.querySelectorAll('.qc')];ans=new Array(cards.length).fill(null);
+  cards.forEach((card,ci)=>[...card.querySelectorAll('.opt')].forEach((b,oi)=>b.addEventListener('click',()=>pick(ci,oi))));
+  if(window.MathJax&&MathJax.typesetPromise)MathJax.typesetPromise([host]);
+}
+function startQ(){build();idx=0;score=0;
+  document.getElementById('qStart').hidden=true;document.getElementById('qRes').hidden=true;
+  document.getElementById('qRun').hidden=false;document.getElementById('qsc').textContent='0';draw();}
+function draw(){
+  cards.forEach(c=>c.hidden=true);cards[idx].hidden=false;
+  document.getElementById('qpos').textContent='Question '+(idx+1)+' of '+cards.length;
+  document.getElementById('pbar').style.width=((idx+1)/cards.length*100)+'%';
+  document.getElementById('bPrev').disabled=(idx===0);
+  const b=document.getElementById('bNext');
+  b.disabled=ans[idx]===null;b.textContent=(idx===cards.length-1)?'See results':'Next';
+}
+function pick(ci,oi){
+  if(ans[ci]!==null)return;
+  const card=cards[ci],cor=+card.dataset.correct,opts=[...card.querySelectorAll('.opt')];
+  opts.forEach((b,i)=>{b.disabled=true;
+    if(i===cor)b.classList.add('correct');else if(i===oi)b.classList.add('wrong');else b.classList.add('mute');});
+  const ok=(oi===cor);ans[ci]=ok;if(ok)score++;
+  document.getElementById('qsc').textContent=score;
+  const ex=card.querySelector('.explain');
+  const v=document.createElement('div');v.className='verdict '+(ok?'ok':'no');v.textContent=ok?'Correct.':'Not quite.';
+  ex.parentNode.insertBefore(v,ex);ex.hidden=false;
+  document.getElementById('bNext').disabled=false;
+}
+function nextQ(){if(idx<cards.length-1){idx++;draw();}else done();}
+function prevQ(){if(idx>0){idx--;draw();}}
+function done(){
+  document.getElementById('qRun').hidden=true;
+  const r=document.getElementById('qRes');r.hidden=false;
+  const tot=cards.length,pct=Math.round(score/tot*100);
+  document.getElementById('rScore').childNodes[0].nodeValue=score+'/'+tot;
+  document.getElementById('rPct').textContent=pct+'%';
+  document.getElementById('rMsg').textContent=pct>=85?'Exam-ready. Skim the few below, then read the classic proofs once more.'
+    :pct>=60?'Solid. Re-open the full derivations for what you missed.'
+    :'Work through the derivations in the library, then retry — the chains matter more than the details.';
+  const miss=[];cards.forEach((c,i)=>{if(ans[i]===false)miss.push({i,l:c.dataset.label});});
+  document.getElementById('rRev').innerHTML=miss.length===0?'<h4>Clean run — nothing missed.</h4>'
+    :'<h4>Review these ('+miss.length+')</h4><ul>'+miss.map(m=>'<li><a onclick="jump('+m.i+')">Q'+(m.i+1)+' · '+m.l+'</a></li>').join('')+'</ul>';
+}
+function jump(i){document.getElementById('qRes').hidden=true;document.getElementById('qRun').hidden=false;idx=i;draw();window.scrollTo(0,0);}
+function again(){document.getElementById('qRes').hidden=true;document.getElementById('qStart').hidden=false;}
+let mcur='all';
+function mcat(c){mcur=c;document.querySelectorAll('#mchips .chip').forEach(x=>x.setAttribute('aria-pressed',x.dataset.fam===c));mfilt();}
+function mfilt(){
+  const q=document.getElementById('msearch').value.trim().toLowerCase();let n=0;
+  document.querySelectorAll('#miclist .tech').forEach(c=>{
+    const okf=(mcur==='all'||c.dataset.fam===mcur);
+    const hay=(c.dataset.key+' '+c.textContent).toLowerCase();
+    const v=okf&&(q===''||hay.includes(q));
+    c.style.display=v?'':'none';if(v)n++;
+  });
+  document.getElementById('mnores').hidden=n>0;
+  const tot=document.querySelectorAll('#miclist .tech').length;
+  document.getElementById('mcount').textContent=n===tot?tot+' moves':n+' of '+tot+' moves';
+}
+mfilt();
+filt();
+</script>
+</body>
+</html>
