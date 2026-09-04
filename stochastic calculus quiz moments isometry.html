@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stochastic Calculus &mdash; Practice Quiz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] },
+  svg: { fontCache: 'global' },
+  options: { renderActions: { addMenu: [] } }
+};
+</script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.min.js"></script>
+<style>
+  :root{
+    --ink:#0f2033;          /* deep navy ink */
+    --ink-soft:#41536b;     /* secondary text */
+    --paper:#f2f4f0;        /* graph-paper base */
+    --card:#ffffff;
+    --line:#d9e0dc;         /* grid / hairlines */
+    --line-strong:#c2cbc4;
+    --accent:#1f5c8b;       /* plotted-path blue */
+    --accent-ink:#123a5a;
+    --gold:#b5842f;         /* utility highlight */
+    --correct:#1f7a4d;
+    --correct-bg:#e6f3ec;
+    --wrong:#a83636;
+    --wrong-bg:#f6e7e6;
+    --radius:14px;
+    --maxw:820px;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;color:var(--ink);
+    font-family:"Inter",system-ui,sans-serif;
+    line-height:1.55;
+    background-color:var(--paper);
+    background-image:
+      linear-gradient(var(--line) 1px,transparent 1px),
+      linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:26px 26px;
+    background-position:-1px -1px;
+  }
+  a{color:var(--accent)}
+
+  /* ---------- hero ---------- */
+  .hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line-strong);
+    background:linear-gradient(180deg,#0f2033 0%,#14293f 100%);color:#eef3f4}
+  .hero-inner{max-width:var(--maxw);margin:0 auto;padding:44px 22px 30px;position:relative;z-index:2}
+  .eyebrow{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.28em;
+    text-transform:uppercase;color:#8fb6d6;margin:0 0 14px}
+  h1{font-family:"Fraunces",Georgia,serif;font-weight:600;letter-spacing:-.01em;
+    font-size:clamp(2rem,5.5vw,3.1rem);line-height:1.02;margin:0 0 12px}
+  h1 em{font-style:italic;color:#7fb2dc}
+  .lede{max-width:52ch;color:#c4d3de;margin:0;font-size:1.02rem}
+  .hero svg.walk{position:absolute;inset:0;width:100%;height:100%;z-index:1;opacity:.5}
+  .hero-path{fill:none;stroke:#5fa8d8;stroke-width:1.6;
+    stroke-linejoin:round;stroke-linecap:round}
+  .hero-dot{fill:#a9d3ef}
+
+  /* ---------- controls ---------- */
+  .controls{max-width:var(--maxw);margin:0 auto;padding:20px 22px 0}
+  .scorebar{display:flex;flex-wrap:wrap;align-items:center;gap:14px 20px;
+    background:var(--card);border:1px solid var(--line-strong);border-radius:var(--radius);
+    padding:14px 18px;box-shadow:0 1px 0 rgba(15,32,51,.03)}
+  .stat{display:flex;flex-direction:column;line-height:1.1}
+  .stat b{font-family:"JetBrains Mono",monospace;font-size:1.35rem;color:var(--ink)}
+  .stat span{font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-soft)}
+  .stat.correct b{color:var(--correct)}
+  .track{flex:1 1 160px;min-width:140px}
+  .track .bar{height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+  .track .fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),#3a86c0);
+    border-radius:99px;transition:width .35s ease}
+  .track small{display:block;margin-top:6px;font-size:.72rem;color:var(--ink-soft)}
+  .btn-reset{margin-left:auto;border:1px solid var(--line-strong);background:var(--card);
+    color:var(--ink);font:600 .82rem/1 "Inter",sans-serif;padding:9px 14px;border-radius:9px;
+    cursor:pointer;transition:background .15s,border-color .15s}
+  .btn-reset:hover{background:#f5f7f5;border-color:var(--accent)}
+
+  .chips{max-width:var(--maxw);margin:16px auto 0;padding:0 22px;
+    display:flex;flex-wrap:wrap;gap:8px}
+  .chip{border:1px solid var(--line-strong);background:var(--card);color:var(--ink-soft);
+    font:500 .82rem/1 "Inter",sans-serif;padding:8px 12px;border-radius:99px;cursor:pointer;
+    display:inline-flex;align-items:center;gap:7px;transition:all .15s}
+  .chip:hover{border-color:var(--accent);color:var(--ink)}
+  .chip.active{background:var(--ink);border-color:var(--ink);color:#fff}
+  .chip-n{font-family:"JetBrains Mono",monospace;font-size:.72rem;opacity:.7}
+  .chip.active .chip-n{opacity:.85}
+
+  /* ---------- questions ---------- */
+  main{max-width:var(--maxw);margin:0 auto;padding:26px 22px 90px}
+  .question{background:var(--card);border:1px solid var(--line-strong);border-radius:var(--radius);
+    padding:22px 22px 18px;margin:0 0 20px;scroll-margin-top:16px;
+    box-shadow:0 1px 2px rgba(15,32,51,.04)}
+  .question.hidden{display:none}
+  .q-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .q-num{font-family:"JetBrains Mono",monospace;font-weight:600;font-size:.9rem;
+    color:#fff;background:var(--ink);border-radius:7px;padding:3px 9px;letter-spacing:.02em}
+  .q-topic{font-size:.72rem;text-transform:uppercase;letter-spacing:.14em;color:var(--accent-ink);
+    font-weight:600}
+  .q-status{margin-left:auto;font-size:.8rem;font-weight:600}
+  .q-status.ok{color:var(--correct)}
+  .q-status.no{color:var(--wrong)}
+  .q-prompt{font-size:1.06rem;margin-bottom:16px}
+  .q-prompt b{font-weight:600}
+
+  .options{display:flex;flex-direction:column;gap:9px}
+  .option{display:flex;align-items:center;gap:12px;width:100%;text-align:left;
+    border:1px solid var(--line-strong);background:#fbfcfb;border-radius:11px;
+    padding:11px 14px;cursor:pointer;font-size:1rem;color:var(--ink);
+    transition:border-color .15s,background .15s,box-shadow .15s}
+  .option:hover:not(.locked){border-color:var(--accent);background:#f4f9fd}
+  .opt-key{font-family:"JetBrains Mono",monospace;font-weight:600;font-size:.85rem;
+    color:var(--ink-soft);border:1px solid var(--line-strong);border-radius:6px;
+    width:26px;height:26px;display:grid;place-items:center;flex:none;transition:all .15s}
+  .option:hover:not(.locked) .opt-key{border-color:var(--accent);color:var(--accent)}
+  .opt-body{flex:1}
+  .option.locked{cursor:default}
+  .answered .option:not(.correct):not(.incorrect){opacity:.55}
+  .option.correct{border-color:var(--correct);background:var(--correct-bg)}
+  .option.correct .opt-key{background:var(--correct);border-color:var(--correct);color:#fff}
+  .option.incorrect{border-color:var(--wrong);background:var(--wrong-bg)}
+  .option.incorrect .opt-key{background:var(--wrong);border-color:var(--wrong);color:#fff}
+
+  .sol-toggle{margin-top:16px;border:none;background:none;color:var(--accent);
+    font:600 .9rem/1 "Inter",sans-serif;cursor:pointer;padding:6px 0;
+    display:inline-flex;align-items:center;gap:7px}
+  .sol-toggle::before{content:"";width:0;height:0;border-left:6px solid var(--accent);
+    border-top:4px solid transparent;border-bottom:4px solid transparent;transition:transform .18s}
+  .sol-toggle[aria-expanded="true"]::before{transform:rotate(90deg)}
+  .sol-toggle:hover{color:var(--accent-ink)}
+  .solution{display:none;margin-top:14px;padding:16px 18px;border-radius:11px;
+    background:#f6f8f6;border:1px solid var(--line);border-left:3px solid var(--accent);
+    font-size:.98rem;color:#20303f}
+  .question.show-sol .solution{display:block}
+  .solution :is(p){margin:.4em 0}
+
+  footer{max-width:var(--maxw);margin:0 auto;padding:0 22px 60px;color:var(--ink-soft);
+    font-size:.82rem;text-align:center}
+  footer hr{border:none;border-top:1px solid var(--line);margin:0 0 22px}
+
+  @media (max-width:560px){
+    .q-prompt{font-size:1rem}
+    .option{font-size:.95rem;padding:10px 12px}
+    .scorebar{gap:12px 16px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+  }
+</style>
+</head>
+<body>
+
+  <section class="hero">
+    <svg class="walk" preserveAspectRatio="none" viewBox="0 0 1000 320" aria-hidden="true">
+      <path class="hero-path" id="walkPath" d=""></path>
+      <circle class="hero-dot" id="walkDot" r="4" cx="0" cy="160"></circle>
+    </svg>
+    <div class="hero-inner">
+      <p class="eyebrow">Mathematical Finance &middot; Practice Set IV</p>
+      <h1>Mixed moments and<br><em>the isometry drill</em></h1>
+      <p class="lede">Fifty computations in the style of the practice quiz: check the parity, split off the independent increment, count the pairings, merge everything into a single stochastic integral. Mixed moments like \(E[B_s^mB_t^n]\), conditional moments, and It&ocirc; isometry evaluations, each with the two routes worked out so you can cross-check under exam pressure.</p>
+    </div>
+  </section>
+
+  <div class="controls">
+    <div class="scorebar">
+      <div class="stat"><b id="answered">0</b><span>Answered</span></div>
+      <div class="stat correct"><b id="score">0</b><span>Correct</span></div>
+      <div class="stat"><b id="pct">&ndash;</b><span>Accuracy</span></div>
+      <div class="track">
+        <div class="bar"><div class="fill" id="fill"></div></div>
+        <small><span id="answered2">0</span> of 50 answered</small>
+      </div>
+      <button class="btn-reset" id="reset">Reset quiz</button>
+    </div>
+  </div>
+
+  <div class="chips" id="chips">
+        <button class="chip active" data-topic="all">All <span class="chip-n">50</span></button>
+        <button class="chip" data-topic="parity">Parity arguments <span class="chip-n">8</span></button>
+        <button class="chip" data-topic="gaussian-moments">Moments &amp; pairings <span class="chip-n">12</span></button>
+        <button class="chip" data-topic="increments">Increments &amp; conditioning <span class="chip-n">10</span></button>
+        <button class="chip" data-topic="isometry">Itô isometry <span class="chip-n">12</span></button>
+        <button class="chip" data-topic="scaling">Scaling &amp; laws <span class="chip-n">8</span></button>
+  </div>
+
+  <main id="quiz">
+      <article class="question" data-answer="0" data-topic="parity" id="q1">
+        <header class="q-head">
+          <span class="q-num">01</span>
+          <span class="q-topic">Parity</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Determine \(E\big[B_s^3B_t^2\big]\) for \(0\le s<t\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(0\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(3s^3\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(s^2(t-s)\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(3s^2t\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(6s^2t\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">The monomial has total degree \(3+2=5\), which is odd.
+  The vector \((B_s,B_t)\) is centred Gaussian, so \((B_s,B_t)\overset{d}{=}(-B_s,-B_t)\); an odd-degree monomial
+  changes sign under this symmetry, hence equals minus itself in expectation.
+  <b>Always check the total degree first</b> &mdash; it settles half the exam questions of this type in one line, with
+  no computation at all.</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="parity" id="q2">
+        <header class="q-head">
+          <span class="q-num">02</span>
+          <span class="q-topic">Parity</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Which of the following expectations vanishes <b>by parity alone</b> (for \(0<s<t<u\))?</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(E[B_s^2B_t^2]\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(E[B_s^2B_t^3]\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(E[B_sB_t]\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(E[B_s^3B_t]\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(E[B_s^4]\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Only \(B_s^2B_t^3\) has odd total degree (\(5\)).
+  The others have even degree and are generally non-zero: \(E[B_s^2B_t^2]=st+2s^2\), \(E[B_s^3B_t]=3s^2\),
+  \(E[B_sB_t]=s\), \(E[B_s^4]=3s^2\).
+  Parity is about the <em>sum</em> of the exponents, not about individual factors.</div>
+      </article>
+
+      <article class="question" data-answer="2" data-topic="parity" id="q3">
+        <header class="q-head">
+          <span class="q-num">03</span>
+          <span class="q-topic">Parity</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Why is \(E\big[B_{t_1}^{k_1}\cdots B_{t_n}^{k_n}\big]=0\) whenever \(k_1+\dots+k_n\) is odd?</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">because the covariance matrix is singular</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">because \(E[B_t]=0\) for each \(t\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">because \((B_{t_1},\dots,B_{t_n})\) is a centred Gaussian vector, hence has the same law as its negative</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">because Brownian increments are independent</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">because \(B\) is a martingale</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Symmetry of the joint law is the whole argument: \(X\overset{d}{=}-X\) for a centred Gaussian vector, so any odd
+  function of it has expectation \(-\) itself.
+  \(E[B_t]=0\) alone is far too weak (it would not give \(E[B_s^2B_t^3]=0\)), and independence of increments is not
+  needed &mdash; the statement holds for <em>any</em> centred Gaussian process, e.g. the Brownian bridge.</div>
+      </article>
+
+      <article class="question" data-answer="3" data-topic="parity" id="q4">
+        <header class="q-head">
+          <span class="q-num">04</span>
+          <span class="q-topic">Parity</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Determine \(E[B_sB_tB_u]\) for \(0\le s\le t\le u\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(s(t+u)\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(stu\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(s\,u\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(0\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(s\,t\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Total degree \(3\): odd, so the expectation is \(0\) whatever the times are.
+  A frequent slip is to reach for the tower property here: \(E[B_sB_tB_u]=E[B_sB_tE[B_u\mid\mathcal F_t]]=E[B_sB_t^2]\),
+  which is again odd and zero. Parity gets there immediately.</div>
+      </article>
+
+      <article class="question" data-answer="4" data-topic="parity" id="q5">
+        <header class="q-head">
+          <span class="q-num">05</span>
+          <span class="q-topic">Parity</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Determine \(E\big[B_1^2B_2B_3\big]\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(0\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(3\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(6\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(2\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(4\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Total degree \(4\) is even, so parity gives nothing and one must compute. Wick/Isserlis with
+  \(X=B_1\) (twice), \(Y=B_2\), \(Z=B_3\) sums over the three pairings:
+  \[E[X^2YZ]=E[X^2]E[YZ]+2E[XY]E[XZ]=1\cdot2+2\cdot1\cdot1=4.\]
+  Equivalently by conditioning: \(E[B_1^2B_2B_3]=E[B_1^2B_2^2]=1\cdot2+2\cdot1^2=4\).</div>
+      </article>
+
+      <article class="question" data-answer="0" data-topic="parity" id="q6">
+        <header class="q-head">
+          <span class="q-num">06</span>
+          <span class="q-topic">Parity</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">For \(0<s<t\), which of these is <b>not</b> zero?</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(E\big[\operatorname{sgn}(B_s)B_t\big]\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(E\big[B_s^2B_t^3\big]\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(E\big[B_s^5\big]\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(E\big[(B_t-B_s)^3B_s^2\big]\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(E\big[|B_s|B_t\big]\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Conditioning gives \(E[\operatorname{sgn}(B_s)B_t]=E[\operatorname{sgn}(B_s)B_s]=E|B_s|=\sqrt{2s/\pi}>0\).
+  The others vanish: \(|x|y\) and \(x^5\) and \(x^2y^3\) are all odd in the pair \((x,y)\) jointly, and the last one
+  factorises into \(E[(B_t-B_s)^3]E[B_s^2]=0\) by independence.
+  Moral: \(|\cdot|\) preserves the symmetry argument, \(\operatorname{sgn}(\cdot)\cdot(\text{odd})\) destroys it.</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="parity" id="q7">
+        <header class="q-head">
+          <span class="q-num">07</span>
+          <span class="q-topic">Parity</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Determine \(E\big[B_s^5B_t\big]\) for \(0\le s<t\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(15s^2t\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(15s^3\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(3s^2t\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(0\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(5s^3\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Degree \(6\) is even, so compute. Split \(B_t=B_s+(B_t-B_s)\) with the increment independent and centred:
+  \[E[B_s^5B_t]=E[B_s^6]+E[B_s^5]E[B_t-B_s]=15s^3.\]
+  Note the answer does not involve \(t\) at all: conditioning on \(\mathcal F_s\) replaces \(B_t\) by \(B_s\) whenever
+  \(B_t\) appears to the first power.</div>
+      </article>
+
+      <article class="question" data-answer="2" data-topic="parity" id="q8">
+        <header class="q-head">
+          <span class="q-num">08</span>
+          <span class="q-topic">Parity</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Determine \(E\big[B_s^2(B_t-B_s)^3\big]\) for \(0\le s<t\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(s(t-s)^3\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(15s(t-s)^2\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(0\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(3s^2(t-s)\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(3s(t-s)^2\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Two independent factors, so the expectation splits: \(E[B_s^2]\cdot E[(B_t-B_s)^3]=s\cdot0=0\), the third moment
+  of a centred Gaussian being zero.
+  This is the workhorse move for mixed moments: rewrite everything in terms of \(B_s\) and the <em>independent</em>
+  increment, then any factor with an odd power of the increment drops out.</div>
+      </article>
+
+      <article class="question" data-answer="3" data-topic="gaussian-moments" id="q9">
+        <header class="q-head">
+          <span class="q-num">09</span>
+          <span class="q-topic">Gaussian moments</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Determine \(E[B_t^6]\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(15t^2\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(6t^3\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(105t^3\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(15t^3\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(3t^3\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(B_t=\sqrt t\,Z\) with \(Z\sim N(0,1)\), and \(E[Z^{2k}]=(2k-1)!!\). For \(2k=6\):
+  \(5!!=5\cdot3\cdot1=15\), so \(E[B_t^6]=15t^3\).
+  Keep the short list to hand: \(E[Z^2]=1\), \(E[Z^4]=3\), \(E[Z^6]=15\), \(E[Z^8]=105\), and the power of \(t\) is always
+  half the power of \(B\).</div>
+      </article>
+
+      <article class="question" data-answer="4" data-topic="gaussian-moments" id="q10">
+        <header class="q-head">
+          <span class="q-num">10</span>
+          <span class="q-topic">Gaussian moments</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">For \(Z\sim N(0,1)\) and \(k\ge1\), determine \(E[Z^{2k}]\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(k^2\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(k!\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(2^kk!\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\((2k)!\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\((2k-1)!!=(2k-1)(2k-3)\cdots3\cdot1\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">The double factorial counts the number of ways to split \(2k\) points into pairs, which is exactly the number of
+  terms in the Wick/Isserlis expansion (each pairing contributes \(E[Z^2]^k=1\)).
+  For \(2k=4\) this gives \(3\) pairings, for \(2k=6\) it gives \(15\).
+  Note \(2^kk!\) is the wrong classic: that is \(E[Z^{2k}]\)'s cousin \((2k)!!\).</div>
+      </article>
+
+      <article class="question" data-answer="0" data-topic="gaussian-moments" id="q11">
+        <header class="q-head">
+          <span class="q-num">11</span>
+          <span class="q-topic">Gaussian moments</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Determine \(\operatorname{var}(B_t^2)\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(2t^2\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(4t^2\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(3t^2\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(t^2\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(2t\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(\operatorname{var}(B_t^2)=E[B_t^4]-\big(E[B_t^2]\big)^2=3t^2-t^2=2t^2\).
+  This single number is behind several standard results: the \(L^2\)-convergence of the quadratic variation sums, the
+  identity \(E[(\int_0^tB\,\mathrm dB)^2]=\tfrac12t^2\), and the fact that \(B_t^2-t\) has variance \(2t^2\).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="gaussian-moments" id="q12">
+        <header class="q-head">
+          <span class="q-num">12</span>
+          <span class="q-topic">Gaussian moments</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Determine \(E\big[B_2^2B_5^2\big]\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(10\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(18\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(14\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(30\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(22\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">With \(s=2<t=5\): \(E[B_s^2B_t^2]=st+2s^2=10+8=18\).
+  Wick: \(E[X^2Y^2]=E[X^2]E[Y^2]+2E[XY]^2\), and \(E[B_sB_t]=s\).
+  The equivalent form from the practice quiz is \(s(t-s)+3s^2\); check they agree: \(2\cdot3+3\cdot4=18\).</div>
+      </article>
+
+      <article class="question" data-answer="2" data-topic="gaussian-moments" id="q13">
+        <header class="q-head">
+          <span class="q-num">13</span>
+          <span class="q-topic">Gaussian moments</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Determine \(\operatorname{cov}(B_s^2,B_t^2)\) for \(0\le s<t\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(2st\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(2t^2\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(2s^2\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(s^2\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(s(t-s)\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(\operatorname{cov}(B_s^2,B_t^2)=E[B_s^2B_t^2]-st=(st+2s^2)-st=2s^2\).
+  Striking feature: the answer does not depend on \(t\) at all. Freezing the earlier time freezes the covariance,
+  however far into the future you look &mdash; the extra randomness after \(s\) is independent and contributes only to
+  the variance of \(B_t^2\).</div>
+      </article>
+
+      <article class="question" data-answer="3" data-topic="gaussian-moments" id="q14">
+        <header class="q-head">
+          <span class="q-num">14</span>
+          <span class="q-topic">Gaussian moments</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Determine \(\operatorname{corr}(B_s^2,B_t^2)\) for \(0<s<t\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(\sqrt{s/t}\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(2s/t\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(1/2\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(s/t\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(s^2/t^2\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(\dfrac{2s^2}{\sqrt{2s^2\cdot2t^2}}=\dfrac{2s^2}{2st}=\dfrac st\).
+  Compare \(\operatorname{corr}(B_s,B_t)=s/\sqrt{st}=\sqrt{s/t}\): squaring the process squares the correlation.
+  Both tend to \(0\) as \(t\to\infty\), but the squared process decorrelates faster.</div>
+      </article>
+
+      <article class="question" data-answer="4" data-topic="gaussian-moments" id="q15">
+        <header class="q-head">
+          <span class="q-num">15</span>
+          <span class="q-topic">Gaussian moments</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Determine \(E\big[B_1^2B_2^4\big]\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(18\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(24\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(12\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(48\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(36\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Split off the independent increment \(D=B_2-B_1\sim N(0,1)\):
+  \[E[B_1^2(B_1+D)^4]=E[B_1^6]+6E[B_1^4]E[D^2]+E[B_1^2]E[D^4]=15+18+3=36,\]
+  the odd-power terms vanishing. In general \(E[B_s^2B_t^4]=3st^2+12s^2t\); with \(s=1,t=2\) this is \(12+24=36\).</div>
+      </article>
+
+      <article class="question" data-answer="0" data-topic="gaussian-moments" id="q16">
+        <header class="q-head">
+          <span class="q-num">16</span>
+          <span class="q-topic">Gaussian moments</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Determine \(E\big[B_2^4B_3^2\big]\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(132\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(156\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(96\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(108\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(72\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(E[B_s^4B_t^2]=E[B_s^4(B_s+D)^2]=E[B_s^6]+E[B_s^4]E[D^2]=15s^3+3s^2(t-s)=12s^3+3s^2t\).
+  With \(s=2,t=3\): \(12\cdot8+3\cdot4\cdot3=96+36=132\).
+  Note how differently the two exponents enter &mdash; \(E[B_s^4B_t^2]\neq E[B_s^2B_t^4]\), since the earlier time
+  carries all the shared randomness.</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="gaussian-moments" id="q17">
+        <header class="q-head">
+          <span class="q-num">17</span>
+          <span class="q-topic">Gaussian moments</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Determine \(E\big[B_s^3B_t^3\big]\) for \(0\le s<t\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(9s^3+6s^2t\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(6s^3+9s^2t\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(3s^2t\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(9s^3t\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(15s^2t\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(E[B_s^3(B_s+D)^3]=E[B_s^6]+3E[B_s^4]E[D^2]=15s^3+9s^2(t-s)=6s^3+9s^2t\).
+  Wick gives the same split: \(6\) pairings match every \(B_s\) with a \(B_t\) (\(6E[B_sB_t]^3=6s^3\)) and \(9\) pairings
+  use one \(B_s\)&ndash;\(B_s\) pair (\(9E[B_s^2]E[B_sB_t]E[B_t^2]=9s^2t\)).
+  Sanity check at \(s=t\): \(6t^3+9t^3=15t^3=E[B_t^6]\).</div>
+      </article>
+
+      <article class="question" data-answer="2" data-topic="gaussian-moments" id="q18">
+        <header class="q-head">
+          <span class="q-num">18</span>
+          <span class="q-topic">Gaussian moments</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Determine \(E\big[B_2^3B_5^3\big]\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(120\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(48\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(228\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(180\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(288\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Using \(E[B_s^3B_t^3]=6s^3+9s^2t\) with \(s=2,t=5\): \(6\cdot8+9\cdot4\cdot5=48+180=228\).
+  A quick plausibility check: it must exceed \(E[B_2^6]=15\cdot8=120\) and stay below
+  \(\sqrt{E[B_2^6]E[B_5^6]}=\sqrt{120\cdot1875}\approx474\) by Cauchy&ndash;Schwarz.</div>
+      </article>
+
+      <article class="question" data-answer="3" data-topic="gaussian-moments" id="q19">
+        <header class="q-head">
+          <span class="q-num">19</span>
+          <span class="q-topic">Gaussian moments</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">How many terms does the Wick/Isserlis expansion of \(E[X_1X_2X_3X_4X_5X_6]\) have, for a centred Gaussian vector?</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(6\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(45\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(3\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(15\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(720\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">The expectation is the sum over all perfect matchings of \(\{1,\dots,6\}\), and there are
+  \(5!!=5\cdot3\cdot1=15\) of them (\(3\) for four variables, \(15\) for six, \(105\) for eight).
+  Consistency check: with all \(X_i=Z\sim N(0,1)\) every term equals \(1\), giving \(E[Z^6]=15\).</div>
+      </article>
+
+      <article class="question" data-answer="4" data-topic="gaussian-moments" id="q20">
+        <header class="q-head">
+          <span class="q-num">20</span>
+          <span class="q-topic">Gaussian moments</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Determine \(E\big[B_1B_2B_3B_4\big]\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(10\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(4\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(6\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(0\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(7\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Three pairings, each a product of two covariances \(\min(\cdot,\cdot)\):
+  \[E[B_1B_2]E[B_3B_4]+E[B_1B_3]E[B_2B_4]+E[B_1B_4]E[B_2B_3]=1\cdot3+1\cdot2+1\cdot2=7.\]
+  Degree \(4\) is even, so parity gives nothing; note that every pairing containing \(B_1\) contributes a factor \(1\),
+  which is why the earliest time dominates.</div>
+      </article>
+
+      <article class="question" data-answer="0" data-topic="increments" id="q21">
+        <header class="q-head">
+          <span class="q-num">21</span>
+          <span class="q-topic">Increment splitting</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Determine \(E\big[B_t^2\mid\mathcal F_s\big]\) for \(s<t\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(B_s^2+(t-s)\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(t-s\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(B_s^2+s\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(B_s^2\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(B_s^2+t\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Write \(B_t=B_s+D\) with \(D\sim N(0,t-s)\) independent of \(\mathcal F_s\):
+  \(E[(B_s+D)^2\mid\mathcal F_s]=B_s^2+2B_sE[D]+E[D^2]=B_s^2+(t-s)\).
+  Equivalently, this is the martingale property of \(B_t^2-t\).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="increments" id="q22">
+        <header class="q-head">
+          <span class="q-num">22</span>
+          <span class="q-topic">Increment splitting</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Determine \(E\big[B_t^3\mid\mathcal F_s\big]\) for \(s<t\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(B_s^3\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(B_s^3+3(t-s)B_s\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(B_s^3+3tB_s\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(B_s^3+(t-s)B_s\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(3(t-s)B_s\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Expanding \((B_s+D)^3\) and keeping the terms with even powers of \(D\):
+  \(B_s^3+3B_sE[D^2]=B_s^3+3(t-s)B_s\).
+  Rearranged, \(B_t^3-3tB_t\) is a martingale &mdash; the cubic Hermite polynomial.</div>
+      </article>
+
+      <article class="question" data-answer="2" data-topic="increments" id="q23">
+        <header class="q-head">
+          <span class="q-num">23</span>
+          <span class="q-topic">Increment splitting</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Determine \(E\big[B_t^4\mid\mathcal F_s\big]\) for \(s<t\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(B_s^4+6tB_s^2+3t^2\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(3(t-s)^2\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(B_s^4+6(t-s)B_s^2+3(t-s)^2\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(B_s^4+3(t-s)^2\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(B_s^4+6(t-s)B_s^2\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\((B_s+D)^4=B_s^4+4B_s^3D+6B_s^2D^2+4B_sD^3+D^4\); the odd powers of \(D\) drop, leaving
+  \(B_s^4+6(t-s)B_s^2+3(t-s)^2\) with \(E[D^4]=3(t-s)^2\).
+  Setting \(s=0\) recovers \(E[B_t^4]=3t^2\), a useful check on the coefficients.</div>
+      </article>
+
+      <article class="question" data-answer="3" data-topic="increments" id="q24">
+        <header class="q-head">
+          <span class="q-num">24</span>
+          <span class="q-topic">Increment splitting</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Determine \(E\big[B_s^2B_t^2\big]\) for \(0\le s<t\) using the tower property.</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(st\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(s(t-s)\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(3s^2\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(st+2s^2\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(st+s^2\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(E[B_s^2B_t^2]=E\big[B_s^2E[B_t^2\mid\mathcal F_s]\big]=E\big[B_s^2(B_s^2+t-s)\big]=3s^2+s(t-s)=st+2s^2\).
+  This is the practice-quiz answer \(s(t-s)+3s^2\) in a different arrangement.
+  Two routes, one number: Wick pairings and the tower property should always agree, and checking them against each
+  other is the cheapest way to catch an arithmetic slip under time pressure.</div>
+      </article>
+
+      <article class="question" data-answer="4" data-topic="increments" id="q25">
+        <header class="q-head">
+          <span class="q-num">25</span>
+          <span class="q-topic">Increment splitting</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Determine \(E\big[B_sB_t^3\big]\) for \(0\le s<t\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(st\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(0\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(3s^2t\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(3s^2\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(3st\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Tower: \(E[B_sE[B_t^3\mid\mathcal F_s]]=E[B_s(B_s^3+3(t-s)B_s)]=3s^2+3(t-s)s=3st\).
+  Wick agrees: the three pairings each contain one \(B_sB_t\) factor and one \(B_t^2\) factor, giving
+  \(3E[B_sB_t]E[B_t^2]=3st\).
+  Compare \(E[B_s^3B_t]=3s^2\): swapping which time carries the cube changes the answer completely.</div>
+      </article>
+
+      <article class="question" data-answer="0" data-topic="increments" id="q26">
+        <header class="q-head">
+          <span class="q-num">26</span>
+          <span class="q-topic">Increment splitting</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Determine \(E\big[B_s^2(B_t-B_s)^2\big]\) for \(0\le s<t\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(s(t-s)\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\((t-s)^2\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(2s^2\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(st\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(3s(t-s)\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">The two factors are independent, so the expectation factorises: \(E[B_s^2]E[(B_t-B_s)^2]=s(t-s)\).
+  This is the term that survives in the practice-quiz computation
+  \(E[B_s^2B_t^2]=E[B_s^2(B_t-B_s)^2]+E[B_s^4]+2E[B_s^3]E[B_t-B_s]=s(t-s)+3s^2\).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="increments" id="q27">
+        <header class="q-head">
+          <span class="q-num">27</span>
+          <span class="q-topic">Increment splitting</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Determine \(E\big[(B_t-B_s)^4\big]\) for \(0\le s<t\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\((t-s)^2\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(3(t-s)^2\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(15(t-s)^2\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(3(t^2-s^2)\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(3t^2-3s^2\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Increments are stationary: \(B_t-B_s\overset{d}{=}B_{t-s}\sim N(0,t-s)\), so the fourth moment is
+  \(3(t-s)^2\).
+  The distractor \(3t^2-3s^2\) comes from differencing \(E[B_t^4]\) and \(E[B_s^4]\), which is meaningless &mdash;
+  moments do not subtract like that.</div>
+      </article>
+
+      <article class="question" data-answer="2" data-topic="increments" id="q28">
+        <header class="q-head">
+          <span class="q-num">28</span>
+          <span class="q-topic">Increment splitting</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Determine \(E\big[B_sB_t\mid\mathcal F_r\big]\) for \(0\le r\le s\le t\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(B_r^2+(t-r)\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(B_r^2\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(B_r^2+(s-r)\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(B_r^2+(t-s)\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(s\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Condition in stages, innermost time last:
+  \(E[B_sB_t\mid\mathcal F_r]=E\big[B_sE[B_t\mid\mathcal F_s]\mid\mathcal F_r\big]=E[B_s^2\mid\mathcal F_r]=B_r^2+(s-r)\).
+  The later time \(t\) disappears entirely, because \(B_t\) enters linearly. Taking \(r=0\) gives \(E[B_sB_t]=s\).</div>
+      </article>
+
+      <article class="question" data-answer="3" data-topic="increments" id="q29">
+        <header class="q-head">
+          <span class="q-num">29</span>
+          <span class="q-topic">Increment splitting</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Determine \(E\big[B_s^4B_t^2\big]\) for \(0\le s<t\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(3s^2t\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(15s^3\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(12s^2t\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(12s^3+3s^2t\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(3s^2t+3s^3\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(E[B_s^4(B_s+D)^2]=E[B_s^6]+E[B_s^4]E[D^2]=15s^3+3s^2(t-s)=12s^3+3s^2t\).
+  Check at \(s=t\): \(12t^3+3t^3=15t^3=E[B_t^6]\). Any formula for a mixed moment should collapse to the pure moment
+  when the two times coincide &mdash; a free correctness test.</div>
+      </article>
+
+      <article class="question" data-answer="4" data-topic="increments" id="q30">
+        <header class="q-head">
+          <span class="q-num">30</span>
+          <span class="q-topic">Increment splitting</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Determine \(E\big[B_1^2B_2^2B_3^2\big]\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(48\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(30\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(36\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(24\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(40\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Peel off the last increment \(D_2=B_3-B_2\sim N(0,1)\), independent of \(\mathcal F_2\):
+  \[E[B_1^2B_2^2B_3^2]=E[B_1^2B_2^2(B_2+D_2)^2]=E[B_1^2B_2^4]+E[B_1^2B_2^2]\cdot1=36+4=40,\]
+  using \(E[B_1^2B_2^4]=36\) and \(E[B_1^2B_2^2]=1\cdot2+2\cdot1=4\).
+  Work from the latest time inwards: each step reduces the number of distinct times by one.</div>
+      </article>
+
+      <article class="question" data-answer="0" data-topic="isometry" id="q31">
+        <header class="q-head">
+          <span class="q-num">31</span>
+          <span class="q-topic">Itô isometry</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Determine \(E\Big[\big(\int_0^tB_s^2\,\mathrm dB_s\big)^2\Big]\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(t^3\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(\tfrac12t^2\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(\tfrac14t^4\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(\tfrac13t^3\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(3t^3\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Isometry then a Gaussian moment: \(\int_0^tE[B_s^4]\,\mathrm ds=\int_0^t3s^2\,\mathrm ds=t^3\).
+  The order matters &mdash; square the integrand first, <em>then</em> take expectations, then integrate in \(s\).
+  Squaring \(E[B_s^2]=s\) instead would give the wrong \(\tfrac13t^3\).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="isometry" id="q32">
+        <header class="q-head">
+          <span class="q-num">32</span>
+          <span class="q-topic">Itô isometry</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Determine \(E\Big[\big(\int_0^tB_s^3\,\mathrm dB_s\big)^2\Big]\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(\tfrac34t^4\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(\tfrac{15}4t^4\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(\tfrac{15}3t^3\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(15t^4\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(\tfrac14t^4\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(\int_0^tE[B_s^6]\,\mathrm ds=\int_0^t15s^3\,\mathrm ds=\tfrac{15}4t^4\).
+  Pattern worth memorising: \(E[(\int_0^tB_s^n\,\mathrm dB_s)^2]=\int_0^t(2n-1)!!\,s^n\,\mathrm ds
+  =\frac{(2n-1)!!}{n+1}t^{n+1}\).</div>
+      </article>
+
+      <article class="question" data-answer="2" data-topic="isometry" id="q33">
+        <header class="q-head">
+          <span class="q-num">33</span>
+          <span class="q-topic">Itô isometry</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Determine \(E\Big[\big(B_t+\int_0^ts\,\mathrm dB_s\big)^2\Big]\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(t+\tfrac12t^2\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(t+\tfrac13t^3\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(t+t^2+\tfrac13t^3\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(\tfrac13t^3\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\((1+t)^2\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Write \(B_t=\int_0^t1\,\mathrm dB_s\) and merge the integrands, exactly as in the practice quiz:
+  \[E\Big[\Big(\int_0^t(1+s)\,\mathrm dB_s\Big)^2\Big]=\int_0^t(1+s)^2\,\mathrm ds=\frac{(1+t)^3-1}{3}=t+t^2+\tfrac13t^3.\]
+  Since the integrand is deterministic no expectation is needed inside; the cross term \(2\int_0^ts\,\mathrm ds=t^2\)
+  is exactly what is lost if you (wrongly) treat the two pieces as uncorrelated.</div>
+      </article>
+
+      <article class="question" data-answer="3" data-topic="isometry" id="q34">
+        <header class="q-head">
+          <span class="q-num">34</span>
+          <span class="q-topic">Itô isometry</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Determine \(E\Big[\big(2B_t-\int_0^tB_s\,\mathrm dB_s\big)^2\Big]\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(4t-\tfrac12t^2\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(4t+\tfrac14t^2\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(2t+\tfrac12t^2\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(4t+\tfrac12t^2\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(4t\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Merge into one integral: \(\int_0^t(2-B_s)\,\mathrm dB_s\), so by the isometry
+  \[\int_0^tE\big[(2-B_s)^2\big]\,\mathrm ds=\int_0^t\big(4-4E[B_s]+E[B_s^2]\big)\,\mathrm ds=\int_0^t(4+s)\,\mathrm ds
+  =4t+\tfrac12t^2.\]
+  The cross term vanishes because \(E[B_s]=0\), not because the two integrals are independent &mdash; they are not.</div>
+      </article>
+
+      <article class="question" data-answer="4" data-topic="isometry" id="q35">
+        <header class="q-head">
+          <span class="q-num">35</span>
+          <span class="q-topic">Itô isometry</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Determine \(E\Big[\big(\int_0^tB_s\,\mathrm dB_s\big)\big(\int_0^ts\,\mathrm dB_s\big)\Big]\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(\tfrac12t^2\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(\tfrac14t^4\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(\tfrac13t^3\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(t\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(0\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Polarised isometry: \(E[\int f\,\mathrm dB\int g\,\mathrm dB]=\int_0^tE[f_sg_s]\,\mathrm ds
+  =\int_0^tsE[B_s]\,\mathrm ds=0\).
+  So the two integrals are uncorrelated &mdash; but not independent: the second is Gaussian, the first is
+  \(\tfrac12(B_t^2-t)\), and both are functions of the same path.</div>
+      </article>
+
+      <article class="question" data-answer="0" data-topic="isometry" id="q36">
+        <header class="q-head">
+          <span class="q-num">36</span>
+          <span class="q-topic">Itô isometry</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Determine \(E\Big[B_t\int_0^ts\,\mathrm dB_s\Big]\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(\tfrac12t^2\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(\tfrac13t^3\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(t\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(t^2\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(0\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Again write \(B_t=\int_0^t1\,\mathrm dB_s\) and polarise:
+  \(\int_0^t1\cdot s\,\mathrm ds=\tfrac12t^2\).
+  Contrast with the previous question, where the random integrand \(B_s\) had mean zero and killed the cross term.
+  Turning \(B_t\) into a stochastic integral with integrand \(1\) is the trick that makes both computations one
+  line.</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="isometry" id="q37">
+        <header class="q-head">
+          <span class="q-num">37</span>
+          <span class="q-topic">Itô isometry</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Determine \(E\Big[\big(\int_0^t|B_s|\,\mathrm dB_s\big)^2\Big]\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(\tfrac2\pi t^2\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(\tfrac12t^2\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(t^2\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(\tfrac13t^3\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(\tfrac1\pi t^2\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(\int_0^tE\big[|B_s|^2\big]\,\mathrm ds=\int_0^ts\,\mathrm ds=\tfrac12t^2\): the absolute value disappears on
+  squaring, so this matches \(E[(\int_0^tB_s\,\mathrm dB_s)^2]\).
+  The trap is to use \(E|B_s|=\sqrt{2s/\pi}\) and square it, giving \(\tfrac2\pi\cdot\tfrac12t^2\). The isometry wants
+  the second moment of the integrand, never the square of its mean.</div>
+      </article>
+
+      <article class="question" data-answer="2" data-topic="isometry" id="q38">
+        <header class="q-head">
+          <span class="q-num">38</span>
+          <span class="q-topic">Itô isometry</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Determine \(E\Big[\big(\int_0^t\mathbf 1_{\{B_s>0\}}B_s\,\mathrm dB_s\big)^2\Big]\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(\tfrac13t^3\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(\tfrac18t^2\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(\tfrac14t^2\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(\tfrac12t\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(\tfrac12t^2\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(\int_0^tE\big[B_s^2\mathbf 1_{\{B_s>0\}}\big]\,\mathrm ds=\int_0^t\tfrac s2\,\mathrm ds=\tfrac14t^2\), using
+  symmetry: \(B_s^2\mathbf 1_{\{B_s>0\}}\) and \(B_s^2\mathbf 1_{\{B_s<0\}}\) have the same expectation and add up to
+  \(E[B_s^2]=s\).
+  Exactly half of the previous answer &mdash; the indicator halves the squared integrand in mean, and the isometry is
+  linear in that quantity.</div>
+      </article>
+
+      <article class="question" data-answer="3" data-topic="isometry" id="q39">
+        <header class="q-head">
+          <span class="q-num">39</span>
+          <span class="q-topic">Itô isometry</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Let \(X_t=\int_0^ts\,\mathrm dB_s\). Determine \(E\Big[\big(\int_0^tX_s\,\mathrm dB_s\big)^2\Big]\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(\tfrac19t^6\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(\tfrac1{12}t^3\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(\tfrac13t^3\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(\tfrac1{12}t^4\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(\tfrac14t^4\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Two applications of the isometry, exactly as in question 7 of the practice quiz.
+  Inner: \(E[X_s^2]=\int_0^su^2\,\mathrm du=\tfrac13s^3\).
+  Outer: \(\int_0^tE[X_s^2]\,\mathrm ds=\int_0^t\tfrac13s^3\,\mathrm ds=\tfrac1{12}t^4\).</div>
+      </article>
+
+      <article class="question" data-answer="4" data-topic="isometry" id="q40">
+        <header class="q-head">
+          <span class="q-num">40</span>
+          <span class="q-topic">Itô isometry</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Determine \(E\Big[\big(\int_0^t(B_s+s)\,\mathrm dB_s\big)^2\Big]\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(\tfrac14t^4\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(\tfrac12t^2\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(\tfrac13t^3\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(\tfrac12t^2+\tfrac13t^3+t^2\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(\tfrac12t^2+\tfrac13t^3\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(E[(B_s+s)^2]=E[B_s^2]+2sE[B_s]+s^2=s+s^2\), so the isometry gives
+  \(\int_0^t(s+s^2)\,\mathrm ds=\tfrac12t^2+\tfrac13t^3\).
+  The mixed term \(2sE[B_s]\) vanishing is what keeps the answer clean; note it is an expectation of a product
+  <em>inside</em> the time integral, not a product of expectations of the two integrals.</div>
+      </article>
+
+      <article class="question" data-answer="0" data-topic="isometry" id="q41">
+        <header class="q-head">
+          <span class="q-num">41</span>
+          <span class="q-topic">Itô isometry</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Determine \(E\Big[\big(\int_0^te^{B_s}\,\mathrm dB_s\big)^2\Big]\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(\tfrac12(e^{2t}-1)\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(\tfrac14(e^{2t}-1)\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(e^{2t}-1\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(e^{t}-1\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(\tfrac12(e^{t}-1)\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(\int_0^tE[e^{2B_s}]\,\mathrm ds=\int_0^te^{2s}\,\mathrm ds=\tfrac12(e^{2t}-1)\), using
+  \(E[e^{\theta B_s}]=e^{\theta^2s/2}\) with \(\theta=2\).
+  Squaring the integrand doubles \(\theta\), so the exponent picks up a factor \(4\) before halving &mdash; using
+  \(\theta=1\) by mistake gives the distractor \(e^t-1\).</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="isometry" id="q42">
+        <header class="q-head">
+          <span class="q-num">42</span>
+          <span class="q-topic">Itô isometry</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Determine \(E\Big[\big(3B_t+\int_0^tB_s\,\mathrm dB_s\big)^2\Big]\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(9t\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(9t+\tfrac12t^2\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(9t+\tfrac12t^2+3t^2\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(3t+\tfrac12t^2\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(9t+t^2\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">One integral with integrand \(3+B_s\):
+  \(\int_0^tE[(3+B_s)^2]\,\mathrm ds=\int_0^t(9+s)\,\mathrm ds=9t+\tfrac12t^2\).
+  The practice-quiz question is the case with coefficient \(1\), giving \(t+\tfrac12t^2\); the coefficient enters
+  squared, and the cross term dies because \(E[B_s]=0\).</div>
+      </article>
+
+      <article class="question" data-answer="2" data-topic="scaling" id="q43">
+        <header class="q-head">
+          <span class="q-num">43</span>
+          <span class="q-topic">Scaling &amp; laws</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Which identity is the basis for computing \(E[B_s^{2k}]\) from standard normal moments?</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(B_s\overset{d}{=}B_{1/s}\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(B_s\overset{d}{=}sB_1\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(B_s\overset{d}{=}\sqrt s\,B_1\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(B_s\overset{d}{=}B_1/\sqrt s\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(B_s\overset{d}{=}s^2B_1\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Brownian scaling in its simplest form: \(B_s\) is centred Gaussian with variance \(s\), so
+  \(B_s\overset{d}{=}\sqrt s\,Z\) and \(E[B_s^{2k}]=s^kE[Z^{2k}]=s^k(2k-1)!!\).
+  The exponent bookkeeping (\(s^k\), not \(s^{2k}\)) is where most sign-free errors happen; note the practice quiz
+  uses precisely this to write \(B_s=\sqrt s\,B_1\) in the \(E[B_s^2B_t^2]\) computation.</div>
+      </article>
+
+      <article class="question" data-answer="3" data-topic="scaling" id="q44">
+        <header class="q-head">
+          <span class="q-num">44</span>
+          <span class="q-topic">Scaling &amp; laws</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Determine \(E\big[B_t^+\big]=E\big[\max(B_t,0)\big]\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(\tfrac12\sqrt{2/\pi}\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(0\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(\sqrt{2t/\pi}\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(\sqrt{t/(2\pi)}\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(t/2\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">By symmetry \(E[B_t^+]=\tfrac12E|B_t|=\tfrac12\sqrt{2t/\pi}=\sqrt{t/(2\pi)}\).
+  Useful as the \(K=0\) case of a call price, and a reminder that \(E[B_t]=0\) splits into two equal and opposite
+  halves \(E[B_t^+]=E[B_t^-]\).</div>
+      </article>
+
+      <article class="question" data-answer="4" data-topic="scaling" id="q45">
+        <header class="q-head">
+          <span class="q-num">45</span>
+          <span class="q-topic">Scaling &amp; laws</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Determine \(E\big[(B_t^+)^2\big]\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(2t/\pi\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(t/\pi\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(t\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(t/4\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(t/2\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\((B_t^+)^2=B_t^2\mathbf 1_{\{B_t>0\}}\), and by symmetry this carries exactly half of \(E[B_t^2]=t\).
+  Same argument as the indicator isometry question; and note \(\operatorname{var}(B_t^+)=t/2-t/(2\pi)\), so the
+  positive part is <em>not</em> Gaussian even though \(B_t\) is.</div>
+      </article>
+
+      <article class="question" data-answer="0" data-topic="scaling" id="q46">
+        <header class="q-head">
+          <span class="q-num">46</span>
+          <span class="q-topic">Scaling &amp; laws</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Determine \(\operatorname{var}\big(|B_t|\big)\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(\big(1-\tfrac2\pi\big)t\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(\big(1-\tfrac1\pi\big)t\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(\tfrac12t\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(t\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(\tfrac2\pi t\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(E[|B_t|^2]=t\) and \(E|B_t|=\sqrt{2t/\pi}\), so
+  \(\operatorname{var}(|B_t|)=t-\tfrac2\pi t=(1-\tfrac2\pi)t\approx0.363\,t\).
+  Folding the distribution at \(0\) keeps the second moment and creates a positive mean, hence strictly reduces the
+  variance.</div>
+      </article>
+
+      <article class="question" data-answer="1" data-topic="scaling" id="q47">
+        <header class="q-head">
+          <span class="q-num">47</span>
+          <span class="q-topic">Scaling &amp; laws</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Determine \(E\big[e^{2B_3}\big]\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(e^{12}\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(e^{6}\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(e^{2}\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(e^{3/2}\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(e^{3}\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(E[e^{\theta B_t}]=e^{\theta^2t/2}\); with \(\theta=2\) and \(t=3\) this is \(e^{4\cdot3/2}=e^6\).
+  This is the moment generating function of \(N(0,t)\), and it is what makes \(e^{\theta B_t-\theta^2t/2}\) a
+  martingale.</div>
+      </article>
+
+      <article class="question" data-answer="2" data-topic="scaling" id="q48">
+        <header class="q-head">
+          <span class="q-num">48</span>
+          <span class="q-topic">Scaling &amp; laws</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Determine \(\displaystyle\lim_{t\to\infty}E\big[\mathbf 1_{\{B_t\le5\}}\big]\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(1\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(\tfrac14\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(\tfrac12\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(\tfrac1{\sqrt5}\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(0\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">\(E[\mathbf 1_{\{B_t\le5\}}]=P(\sqrt t\,B_1\le5)=P(B_1\le5/\sqrt t)\to P(B_1\le0)=\tfrac12\).
+  The fixed level becomes negligible against the spreading \(\sqrt t\) scale, so any fixed threshold gives \(\tfrac12\)
+  in the limit. (For \(t\to0\) the same expression tends to \(1\).)</div>
+      </article>
+
+      <article class="question" data-answer="3" data-topic="scaling" id="q49">
+        <header class="q-head">
+          <span class="q-num">49</span>
+          <span class="q-topic">Scaling &amp; laws</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Let \(Y_t=B_t-\tfrac t2B_2\) for \(0\le t\le2\). Determine \(E[Y_sY_t]\) for \(0\le s\le t\le2\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(\tfrac{st}2\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(s(1-t)\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(t\big(1-\tfrac s2\big)\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(s\big(1-\tfrac t2\big)\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(s\big(1-\tfrac s2\big)\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Expand and use \(E[B_uB_v]=\min(u,v)\):
+  \[E[Y_sY_t]=s-\tfrac t2s-\tfrac s2t+\tfrac{st}4\cdot2=s-\tfrac{st}2=s\Big(1-\frac t2\Big).\]
+  This is the bridge on \([0,2]\); the practice-quiz case \(X_t=B_t-tB_1\) with covariance \(s(1-t)\) is the horizon-\(1\)
+  version. Check the endpoint: \(t=2\) gives \(0\), as it must since \(Y_2=0\).</div>
+      </article>
+
+      <article class="question" data-answer="4" data-topic="scaling" id="q50">
+        <header class="q-head">
+          <span class="q-num">50</span>
+          <span class="q-topic">Scaling &amp; laws</span>
+          <span class="q-status" aria-live="polite"></span>
+        </header>
+        <div class="q-prompt">Determine \(E\big[|B_t|^3\big]\).</div>
+        <div class="options">
+            <button class="option" data-i="0"><span class="opt-key">A</span><span class="opt-body">\(\sqrt{2/\pi}\;t^{3/2}\)</span></button>
+            <button class="option" data-i="1"><span class="opt-key">B</span><span class="opt-body">\(3t^2\)</span></button>
+            <button class="option" data-i="2"><span class="opt-key">C</span><span class="opt-body">\(0\)</span></button>
+            <button class="option" data-i="3"><span class="opt-key">D</span><span class="opt-body">\(3t^{3/2}\)</span></button>
+            <button class="option" data-i="4"><span class="opt-key">E</span><span class="opt-body">\(2\sqrt{2/\pi}\;t^{3/2}\)</span></button>
+        </div>
+        <button class="sol-toggle" aria-expanded="false">Show solution</button>
+        <div class="solution">Scaling first: \(E|B_t|^3=t^{3/2}E|Z|^3\). For a standard normal,
+  \(E|Z|^3=2\int_0^\infty z^3\varphi(z)\,\mathrm dz=2\sqrt{2/\pi}\approx1.596\).
+  Note that <em>odd absolute</em> moments are not zero and are not given by the double-factorial rule &mdash; that rule
+  applies to even powers of \(Z\) itself.</div>
+      </article>
+  </main>
+
+  <footer>
+    <hr>
+    Notation: \(B=(B_t)_{t\ge0}\) is a standard Brownian motion, \(\mathcal F=(\mathcal F_t)_{t\ge0}\) its completed canonical filtration, \(Z\sim N(0,1)\), and \((2k-1)!!=(2k-1)(2k-3)\cdots3\cdot1\). Single correct answer per question.
+  </footer>
+
+<script>
+(function(){
+  "use strict";
+  var total = document.querySelectorAll('.question').length;
+  var answered = 0, score = 0;
+  var elA = document.getElementById('answered');
+  var elA2 = document.getElementById('answered2');
+  var elS = document.getElementById('score');
+  var elP = document.getElementById('pct');
+  var elFill = document.getElementById('fill');
+
+  function refresh(){
+    elA.textContent = answered;
+    elA2.textContent = answered;
+    elS.textContent = score;
+    elP.textContent = answered ? Math.round(100*score/answered) + '%' : '\u2013';
+    elFill.style.width = (100*answered/total) + '%';
+  }
+
+  document.querySelectorAll('.question').forEach(function(q){
+    var ans = parseInt(q.dataset.answer,10);
+    var opts = q.querySelectorAll('.option');
+    var status = q.querySelector('.q-status');
+    q._done = false;
+
+    opts.forEach(function(opt){
+      opt.addEventListener('click', function(){
+        if(q._done) return;
+        q._done = true;
+        var chosen = parseInt(opt.dataset.i,10);
+        q.classList.add('answered');
+        opts.forEach(function(o,j){
+          o.classList.add('locked');
+          if(j===ans) o.classList.add('correct');
+          else if(j===chosen) o.classList.add('incorrect');
+        });
+        answered++;
+        if(chosen===ans){ score++; status.textContent='Correct'; status.className='q-status ok'; }
+        else { status.textContent='Not quite'; status.className='q-status no'; }
+        refresh();
+      });
+    });
+
+    var toggle = q.querySelector('.sol-toggle');
+    toggle.addEventListener('click', function(){
+      var open = q.classList.toggle('show-sol');
+      toggle.setAttribute('aria-expanded', open ? 'true':'false');
+      toggle.textContent = open ? 'Hide solution' : 'Show solution';
+    });
+  });
+
+  // topic filter
+  var chips = document.querySelectorAll('.chip');
+  chips.forEach(function(chip){
+    chip.addEventListener('click', function(){
+      chips.forEach(function(c){ c.classList.remove('active'); });
+      chip.classList.add('active');
+      var t = chip.dataset.topic;
+      document.querySelectorAll('.question').forEach(function(q){
+        q.classList.toggle('hidden', !(t==='all' || q.dataset.topic===t));
+      });
+      window.scrollTo({top: document.getElementById('quiz').offsetTop-10, behavior:'smooth'});
+    });
+  });
+
+  // reset
+  document.getElementById('reset').addEventListener('click', function(){
+    answered = 0; score = 0;
+    document.querySelectorAll('.question').forEach(function(q){
+      q._done = false;
+      q.classList.remove('answered','show-sol');
+      var st = q.querySelector('.q-status'); st.textContent=''; st.className='q-status';
+      q.querySelectorAll('.option').forEach(function(o){
+        o.classList.remove('locked','correct','incorrect');
+      });
+      var tg = q.querySelector('.sol-toggle');
+      tg.setAttribute('aria-expanded','false'); tg.textContent='Show solution';
+    });
+    refresh();
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+
+  refresh();
+
+  // --- signature: animated Brownian path in the hero ---
+  (function(){
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var W=1000, H=320, N=180, mid=H/2;
+    var xs=[], ys=[]; var y=mid; var seed=20251021;
+    function rnd(){ seed=(seed*1103515245+12345)&0x7fffffff; return seed/0x7fffffff; }
+    for(var i=0;i<=N;i++){
+      xs.push(i*W/N);
+      // Gaussian-ish step via sum of uniforms
+      var g=(rnd()+rnd()+rnd()+rnd()-2)*10;
+      y += g; if(y<24) y=24+(24-y)*0.5; if(y>H-24) y=(H-24)-((y-(H-24))*0.5);
+      ys.push(y);
+    }
+    var path=document.getElementById('walkPath');
+    var dot=document.getElementById('walkDot');
+    function d(k){ var s='M '+xs[0].toFixed(1)+' '+ys[0].toFixed(1);
+      for(var i=1;i<=k;i++) s+=' L '+xs[i].toFixed(1)+' '+ys[i].toFixed(1); return s; }
+    if(reduce){ path.setAttribute('d', d(N)); dot.setAttribute('cx',xs[N]); dot.setAttribute('cy',ys[N]); return; }
+    var k=0;
+    (function step(){
+      k+=1; if(k>N) k=N;
+      path.setAttribute('d', d(k));
+      dot.setAttribute('cx', xs[k].toFixed(1)); dot.setAttribute('cy', ys[k].toFixed(1));
+      if(k<N) requestAnimationFrame(step);
+    })();
+  })();
+})();
+</script>
+</body>
+</html>
