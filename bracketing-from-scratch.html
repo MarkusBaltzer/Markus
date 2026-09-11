@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How the bracketing proof actually works — built from the ground up</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@400;500;600&family=Spectral:ital,wght@0,300;0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\\[','\\]']],
+    processEscapes: true,
+    macros: {
+      Nb: ["N_{[\\,]}"],
+      Jb: ["J_{[\\,]}"],
+      Pn: ["\\mathbb{P}^{(n)}"],
+      Gn: ["\\mathbb{G}^{(n)}"],
+      E: ["\\mathbb{E}"],
+      P: ["\\mathbb{P}"],
+      R: ["\\mathbb{R}"],
+      linf: ["\\ell^\\infty"],
+      wto: ["\\;\\overset{d}{\\longrightarrow}\\;"],
+      pto: ["\\;\\overset{P}{\\longrightarrow}\\;"]
+    }
+  },
+  chtml: { scale: 1.02 },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script id="MathJax-script" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js"></script>
+<style>
+:root{
+  --ink:#14181d;
+  --ink-soft:#4b5661;
+  --paper:#e9edf1;
+  --panel:#ffffff;
+  --rule:#c6d0d9;
+  --rule-soft:#dde4ea;
+  --deep:#1b4965;
+  --lower:#0f766e;
+  --upper:#6d28d9;
+  --warn:#9f1239;
+  --gold:#8a6d1f;
+  --shadow:0 1px 0 rgba(20,24,29,.06);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:1.5rem}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} *{animation:none!important; transition:none!important} }
+body{
+  margin:0;
+  background-color:var(--paper);
+  background-image:
+    linear-gradient(to right, rgba(27,73,101,.055) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(27,73,101,.055) 1px, transparent 1px);
+  background-size:26px 26px;
+  color:var(--ink);
+  font-family:"Spectral", Georgia, "Times New Roman", serif;
+  font-weight:400;
+  font-size:17.5px;
+  line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4,.sans{font-family:"IBM Plex Sans Condensed","Helvetica Neue",Arial,sans-serif;font-weight:600;letter-spacing:-.005em}
+code,kbd,.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;font-size:.87em}
+
+/* ---------- layout ---------- */
+.wrap{display:grid;grid-template-columns:250px minmax(0,1fr);gap:0;max-width:1320px;margin:0 auto}
+nav.rail{
+  position:sticky;top:0;align-self:start;height:100vh;overflow-y:auto;
+  padding:2.2rem 1.1rem 3rem 1.4rem;border-right:1px solid var(--rule);
+  background:linear-gradient(to right, rgba(255,255,255,.75), rgba(255,255,255,.35));
+}
+nav.rail .railtitle{font-family:"IBM Plex Sans Condensed",sans-serif;font-size:.82rem;color:var(--ink-soft);margin:0 0 1rem;line-height:1.35}
+nav.rail ol{list-style:none;margin:0;padding:0;counter-reset:sec}
+nav.rail li{counter-increment:sec;margin:0}
+nav.rail a{
+  display:grid;grid-template-columns:2.1rem 1fr;gap:.2rem;align-items:baseline;
+  padding:.3rem 0;color:var(--ink);text-decoration:none;
+  font-family:"IBM Plex Sans Condensed",sans-serif;font-size:.93rem;line-height:1.28;
+  border-top:1px solid var(--rule-soft);
+}
+nav.rail a:hover{color:var(--deep)}
+nav.rail a::before{content:"§" counter(sec);font-family:"IBM Plex Mono",monospace;font-size:.72rem;color:var(--deep);opacity:.8}
+nav.rail a.sub{grid-template-columns:2.1rem 1fr;font-size:.86rem;color:var(--ink-soft);border-top:none;padding-left:0}
+nav.rail a.sub::before{content:"";}
+main{padding:2.6rem 3.2rem 8rem;max-width:none;min-width:0}
+.col{max-width:74ch}
+@media (max-width:960px){
+  .wrap{grid-template-columns:1fr}
+  nav.rail{position:static;height:auto;border-right:none;border-bottom:1px solid var(--rule)}
+  main{padding:1.6rem 1.1rem 5rem}
+}
+
+/* ---------- hero ---------- */
+header.hero{border-bottom:2px solid var(--ink);padding-bottom:2rem;margin-bottom:2.4rem}
+header.hero h1{font-size:clamp(2rem,4.4vw,3.2rem);line-height:1.02;margin:.2rem 0 .6rem;max-width:20ch}
+header.hero .kicker{font-family:"IBM Plex Mono",monospace;font-size:.78rem;color:var(--deep);margin:0}
+header.hero .lede{font-size:1.14rem;max-width:66ch;color:var(--ink-soft)}
+.brackethead{position:relative;padding-left:1.5rem}
+.brackethead::before{
+  content:"";position:absolute;left:0;top:.25em;bottom:.25em;width:.62rem;
+  border-left:2px solid var(--deep);border-top:2px solid var(--deep);border-bottom:2px solid var(--deep);
+}
+
+/* ---------- sections ---------- */
+section{margin:0 0 3.4rem;scroll-margin-top:1rem}
+section > h2{
+  font-size:1.72rem;line-height:1.12;margin:3.2rem 0 .4rem;padding-top:1.1rem;border-top:2px solid var(--ink);
+}
+section > h2 .num{font-family:"IBM Plex Mono",monospace;font-size:.72rem;color:var(--deep);display:block;margin-bottom:.35rem}
+h3{font-size:1.18rem;margin:2rem 0 .35rem}
+h4{font-size:1rem;margin:1.4rem 0 .3rem;color:var(--deep)}
+p{margin:.7rem 0}
+ul,ol{padding-left:1.25rem}
+li{margin:.35rem 0}
+a{color:var(--deep)}
+
+/* ---------- panels ---------- */
+.panel{background:var(--panel);border:1px solid var(--rule);padding:1.1rem 1.3rem;margin:1.3rem 0;box-shadow:var(--shadow)}
+.panel > :first-child{margin-top:0}
+.panel > :last-child{margin-bottom:0}
+.tag{font-family:"IBM Plex Sans Condensed",sans-serif;font-size:.8rem;color:var(--deep);display:block;margin-bottom:.35rem}
+.thm{border-left:3px solid var(--deep)}
+.thm .tag{color:var(--deep)}
+.intuition{background:#fbfaf6;border-left:3px solid var(--gold)}
+.intuition .tag{color:var(--gold)}
+.trap{background:#fdf4f5;border-left:3px solid var(--warn)}
+.trap .tag{color:var(--warn)}
+.recipe{background:#f4f9fb;border-left:3px solid var(--lower)}
+.recipe .tag{color:var(--lower)}
+blockquote{margin:1rem 0;padding-left:1rem;border-left:2px solid var(--rule);color:var(--ink-soft);font-style:italic}
+
+/* boilerplate steps */
+ol.steps{list-style:none;counter-reset:st;padding:0;margin:1.2rem 0}
+ol.steps > li{counter-increment:st;position:relative;padding:.75rem 0 .75rem 3.1rem;border-top:1px solid var(--rule-soft)}
+ol.steps > li::before{
+  content:"S" counter(st);position:absolute;left:0;top:.85rem;
+  font-family:"IBM Plex Mono",monospace;font-size:.74rem;color:#fff;background:var(--deep);
+  padding:.16rem .4rem;letter-spacing:.02em;
+}
+ol.steps > li b{font-family:"IBM Plex Sans Condensed",sans-serif;font-weight:600}
+
+/* example cards */
+.ex{border:1px solid var(--rule);background:var(--panel);margin:1.6rem 0;box-shadow:var(--shadow)}
+.ex > .exhead{display:flex;gap:.8rem;align-items:baseline;padding:.8rem 1.2rem;border-bottom:1px solid var(--rule-soft);background:#f6f8fa}
+.ex > .exhead .n{font-family:"IBM Plex Mono",monospace;font-size:.8rem;color:var(--deep)}
+.ex > .exhead h3{margin:0;font-size:1.1rem}
+.ex .exbody{padding:.9rem 1.2rem 1.1rem}
+.ex .exbody > :first-child{margin-top:0}
+.meta{display:grid;grid-template-columns:auto 1fr;gap:.2rem .9rem;font-size:.94rem;margin:.8rem 0;padding:.7rem .9rem;background:#f6f8fa;border:1px solid var(--rule-soft)}
+.meta dt{font-family:"IBM Plex Sans Condensed",sans-serif;color:var(--deep)}
+.meta dd{margin:0}
+
+table{border-collapse:collapse;width:100%;margin:1.1rem 0;font-size:.95rem;background:var(--panel)}
+th,td{border:1px solid var(--rule-soft);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:#f0f4f7;font-family:"IBM Plex Sans Condensed",sans-serif;font-weight:600;font-size:.9rem}
+
+figure{margin:1.6rem 0;background:var(--panel);border:1px solid var(--rule);padding:1rem;box-shadow:var(--shadow)}
+figcaption{font-size:.9rem;color:var(--ink-soft);margin-top:.6rem;line-height:1.45}
+svg{max-width:100%;height:auto;display:block}
+
+/* controls */
+.controls{display:flex;flex-wrap:wrap;gap:1rem;align-items:center;margin:.4rem 0 1rem;font-family:"IBM Plex Sans Condensed",sans-serif;font-size:.92rem}
+.controls label{display:flex;gap:.5rem;align-items:center}
+input[type=range]{accent-color:var(--deep);width:190px}
+button{font-family:"IBM Plex Sans Condensed",sans-serif;font-size:.92rem;background:var(--deep);color:#fff;border:none;padding:.42rem .85rem;cursor:pointer}
+button:hover{background:#16394f}
+button.ghost{background:transparent;color:var(--deep);border:1px solid var(--deep)}
+button.ghost:hover{background:#e6eef3}
+select{font-family:"IBM Plex Sans Condensed",sans-serif;font-size:.92rem;padding:.3rem .4rem;border:1px solid var(--rule)}
+:focus-visible{outline:2px solid var(--upper);outline-offset:2px}
+.readout{font-family:"IBM Plex Mono",monospace;font-size:.85rem;color:var(--ink)}
+.verdict{font-family:"IBM Plex Sans Condensed",sans-serif;font-weight:600;padding:.15rem .5rem;display:inline-block}
+.ok{background:#dff2ee;color:#0f766e}
+.no{background:#fbe3e7;color:var(--warn)}
+
+details{border-top:1px solid var(--rule-soft);padding:.5rem 0}
+details summary{cursor:pointer;font-family:"IBM Plex Sans Condensed",sans-serif;color:var(--deep)}
+details[open] summary{margin-bottom:.4rem}
+.q{font-weight:600}
+.legend{display:flex;gap:1.2rem;flex-wrap:wrap;font-size:.87rem;font-family:"IBM Plex Sans Condensed",sans-serif;color:var(--ink-soft);margin-top:.5rem}
+.swatch{display:inline-block;width:.85rem;height:.85rem;margin-right:.35rem;vertical-align:-1px}
+.footnote{font-size:.9rem;color:var(--ink-soft)}
+hr.thin{border:none;border-top:1px solid var(--rule-soft);margin:2rem 0}
+</style>
+</head><body>
+<div class="wrap">
+<nav class="rail" aria-label="Contents">
+  <p class="railtitle">How the bracketing<br>proof actually works</p>
+  <ol>
+    <li><a href="#setting"><span>Everything is an average</span></a></li>
+    <li><a href="#problem"><span>The problem: one function, N functions, all functions</span></a></li>
+    <li><a href="#tail"><span>Tool 1 — the tail of a single average</span></a></li>
+    <li><a href="#max"><span>Tool 2 — the cost of a maximum over N</span></a></li>
+    <li><a href="#brackets"><span>Tool 3 — turning infinity into N</span></a></li>
+    <li><a href="#gc"><span>A complete proof, start to finish</span></a></li>
+    <li><a href="#breaks"><span>Now multiply by √n and watch it break</span></a></li>
+    <li><a href="#chain"><span>The repair, and where the integral comes from</span></a></li>
+    <li><a href="#recipe"><span>What you actually have to do</span></a></li>
+    <li><a href="#examples"><span>Twelve examples, all algebra shown</span></a></li>
+    <li><a href="#drills"><span>Drills</span></a></li>
+    <li><a href="#close"><span>The whole page in one box</span></a></li>
+  </ol>
+  <p class="railtitle" style="margin-top:1.4rem">Assumes: iid samples, expectation and variance, Chebyshev, the LLN and the CLT. Nothing else.</p>
+</nav>
+
+<main>
+<header class="hero">
+  <p class="kicker">Companion page · built forwards, not backwards</p>
+  <h1>How the bracketing proof actually works</h1>
+  <p class="lede">Nothing here is quoted before it is derived. We start with a single average, find out exactly what goes wrong when you want to control many averages at once, and let the failure tell us what a bracket has to be. By the end of §6 you will have read one complete proof with no gaps, by the end of §8 you will know precisely which step is hard and why, and §10 runs the finished machine on twelve different classes with every line of algebra written out.</p>
+</header>
+
+<div class="panel intuition">
+<span class="tag">The promise</span>
+<p>If at any point something appears without a reason, that is a bug in this page. Two things are stated without proof, and both are flagged where they occur: Bernstein's inequality (§3) and the final assembly of the chaining argument (§8). Everything else — including the whole of §6 — is derived here in full.</p>
+</div>
+
+<section id="setting">
+<h2><span class="num">§1</span>Everything in sight is an average</h2>
+
+<p>We have $Z_1,\dots,Z_n$ iid with distribution $P$. Take any function $f$ of one observation. Then</p>
+$$\mathbb P^{(n)}f\;:=\;\frac1n\sum_{i=1}^nf(Z_i)$$
+<p>is just a sample average, and $Pf:=\mathbb E[f(Z_1)]$ is the number it estimates. Two facts from a first probability course, and we will use nothing deeper about a single $f$:</p>
+$$\mathbb E\big[\mathbb P^{(n)}f\big]=Pf,\qquad
+\operatorname{Var}\big(\mathbb P^{(n)}f\big)=\frac{\operatorname{Var}(f(Z_1))}{n}.$$
+<p>The error is therefore of size $n^{-1/2}$, so to see it we rescale. Define the <b>empirical process</b> applied to $f$:</p>
+$$\mathbb G^{(n)}f\;:=\;\sqrt n\big(\mathbb P^{(n)}f-Pf\big)=\frac1{\sqrt n}\sum_{i=1}^n\Big(f(Z_i)-Pf\Big).$$
+<p>This is a centred, normalised sum of iid terms. Its mean is $0$; its variance is $\operatorname{Var}(f(Z_1))$, independent of $n$; and by the CLT it converges to $\mathcal N\big(0,\operatorname{Var}(f(Z_1))\big)$. Nothing new so far.</p>
+
+<div class="panel">
+<span class="tag">The one piece of translation you need</span>
+<p>The distribution function is this construction with a particular $f$. Put $f_t(z)=\mathbf 1_{[0,t]}(z)$, which is $1$ if $z\le t$ and $0$ otherwise. Then
+$$\mathbb P^{(n)}f_t=\frac1n\#\{i:Z_i\le t\}=F^{(n)}(t),\qquad Pf_t=\mathbb P(Z_1\le t)=F(t),$$
+$$\mathbb G^{(n)}f_t=\sqrt n\big(F^{(n)}(t)-F(t)\big).$$
+So “the rescaled error of the empirical distribution function at $t$” and “the empirical process applied to the function $f_t$” are the same object. Studying a family of functions $\mathcal F=\{f_t:t\ge0\}$ is the same as studying the whole curve.</p>
+</div>
+
+<p>One more elementary fact, used constantly below, so let us record it now. For an indicator, squaring changes nothing: $\mathbf 1_A^2=\mathbf 1_A$. Hence</p>
+$$\mathbb E\big[\mathbf 1_A(Z_1)^2\big]=\mathbb E\big[\mathbf 1_A(Z_1)\big]=P(A),
+\qquad\text{so}\qquad \|\mathbf 1_A\|_{L_2(P)}=\sqrt{P(A)} .$$
+<p>Here $\|g\|_{L_2(P)}=\big(\mathbb E[g(Z_1)^2]\big)^{1/2}$ and $\|g\|_{L_1(P)}=\mathbb E|g(Z_1)|$. Remember the box: <b>for a set, the $L_2$ size is the square root of the probability, while the $L_1$ size is the probability itself.</b> This single asymmetry is responsible for every $\varepsilon^2$ you will meet.</p>
+</section>
+
+<section id="problem">
+<h2><span class="num">§2</span>One function, $N$ functions, all functions</h2>
+
+<p>Fix the goal: we want to say something about</p>
+$$\Big\|\mathbb G^{(n)}\Big\|_{\mathcal F}:=\sup_{f\in\mathcal F}\big|\mathbb G^{(n)}f\big| ,$$
+<p>because that is what a statement “uniformly in $t$” means. Watch what happens as the family grows.</p>
+
+<h4>One function</h4>
+<p>$\mathbb G^{(n)}f\wto\mathcal N(0,\sigma_f^2)$. Bounded in probability, nothing to do.</p>
+
+<h4>Two functions</h4>
+<p>$\max(|\mathbb G^{(n)}f_1|,|\mathbb G^{(n)}f_2|)$ converges to the max of two (correlated) normals. Still bounded. A maximum of finitely many convergent things converges.</p>
+
+<h4>$N$ functions</h4>
+<p>Still fine for fixed $N$, but the <em>size</em> now depends on $N$: the maximum of $N$ standard normals is roughly $\sqrt{2\log N}$, and this grows without bound as $N$ grows. So a bound that is uniform over a family must contain a price that depends on how many functions there effectively are. §4 derives that price.</p>
+
+<h4>Infinitely many functions</h4>
+<p>Now it can genuinely fail. Take $Z_i$ uniform on $[0,1]$ and
+$$\mathcal F=\{\mathbf 1_A:A\subset[0,1]\ \text{finite}\}.$$
+For each <em>fixed</em> finite $A$ we have $P(A)=0$ and, almost surely, no data point lands in $A$, so $\mathbb P^{(n)}\mathbf 1_A=0$ and $\mathbb G^{(n)}\mathbf 1_A=0$. Every individual function behaves perfectly. But now choose $A$ <em>after</em> seeing the data, namely $A=\{Z_1,\dots,Z_n\}$, which is finite and so belongs to $\mathcal F$. Then $\mathbb P^{(n)}\mathbf 1_A=1$ while $P\mathbf 1_A=0$, so
+$$\big\|\mathbb G^{(n)}\big\|_{\mathcal F}\ \ge\ \sqrt n\,(1-0)=\sqrt n\ \longrightarrow\ \infty .$$
+</p>
+
+<div class="panel trap">
+<span class="tag">The lesson to extract</span>
+<p>Pointwise information is worth nothing for a supremum, because the supremum is allowed to pick its $f$ <em>after</em> looking at the data. Any argument that is going to work must therefore control all $f$ <b>simultaneously and in advance</b>, using inequalities that hold for every possible dataset. Hold onto that phrase: it is exactly what a bracket delivers and what an “approximation on average” does not.</p>
+</div>
+
+<p>So the plan must be: reduce the infinite family to a finite one, in advance, with inequalities valid for all data; pay the $\sqrt{\log N}$ price for the finite maximum; and control the error made by the reduction. Three tools, one per §3, §4, §5.</p>
+</section>
+
+<section id="tail">
+<h2><span class="num">§3</span>Tool 1 — how likely is one average to be far out?</h2>
+
+<p>The CLT tells us $\mathbb G^{(n)}f$ is approximately normal, but a limit statement is not enough: to take a maximum over $N$ things we need a bound valid at finite $n$, and we need to know how the bound depends on $f$. That is Bernstein's inequality, the only result on this page quoted without proof.</p>
+
+<div class="panel thm">
+<span class="tag">Bernstein's inequality — quoted (Theorem 1.3 in the notes)</span>
+<p>Let $g$ satisfy $|g|\le M$ and $Pg=0$, and write $\sigma^2=\|g\|^2_{L_2(P)}$. Then for every $x>0$,
+$$\mathbb P\Big(\big|\mathbb G^{(n)}g\big|>x\Big)\;\le\;2\exp\left(-\frac{\tfrac12x^2}{\sigma^2+\tfrac13Mx/\sqrt n}\right).$$</p>
+</div>
+
+<p>Two readings, and both matter later.</p>
+<ul>
+<li><b>For moderate $x$ the second term in the denominator is negligible</b> and the bound is $2e^{-x^2/2\sigma^2}$ — exactly a normal tail with standard deviation $\sigma$. So we may think of $\mathbb G^{(n)}g$ as “a normal with standard deviation $\|g\|_{L_2}$”, uniformly in $n$.</li>
+<li><b>The parameter controlling the tail is $\|g\|_{L_2(P)}$.</b> Not $\|g\|_{L_1}$, not the sup norm. This is not a stylistic choice: the variance of $\mathbb G^{(n)}g$ <em>is</em> $\operatorname{Var}(g(Z_1))\le\|g\|_{L_2}^2$, computed in §1. If you want to say “this piece of the process is small”, the quantity you must make small is its $L_2$ norm.</li>
+</ul>
+
+<div class="panel intuition">
+<span class="tag">Answer to “why is entropy measured in $L_2$?”</span>
+<p>Because the fluctuation size of $\mathbb G^{(n)}g$ is $\|g\|_{L_2(P)}$, and that is the only thing the tail bound sees. Later, when we approximate $f$ by a bracket endpoint, the leftover is some $g$, and the leftover's contribution to the process is governed by $\|g\|_{L_2}$. So brackets must be measured in $L_2$ — otherwise we would be controlling a quantity that does not appear in the bound we intend to use.</p>
+</div>
+</section>
+
+<section id="max">
+<h2><span class="num">§4</span>Tool 2 — what a maximum over $N$ costs</h2>
+
+<p>Now the derivation of $\sqrt{\log N}$, in full. Let $X_1,\dots,X_N$ be any random variables — not necessarily independent — each satisfying the normal-type tail</p>
+$$\mathbb P(|X_j|>x)\le2e^{-x^2/2\sigma^2}\qquad\text{for all }x>0 .$$
+<p>The event that the maximum exceeds $x$ is the union of the $N$ events that some particular $X_j$ exceeds $x$. The union bound (probability of a union $\le$ sum of probabilities — no independence needed) gives</p>
+$$\mathbb P\Big(\max_{j\le N}|X_j|>x\Big)\;\le\;\sum_{j=1}^N\mathbb P(|X_j|>x)\;\le\;2N e^{-x^2/2\sigma^2}.$$
+<p>Now choose $x$ so that the right-hand side is small. Set $x=\sigma\sqrt{2\log(2N/\alpha)}$; then $2Ne^{-x^2/2\sigma^2}=2Ne^{-\log(2N/\alpha)}=\alpha$. In words:</p>
+
+<div class="panel recipe">
+<span class="tag">The maximal inequality, derived</span>
+<p>$$\max_{j\le N}|X_j|\;\le\;\sigma\sqrt{2\log(2N/\alpha)}\qquad\text{with probability at least }1-\alpha,$$
+and integrating the tail gives the expectation form $\mathbb E\big[\max_{j\le N}|X_j|\big]\le C\sigma\sqrt{\log N}$ for a universal constant $C$.</p>
+</div>
+
+<p>Look carefully at the shape, because the whole theory is a consequence of it:</p>
+<ul>
+<li>The cost of a maximum enters through $\sqrt{\log N}$ — you can afford <em>enormous</em> $N$. Going from $10$ functions to $10^{6}$ multiplies the bound by only $\sqrt{6}\approx2.4$.</li>
+<li>The cost is <em>multiplied</em> by $\sigma$, the common $L_2$ size. So a maximum over many <b>small</b> pieces is small: $N$ pieces each of $L_2$ size $\varepsilon$ contribute about $\varepsilon\sqrt{\log N}$. Keep this product in view — it is the integrand of the entropy integral, and it is the only thing the integral is made of.</li>
+</ul>
+
+<figure>
+  <div class="controls">
+    <button id="maxRun">Resample</button>
+    <span class="readout" id="maxRead"></span>
+  </div>
+  <div id="maxFig"></div>
+  <figcaption>Simulated $\mathbb E[\max_{j\le N}|X_j|]$ for iid standard normals, against the derived bound $\sqrt{2\log N}$. The bound is tight in shape: the maximum really does grow, but only like the square root of a logarithm.</figcaption>
+</figure>
+</section>
+
+<section id="brackets">
+<h2><span class="num">§5</span>Tool 3 — turning infinitely many functions into $N$ of them</h2>
+
+<p>We need to replace $\sup_{f\in\mathcal F}$ by $\max_{j\le N}$. The obvious idea is to pick representatives and hope the rest are close. Let us try it honestly and see it fail; the failure tells us what to do instead.</p>
+
+<h3>5.1 &nbsp;The naive attempt, and why it does not close</h3>
+<p>Pick $f_1,\dots,f_N$ such that every $f\in\mathcal F$ has some $f_j$ with $\|f-f_j\|_{L_2}\le\varepsilon$. Then for that $f$,
+$$\big|\mathbb G^{(n)}f\big|\;\le\;\big|\mathbb G^{(n)}f_j\big|+\big|\mathbb G^{(n)}(f-f_j)\big| .$$
+The first term is fine: a maximum over $N$ things, §4. The second term has small $L_2$ norm, so by §3 each single instance of it is small. But we need it small <em>for every $f$ at once</em>, and the collection $\{f-f_{j(f)}:f\in\mathcal F\}$ is still an infinite family. We have not reduced anything: we are trying to bound a supremum over an infinite family using a bound for one member at a time, which §2 showed is exactly the thing that does not work.</p>
+
+<div class="panel trap">
+<span class="tag">The precise defect</span>
+<p>“$\|f-f_j\|_{L_2}$ is small” is a statement about an <em>average over $z$</em>. The supremum is allowed to choose $f$ after seeing the data, so it will choose the $f$ whose deviation happens to sit exactly on the observed points. An averaged guarantee cannot rule that out. We need a guarantee that holds <b>at every $z$ separately</b>, so that it survives being evaluated at whatever the data turn out to be.</p>
+</div>
+
+<h3>5.2 &nbsp;What the defect forces: a pointwise two-sided cage</h3>
+<p>So demand approximation from below and above, valid at every point:
+$$l_j(z)\;\le\;f(z)\;\le\;u_j(z)\qquad\text{for every }z\text{ and every }f\in\mathcal F_j .$$
+A pair $[l_j,u_j]$ is called a <b>bracket</b>, and $\mathcal F_j$ is the set of functions caught inside it. That is all the word means: a floor and a ceiling that no member of the group is allowed to cross, anywhere.</p>
+
+<p>Why this is the right object becomes visible the moment you use it. The point is that inequalities between functions survive integration against <em>any</em> measure — including the random empirical one.</p>
+
+<div class="panel recipe">
+<span class="tag">The key derivation. Everything after this is bookkeeping.</span>
+<p>Let $l\le f\le u$ pointwise. Then $f-l\ge0$ and $f-l\le u-l$ pointwise, so applying both $\mathbb P^{(n)}$ and $P$ — each of which is a positive linear operator, i.e. preserves “$\ge0$” — gives four inequalities:
+$$0\le\mathbb P^{(n)}(f-l)\le\mathbb P^{(n)}(u-l),\qquad 0\le P(f-l)\le P(u-l).$$
+Now write the difference of processes and substitute:
+$$\mathbb G^{(n)}f-\mathbb G^{(n)}l=\sqrt n\Big(\mathbb P^{(n)}(f-l)-P(f-l)\Big).$$
+Upper bound: keep the largest possible first term and the smallest possible second term,
+$$\mathbb G^{(n)}f-\mathbb G^{(n)}l\;\le\;\sqrt n\,\mathbb P^{(n)}(u-l)\;=\;\underbrace{\mathbb G^{(n)}(u-l)}_{\text{random, mean }0}+\underbrace{\sqrt n\,P(u-l)}_{\text{deterministic}} .$$
+Lower bound: smallest first term, largest second term,
+$$\mathbb G^{(n)}f-\mathbb G^{(n)}l\;\ge\;-\sqrt n\,P(u-l).$$
+Combining,
+$$\boxed{\ \sup_{f\in[l,u]}\big|\mathbb G^{(n)}f-\mathbb G^{(n)}l\big|\;\le\;\big|\mathbb G^{(n)}(u-l)\big|\;+\;\sqrt n\,P(u-l).\ }$$</p>
+</div>
+
+<p>Read the box slowly, because it is the entire mechanism of the subject.</p>
+<ul>
+<li><b>The supremum on the left is over infinitely many $f$; the right-hand side does not mention $f$ at all.</b> It involves only the two fixed functions $l$ and $u$. That is the reduction we needed, and it works because the cage is pointwise.</li>
+<li><b>Two costs appear, and they pull in the same direction.</b> A random cost $|\mathbb G^{(n)}(u-l)|$, whose size is $\|u-l\|_{L_2}$ by §3, and a deterministic cost $\sqrt n\,P(u-l)$, i.e. $\sqrt n$ times the $L_1$ size. Both shrink when the bracket is tighter.</li>
+<li><b>The two costs are measured in different norms.</b> $L_2$ for the random one, $L_1$ for the deterministic one. Keep both in view; §7 is entirely about the fact that the second one carries a factor $\sqrt n$.</li>
+</ul>
+
+<div class="panel">
+<span class="tag">Definition, now unavoidable rather than arbitrary</span>
+<p>A bracket $[l,u]$ is an <b>$\varepsilon$-bracket</b> in $L_r(P)$ if $\|u-l\|_{L_r}\le\varepsilon$. The <b>bracketing number</b> $N_{[\,]}(\varepsilon,\mathcal F,L_r(P))$ is the smallest number of $\varepsilon$-brackets needed to cover $\mathcal F$. That is the $N$ that will go into the maximal inequality of §4.</p>
+</div>
+</section>
+
+<section id="gc">
+<h2><span class="num">§6</span>A complete proof, with no gaps: the uniform law of large numbers</h2>
+
+<p>Before touching $\sqrt n$, let us assemble the three tools into a full theorem at the easier scale. Everything below is derived; nothing is quoted except the ordinary strong law.</p>
+
+<div class="panel thm">
+<span class="tag">Theorem (Glivenko–Cantelli, bracketing form — Theorem 1.18 in the notes)</span>
+<p>If $N_{[\,]}(\varepsilon,\mathcal F,L_1(P))<\infty$ for every $\varepsilon>0$, then
+$$\big\|\mathbb P^{(n)}-P\big\|_{\mathcal F}=\sup_{f\in\mathcal F}\big|\mathbb P^{(n)}f-Pf\big|\;\longrightarrow\;0\quad\text{almost surely.}$$</p>
+<p><b>Proof.</b> Fix $\varepsilon>0$. By assumption there are finitely many brackets $[l_1,u_1],\dots,[l_N,u_N]$ with $P(u_j-l_j)\le\varepsilon$ whose union covers $\mathcal F$. Take any $f\in\mathcal F$ and let $j$ be an index with $l_j\le f\le u_j$.</p>
+<p><em>Upper bound.</em> Since $f\le u_j$ pointwise, $\mathbb P^{(n)}f\le\mathbb P^{(n)}u_j$. Add and subtract $Pu_j$:
+$$\mathbb P^{(n)}f-Pf\;\le\;\mathbb P^{(n)}u_j-Pf\;=\;\big(\mathbb P^{(n)}u_j-Pu_j\big)+\big(Pu_j-Pf\big).$$
+For the last bracket use $f\ge l_j$ pointwise, so $Pu_j-Pf\le Pu_j-Pl_j=P(u_j-l_j)\le\varepsilon$. Hence
+$$\mathbb P^{(n)}f-Pf\;\le\;\big(\mathbb P^{(n)}-P\big)u_j+\varepsilon .$$</p>
+<p><em>Lower bound.</em> Symmetrically, $\mathbb P^{(n)}f\ge\mathbb P^{(n)}l_j$ and $Pf\le Pu_j$, so
+$$\mathbb P^{(n)}f-Pf\;\ge\;\big(\mathbb P^{(n)}-P\big)l_j-\varepsilon .$$</p>
+<p><em>Combine.</em> Both bounds are indexed only by $j$, so taking the supremum over $f$ costs nothing:
+$$\big\|\mathbb P^{(n)}-P\big\|_{\mathcal F}\;\le\;\max_{j\le N}\Big\{\big|\big(\mathbb P^{(n)}-P\big)u_j\big|,\ \big|\big(\mathbb P^{(n)}-P\big)l_j\big|\Big\}+\varepsilon .$$
+The maximum is over $2N$ <em>fixed</em> functions, and for each one the strong law gives $(\mathbb P^{(n)}-P)u_j\to0$ almost surely. A maximum of finitely many sequences each tending to $0$ tends to $0$. Therefore
+$$\limsup_{n\to\infty}\big\|\mathbb P^{(n)}-P\big\|_{\mathcal F}\le\varepsilon\quad\text{a.s.}$$
+Since $\varepsilon>0$ was arbitrary, intersecting countably many almost-sure events over $\varepsilon=1/k$ finishes the proof. $\square$</p>
+</div>
+
+<div class="panel intuition">
+<span class="tag">What this proof teaches, and what it hides</span>
+<p>It contains the full mechanism — cage, cover, finite maximum, residual $\varepsilon$ — and it is completely rigorous. Note where each tool went: §5's pointwise cage let the supremum be dropped, and the finite maximum was free because at this scale each term goes to $0$ on its own. <b>The maximal inequality of §4 was never needed</b>: a maximum of $N$ null sequences is null no matter how large $N$ is. That is the luxury we are about to lose.</p>
+</div>
+</section>
+
+<section id="breaks">
+<h2><span class="num">§7</span>Now multiply by $\sqrt n$, and watch exactly what breaks</h2>
+
+<p>Repeat §6 verbatim at the CLT scale. The box from §5.2 already did the algebra: for $f$ in bracket $j$,
+$$\big|\mathbb G^{(n)}f-\mathbb G^{(n)}l_j\big|\;\le\;\underbrace{\big|\mathbb G^{(n)}(u_j-l_j)\big|}_{\text{(A) fluctuation}}\;+\;\underbrace{\sqrt n\,P(u_j-l_j)}_{\text{(B) bias}} .$$
+So the whole process is within (A)+(B) of a process indexed by only $N$ fixed functions. Now size the two terms for the model case: the half-line class, with brackets built from cells of probability mass $m$. Then $u_j-l_j$ is the indicator of a cell, so by §1</p>
+$$\|u_j-l_j\|_{L_2}=\sqrt m,\qquad P(u_j-l_j)=m .$$
+<p>Using §4 with $\sigma=\sqrt m$ and §3's normal-type tail, and $N\approx1/m$ brackets:</p>
+$$\text{(A)}\ \approx\ \sqrt m\,\sqrt{2\log N}=\sqrt m\,\sqrt{2\log(1/m)},\qquad\qquad
+\text{(B)}\ =\ \sqrt n\,m .$$
+
+<h3>7.1 &nbsp;The conflict, in numbers</h3>
+<figure>
+  <div class="controls">
+    <label for="nSlider">sample size $n$</label>
+    <input id="nSlider" type="range" min="2" max="10" step="0.1" value="4">
+    <label for="mSlider">cell mass $m$</label>
+    <input id="mSlider" type="range" min="-8" max="-0.5" step="0.05" value="-2">
+    <span class="readout" id="tradeRead"></span>
+  </div>
+  <div id="tradeFig"></div>
+  <figcaption>The two costs from the single-level bound, as the cell mass $m$ varies at fixed $n$. Term (A), the fluctuation, falls as the brackets get finer. Term (B), the bias, falls too — but it carries a factor $\sqrt n$, so at any fixed refinement it grows without bound as $n\to\infty$. Slide $n$ upward with $m$ held fixed and watch the red curve lift off the floor.</figcaption>
+</figure>
+
+<p>Here is why that is fatal, stated precisely. What we must prove is <b>asymptotic equicontinuity</b>: for every $\eta>0$,
+$$\lim_{\delta\downarrow0}\ \limsup_{n\to\infty}\ \mathbb P\Big(\sup_{\|f-g\|_{L_2}<\delta}\big|\mathbb G^{(n)}f-\mathbb G^{(n)}g\big|>\eta\Big)=0 .$$
+Read the order of the limits: <b>$\delta$ is fixed first, then $n\to\infty$, and only afterwards does $\delta$ shrink.</b> That order is not negotiable — it is what “the process does not develop fine-scale wiggles, uniformly in $n$” means. And the single-level bound contains the term $\sqrt n\,P(u-l)$, in which $P(u-l)$ depends on $\delta$ but not on $n$. So for every fixed $\delta$, the bound tends to $\infty$ as $n\to\infty$. The bound is useless, no matter how the constants are tuned.</p>
+
+<div class="panel trap">
+<span class="tag">And you cannot escape by letting the brackets shrink with $n$</span>
+<p>Choosing $m=m_n\to0$ fast enough kills (B), but then the finite family you compared against is $N_n\to\infty$ functions that change with $n$ — no longer a fixed finite-dimensional object, so you can no longer conclude anything from convergence of finite-dimensional distributions. You have moved the problem, not solved it.</p>
+</div>
+
+<h3>7.2 &nbsp;Where the crudeness is</h3>
+<p>Look back at the derivation in §5.2 and find the wasteful step. It is
+$$\mathbb P^{(n)}(f-l)\;\le\;\mathbb P^{(n)}(u-l).$$
+We replaced the actual leftover $f-l$ by the worst possible leftover $u-l$, at every data point simultaneously. For a typical $f$ sitting in the middle of the bracket, that is a gross overestimate — and we then paid $\sqrt n$ times it. The repair is not to be cleverer about one bracket, but to <b>never take a large step at all</b>.</p>
+</section>
+
+<section id="chain">
+<h2><span class="num">§8</span>The repair: many resolutions, and where the integral comes from</h2>
+
+<p>The idea is called <b>chaining</b>. Instead of approximating $f$ once by a coarse endpoint and paying for the whole leftover, approximate it repeatedly, at finer and finer resolutions, and pay only for the small corrections between consecutive levels.</p>
+
+<h3>8.1 &nbsp;The telescope</h3>
+<p>Fix the dyadic scales $\varepsilon_m=2^{-m}$ for $m=0,1,2,\dots$ At each level, cover $\mathcal F$ by $N_m:=N_{[\,]}(\varepsilon_m,\mathcal F,L_2(P))$ brackets, and let $\pi_mf$ denote the endpoint of the level-$m$ bracket containing $f$. Then for any $M$,
+$$\mathbb G^{(n)}f-\mathbb G^{(n)}\pi_0f\;=\;\sum_{m=1}^{M}\Big(\mathbb G^{(n)}\pi_mf-\mathbb G^{(n)}\pi_{m-1}f\Big)\;+\;\Big(\mathbb G^{(n)}f-\mathbb G^{(n)}\pi_Mf\Big).$$
+This is an identity — everything cancels. Its value is that each increment $\pi_mf-\pi_{m-1}f$ is <em>small</em>: both endpoints approximate the same $f$ at neighbouring resolutions, so their $L_2$ distance is at most $\varepsilon_{m-1}+\varepsilon_m\le3\varepsilon_m$. And there are at most $N_mN_{m-1}\le N_m^2$ distinct such increments, because each is determined by which bracket $f$ falls into at levels $m$ and $m-1$.</p>
+
+<p>Apply §4 to level $m$: a maximum over $N_m^2$ terms of common $L_2$ size $3\varepsilon_m$ costs</p>
+$$\mathbb E\Big[\max_{\text{level-}m\text{ increments}}\big|\mathbb G^{(n)}(\cdot)\big|\Big]\;\lesssim\;\varepsilon_m\sqrt{\log N_m^2}\;\asymp\;\varepsilon_m\sqrt{\log N_m}.$$
+<p>Summing over levels, the total cost of the entire chain is</p>
+$$\sum_{m\ge1}\varepsilon_m\sqrt{\log N_{[\,]}(\varepsilon_m)}\;=\;\sum_{m\ge1}2^{-m}\sqrt{\log N_{[\,]}(2^{-m})} .$$
+
+<h3>8.2 &nbsp;That sum is the integral</h3>
+<p>Now the punchline, and it is an elementary comparison. $N_{[\,]}(\varepsilon)$ is non-increasing in $\varepsilon$, so for $\varepsilon\in[2^{-m-1},2^{-m}]$ we have $\sqrt{\log N_{[\,]}(\varepsilon)}\ge\sqrt{\log N_{[\,]}(2^{-m})}$. That interval has length $2^{-m-1}$, so
+$$\int_{2^{-m-1}}^{2^{-m}}\sqrt{\log N_{[\,]}(\varepsilon)}\,d\varepsilon\;\ge\;2^{-m-1}\sqrt{\log N_{[\,]}(2^{-m})}\;=\;\tfrac12\,\varepsilon_m\sqrt{\log N_{[\,]}(\varepsilon_m)} .$$
+Summing over $m\ge1$, the intervals are disjoint and fill $(0,\tfrac12]$, so
+$$\sum_{m\ge1}\varepsilon_m\sqrt{\log N_{[\,]}(\varepsilon_m)}\;\le\;2\int_0^{1/2}\sqrt{\log N_{[\,]}(\varepsilon)}\,d\varepsilon\;\le\;2\int_0^{1}\sqrt{\log N_{[\,]}(\varepsilon)}\,d\varepsilon .$$
+</p>
+
+<div class="panel recipe">
+<span class="tag">This is the answer to “where does the entropy integral come from?”</span>
+<p>It is the total bill for the chain: <b>the sum over resolutions of (size of the correction at that resolution) × (price of a maximum at that resolution)</b>, and the dyadic sum is within a factor $2$ of
+$$\int_0^1\sqrt{\log N_{[\,]}(\varepsilon,\mathcal F,L_2(P))}\;d\varepsilon .$$
+Finite integral means the chain converges: the fine corrections are summable, so the process is uniformly close to a finite-dimensional one, uniformly in $n$. That is asymptotic equicontinuity, and with convergence of the finite-dimensional distributions it is weak convergence.</p>
+</div>
+
+<h3>8.3 &nbsp;What is still being hidden, stated plainly</h3>
+<p>The bias term of §7 has not vanished by magic; it has been made affordable. At each level the argument does not use the crude step “replace the leftover by the whole bracket width”. Instead the increment is split into a part bounded by a threshold — where Bernstein's inequality is in its sub-Gaussian regime and produces the clean $\varepsilon_m\sqrt{\log N_m}$ above — and a rare part where the function is large, which is handled by a moment bound and contributes at higher order. The thresholds are chosen level by level, roughly as $\sqrt n\,\varepsilon_m/\sqrt{\log N_m}$, which is exactly the point at which the second term in Bernstein's denominator stops mattering. Carrying this bookkeeping through is the content of the proof of Theorem 1.19; it is in van der Vaart, Theorem 19.5, and it is <em>not</em> examinable.</p>
+<p>What is examinable, and what you should now feel is inevitable rather than arbitrary, is the <b>statement</b>:</p>
+
+<div class="panel thm">
+<span class="tag">Theorem 1.19 — the Bracketing CLT</span>
+<p>If
+$$\int_0^1\sqrt{\log N_{[\,]}\big(\varepsilon,\mathcal F,L_2(P)\big)}\;d\varepsilon\;<\;\infty ,$$
+then $\mathcal F$ is $P$-Donsker: $\mathbb G^{(n)}=\sqrt n(\mathbb P^{(n)}-P)$ converges weakly in $\ell^\infty(\mathcal F)$ to a tight Gaussian process $\mathbb G$ with $\mathbb E[\mathbb G f]=0$ and $\operatorname{Cov}(\mathbb Gf,\mathbb Gg)=Pfg-Pf\,Pg$.</p>
+</div>
+
+<div class="panel intuition">
+<span class="tag">How forgiving the condition is — and why you will never lose a mark here</span>
+<p>Suppose $N_{[\,]}(\varepsilon)\le C\varepsilon^{-K}$ for some constants. Then $\log N_{[\,]}(\varepsilon)\le\log C+K\log(1/\varepsilon)$ and
+$$\int_0^1\sqrt{\log C+K\log(1/\varepsilon)}\;d\varepsilon<\infty ,$$
+because $\log(1/\varepsilon)$ is integrable on $(0,1]$ — indeed $\int_0^1\log(1/\varepsilon)d\varepsilon=1$ — and the square root only makes it smaller near $0$ where the integrand exceeds $1$. So: <b>any polynomial bracketing number, of any degree, passes.</b> In practice the last step of every proof is this one sentence, and it is identical every time.</p>
+</div>
+</section>
+
+<section id="recipe">
+<h2><span class="num">§9</span>What you actually have to do</h2>
+
+<p>Everything above says the theory has exactly one input: a bound on $N_{[\,]}(\varepsilon,\mathcal F,L_2(P))$. So an application has exactly five steps, and only steps 2 and 3 involve any thought.</p>
+
+<ol class="steps">
+<li><b>Name the family and its parameter.</b> $\mathcal F=\{f_\theta:\theta\in\Theta\}$. Say what $\Theta$ is and its dimension $d$; expect $N\approx(\text{something})^d$.</li>
+<li><b>Build the cage on a cell, and check it is a cage.</b> Choose cells in $\Theta$ of an <em>unnamed</em> fineness, and write $l_j,u_j$ with a one-line reason why every $f_\theta$ with $\theta$ in the cell satisfies $l_j\le f_\theta\le u_j$ <em>pointwise</em>. Two mechanisms exist, and they exhaust the course:
+<div style="margin:.5rem 0 .2rem">
+<b>ORDER</b> — if $\theta\mapsto f_\theta(z)$ is monotone for each fixed $z$, take $l_j,u_j$ to be the family evaluated at the two ends of the cell. The cage is then exact, by monotonicity.<br>
+<b>SIZE</b> — if instead $|f_\theta-f_{\theta'}|\le\|\theta-\theta'\|\,m(z)$ for an envelope $m$ with $\|m\|_{L_2}<\infty$, take $l_j=f_{\theta_j}-\delta m$ and $u_j=f_{\theta_j}+\delta m$ for a cell of diameter $\delta$ around $\theta_j$.
+</div></li>
+<li><b>Compute the gap and its $L_2$ norm as a formula in the fineness.</b> Write $u_j-l_j$ explicitly, then $\|u_j-l_j\|_{L_2}$. If the gap is an indicator, §1 says this is $\sqrt{\text{mass}}$; otherwise compute directly.</li>
+<li><b>Solve $\|u_j-l_j\|_{L_2}\le\varepsilon$ for the fineness, and count.</b> This is where $\varepsilon^2$ appears, or fails to — it is an algebraic consequence of step 3, never a choice. Then $N_{[\,]}(\varepsilon)=$ (size of $\Theta$) / (fineness), to the power $d$.</li>
+<li><b>Say the invariant sentence.</b> “$N_{[\,]}(\varepsilon)$ is polynomial in $1/\varepsilon$, so the entropy integral converges and Theorem 1.19 applies.”</li>
+</ol>
+
+<div class="panel">
+<span class="tag">The one refinement that step 3 sometimes needs</span>
+<p>If the gap is an indicator of a set built from <em>two</em> constraints — a union of two strips, as happens whenever $\Theta$ is two-dimensional — then bound its mass by a union bound and give each constraint half the budget: mass $\le\varepsilon^2/2+\varepsilon^2/2=\varepsilon^2$. Nothing else changes, and the count gets squared. Examples 3, 4 and 5 below all do exactly this.</p>
+</div>
+</section>
+
+<section id="examples">
+<h2><span class="num">§10</span>Twelve examples, with every line of algebra</h2>
+
+<p>Same five steps every time. Read two or three carefully and the pattern will start doing the work for you; the point of having twelve is that you can check the pattern rather than take it on trust.</p>
+
+<article class="ex">
+<div class="exhead"><span class="n">01</span><h3>Half-lines: $\mathcal F=\{\mathbf 1_{[0,t]}:t\ge0\}$</h3></div>
+<div class="exbody">
+<p><b>Parameter.</b> $t\in[0,\infty)$, so $d=1$.</p>
+<p><b>Mechanism.</b> For fixed $z$, the map $t\mapsto\mathbf 1_{[0,t]}(z)$ jumps from $0$ to $1$ at $t=z$ and never comes back down: monotone increasing. ORDER.</p>
+<p><b>Cage.</b> For $t\in[t_{j-1},t_j)$ put $l_j=\mathbf 1_{[0,t_{j-1}]}$, $u_j=\mathbf 1_{[0,t_j)}$. Check pointwise: if $z\le t_{j-1}$ then $z\le t$, so $l_j(z)=1$ forces $\mathbf 1_{[0,t]}(z)=1$; if $z\ge t_j$ then $z>t$, so $u_j(z)=0$ forces $\mathbf 1_{[0,t]}(z)=0$. In between both inequalities are $0\le\cdot\le1$. ✓</p>
+<p><b>Gap.</b> $u_j-l_j=\mathbf 1_{(t_{j-1},t_j)}$, an indicator.</p>
+<p><b>Its $L_2$ norm.</b> By §1, $\|u_j-l_j\|_{L_2}=\big(\mathbb P(t_{j-1}<Z_1<t_j)\big)^{1/2}=\big(F(t_j-)-F(t_{j-1})\big)^{1/2}.$</p>
+<p><b>Solve.</b> $\big(\text{mass}\big)^{1/2}\le\varepsilon\iff\text{mass}\le\varepsilon^2$. Achievable for any $F$: put $t_j=\inf\{t:F(t)\ge j\varepsilon^2\}$, which works because $F$ is non-decreasing, right-continuous and bounded by $1$.</p>
+<p><b>Count.</b> Each cell consumes $\varepsilon^2$ of the total mass $1$, so $N_{[\,]}(\varepsilon)\le\lceil2/\varepsilon^2\rceil$ (the $2$ is slack for the endpoints).</p>
+<p><b>Conclude.</b> Polynomial in $1/\varepsilon$, so the entropy integral converges and Theorem 1.19 applies. Donsker. $\square$</p>
+</div>
+</article>
+
+<article class="ex">
+<div class="exhead"><span class="n">02</span><h3>Survival indicators: $\mathcal F=\{\mathbf 1_{(t,\infty)}:t\ge0\}$</h3></div>
+<div class="exbody">
+<p><b>Mechanism.</b> $\mathbf 1_{(t,\infty)}=1-\mathbf 1_{[0,t]}$: monotone <em>decreasing</em> in $t$. ORDER, with the roles of the two ends swapped.</p>
+<p><b>Cage.</b> For $t\in[t_{j-1},t_j)$: $l_j=\mathbf 1_{[t_j,\infty)}$ and $u_j=\mathbf 1_{(t_{j-1},\infty)}$.</p>
+<p><b>Gap.</b> $u_j-l_j=\mathbf 1_{(t_{j-1},t_j)}$ — <em>identical</em> to example 1.</p>
+<p><b>Everything after is example 1.</b> $N_{[\,]}(\varepsilon)\le\lceil2/\varepsilon^2\rceil$. Donsker.</p>
+<p class="footnote"><b>Worth extracting as a rule:</b> replacing $f$ by $c-f$ turns each bracket $[l,u]$ into $[c-u,c-l]$ and leaves the gap unchanged. So $N_{[\,]}$ is unchanged by reflection, and likewise by adding a fixed function. If you are asked about $\{\mathbf 1_{[0,t]}-F(t)\}$, the brackets are the ones from example 1 shifted by a constant, and the gap is untouched.</p>
+</div>
+</article>
+
+<article class="ex">
+<div class="exhead"><span class="n">03</span><h3>Intervals: $\mathcal F=\{\mathbf 1_{(s,t]}:0\le s\le t\}$</h3></div>
+<div class="exbody">
+<p><b>Parameter.</b> $(s,t)$, so $d=2$. Expect the count to be squared.</p>
+<p><b>Mechanism.</b> The set $(s,t]$ shrinks as $s$ grows and grows as $t$ grows: monotone in each coordinate separately. ORDER, applied twice.</p>
+<p><b>Cage.</b> Take a cell $s\in[s_{j-1},s_j)$, $t\in[t_{l-1},t_l)$. The largest set that can occur is $(s_{j-1},t_l)$ and the smallest is $(s_j,t_{l-1}]$ (possibly empty, which is fine):
+$$l_{jl}=\mathbf 1_{(s_j,\,t_{l-1}]},\qquad u_{jl}=\mathbf 1_{(s_{j-1},\,t_l)} .$$
+Check: $(s_j,t_{l-1}]\subseteq(s,t]$ because $s\le s_j$ and $t\ge t_{l-1}$; and $(s,t]\subseteq(s_{j-1},t_l)$ because $s\ge s_{j-1}$ and $t<t_l$. ✓</p>
+<p><b>Gap.</b> $u_{jl}-l_{jl}$ is the indicator of $(s_{j-1},t_l)\setminus(s_j,t_{l-1}]$, which is contained in the union of the two strips $(s_{j-1},s_j]$ and $(t_{l-1},t_l)$.</p>
+<p><b>Its $L_2$ norm.</b> Still an indicator, so still a square root of a mass; bound the mass by a union bound:
+$$\|u_{jl}-l_{jl}\|_{L_2}\le\Big(\mathbb P(s_{j-1}<Z\le s_j)+\mathbb P(t_{l-1}<Z<t_l)\Big)^{1/2}.$$</p>
+<p><b>Solve.</b> The formula measures <em>probability</em>, so cut the probability axis — cutting by length cannot work, since a distribution may put mass $0.9$ inside an interval of length $10^{-9}$. Give each strip half the budget: choose the grid so every cell has mass $\le\varepsilon^2/2$. Then the bracket size is $\big(\varepsilon^2/2+\varepsilon^2/2\big)^{1/2}=\varepsilon$. ✓</p>
+<p><b>Count.</b> One grid with $\le\lceil4/\varepsilon^2\rceil$ points serves both coordinates, and a bracket is a choice of cell for $s$ and a cell for $t$: $N_{[\,]}(\varepsilon)\le\lceil4/\varepsilon^2\rceil^2\le C\varepsilon^{-4}$.</p>
+<p><b>Conclude.</b> Polynomial. Donsker. $\square$</p>
+</div>
+</article>
+
+<article class="ex">
+<div class="exhead"><span class="n">04</span><h3>Bivariate quadrants: $\mathcal H=\{\mathbf 1_{[0,s]}(x)\mathbf 1_{[0,t]}(y)\}$</h3></div>
+<div class="exbody">
+<p>This is the bivariate empirical distribution function, $H^{(n)}(s,t)=n^{-1}\sum_i\mathbf 1_{(Z_i\le s,W_i\le t)}$.</p>
+<p><b>Mechanism.</b> The rectangle $[0,s]\times[0,t]$ grows in both coordinates. ORDER, applied to each margin.</p>
+<p><b>Cage.</b> For $s\in[s_{j-1},s_j)$ and $t\in[t_{l-1},t_l)$,
+$$l_{jl}=\mathbf 1_{[0,s_{j-1}]}\otimes\mathbf 1_{[0,t_{l-1}]},\qquad u_{jl}=\mathbf 1_{[0,s_j)}\otimes\mathbf 1_{[0,t_l)} .$$
+The lower rectangle is inside the true one and the true one is inside the upper. ✓</p>
+<p><b>Gap.</b> The indicator of the L-shaped set
+$$D_{jl}=\big([0,s_j)\times[0,t_l)\big)\setminus\big([0,s_{j-1}]\times[0,t_{l-1}]\big)\;\subseteq\;\{s_{j-1}<Z<s_j\}\cup\{t_{l-1}<W<t_l\} .$$
+<em>Not</em> the small rectangle $(s_{j-1},s_j)\times(t_{l-1},t_l)$ — draw the picture and you will see the two arms.</p>
+<p><b>Its $L_2$ norm.</b> $\mathbb P(D_{jl})^{1/2}\le\big(\mathbb P(s_{j-1}<Z<s_j)+\mathbb P(t_{l-1}<W<t_l)\big)^{1/2}$.</p>
+<p><b>Solve.</b> Grid each <em>margin</em> on its own probability axis, at mass $\varepsilon^2/2$ per cell: use $F_Z$ for the $s$-grid and $F_W$ for the $t$-grid. Each needs $\le\lceil4/\varepsilon^2\rceil$ points, and the bracket size is $\le\varepsilon$.</p>
+<p><b>Count.</b> $N_{[\,]}(\varepsilon)\le\lceil4/\varepsilon^2\rceil^2=O(\varepsilon^{-4})$. Polynomial. Donsker. $\square$</p>
+<p class="footnote">Compare with the distributed week-2 solution, which uses a single index $j$ for both coordinates and reports $\lceil2/\varepsilon^2\rceil$. A diagonal family of brackets does not cover pairs $(s,t)$ lying in different cells in the two coordinates, and the gap there is the L-shape, not the rectangle. The product-grid version above is the repair; since any polynomial count passes, the conclusion is the same.</p>
+</div>
+</article>
+
+<article class="ex">
+<div class="exhead"><span class="n">05</span><h3>Rectangles in the plane: $\mathcal F=\{\mathbf 1_{(a,b]}(x)\mathbf 1_{(c,d]}(y)\}$</h3></div>
+<div class="exbody">
+<p><b>Parameter.</b> Four numbers $(a,b,c,d)$. Expect a fourth power.</p>
+<p><b>Cage.</b> Largest rectangle in the cell against smallest, exactly as in example 3 done twice: shrink $a,c$ to their left cell-ends and grow $b,d$ to their right cell-ends for $u$; the reverse for $l$.</p>
+<p><b>Gap.</b> An indicator of a region contained in the union of <em>four</em> strips — one per parameter.</p>
+<p><b>Solve.</b> Union bound over four terms, so each strip gets budget $\varepsilon^2/4$:
+$$\|u-l\|_{L_2}\le\big(4\cdot\varepsilon^2/4\big)^{1/2}=\varepsilon .$$
+Each margin needs $\le\lceil8/\varepsilon^2\rceil$ grid points at that budget.</p>
+<p><b>Count.</b> Two cell-choices per margin, so $N_{[\,]}(\varepsilon)\le\lceil8/\varepsilon^2\rceil^4=O(\varepsilon^{-8})$. Polynomial. Donsker. $\square$</p>
+<p class="footnote">The general rule this example is here to display: <b>$k$ monotone constraints ⇒ split the budget $k$ ways ⇒ the count is raised to the power $k$ ⇒ $\log N_{[\,]}$ picks up a factor $k$ ⇒ nothing whatsoever changes about convergence.</b> This is why dimension is cheap for rectangle-type classes and expensive for, say, convex sets, where the number of constraints is not bounded.</p>
+</div>
+</article>
+
+<article class="ex">
+<div class="exhead"><span class="n">06</span><h3>Weighted indicators: $\mathcal F=\{w\cdot\mathbf 1_{[0,t]}:t\ge0\}$ with $w\ge0$, $\|w\|_{L_2}<\infty$</h3></div>
+<div class="exbody">
+<p><b>Mechanism.</b> Still monotone in $t$ because $w\ge0$ (this is where non-negativity is used — with a sign-changing $w$ you would take pointwise min and max instead, as in example 10). ORDER.</p>
+<p><b>Cage.</b> $l_j=w\cdot\mathbf 1_{[0,t_{j-1}]}$, $u_j=w\cdot\mathbf 1_{[0,t_j)}$.</p>
+<p><b>Gap.</b> $u_j-l_j=w\cdot\mathbf 1_{(t_{j-1},t_j)}$ — an indicator <em>weighted</em> by $w$, so no longer an indicator.</p>
+<p><b>Its $L_2$ norm.</b> Compute from the definition:
+$$\|u_j-l_j\|_{L_2}^2=\mathbb E\Big[w(Z_1)^2\mathbf 1_{(t_{j-1}<Z_1<t_j)}\Big]=\mu\big((t_{j-1},t_j)\big),\qquad\text{where }\mu(A):=\mathbb E\big[w(Z_1)^2\mathbf 1_A(Z_1)\big].$$</p>
+<p><b>Solve.</b> The formula measures the mass of the cell under $\mu$, not under $P$. So — following the rule — <b>cut the axis of the measure that appears</b>: build the grid so that $\mu(\text{cell})\le\varepsilon^2$, which is possible because $\mu$ is a finite measure with total mass $\mu(\mathbb R)=\|w\|_{L_2}^2<\infty$.</p>
+<p><b>Count.</b> $N_{[\,]}(\varepsilon)\le\big\lceil2\|w\|^2_{L_2}/\varepsilon^2\big\rceil$. Polynomial. Donsker. $\square$</p>
+<p class="footnote">This example exists to show that “cut the probability axis” was never the rule. The rule is: compute the gap's $L_2$ norm, see which measure appears in the formula, and cut <em>that</em>. Example 1 is the special case $w\equiv1$, where $\mu=P$.</p>
+</div>
+</article>
+
+<article class="ex">
+<div class="exhead"><span class="n">07</span><h3>Excess functions: $\mathcal F=\{z\mapsto(z-u)^+:u\in[0,U]\}$, assuming $\mathbb E[Z_1^2]<\infty$</h3></div>
+<div class="exbody">
+<p><b>Mechanism.</b> $u\mapsto(z-u)^+$ is decreasing in $u$ for every $z$. ORDER.</p>
+<p><b>Cage.</b> For $u\in[u_{j-1},u_j)$ with $u_j-u_{j-1}=\delta$: $l_j(z)=(z-u_j)^+$, $u_j^{\rm br}(z)=(z-u_{j-1})^+$.</p>
+<p><b>Gap.</b> $u_j^{\rm br}-l_j=(z-u_{j-1})^+-(z-u_j)^+$. The function $x\mapsto(z-x)^+$ is $1$-Lipschitz, so this is between $0$ and $u_j-u_{j-1}=\delta$, <em>pointwise</em>.</p>
+<p><b>Its $L_2$ norm.</b> A function bounded by the constant $\delta$ has $L_2$ norm at most $\delta$:
+$$\|u_j^{\rm br}-l_j\|_{L_2}=\big(\mathbb E[(\cdots)^2]\big)^{1/2}\le\big(\mathbb E[\delta^2]\big)^{1/2}=\delta .$$</p>
+<p><b>Solve.</b> $\delta\le\varepsilon$, so take $\delta=\varepsilon$. <b>No square appears</b>, because the gap was not an indicator — there was no $\mathbf 1^2=\mathbf 1$ collapse.</p>
+<p><b>Count.</b> $N_{[\,]}(\varepsilon)\le\lceil U/\varepsilon\rceil$. Polynomial. Donsker. $\square$</p>
+<p class="footnote">The second moment is needed not for the brackets but so that the class has a square-integrable envelope, i.e. so that the limiting Gaussian process has finite variances at all. Bracketing controls complexity; integrability is a separate hypothesis.</p>
+</div>
+</article>
+
+<article class="ex">
+<div class="exhead"><span class="n">08</span><h3>Truncations: $\mathcal F=\{z\mapsto\min(z,c):c\in[0,C]\}$</h3></div>
+<div class="exbody">
+<p><b>Mechanism.</b> Increasing in $c$. ORDER.</p>
+<p><b>Cage.</b> $l_j(z)=\min(z,c_{j-1})$, $u_j(z)=\min(z,c_j)$, on cells of length $\delta$.</p>
+<p><b>Gap.</b> $\min(z,c_j)-\min(z,c_{j-1})\in[0,\delta]$ pointwise, since $c\mapsto\min(z,c)$ is $1$-Lipschitz.</p>
+<p><b>$L_2$ norm, solve, count.</b> $\le\delta$; set $\delta=\varepsilon$; $N_{[\,]}(\varepsilon)\le\lceil C/\varepsilon\rceil$. Donsker, with no moment assumption at all — the whole class is bounded by $C$. $\square$</p>
+</div>
+</article>
+
+<article class="ex">
+<div class="exhead"><span class="n">09</span><h3>Exponential weights: $\mathcal F=\{z\mapsto e^{-\lambda z}:\lambda\in[0,1]\}$ on $z\ge0$, assuming $\mathbb E[Z_1^2]<\infty$</h3></div>
+<div class="exbody">
+<p><b>Mechanism.</b> Decreasing in $\lambda$ for $z\ge0$. ORDER — use it even though a Lipschitz bound also exists, because ORDER is exact and gives a smaller count.</p>
+<p><b>Cage.</b> $l_j(z)=e^{-\lambda_jz}$, $u_j(z)=e^{-\lambda_{j-1}z}$ on cells of length $\delta$.</p>
+<p><b>Gap.</b> Factorise:
+$$e^{-\lambda_{j-1}z}-e^{-\lambda_jz}=e^{-\lambda_{j-1}z}\big(1-e^{-(\lambda_j-\lambda_{j-1})z}\big)\le1\cdot\big(1-e^{-\delta z}\big)\le\delta z,$$
+using $e^{-\lambda_{j-1}z}\le1$ and $1-e^{-x}\le x$.</p>
+<p><b>Its $L_2$ norm.</b> $\|u_j-l_j\|_{L_2}\le\delta\big(\mathbb E[Z_1^2]\big)^{1/2}=\delta\|Z_1\|_{L_2}$.</p>
+<p><b>Solve.</b> $\delta\|Z_1\|_{L_2}\le\varepsilon\iff\delta=\varepsilon/\|Z_1\|_{L_2}$.</p>
+<p><b>Count.</b> $N_{[\,]}(\varepsilon)\le\lceil\|Z_1\|_{L_2}/\varepsilon\rceil$. Polynomial. Donsker. $\square$</p>
+</div>
+</article>
+
+<article class="ex">
+<div class="exhead"><span class="n">10</span><h3>A one-parameter linear class: $\mathcal F=\{z\mapsto\theta z:\theta\in[-1,1]\}$, $\mathbb E[Z_1^2]<\infty$</h3></div>
+<div class="exbody">
+<p><b>Mechanism.</b> For fixed $z$, $\theta\mapsto\theta z$ is monotone — but increasing when $z>0$ and decreasing when $z<0$. So ORDER still applies, provided you build the cage from <em>whichever endpoint is smaller at that $z$</em>:
+$$l_j(z)=\min\big(\theta_{j-1}z,\;\theta_jz\big),\qquad u_j(z)=\max\big(\theta_{j-1}z,\;\theta_jz\big).$$
+These are legitimate functions of $z$ and the cage holds pointwise because a linear function of $\theta$ on an interval attains its extremes at the ends. ✓</p>
+<p><b>Gap.</b> $u_j-l_j=|\theta_j-\theta_{j-1}|\,|z|=\delta|z|$.</p>
+<p><b>Its $L_2$ norm.</b> $\delta\,\|Z_1\|_{L_2}$.</p>
+<p><b>Solve.</b> $\delta=\varepsilon/\|Z_1\|_{L_2}$.</p>
+<p><b>Count.</b> The parameter interval has length $2$, so $N_{[\,]}(\varepsilon)\le\lceil2\|Z_1\|_{L_2}/\varepsilon\rceil$. Donsker. $\square$</p>
+<p class="footnote">This is the moment where “ORDER” and “SIZE” meet: taking min and max over the corners of the parameter cell is the general recipe, and for a Lipschitz family it reproduces the padded brackets $f_{\theta_j}\pm\delta m$ up to a constant.</p>
+</div>
+</article>
+
+<article class="ex">
+<div class="exhead"><span class="n">11</span><h3>An affine class: $\mathcal F=\{z\mapsto a+bz:(a,b)\in[-1,1]^2\}$</h3></div>
+<div class="exbody">
+<p><b>Parameter.</b> $d=2$. Expect $\varepsilon^{-2}$.</p>
+<p><b>Cage.</b> On a rectangle cell $[a_{j-1},a_j]\times[b_{k-1},b_k]$ with side lengths $\Delta_a,\Delta_b$, take the pointwise min and max over the four corners. Since $a+bz$ is affine in $(a,b)$, the extremes over the rectangle are attained at corners, so the cage is exact.</p>
+<p><b>Gap.</b> Bound it by moving one parameter at a time:
+$$u-l\;\le\;\underbrace{\Delta_a}_{\text{from }a}+\underbrace{\Delta_b|z|}_{\text{from }b}.$$</p>
+<p><b>Its $L_2$ norm.</b> By the triangle inequality in $L_2$, $\|u-l\|_{L_2}\le\Delta_a+\Delta_b\|Z_1\|_{L_2}$.</p>
+<p><b>Solve.</b> Split the budget: $\Delta_a=\varepsilon/2$ and $\Delta_b=\varepsilon/(2\|Z_1\|_{L_2})$ gives $\|u-l\|_{L_2}\le\varepsilon$. Same budget-splitting move as examples 3–5, now for two different <em>units</em> rather than two strips.</p>
+<p><b>Count.</b> $\lceil2/\Delta_a\rceil\cdot\lceil2/\Delta_b\rceil\le C/\varepsilon^2$. Polynomial. Donsker. $\square$</p>
+</div>
+</article>
+
+<article class="ex">
+<div class="exhead"><span class="n">12</span><h3>An oscillating class: $\mathcal F=\{z\mapsto\sin(\theta z):\theta\in[0,T]\}$, $\mathbb E[Z_1^2]<\infty$</h3></div>
+<div class="exbody">
+<p><b>Mechanism.</b> Now genuinely <em>not</em> monotone in $\theta$: as $\theta$ grows, $\sin(\theta z)$ oscillates. ORDER is unavailable, so use SIZE.</p>
+<p><b>Lipschitz bound.</b> By the mean value theorem applied to $\theta\mapsto\sin(\theta z)$, whose derivative is $z\cos(\theta z)$ and is bounded by $|z|$:
+$$|\sin(\theta_1z)-\sin(\theta_2z)|\le|\theta_1-\theta_2|\,|z| ,$$
+so the envelope is $m(z)=|z|$ with $\|m\|_{L_2}=\|Z_1\|_{L_2}<\infty$. ✓</p>
+<p><b>Cage.</b> On a cell of diameter $\delta$ with centre $\theta_j$: $l_j=\sin(\theta_jz)-\delta|z|$ and $u_j=\sin(\theta_jz)+\delta|z|$. The cage holds pointwise by the displayed Lipschitz bound.</p>
+<p><b>Gap.</b> $u_j-l_j=2\delta|z|$.</p>
+<p><b>$L_2$ norm, solve, count.</b> $2\delta\|Z_1\|_{L_2}\le\varepsilon$ gives $\delta=\varepsilon/(2\|Z_1\|_{L_2})$, so $N_{[\,]}(\varepsilon)\le\lceil2T\|Z_1\|_{L_2}/\varepsilon\rceil$. Polynomial. Donsker. $\square$</p>
+<p class="footnote">The same computation with $e^{i\theta z}$ in place of $\sin(\theta z)$, using $|e^{i\theta_1z}-e^{i\theta_2z}|\le|\theta_1-\theta_2||z|$, gives the empirical characteristic function on $[-T,T]$.</p>
+</div>
+</article>
+
+<h3>The twelve at a glance</h3>
+<div style="overflow-x:auto">
+<table>
+<thead><tr><th>#</th><th>Class</th><th>Mech.</th><th>Gap</th><th>$\|{\rm gap}\|_{L_2}$</th><th>$N_{[\,]}(\varepsilon)$</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>$\mathbf 1_{[0,t]}$</td><td>ORDER</td><td>$\mathbf 1_{\rm cell}$</td><td>$\sqrt{\rm mass}$</td><td>$2/\varepsilon^2$</td></tr>
+<tr><td>2</td><td>$\mathbf 1_{(t,\infty)}$</td><td>ORDER</td><td>$\mathbf 1_{\rm cell}$</td><td>$\sqrt{\rm mass}$</td><td>$2/\varepsilon^2$</td></tr>
+<tr><td>3</td><td>$\mathbf 1_{(s,t]}$</td><td>ORDER$^2$</td><td>$\mathbf 1_{\rm 2\ strips}$</td><td>$\sqrt{2\times\rm mass}$</td><td>$(4/\varepsilon^2)^2$</td></tr>
+<tr><td>4</td><td>quadrants in $\mathbb R^2$</td><td>ORDER$^2$</td><td>$\mathbf 1_{\rm L\text{-}shape}$</td><td>$\sqrt{2\times\rm mass}$</td><td>$(4/\varepsilon^2)^2$</td></tr>
+<tr><td>5</td><td>rectangles in $\mathbb R^2$</td><td>ORDER$^4$</td><td>$\mathbf 1_{\rm 4\ strips}$</td><td>$\sqrt{4\times\rm mass}$</td><td>$(8/\varepsilon^2)^4$</td></tr>
+<tr><td>6</td><td>$w\,\mathbf 1_{[0,t]}$</td><td>ORDER</td><td>$w\,\mathbf 1_{\rm cell}$</td><td>$\sqrt{\mu({\rm cell})}$</td><td>$2\|w\|^2/\varepsilon^2$</td></tr>
+<tr><td>7</td><td>$(z-u)^+$</td><td>ORDER</td><td>$\le\delta$</td><td>$\le\delta$</td><td>$U/\varepsilon$</td></tr>
+<tr><td>8</td><td>$\min(z,c)$</td><td>ORDER</td><td>$\le\delta$</td><td>$\le\delta$</td><td>$C/\varepsilon$</td></tr>
+<tr><td>9</td><td>$e^{-\lambda z}$</td><td>ORDER</td><td>$\le\delta z$</td><td>$\delta\|Z\|$</td><td>$\|Z\|/\varepsilon$</td></tr>
+<tr><td>10</td><td>$\theta z$</td><td>ORDER (corners)</td><td>$\delta|z|$</td><td>$\delta\|Z\|$</td><td>$2\|Z\|/\varepsilon$</td></tr>
+<tr><td>11</td><td>$a+bz$</td><td>ORDER (corners)</td><td>$\Delta_a+\Delta_b|z|$</td><td>$\Delta_a+\Delta_b\|Z\|$</td><td>$C/\varepsilon^2$</td></tr>
+<tr><td>12</td><td>$\sin(\theta z)$</td><td>SIZE</td><td>$2\delta|z|$</td><td>$2\delta\|Z\|$</td><td>$C/\varepsilon$</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="panel intuition">
+<span class="tag">Read the fifth column</span>
+<p>The square root appears in rows 1–6 and nowhere else, and in every one of those rows the gap is an indicator (possibly weighted). That is the only source of $\varepsilon^2$ in this entire subject. Rows 7–12 have gaps with an honest size, so $\delta=\varepsilon$ directly and the counts are $1/\varepsilon$ per parameter. Nothing else varies.</p>
+</div>
+</section>
+
+<section id="drills">
+<h2><span class="num">§11</span>Drills</h2>
+<p>Work on paper first: name the parameter, choose the mechanism, write the cage and justify it pointwise, compute the gap's $L_2$ norm as a formula in the fineness, solve, count.</p>
+
+<details><summary class="q">Drill 1. &nbsp;$\mathcal F=\{\mathbf 1_{[0,t]}\}$ when $Z_1$ is discrete, say uniform on $\{1,2,3\}$. Does anything break?</summary>
+<p>No. Take $\varepsilon=0.4$, so $\varepsilon^2=0.16$, and build the grid by $t_j=\inf\{t:F(t)\ge0.16j\}$. Since $F$ jumps by $1/3$ at each of $1,2,3$, the grid points come out as $t_1=t_2=1$, $t_3=t_4=2$, and so on: consecutive grid points coincide. The cells between coinciding points are empty and carry mass $0\le\varepsilon^2$; the cells that straddle an atom have mass $F(t_j-)-F(t_{j-1})=0$ as well, because the atom sits <em>at</em> the grid point and the open cell excludes it. Every cell satisfies the requirement, the count is still at most $\lceil2/\varepsilon^2\rceil$, and the proof runs unchanged. This is exactly what the left limit $F(t_j-)$ in example 1 is for.</p></details>
+
+<details><summary class="q">Drill 2. &nbsp;$\mathcal F=\{z\mapsto|z-\theta|:\theta\in[0,1]\}$.</summary>
+<p>Not monotone in $\theta$ (it decreases then increases), so SIZE. The reverse triangle inequality gives $\big||z-\theta_1|-|z-\theta_2|\big|\le|\theta_1-\theta_2|$, so the envelope is the constant $m\equiv1$ and $\|m\|_{L_2}=1$. Cage on a cell of diameter $\delta$ with centre $\theta_j$: $l_j=|z-\theta_j|-\delta$, $u_j=|z-\theta_j|+\delta$. Gap $=2\delta$, $L_2$ norm $=2\delta$. Solve: $\delta=\varepsilon/2$. Count: $N_{[\,]}(\varepsilon)\le\lceil2/\varepsilon\rceil$. Polynomial, Donsker, and no moment assumption is needed for the brackets — though $\mathbb E[Z_1^2]<\infty$ is needed for the class to have square-integrable envelope.</p></details>
+
+<details><summary class="q">Drill 3. &nbsp;$\mathcal F=\{(x,y)\mapsto\mathbf 1_{[0,s]}(x)\,(y-u)^+:s\ge0,\ u\in[0,U]\}$, with $\mathbb E[Y_1^2]<\infty$. (Hard: two parameters, two different mechanisms.)</summary>
+<p>Increasing in $s$, decreasing in $u$, so ORDER in both, with the cage
+$$l_{jk}=\mathbf 1_{[0,s_{j-1}]}(x)(y-u_k)^+,\qquad u^{\rm br}_{jk}=\mathbf 1_{[0,s_j)}(x)(y-u_{k-1})^+ .$$
+Split the gap by changing one parameter at a time:
+$$u^{\rm br}_{jk}-l_{jk}\;\le\;\underbrace{\mathbf 1_{(s_{j-1},s_j)}(x)\,(y-u_{k-1})^+}_{\text{from }s}\;+\;\underbrace{\mathbf 1_{[0,s_j)}(x)\big[(y-u_{k-1})^+-(y-u_k)^+\big]}_{\text{from }u}.$$
+The second piece is bounded pointwise by $\delta_u$, so its $L_2$ norm is $\le\delta_u$. The first piece has
+$$\big\|\mathbf 1_{(s_{j-1},s_j)}(X)\,(Y-u_{k-1})^+\big\|_{L_2}^2\le\mathbb E\big[Y_1^2\,\mathbf 1_{(s_{j-1}<X_1<s_j)}\big]=\mu\big((s_{j-1},s_j)\big),$$
+which is example 6's weighted measure $\mu(A)=\mathbb E[Y_1^2\mathbf 1_A(X_1)]$, of finite total mass $\mathbb E[Y_1^2]$. Triangle inequality, then split the budget in half: choose the $s$-grid so that $\mu(\text{cell})\le\varepsilon^2/4$ and $\delta_u=\varepsilon/2$. Then $\|u^{\rm br}-l\|_{L_2}\le\varepsilon/2+\varepsilon/2=\varepsilon$. Count: $\lceil4\mathbb E[Y_1^2]/\varepsilon^2\rceil\cdot\lceil2U/\varepsilon\rceil=O(\varepsilon^{-3})$. Polynomial, Donsker.</p></details>
+
+<details><summary class="q">Drill 4. &nbsp;Why is the class of all indicators of finite subsets of $[0,1]$ not covered by any of this?</summary>
+<p>Try to build a cage. Any bracket containing $\mathbf 1_A$ for every finite $A$ must have $u\ge\mathbf 1_A$ for all of them, hence $u\equiv1$ on $[0,1]$, while $l\le\mathbf 1_\emptyset=0$ gives $l\le0$. So the only bracket covering more than a negligible part of the class has $\|u-l\|_{L_2}=1$, and for $\varepsilon<1$ you would need one bracket per function — infinitely many. Thus $N_{[\,]}(\varepsilon)=\infty$ and the theorem simply does not apply, in agreement with §2 where the supremum was computed to be $\sqrt n$.</p></details>
+</section>
+
+<section id="close">
+<h2><span class="num">§12</span>The whole page in one box</h2>
+
+<div class="panel recipe">
+<span class="tag">What was proved, in order</span>
+<ol>
+<li>$\mathbb G^{(n)}f$ is a normalised sum; its fluctuation size is $\|f\|_{L_2(P)}$ (§1, §3).</li>
+<li>A maximum over $N$ such things costs a factor $\sqrt{\log N}$, by the union bound (§4).</li>
+<li>A supremum over infinitely many cannot be handled by averaged approximation, because the supremum sees the data (§2, §5.1). A pointwise cage can, because inequalities survive integration against the empirical measure (§5.2).</li>
+<li>Caging plus a finite maximum proves the uniform law of large numbers outright (§6).</li>
+<li>At the $\sqrt n$ scale the same argument leaves a term $\sqrt n\,P(u-l)$, which for fixed bracket size diverges. One resolution is not enough (§7).</li>
+<li>Approximating across all resolutions instead, the cost is $\sum_m\varepsilon_m\sqrt{\log N_{[\,]}(\varepsilon_m)}$, which is within a factor $2$ of $\int_0^1\sqrt{\log N_{[\,]}(\varepsilon)}\,d\varepsilon$ (§8).</li>
+<li>Hence the only thing an application must supply is a bound on $N_{[\,]}(\varepsilon,\mathcal F,L_2(P))$, and any polynomial bound suffices (§8, §9).</li>
+<li>Supplying it is five mechanical steps, with two mechanisms and one algebraic move — solve for the fineness (§9, §10).</li>
+</ol>
+</div>
+
+<p class="footnote">Numbering of results follows the Week 1 chapter. The single quoted ingredient is Bernstein's inequality; the single unproved assembly is the truncation-and-chaining bookkeeping inside Theorem 1.19, which is where the $\sqrt n\,P(u-l)$ term of §7 is finally disposed of, and which is not examinable.</p>
+</section>
+
+<script>
+(function(){
+  "use strict";
+  var NS="http://www.w3.org/2000/svg";
+  function el(n,a){var e=document.createElementNS(NS,n);for(var k in a){if(a.hasOwnProperty(k))e.setAttribute(k,a[k]);}return e;}
+  function txt(x,y,s,cls,anchor,fill){var t=el("text",{x:x,y:y,"font-size":"12","font-family":'"IBM Plex Sans Condensed",sans-serif',fill:fill||"#4b5661"});if(anchor)t.setAttribute("text-anchor",anchor);t.textContent=s;return t;}
+  function svg(w,h){return el("svg",{viewBox:"0 0 "+w+" "+h,role:"img"});}
+
+  /* --- max of N normals vs sqrt(2 log N) --- */
+  (function(){
+    var box=document.getElementById("maxFig"),btn=document.getElementById("maxRun"),read=document.getElementById("maxRead");
+    if(!box)return;
+    function nrm(){var u=0,v=0;while(u===0)u=Math.random();while(v===0)v=Math.random();
+      return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+    function meanMax(N,reps){var acc=0;
+      for(var r=0;r<reps;r++){var m=0;for(var i=0;i<N;i++){var x=Math.abs(nrm());if(x>m)m=x;}acc+=m;}
+      return acc/reps;}
+    function run(){
+      var Ns=[2,5,20,100,1000,10000,100000,1000000],pts=[];
+      for(var i=0;i<Ns.length;i++){var N=Ns[i],reps=N>=100000?3:(N>=1000?20:200);
+        pts.push({N:N,y:meanMax(N,reps),b:Math.sqrt(2*Math.log(N))});}
+      draw(pts);
+    }
+    function draw(pts){
+      var W=700,H=270,L=64,R=28,T=20,Bm=48,maxY=6.2;
+      var px=function(N){return L+Math.log10(N)/6*(W-L-R);},py=function(y){return H-Bm-y/maxY*(H-T-Bm);};
+      var s=svg(W,H);
+      for(var g=0;g<=6;g++){s.appendChild(el("line",{x1:px(Math.pow(10,g)),x2:px(Math.pow(10,g)),y1:T,y2:H-Bm,stroke:"#eef2f5"}));
+        s.appendChild(txt(px(Math.pow(10,g)),H-Bm+18,"10^"+g,null,"middle"));}
+      for(var v=0;v<=6;v+=2){s.appendChild(el("line",{x1:L,x2:W-R,y1:py(v),y2:py(v),stroke:"#eef2f5"}));
+        s.appendChild(txt(L-8,py(v)+4,String(v),null,"end"));}
+      s.appendChild(el("line",{x1:L,x2:W-R,y1:H-Bm,y2:H-Bm,stroke:"#8fa0ad"}));
+      s.appendChild(el("line",{x1:L,x2:L,y1:T,y2:H-Bm,stroke:"#8fa0ad"}));
+      s.appendChild(txt((L+W-R)/2,H-Bm+38,"number of functions N (log scale)",null,"middle"));
+      var d="";for(var q=0;q<=120;q++){var N=Math.pow(10,6*q/120);if(N<1.2)continue;
+        d+=(d?" L":"M")+px(N).toFixed(1)+","+py(Math.sqrt(2*Math.log(N))).toFixed(1);}
+      s.appendChild(el("path",{d:d,stroke:"#6d28d9","stroke-width":"2.2",fill:"none","stroke-dasharray":"7 4"}));
+      var d2="";pts.forEach(function(p,i){d2+=(i?" L":"M")+px(p.N).toFixed(1)+","+py(p.y).toFixed(1);
+        s.appendChild(el("circle",{cx:px(p.N),cy:py(p.y),r:"4",fill:"#1b4965"}));});
+      s.appendChild(el("path",{d:d2,stroke:"#1b4965","stroke-width":"2",fill:"none"}));
+      s.appendChild(txt(L+8,T+4,"bound √(2 log N)",null,null,"#6d28d9"));
+      s.appendChild(txt(L+8,T+22,"simulated E[max |X_j|]",null,null,"#1b4965"));
+      box.innerHTML="";box.appendChild(s);
+      var last=pts[pts.length-1];
+      if(read)read.textContent="At N = 10^6 the simulated maximum is "+last.y.toFixed(2)+" against the bound "+last.b.toFixed(2)+".";
+    }
+    run(); if(btn)btn.addEventListener("click",run);
+  })();
+
+  /* --- the two competing terms of the single-level bound --- */
+  (function(){
+    var box=document.getElementById("tradeFig"),ns=document.getElementById("nSlider"),
+        ms=document.getElementById("mSlider"),read=document.getElementById("tradeRead");
+    if(!box||!ns||!ms)return;
+    function A(m){return Math.sqrt(m)*Math.sqrt(2*Math.log(2/m));}
+    function B(m,n){return Math.sqrt(n)*m;}
+    function draw(){
+      var n=Math.pow(10,parseFloat(ns.value)), m0=Math.pow(10,parseFloat(ms.value));
+      var W=700,H=280,L=66,R=28,T=22,Bm=52;
+      var lo=-8,hi=-0.5;
+      var px=function(lm){return L+(lm-lo)/(hi-lo)*(W-L-R);};
+      var ylo=-4,yhi=3; /* log10 scale */
+      var py=function(v){var lv=Math.log10(Math.max(v,1e-4));
+        return H-Bm-(Math.min(Math.max(lv,ylo),yhi)-ylo)/(yhi-ylo)*(H-T-Bm);};
+      var s=svg(W,H);
+      for(var g=-8;g<=0;g++){if(g<lo||g>hi)continue;
+        s.appendChild(el("line",{x1:px(g),x2:px(g),y1:T,y2:H-Bm,stroke:"#eef2f5"}));
+        s.appendChild(txt(px(g),H-Bm+18,"10^"+g,null,"middle"));}
+      for(var v=ylo;v<=yhi;v++){
+        s.appendChild(el("line",{x1:L,x2:W-R,y1:py(Math.pow(10,v)),y2:py(Math.pow(10,v)),stroke:"#eef2f5"}));
+        s.appendChild(txt(L-8,py(Math.pow(10,v))+4,"10^"+v,null,"end"));}
+      s.appendChild(el("line",{x1:L,x2:W-R,y1:H-Bm,y2:H-Bm,stroke:"#8fa0ad"}));
+      s.appendChild(el("line",{x1:L,x2:L,y1:T,y2:H-Bm,stroke:"#8fa0ad"}));
+      s.appendChild(txt((L+W-R)/2,H-Bm+38,"cell mass m (log scale)",null,"middle"));
+      var da="",db="";
+      for(var q=0;q<=160;q++){var lm=lo+(hi-lo)*q/160,m=Math.pow(10,lm);
+        da+=(q?" L":"M")+px(lm).toFixed(1)+","+py(A(m)).toFixed(1);
+        db+=(q?" L":"M")+px(lm).toFixed(1)+","+py(B(m,n)).toFixed(1);}
+      s.appendChild(el("path",{d:da,stroke:"#1b4965","stroke-width":"2.2",fill:"none"}));
+      s.appendChild(el("path",{d:db,stroke:"#9f1239","stroke-width":"2.2",fill:"none"}));
+      var lm0=Math.log10(m0);
+      s.appendChild(el("line",{x1:px(lm0),x2:px(lm0),y1:T,y2:H-Bm,stroke:"#6d28d9","stroke-dasharray":"5 4"}));
+      s.appendChild(txt(L+8,T+4,"(A) fluctuation  √m·√(2 log N)",null,null,"#1b4965"));
+      s.appendChild(txt(L+8,T+22,"(B) bias  √n·m",null,null,"#9f1239"));
+      box.innerHTML="";box.appendChild(s);
+      var a=A(m0),b=B(m0,n);
+      read.innerHTML="n = 10^"+parseFloat(ns.value).toFixed(1)+", m = 10^"+lm0.toFixed(2)+
+        " &nbsp;·&nbsp; (A) = "+a.toFixed(3)+" &nbsp;·&nbsp; (B) = "+b.toFixed(3)+
+        " &nbsp;<span class='verdict "+(b<0.1?"ok":"no")+"'>"+(b<0.1?"bias still small":"bias out of control")+"</span>";
+    }
+    draw();
+    ns.addEventListener("input",draw); ms.addEventListener("input",draw);
+  })();
+})();
+</script>
+</main>
+</div>
+</body>
+</html>
