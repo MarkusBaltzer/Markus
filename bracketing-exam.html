@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Decoding a bracketing question — the exam page</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$','$']],
+    displayMath: [['$$','$$']],
+    processEscapes: true,
+    macros: {
+      Nb: ["N_{[\\,]}"],
+      Pn: ["\\mathbb{P}^{(n)}"],
+      Gn: ["\\mathbb{G}^{(n)}"],
+      E: ["\\mathbb{E}"],
+      P: ["\\mathbb{P}"],
+      R: ["\\mathbb{R}"],
+      Ltwo: ["L_2(P)"],
+      linf: ["\\ell^\\infty"]
+    }
+  },
+  chtml: { scale: 1.0 },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] },
+  startup: { typeset: true }
+};
+</script>
+<script id="MathJax-script" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js"></script>
+<style>
+:root{
+  --ink:#191c1a;
+  --ink2:#4e544f;
+  --ink3:#77807a;
+  --paper:#ecefe9;
+  --panel:#ffffff;
+  --rule:#ccd3cc;
+  --rule2:#e0e5df;
+  --mass:#0d5b5f;
+  --mass-bg:#e3f0ef;
+  --len:#95510f;
+  --len-bg:#f7ece0;
+  --flag:#7d1f3d;
+  --flag-bg:#f9ecef;
+  --ok:#2c6640;
+  --ok-bg:#e6f1e8;
+  --shadow:0 1px 2px rgba(25,28,26,.07);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:4.6rem}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto} *{transition:none!important;animation:none!important}}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:"Source Serif 4",Georgia,serif;font-size:18px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4,.ui{font-family:"Archivo",system-ui,sans-serif;font-weight:600;letter-spacing:-.012em}
+.mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.84em}
+p{margin:.65rem 0}
+a{color:var(--mass)}
+ul,ol{padding-left:1.2rem}
+li{margin:.3rem 0}
+hr.rule{border:none;border-top:1px solid var(--rule);margin:2.4rem 0}
+
+/* ---- top bar ---- */
+.topbar{
+  position:sticky;top:0;z-index:50;background:rgba(236,239,233,.94);
+  backdrop-filter:blur(6px);border-bottom:1px solid var(--rule);
+}
+.topbar .inner{max-width:1180px;margin:0 auto;display:flex;gap:.1rem;align-items:center;
+  padding:.42rem .9rem;overflow-x:auto;scrollbar-width:thin}
+.topbar .brand{font-family:"Archivo",sans-serif;font-weight:700;font-size:.86rem;
+  margin-right:.9rem;white-space:nowrap}
+.topbar a{font-family:"Archivo",sans-serif;font-size:.8rem;color:var(--ink2);
+  text-decoration:none;padding:.3rem .5rem;white-space:nowrap;border-radius:3px}
+.topbar a:hover{background:#fff;color:var(--ink)}
+
+/* ---- layout ---- */
+.wrap{max-width:1180px;margin:0 auto;padding:0 1.1rem}
+.col{max-width:73ch}
+section{padding:2.6rem 0 .5rem;scroll-margin-top:4.4rem}
+section > h2{font-size:1.62rem;line-height:1.14;margin:.2rem 0 .1rem}
+section > .kick{font-family:"Archivo",sans-serif;font-size:.78rem;color:var(--ink3);margin:0 0 .5rem}
+h3{font-size:1.1rem;margin:1.8rem 0 .3rem}
+h4{font-size:.98rem;margin:1.2rem 0 .25rem;color:var(--ink2)}
+
+/* ---- hero ---- */
+.hero{padding:2.6rem 0 1rem;border-bottom:1px solid var(--rule)}
+.hero h1{font-size:clamp(2rem,4.6vw,3.1rem);line-height:1.0;margin:.3rem 0 .7rem;max-width:16ch;font-weight:700}
+.hero .lede{font-size:1.1rem;color:var(--ink2);max-width:60ch}
+
+/* ---- decoder ---- */
+.decoder{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:1.1rem;margin:1.6rem 0 .6rem}
+@media (max-width:900px){.decoder{grid-template-columns:1fr}}
+.dpanel{background:var(--panel);border:1px solid var(--rule);box-shadow:var(--shadow);padding:1rem 1.1rem}
+.qblock{border-top:1px solid var(--rule2);padding:.7rem 0 .55rem}
+.qblock:first-of-type{border-top:none;padding-top:.1rem}
+.qlabel{font-family:"Archivo",sans-serif;font-size:.9rem;display:flex;gap:.5rem;align-items:baseline}
+.qlabel .qn{font-family:"JetBrains Mono",monospace;font-size:.72rem;color:var(--ink3);flex:none}
+.qhint{font-size:.86rem;color:var(--ink3);margin:.15rem 0 .45rem 1.7rem}
+.opts{display:flex;flex-wrap:wrap;gap:.4rem;margin-left:1.7rem}
+.opt{font-family:"Archivo",sans-serif;font-size:.84rem;padding:.3rem .6rem;
+  border:1px solid var(--rule);background:#fbfcfb;color:var(--ink2);cursor:pointer;border-radius:2px}
+.opt:hover{border-color:var(--ink3);color:var(--ink)}
+.opt[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+.opt.mass[aria-pressed="true"]{background:var(--mass);border-color:var(--mass)}
+.opt.len[aria-pressed="true"]{background:var(--len);border-color:var(--len)}
+.opt:disabled{opacity:.35;cursor:not-allowed}
+
+/* output card */
+.out{background:var(--panel);border:1px solid var(--rule);box-shadow:var(--shadow);
+  padding:1rem 1.1rem;position:sticky;top:4.3rem;align-self:start}
+@media (max-width:900px){.out{position:static}}
+.out h3{margin:0 0 .5rem;font-size:1rem}
+.outline{display:grid;grid-template-columns:7.3rem 1fr;gap:.1rem .7rem;padding:.42rem 0;
+  border-top:1px solid var(--rule2);font-size:.95rem;align-items:baseline}
+.outline:first-of-type{border-top:none}
+.outline dt{font-family:"Archivo",sans-serif;font-size:.82rem;color:var(--ink3)}
+.outline dd{margin:0}
+.pending{color:var(--ink3);font-style:italic}
+.verdict{display:inline-block;font-family:"Archivo",sans-serif;font-size:.78rem;
+  padding:.1rem .42rem;border-radius:2px}
+.v-mass{background:var(--mass-bg);color:var(--mass)}
+.v-len{background:var(--len-bg);color:var(--len)}
+.v-flag{background:var(--flag-bg);color:var(--flag)}
+.v-ok{background:var(--ok-bg);color:var(--ok)}
+.outnote{font-size:.88rem;color:var(--ink2);margin-top:.7rem;padding-top:.6rem;border-top:1px solid var(--rule2)}
+.ghostbtn{font-family:"Archivo",sans-serif;font-size:.8rem;background:transparent;
+  border:1px solid var(--rule);color:var(--ink2);padding:.28rem .6rem;cursor:pointer;border-radius:2px}
+.ghostbtn:hover{border-color:var(--ink3);color:var(--ink)}
+
+/* ---- panels ---- */
+.box{background:var(--panel);border:1px solid var(--rule);padding:.9rem 1.1rem;margin:1.1rem 0;box-shadow:var(--shadow)}
+.box > :first-child{margin-top:0}
+.box > :last-child{margin-bottom:0}
+.box .lbl{font-family:"Archivo",sans-serif;font-size:.8rem;display:block;margin-bottom:.35rem;color:var(--ink3)}
+.box.mass{border-left:3px solid var(--mass);background:#f6fbfa}
+.box.mass .lbl{color:var(--mass)}
+.box.len{border-left:3px solid var(--len);background:#fdf8f2}
+.box.len .lbl{color:var(--len)}
+.box.flag{border-left:3px solid var(--flag);background:#fdf5f7}
+.box.flag .lbl{color:var(--flag)}
+.box.key{border-left:3px solid var(--ink);background:#fff}
+.box.hook{background:#f4f6f2;border-style:dashed}
+
+table{border-collapse:collapse;width:100%;margin:1rem 0;font-size:.93rem;background:var(--panel)}
+th,td{border:1px solid var(--rule2);padding:.42rem .6rem;text-align:left;vertical-align:top}
+th{background:#f3f6f2;font-family:"Archivo",sans-serif;font-weight:600;font-size:.86rem}
+td.mono{font-size:.85rem}
+
+/* ---- controls / figures ---- */
+figure{margin:1.3rem 0;background:var(--panel);border:1px solid var(--rule);padding:.9rem;box-shadow:var(--shadow)}
+figcaption{font-size:.88rem;color:var(--ink2);margin-top:.55rem;line-height:1.45}
+svg{max-width:100%;height:auto;display:block}
+.controls{display:flex;flex-wrap:wrap;gap:.9rem 1.3rem;align-items:center;margin:.2rem 0 .9rem;
+  font-family:"Archivo",sans-serif;font-size:.86rem}
+.controls label{display:flex;gap:.45rem;align-items:center}
+input[type=range]{accent-color:var(--ink);width:170px}
+select,button{font-family:"Archivo",sans-serif;font-size:.86rem}
+select{padding:.28rem .35rem;border:1px solid var(--rule);background:#fff;border-radius:2px}
+button.solid{background:var(--ink);color:#fff;border:none;padding:.36rem .75rem;cursor:pointer;border-radius:2px}
+button.solid:hover{background:#000}
+:focus-visible{outline:2px solid var(--len);outline-offset:2px}
+.readout{font-family:"JetBrains Mono",monospace;font-size:.82rem;color:var(--ink2)}
+.readout b{color:var(--ink);font-weight:500}
+
+/* ---- annotated model answer ---- */
+.script{background:var(--panel);border:1px solid var(--rule);box-shadow:var(--shadow);margin:1.2rem 0}
+.script > header{padding:.7rem 1rem;border-bottom:1px solid var(--rule2);background:#f3f6f2;
+  display:flex;justify-content:space-between;align-items:baseline;gap:1rem;flex-wrap:wrap}
+.script > header h4{margin:0;font-size:1rem;color:var(--ink)}
+.script .body{padding:.4rem 1rem 1rem}
+.line{border-top:1px solid var(--rule2);padding:.55rem 0 .5rem;position:relative}
+.line:first-child{border-top:none}
+.line .txt{cursor:pointer;display:block;padding-right:1.4rem}
+.line .txt::after{content:"?";position:absolute;right:0;top:.62rem;font-family:"JetBrains Mono",monospace;
+  font-size:.72rem;color:var(--ink3);border:1px solid var(--rule);border-radius:50%;width:1.05rem;
+  height:1.05rem;line-height:.95rem;text-align:center}
+.line.open .txt::after{content:"\00d7";color:var(--ink)}
+.line .why{display:none;margin:.5rem 0 .2rem;padding:.55rem .75rem;background:#f4f6f2;
+  border-left:2px solid var(--ink3);font-size:.92rem;color:var(--ink2)}
+.line.open .why{display:block}
+.line .why b{color:var(--ink)}
+.marks{font-family:"JetBrains Mono",monospace;font-size:.72rem;color:var(--ink3)}
+
+/* ---- drill ---- */
+.drill{background:var(--panel);border:1px solid var(--rule);box-shadow:var(--shadow);padding:1rem 1.1rem}
+.drill .prompt{font-size:1.05rem;margin:.3rem 0 .9rem}
+.drill .row{margin:.6rem 0}
+.drill .rowlabel{font-family:"Archivo",sans-serif;font-size:.8rem;color:var(--ink3);margin-bottom:.25rem}
+.drill .fb{margin-top:.9rem;padding:.6rem .8rem;font-size:.93rem;display:none}
+.drill .fb.show{display:block}
+.fb.good{background:var(--ok-bg);border-left:3px solid var(--ok)}
+.fb.bad{background:var(--flag-bg);border-left:3px solid var(--flag)}
+.score{font-family:"JetBrains Mono",monospace;font-size:.8rem;color:var(--ink2)}
+
+/* ---- flashcards ---- */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:.7rem;margin:1rem 0}
+.card{background:var(--panel);border:1px solid var(--rule);padding:.8rem .9rem;cursor:pointer;
+  box-shadow:var(--shadow);min-height:6.4rem;display:flex;flex-direction:column;justify-content:center}
+.card .q{font-family:"Archivo",sans-serif;font-size:.93rem}
+.card .a{display:none;font-size:.92rem;color:var(--ink2);margin-top:.45rem;
+  padding-top:.45rem;border-top:1px solid var(--rule2)}
+.card.flip .a{display:block}
+.card .tap{font-family:"JetBrains Mono",monospace;font-size:.68rem;color:var(--ink3);margin-top:.5rem}
+.card.flip .tap{display:none}
+
+/* ---- cheat rail ---- */
+.cheat{position:fixed;right:1rem;bottom:1rem;z-index:60;max-width:320px}
+.cheat .panel{background:var(--panel);border:1px solid var(--ink);box-shadow:0 6px 22px rgba(25,28,26,.16);
+  padding:.75rem .85rem;font-size:.88rem;display:none}
+.cheat.open .panel{display:block}
+.cheat .toggle{font-family:"Archivo",sans-serif;font-size:.8rem;background:var(--ink);color:#fff;
+  border:none;padding:.42rem .8rem;cursor:pointer;float:right;margin-top:.4rem;border-radius:2px}
+.cheat .panel p{margin:.35rem 0}
+.cheat .panel .mini{font-size:.82rem;color:var(--ink2)}
+@media (max-width:700px){.cheat{right:.5rem;bottom:.5rem;max-width:88vw}}
+
+footer{margin-top:3rem;padding:1.6rem 0 3rem;border-top:1px solid var(--rule);
+  font-size:.88rem;color:var(--ink3)}
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="inner">
+  <span class="brand">Bracketing · exam</span>
+  <a href="#decode">Decoder</a>
+  <a href="#phrases">Phrase book</a>
+  <a href="#skeleton">Skeleton</a>
+  <a href="#lab">Gap lab</a>
+  <a href="#currencies">Two currencies</a>
+  <a href="#budget">Budgets</a>
+  <a href="#answers">Model answers</a>
+  <a href="#integral">The integral</a>
+  <a href="#marks">Marker's eye</a>
+  <a href="#drill">Drill</a>
+  <a href="#recall">Recall</a>
+</div></div>
+
+<header class="hero"><div class="wrap">
+  <p class="mono" style="color:var(--ink3);margin:0">Companion to the derivation page · built for the two hours that matter</p>
+  <h1>Decode the question, then the proof writes itself</h1>
+  <p class="lede">An exam question never tells you the class, the grid, or the fineness. It tells you five things, all in plain sight, and those five things determine everything else. Answer them in the panel below and watch the entire setup assemble — mechanism, currency, cage, budget, count, and the sentence you finish with.</p>
+
+  <div class="decoder">
+    <div class="dpanel">
+      <div class="qblock">
+        <div class="qlabel"><span class="qn">Q1</span><span>Is the object an average over the sample?</span></div>
+        <p class="qhint">Write the statistic as $\tfrac1n\sum_i(\cdot)$. If you can, what is inside is $f$. If you cannot, it is a smooth function of something that is.</p>
+        <div class="opts" data-q="q1">
+          <button class="opt" data-v="avg">Yes — it is $\Pn f$</button>
+          <button class="opt" data-v="func">No — it is $\phi$ of an average</button>
+        </div>
+      </div>
+
+      <div class="qblock">
+        <div class="qlabel"><span class="qn">Q2</span><span>At fixed $z$, is $\theta\mapsto f_\theta(z)$ monotone?</span></div>
+        <p class="qhint">This is the only question that selects the cage. Test it by moving $\theta$ with $z$ held still.</p>
+        <div class="opts" data-q="q2">
+          <button class="opt" data-v="mono">Yes, in each coordinate</button>
+          <button class="opt" data-v="corner">Affine, but direction flips with $z$</button>
+          <button class="opt" data-v="size">No — it oscillates or turns</button>
+        </div>
+      </div>
+
+      <div class="qblock">
+        <div class="qlabel"><span class="qn">Q3</span><span>Write the gap $u-l$. What kind of object is it?</span></div>
+        <p class="qhint">This is the question that decides $\varepsilon^2$ versus $\varepsilon$. Nothing else decides it.</p>
+        <div class="opts" data-q="q3">
+          <button class="opt mass" data-v="ind">An indicator of a cell</button>
+          <button class="opt mass" data-v="wind">A weight times an indicator</button>
+          <button class="opt len" data-v="const">Bounded by $\delta$, a constant</button>
+          <button class="opt len" data-v="env">Bounded by $\delta\,m(z)$ with $m$ involving $z$</button>
+        </div>
+      </div>
+
+      <div class="qblock">
+        <div class="qlabel"><span class="qn">Q4</span><span>How many numbers is the parameter?</span></div>
+        <p class="qhint">This is the exponent of the count, and the number of ways the budget splits.</p>
+        <div class="opts" data-q="q4">
+          <button class="opt" data-v="1">1</button>
+          <button class="opt" data-v="2">2</button>
+          <button class="opt" data-v="4">4</button>
+          <button class="opt" data-v="d">$d$</button>
+          <button class="opt" data-v="inf">A whole function</button>
+        </div>
+      </div>
+
+      <div class="qblock">
+        <div class="qlabel"><span class="qn">Q5</span><span>Is the parameter range bounded?</span></div>
+        <p class="qhint">Only matters in the length currency. In the mass currency the extent is $1$ whatever the range.</p>
+        <div class="opts" data-q="q5">
+          <button class="opt" data-v="bdd">Yes, an explicit interval</button>
+          <button class="opt" data-v="collapse">No, but the family dies at the edge</button>
+          <button class="opt" data-v="unbdd">No, and nothing collapses</button>
+        </div>
+      </div>
+
+      <p style="margin:.9rem 0 0"><button class="ghostbtn" id="dreset">Clear answers</button>
+      <span class="readout" id="dcount" style="margin-left:.6rem"></span></p>
+    </div>
+
+    <div class="out" id="dout">
+      <h3>Your setup, as it stands</h3>
+      <dl class="outline"><dt>Route</dt><dd id="o-route" class="pending">answer Q1</dd></dl>
+      <dl class="outline"><dt>Mechanism</dt><dd id="o-mech" class="pending">answer Q2</dd></dl>
+      <dl class="outline"><dt>Cage</dt><dd id="o-cage" class="pending">—</dd></dl>
+      <dl class="outline"><dt>Currency</dt><dd id="o-cur" class="pending">answer Q3</dd></dl>
+      <dl class="outline"><dt>Solve</dt><dd id="o-fine" class="pending">—</dd></dl>
+      <dl class="outline"><dt>Extent</dt><dd id="o-ext" class="pending">—</dd></dl>
+      <dl class="outline"><dt>Budget</dt><dd id="o-bud" class="pending">answer Q4</dd></dl>
+      <dl class="outline"><dt>Count</dt><dd id="o-count" class="pending">—</dd></dl>
+      <dl class="outline"><dt>Closing line</dt><dd id="o-close" class="pending">—</dd></dl>
+      <div class="outnote" id="o-note">Nothing here is a choice. Each row is forced by the answer above it, which is why the setup can be assembled by a panel of buttons rather than by inspiration.</div>
+    </div>
+  </div>
+</div></header>
+
+<main class="wrap">
+
+<section id="decode" class="col">
+  <p class="kick">What the question is actually telling you</p>
+  <h2>The exam question is a specification, written in code</h2>
+  <p>A question like <em>“let $Z_1,\dots,Z_n$ be iid with $\E[Z_1^2]&lt;\infty$ and let $\mathcal F=\{z\mapsto e^{-\lambda z}:\lambda\in[0,1]\}$; show $\mathcal F$ is Donsker”</em> looks like it is handing you a class and asking for work. It is doing more than that. Every clause in it is a constraint the examiner had to write down in order for the answer to exist, and each one pins a row of the decoder.</p>
+
+  <p>Read that sentence again, clause by clause. <span class="mono">$\E[Z_1^2]&lt;\infty$</span> says the envelope will involve $z$, so you are in the length currency and $\|Z_1\|_{L_2}$ will appear in your count. <span class="mono">$\lambda\in[0,1]$</span> says the range is bounded — which it has to be, because in the length currency the range divides. <span class="mono">$e^{-\lambda z}$</span> with $z\ge0$ is decreasing in $\lambda$, so the cage is exact and you never need a Lipschitz pad. Three clauses, three rows of the setup, before you have written anything.</p>
+
+  <div class="box key">
+    <span class="lbl">The reading habit to build</span>
+    <p>Assumptions in these questions are not hygiene. They are the examiner telling you which case you are in, because without them the proof they have in mind does not close. <b>Every hypothesis you are given is load-bearing somewhere in the count.</b> If you finish an answer without having used one of them, you have almost certainly taken the wrong route.</p>
+  </div>
+</section>
+
+<section id="phrases" class="col">
+  <p class="kick">Phrase book</p>
+  <h2>Clause by clause, what to write down</h2>
+  <p>These are the phrases that actually recur, and what each one settles. Learn the right-hand column; the left-hand column is what you will be shown.</p>
+
+  <table>
+    <thead><tr><th style="width:38%">The question says</th><th>What it has just told you</th></tr></thead>
+    <tbody>
+      <tr><td>“$\E[Z_1^2]&lt;\infty$”, with a smooth class</td><td>Length currency, envelope $m(z)=|z|$ or similar. $\|Z_1\|_{L_2}$ divides $\varepsilon$ and appears in the count. If you don't use it, you took a wrong turn.</td></tr>
+      <tr><td>“$u\in[0,U]$”, “$\theta\in[-1,1]$”, “$\lambda\in[0,1]$”</td><td>An explicit bounded range means the range is going to divide. That is the signature of the length currency. Its length is the numerator of the count.</td></tr>
+      <tr><td>“for $t\ge0$”, with indicators, no bound</td><td>Mass currency. The unbounded range is deliberate and harmless — say nothing about it, cut the probability axis, extent $1$.</td></tr>
+      <tr><td>“$w\ge0$ with $\|w\|_{L_2}&lt;\infty$”</td><td>The gap is a weighted indicator. Cut the measure $\mu(A)=\E[w(Z_1)^2\mathbf 1_A]$, whose total mass $\|w\|^2_{L_2}$ is the extent.</td></tr>
+      <tr><td>“$K$ bounded and Lipschitz”, bandwidth $h$ fixed</td><td>Envelope is the constant $L/h$. No moment assumption needed, and $h$ lands in the constant of the count, never in the exponent.</td></tr>
+      <tr><td>“$P$ has a density bounded by $\kappa$”</td><td>A geometric class in $\R^d$. You cannot cut the probability axis; you cut volume and convert with $\kappa$. Expect $\varepsilon^{-2}$ per constraint.</td></tr>
+      <tr><td>“Show the functional CLT for $\sqrt n(\,\widehat\cdot-\cdot)$”</td><td>You owe three parts: finite-dimensional convergence with the covariance computed, the entropy bound, and one sentence assembling them.</td></tr>
+      <tr><td>“We proved this for each fixed $t$. Now prove…”</td><td>The pointwise CLT is given. Your job is uniformity — go straight to the class and the brackets; do not re-derive the pointwise statement.</td></tr>
+      <tr><td>“$\sqrt n(\Lambda^{(n)}-\Lambda)$”, or any $\log$, ratio, or inverse</td><td>Not an average. Bracket the average underneath it and transport by the delta method. Hadamard differentiability, not entropy.</td></tr>
+      <tr><td>“Prove Lemma A by applying Lemma B”</td><td>An assembly question — Slutsky, continuous mapping, marginals to joints. No brackets at all. Do not start gridding.</td></tr>
+      <tr><td>“for each $t$ with $F(t)&lt;1$”</td><td>A warning about where the map blows up. In a delta-method answer, this is the domain restriction you must state.</td></tr>
+      <tr><td>Data written as pairs $(Z_i,W_i)$</td><td>One observation is the pair. Functions live on $\R^2$, $P$ is the joint law, and bracket masses are joint probabilities.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="box flag">
+    <span class="lbl">The one misreading that costs most</span>
+    <p>Seeing a two-parameter class and building one grid indexed by a single $j$. A pair $(s,t)$ with $s$ in cell $3$ and $t$ in cell $7$ then lies in no bracket at all, and the cover is not a cover. <b>Two parameters, two indices.</b> The count squares, the budget halves, and nothing else changes.</p>
+  </div>
+</section>
+
+<section id="skeleton" class="col">
+  <p class="kick">Before you think</p>
+  <h2>The skeleton, written from memory in ninety seconds</h2>
+  <p>Write this down first, with blanks, before working anything out. It earns structure marks on its own, it stops you forgetting the finite-dimensional half, and it tells you exactly which quantity you still have to compute.</p>
+
+  <div class="box key">
+    <span class="lbl">Copy this shape</span>
+    <p><b>1. The class.</b> “Let $f_\theta(z)=\underline{\phantom{xx}}$ and $\mathcal F=\{f_\theta:\theta\in\Theta\}$. Then $\sqrt n(\widehat\cdot-\cdot)(\theta)=\Gn f_\theta$, so it suffices to show $\mathcal F$ is $P$-Donsker.”</p>
+    <p><b>2. Finite-dimensional distributions.</b> “Fix $\theta_1,\dots,\theta_M$. The vectors $(f_{\theta_r}(Z_i))_{r\le M}$ are iid with finite second moments, so by the multivariate CLT $\Gn$ converges on these coordinates to a centred Gaussian with $\operatorname{Cov}=Pf_{\theta_r}f_{\theta_s}-Pf_{\theta_r}Pf_{\theta_s}=\underline{\phantom{xx}}$.”</p>
+    <p><b>3. The brackets.</b> “Let $\varepsilon&gt;0$ be given. Choose $\underline{\phantom{xx}}$ such that $\underline{\phantom{xx}}\le\underline{\phantom{xx}}$, possible because $\underline{\phantom{xx}}$. Define $l_j=\underline{\phantom{xx}}$, $u_j=\underline{\phantom{xx}}$. For $\theta$ in cell $j$ and every $z$, $l_j(z)\le f_\theta(z)\le u_j(z)$, because $\underline{\phantom{xx}}$.”</p>
+    <p><b>4. The size and the count.</b> “$\|u_j-l_j\|_{L_2(P)}=\underline{\phantom{xx}}\le\varepsilon$, hence $\Nb(\varepsilon,\mathcal F,L_2(P))\le\underline{\phantom{xx}}$.”</p>
+    <p><b>5. The invariant sentence.</b> “This is polynomial in $1/\varepsilon$, so $\int_0^1\sqrt{\log \Nb(\varepsilon,\mathcal F,L_2(P))}\,d\varepsilon&lt;\infty$, and by the bracketing CLT $\mathcal F$ is Donsker. Therefore $\sqrt n(\widehat\cdot-\cdot)\rightsquigarrow\mathbb G$ in $\linf(\Theta)$, where $\mathbb G$ is the Gaussian process of step 2.”</p>
+  </div>
+
+  <p>Steps 1, 2 and 5 are the same in every question and can be written before you understand the class. Step 4 is arithmetic once step 3 is done. <b>All the thinking lives in the two blanks of step 3</b> — what you cut, and how finely — and the decoder above fills both.</p>
+
+  <div class="box hook">
+    <span class="lbl">Say it in this order, out loud</span>
+    <p>Class. Margins. Cage. Size. Count. Sentence. If you can recite those six words you can reconstruct the skeleton under pressure, and the examiner can see the shape of a complete answer from the first line.</p>
+  </div>
+</section>
+
+<section id="lab">
+  <div class="col">
+    <p class="kick">Gap lab</p>
+    <h2>Move the cell width and watch which currency you are in</h2>
+    <p>The gap is the only object in the proof you have to compute, and everything downstream is read off it. Here it is, drawn. Pick a class, widen the cell, and watch two numbers: the width $\delta$ you chose, and the $L_2$ size of the shaded region. The relationship between those two numbers <em>is</em> the currency.</p>
+  </div>
+
+  <figure>
+    <div class="controls">
+      <label>Class
+        <select id="labClass">
+          <option value="halfline">1[0,t] — half-lines, Z ~ U(0,1)</option>
+          <option value="excess">(z − u)⁺ — excess, Z ~ Exp(1)</option>
+          <option value="expo">e^(−λz) — exponential weights, Z ~ Exp(1)</option>
+          <option value="sine">sin(θz) — oscillating, Z ~ Exp(1)</option>
+        </select>
+      </label>
+      <label>cell width $\delta$ <input type="range" id="labDelta" min="1" max="100" value="40"></label>
+      <label>target $\varepsilon$ <input type="range" id="labEps" min="5" max="60" value="30"></label>
+    </div>
+    <div id="labFig"></div>
+    <p class="readout" id="labRead"></p>
+    <figcaption id="labCap"></figcaption>
+  </figure>
+
+  <div class="col">
+    <div class="box key">
+      <span class="lbl">Why two numbers are shown</span>
+      <p>The proof never computes the exact $L_2$ size of the gap. It computes an upper bound — $\sqrt{\text{mass}}$, or $\delta\|m\|_{L_2}$ from the Lipschitz step — and requires <em>that</em> to be at most $\varepsilon$. The exact norm is smaller, sometimes much smaller, and the difference is slack you are entitled to. <b>Never try to close that gap</b>: only $\log\Nb$ matters, so sharpening a constant buys nothing and costs minutes.</p>
+    </div>
+    <div class="box mass">
+      <span class="lbl">What to notice in the first class</span>
+      <p>Halve $\delta$ and the shaded area halves, but its $L_2$ size only falls by $\sqrt2$. That is the whole reason indicator classes cost $\varepsilon^2$: to buy a factor of two in the norm you must pay a factor of four in the cell. The square root is not an artefact of the algebra — you can watch it happen.</p>
+    </div>
+    <div class="box len">
+      <span class="lbl">What to notice in the other three</span>
+      <p>Halve $\delta$ and the norm halves exactly. Nothing collapses, because the gap is a genuine function rather than a set. So the budget is $\varepsilon$, and the price of the whole class is the parameter range divided by $\varepsilon$ — with the envelope's norm as the exchange rate.</p>
+    </div>
+  </div>
+</section>
+
+<section id="currencies">
+  <div class="col">
+    <p class="kick">Two currencies</p>
+    <h2>The same picture, on log axes</h2>
+    <p>Plot the $L_2$ size of the gap against the cell width for both kinds of class and the difference becomes a single visible fact: two straight lines of different slope. Slope one half is the mass currency; slope one is the length currency. Inverting those slopes is where $\varepsilon^2$ and $\varepsilon$ come from, and there is no third option in this course.</p>
+  </div>
+
+  <figure>
+    <div id="curFig"></div>
+    <figcaption>Gap size against cell width, both axes logarithmic. The indicator class sits on a slope-$\tfrac12$ line: $\|{\rm gap}\|_{L_2}=\sqrt\delta$. The smooth classes sit on slope-$1$ lines: $\|{\rm gap}\|_{L_2}=\delta\|m\|_{L_2}$, with the envelope's norm setting the height. To reach a target $\varepsilon$ you invert: $\delta=\varepsilon^2$ on the first line, $\delta=\varepsilon/\|m\|_{L_2}$ on the others.</figcaption>
+  </figure>
+
+  <div class="col">
+    <table>
+      <thead><tr><th></th><th>Mass currency</th><th>Length currency</th></tr></thead>
+      <tbody>
+        <tr><th>You see</th><td>gap is an indicator, possibly weighted</td><td>gap is bounded by $\delta$ or by $\delta\,m(z)$</td></tr>
+        <tr><th>Because</th><td>$\mathbf 1_A^2=\mathbf 1_A$, so the square collapses</td><td>nothing collapses; the square stays a square</td></tr>
+        <tr><th>Norm</th><td>$\sqrt{\text{mass of the cell}}$</td><td>$\delta\,\|m\|_{L_2}$</td></tr>
+        <tr><th>Fineness</th><td>mass $=\varepsilon^2$</td><td>$\delta=\varepsilon/\|m\|_{L_2}$</td></tr>
+        <tr><th>Extent</th><td>total mass: $1$, or $\|w\|^2_{L_2}$, or $\mu(\R)$</td><td>the length of the parameter interval</td></tr>
+        <tr><th>Count per parameter</th><td>$1/\varepsilon^2$</td><td>$L\|m\|_{L_2}/\varepsilon$</td></tr>
+        <tr><th>Unbounded range</th><td>harmless — extent is still $1$</td><td>fatal unless the family collapses at the edge</td></tr>
+        <tr><th>Moment assumption</th><td>never needed</td><td>needed exactly when $m$ involves $z$</td></tr>
+      </tbody>
+    </table>
+
+    <div class="box key">
+      <span class="lbl">Why they are one thing, not two</span>
+      <p>Relabel the half-line class by $p=F(t)\in[0,1]$ instead of $t\in[0,\infty)$. Same functions, new name for the index. Now the extent is $1$, the cell of width $\Delta p$ has gap of mass $\Delta p$, and $\sqrt{\Delta p}=\varepsilon$ gives fineness $\varepsilon^2$ and count $1/\varepsilon^2$ — <b>extent over fineness</b>, exactly as in the length column. “Cut the probability axis” has always just meant “change to the coordinate where the range is finite”, and the quantile grid $t_j=\inf\{t:F(t)\ge j\varepsilon^2\}$ is the uniform grid on $[0,1]$ pushed back through $F^{-1}$.</p>
+    </div>
+
+    <div class="box hook">
+      <span class="lbl">Hooks worth having verbatim</span>
+      <p><b>Indicator, so square root, so square the budget.</b><br>
+      <b>Differentiate in $\theta$: if $z$ survives the derivative, $\|Z_1\|_{L_2}$ survives into the answer.</b><br>
+      <b>Extent over fineness, to the power of how many numbers.</b></p>
+    </div>
+  </div>
+</section>
+
+<section id="budget" class="col">
+  <p class="kick">Budgets</p>
+  <h2>Where $\varepsilon^2/2$, $\varepsilon^2/4$ and $\varepsilon/2$ come from</h2>
+  <p>When more than one parameter moves, the gap arrives as a sum of pieces — one per parameter, or one per constraint that can fail. The constants that look invented are just the arithmetic of sharing a budget between those pieces, and there are only two ways pieces combine.</p>
+
+  <div class="box mass">
+    <span class="lbl">Disjoint indicator pieces — split the squared budget</span>
+    <p>Their masses add before the square root, since $\|\sum_i\mathbf 1_{A_i}\|_{L_2}^2=\sum_iP(A_i)$ for disjoint $A_i$. Give each piece mass $\varepsilon^2/r$ and the total is $\varepsilon^2$, so the norm is $\varepsilon$. With $r$ pieces the grid needs $r/\varepsilon^2$ points instead of $1/\varepsilon^2$ — that is the entire difference between the $2$ in the half-line count and the $4$ in the interval count.</p>
+  </div>
+
+  <div class="box len">
+    <span class="lbl">Pieces of any other shape — split the plain budget</span>
+    <p>Here you only have the triangle inequality, $\|\sum_ig_i\|_{L_2}\le\sum_i\|g_i\|_{L_2}$, so each piece gets norm $\varepsilon/r$. Two parameters with different units — an intercept with envelope $1$ and a slope with envelope $|z|$ — get $\varepsilon/2$ each and therefore two <em>different</em> finenesses, $\varepsilon/2$ and $\varepsilon/(2\|Z_1\|_{L_2})$.</p>
+  </div>
+
+  <div class="box key">
+    <span class="lbl">Mixed gaps, in the order the arithmetic happens</span>
+    <p>Split the plain budget first, then convert. Two pieces, one indicator and one sized: each needs norm $\le\varepsilon/2$; the indicator piece therefore needs mass $\le(\varepsilon/2)^2=\varepsilon^2/4$. <b>The $4$ is $2^2$, not a new constant</b>, and if you ever find yourself wondering where a $4$ or an $8$ came from, it is always a squared split.</p>
+  </div>
+
+  <p>How many pieces are there? Move one parameter at a time from the low corner of the cell to the high corner. Each move is one piece, and each piece is a gap in which a single parameter moved — which you already know how to size. That telescoping is also the safest way to write it up, because it makes the cage check trivial to justify line by line.</p>
+
+  <div class="box hook">
+    <span class="lbl">Hook</span>
+    <p><b>Strips add masses. Everything else adds norms.</b> And since only $\log \Nb$ matters, a wasteful split costs nothing at all — never spend exam minutes optimising constants.</p>
+  </div>
+</section>
+
+<section id="answers">
+  <div class="col">
+    <p class="kick">Model answers</p>
+    <h2>Three scripts, with every line explained</h2>
+    <p>These are written the way you should write them: short, in order, nothing skipped and nothing padded. Click any line to see why it is there, what it earns, and what happens if you leave it out. The hidden notes are the difference between reproducing an answer and being able to produce one.</p>
+  </div>
+
+  <div class="col">
+  <div class="script">
+    <header>
+      <h4>A · The empirical distribution function is Donsker</h4>
+      <span class="marks">the template every other answer is a variation of</span>
+    </header>
+    <div class="body">
+      <div class="line"><span class="txt">Put $f_t(z)=\mathbf 1\{z\le t\}$ and $\mathcal F=\{f_t:t\ge0\}$. Then $\Pn f_t=F^{(n)}(t)$ and $Pf_t=F(t)$, so $\sqrt n\big(F^{(n)}(t)-F(t)\big)=\Gn f_t$ and it suffices to prove $\mathcal F$ is $P$-Donsker.</span>
+        <div class="why"><b>Why first.</b> The question is about a curve; the theorem is about a class of functions. This line is the translation, and without it nothing that follows is about the object you were asked about. <b>Cheap and always available</b> — write it before you know how the proof goes.</div></div>
+
+      <div class="line"><span class="txt">Fix $0\le t_1&lt;\dots&lt;t_M$. The vectors $\big(\mathbf 1\{Z_i\le t_r\}\big)_{r\le M}$ are iid and bounded, so by the multivariate CLT the vector $\big(\Gn f_{t_r}\big)_{r\le M}$ converges to a centred Gaussian with covariance $Pf_sf_t-Pf_sPf_t=F(s\wedge t)-F(s)F(t)$.</span>
+        <div class="why"><b>The finite-dimensional half.</b> Bracketing gives equicontinuity only; this gives the limit. The covariance is one line because $\mathbf 1_A\mathbf 1_B=\mathbf 1_{A\cap B}$, so $Pf_sf_t=\P(Z\le s\wedge t)$. Recognise $F(s\wedge t)-F(s)F(t)$ as the covariance of $B\circ F$ with $B$ a Brownian bridge — naming the limit is worth a mark by itself.</div></div>
+
+      <div class="line"><span class="txt">Let $\varepsilon&gt;0$ be given. Set $t_j=\inf\{t:F(t)\ge j\varepsilon^2\}$ for $j=0,1,2,\dots$, stopping once $j\varepsilon^2\ge1$, and $t_k=\infty$. This gives $k\le\lceil 2/\varepsilon^2\rceil$ grid points with $F(t_j-)-F(t_{j-1})\le\varepsilon^2$ for every $j$, which is possible because $F$ is non-decreasing, càdlàg and bounded by $1$.</span>
+        <div class="why"><b>The only real decision, and it is forced.</b> The gap will be an indicator, so the currency is mass and the budget is $\varepsilon^2$; total mass is $1$, so $1/\varepsilon^2$ cells suffice. Two details examiners look for: the phrase <em>let $\varepsilon&gt;0$ be given</em> before the grid depends on it, and the <b>left limit</b> $F(t_j-)$, which is what makes the argument survive atoms. Write $F(t_j)-F(t_{j-1})$ and a discrete $Z$ breaks your bound.</div></div>
+
+      <div class="line"><span class="txt">For $j=1,\dots,k$ define $l_j(z)=\mathbf 1_{[0,t_{j-1}]}(z)$ and $u_j(z)=\mathbf 1_{[0,t_j)}(z)$, and put $\mathcal F_j=\{f\in\mathcal F: l_j\le f\le u_j\}$. Every $f_t$ with $t\in[t_{j-1},t_j)$ lies in $\mathcal F_j$, so $\mathcal F=\bigcup_{j\le k}\mathcal F_j$.</span>
+        <div class="why"><b>ORDER, because $t\mapsto\mathbf 1_{[0,t]}(z)$ is non-decreasing at each fixed $z$.</b> The cage is the family evaluated at the two ends of the cell, so it is exact and no padding is needed. The second sentence is the part people forget: you must say the brackets <em>cover</em>, not merely that they exist.</div></div>
+
+      <div class="line"><span class="txt">The cage holds pointwise: for $t\in[t_{j-1},t_j)$ and any $z$, if $z\le t_{j-1}$ then $z\le t$, and if $z\ge t_j$ then $z&gt;t$; in either case the required inequality is an equality, and for $z$ strictly between it reads $0\le\mathbf 1_{[0,t]}(z)\le1$.</span>
+        <div class="why"><b>One mark, one line, almost always dropped.</b> A bracket is a statement about every $z$ separately — that is precisely what makes it survive integration against the random empirical measure. An examiner checks whether you know this or are pattern-matching, and this sentence is how you show it.</div></div>
+
+      <div class="line"><span class="txt">Then $u_j-l_j=\mathbf 1_{(t_{j-1},t_j)}$, so using $\mathbf 1_A^2=\mathbf 1_A$, $\ \|u_j-l_j\|_{L_2(P)}=\big(\P(t_{j-1}&lt;Z_1&lt;t_j)\big)^{1/2}\le\big(F(t_j-)-F(t_{j-1})\big)^{1/2}\le\varepsilon.$</span>
+        <div class="why"><b>The computation the whole answer was arranged around.</b> Three steps: identify the gap, square it (which collapses), take the root. Note the direction of the argument — the grid was chosen in the previous line <em>so that</em> this line ends in $\varepsilon$. In your rough work it goes the other way round: compute this first, then solve for the grid.</div></div>
+
+      <div class="line"><span class="txt">Hence $\Nb(\varepsilon,\mathcal F,L_2(P))\le k\le\lceil2/\varepsilon^2\rceil$, which is polynomial in $1/\varepsilon$, so $\int_0^1\sqrt{\log \Nb(\varepsilon,\mathcal F,L_2(P))}\,d\varepsilon&lt;\infty$.</span>
+        <div class="why"><b>The invariant sentence.</b> Identical in every question with a polynomial count. If you want to show the integral explicitly: $\log\lceil2/\varepsilon^2\rceil\le\log(2/\varepsilon^2+1)$ and $\int_{(0,1]}\sqrt{\log(2/\varepsilon^2+1)}\,d\varepsilon&lt;\infty$ by parts, which is the separate exercise on the same sheet.</div></div>
+
+      <div class="line"><span class="txt">By the bracketing central limit theorem $\mathcal F$ is $P$-Donsker, so $\sqrt n(F^{(n)}-F)\rightsquigarrow B\circ F$ in $\linf([0,\infty))$, with $B$ a standard Brownian bridge. $\square$</span>
+        <div class="why"><b>Close in the space you were asked about.</b> Convergence in $\linf$ is the claim; naming the limit process ties it back to the covariance you computed in line two. An answer that stops at “the entropy integral is finite” has proved half a theorem.</div></div>
+    </div>
+  </div>
+  </div>
+
+  <div class="col">
+  <div class="script">
+    <header>
+      <h4>B · The bivariate empirical distribution function</h4>
+      <span class="marks">what changes when an observation is a pair</span>
+    </header>
+    <div class="body">
+      <div class="line"><span class="txt">Let $(Z_i,W_i)$ be iid with joint distribution function $H$. Put $h_{s,t}(x,y)=\mathbf 1\{x\le s\}\mathbf 1\{y\le t\}$ and $\mathcal H=\{h_{s,t}:s,t\ge0\}$, a class of functions on $[0,\infty)^2$. Then $\Pn h_{s,t}=H^{(n)}(s,t)$.</span>
+        <div class="why"><b>One observation is the whole pair.</b> So every $f$ has domain $\R^2$, and $P$ is the joint law — not the margins. Everything downstream that looks new is a consequence of this one sentence, and getting it wrong makes the rest incoherent.</div></div>
+
+      <div class="line"><span class="txt">For arbitrary $(s_r,t_r)_{r\le M}$ the multivariate CLT gives convergence of $\big(\Gn h_{s_r,t_r}\big)_r$ to a centred Gaussian with $\operatorname{Cov}\big(\mathbb G_H(s,t),\mathbb G_H(u,v)\big)=H(s\wedge u,\,t\wedge v)-H(s,t)H(u,v)$.</span>
+        <div class="why"><b>Same one-line computation as the univariate case</b>, since the product of two quadrant indicators is the indicator of the smaller quadrant: $\mathbf 1\{x\le s,y\le t\}\mathbf 1\{x\le u,y\le v\}=\mathbf 1\{x\le s\wedge u,\ y\le t\wedge v\}$. The minima appear coordinatewise.</div></div>
+
+      <div class="line"><span class="txt">Let $\varepsilon&gt;0$. Choose a grid $0=s_0&lt;\dots&lt;s_k=\infty$ on the $Z$-margin with $F_Z(s_i-)-F_Z(s_{i-1})\le\varepsilon^2/2$, and independently $0=t_0&lt;\dots&lt;t_k=\infty$ on the $W$-margin with the same budget; $k\le\lceil4/\varepsilon^2\rceil$ suffices for each.</span>
+        <div class="why"><b>Two parameters, so the squared budget splits in two</b> — that is where $\varepsilon^2/2$ and hence $4/\varepsilon^2$ come from. The grids are built on the <em>margins</em> because the gap will be bounded by a union of two marginal strips, and marginal masses are all you can control.</div></div>
+
+      <div class="line"><span class="txt">For $s\in[s_{j-1},s_j)$ and $t\in[t_{l-1},t_l)$ set $l_{jl}(x,y)=\mathbf 1_{[0,s_{j-1}]}(x)\mathbf 1_{[0,t_{l-1}]}(y)$ and $u_{jl}(x,y)=\mathbf 1_{[0,s_j)}(x)\mathbf 1_{[0,t_l)}(y)$. Since $[0,s_{j-1}]\times[0,t_{l-1}]\subseteq[0,s]\times[0,t]\subseteq[0,s_j)\times[0,t_l)$, the cage holds at every $(x,y)$, and the $\mathcal H_{jl}$ cover $\mathcal H$.</span>
+        <div class="why"><b>Two indices, not one.</b> A single index $j$ pairing the $j$-th $s$-cell with the $j$-th $t$-cell only catches matched cells, and a pair with $s$ in cell $3$ and $t$ in cell $7$ would lie in no bracket. This is the most common structural error in this question, and it is invisible unless you check the cover explicitly.</div></div>
+
+      <div class="line"><span class="txt">The gap is the indicator of $\big([0,s_j)\times[0,t_l)\big)\setminus\big([0,s_{j-1}]\times[0,t_{l-1}]\big)$, which is contained in $\big((s_{j-1},s_j)\times\R\big)\cup\big(\R\times(t_{l-1},t_l)\big)$. Hence $\|u_{jl}-l_{jl}\|^2_{L_2(P)}\le\P(s_{j-1}&lt;Z_1&lt;s_j)+\P(t_{l-1}&lt;W_1&lt;t_l)\le\tfrac{\varepsilon^2}2+\tfrac{\varepsilon^2}2=\varepsilon^2$.</span>
+        <div class="why"><b>The L-shape, bounded by two strips.</b> A union bound is all that is available, because a joint probability is not determined by the margins. Squaring first is what lets the two masses add — this is the squared-budget split in action, and it is why each strip was given $\varepsilon^2/2$ three lines ago.</div></div>
+
+      <div class="line"><span class="txt">Therefore $\Nb(\varepsilon,\mathcal H,L_2(P))\le k^2\le\lceil4/\varepsilon^2\rceil^2=O(\varepsilon^{-4})$, the entropy integral converges, and $\sqrt n(H^{(n)}-H)\rightsquigarrow\mathbb G_H$ in $\linf([0,\infty)^2)$ with the covariance computed above. $\square$</span>
+        <div class="why"><b>The exponent counts the parameters.</b> Two numbers, two grid choices, count squared. If your answer produces $O(\varepsilon^{-2})$ here, go back and check whether your brackets really cover the off-diagonal pairs.</div></div>
+    </div>
+  </div>
+  </div>
+
+  <div class="col">
+  <div class="script">
+    <header>
+      <h4>C · The cumulative hazard — when there is nothing to bracket</h4>
+      <span class="marks">recognise this in the first ten seconds</span>
+    </header>
+    <div class="body">
+      <div class="line"><span class="txt">$\Lambda^{(n)}(t)=-\log\big(1-F^{(n)}(t)\big)$ is not of the form $\Pn f$, so there is no class to bracket. Instead write $\Lambda^{(n)}=\phi(F^{(n)})$ with $\phi(h)(t)=-\log(1-h(t))$, defined for $h$ with $h(t)&lt;1$, and transport the known limit for $F^{(n)}$ through $\phi$.</span>
+        <div class="why"><b>The fork in the road.</b> Any $\log$, ratio, inverse or supremum of an average lands here. Spending ten minutes trying to bracket $\Lambda^{(n)}$ is the single most expensive mistake available in this topic, and the diagnosis takes one line: <em>can I write it as an average?</em></div></div>
+
+      <div class="line"><span class="txt">Domain and codomain: restrict to a compact $[0,\tau]$ with $F(\tau)&lt;1$, take the domain to be distribution functions there and the codomain $\linf([0,\tau])$ with the uniform norm.</span>
+        <div class="why"><b>State it, briefly.</b> Hadamard differentiability is a statement about maps between normed spaces, so the spaces have to be named, and $\phi$ genuinely blows up where $F=1$. One sentence is enough, and its absence is a visible gap.</div></div>
+
+      <div class="line"><span class="txt">For $u_n\to0$ and $h_n\to h$ uniformly, $\ \dfrac{\phi(f+u_nh_n)(t)-\phi(f)(t)}{u_n}=-\dfrac1{u_n}\log\Big(1-\dfrac{u_nh_n(t)}{1-f(t)}\Big)\longrightarrow\dfrac{h(t)}{1-f(t)},$ using $\log(1-x)\approx-x$ for small $x$. So $\phi'_f(h)=h/(1-f)$.</span>
+        <div class="why"><b>The algebra worth memorising.</b> Combine the two logarithms first — $-\log(1-f-u_nh_n)+\log(1-f)=-\log\!\big(1-\tfrac{u_nh_n}{1-f}\big)$ — and the rest is the standard expansion. Convergence is uniform on $[0,\tau]$ because $1-f$ is bounded away from $0$ there, which is what the previous line bought you.</div></div>
+
+      <div class="line"><span class="txt">By the functional delta method applied to $\sqrt n(F^{(n)}-F)\rightsquigarrow B\circ F$, $\ \sqrt n(\Lambda^{(n)}-\Lambda)\rightsquigarrow\dfrac{B\circ F}{1-F}$ in $\linf([0,\tau])$.</span>
+        <div class="why"><b>The delta method needs the functional CLT as input</b>, which is answer A. Say so explicitly — the marker wants to see that you know which result is doing the work, and that the derivative is applied to the <em>limit process</em>, not to the data.</div></div>
+
+      <div class="line"><span class="txt">The limit is centred Gaussian with $\operatorname{Cov}\Big(\dfrac{(B\circ F)(s)}{1-F(s)},\dfrac{(B\circ F)(t)}{1-F(t)}\Big)=\dfrac{F(s\wedge t)-F(s)F(t)}{(1-F(s))(1-F(t))}. \square$</span>
+        <div class="why"><b>Deterministic factors come straight out of the covariance</b>, so this is one line from answer A's covariance. Divide by $(1-F(s))(1-F(t))$ and stop — there is nothing more to do, and any further manipulation risks an error for no marks.</div></div>
+    </div>
+  </div>
+  </div>
+</section>
+
+<section id="integral">
+  <div class="col">
+    <p class="kick">The last line</p>
+    <h2>Why you almost never have to think about the integral</h2>
+    <p>The final step of every answer is the same sentence, and it is safe because the condition is extraordinarily forgiving. Move the slider and watch: any polynomial count, of any degree, with any constant, converges — the curve barely moves. The condition only bites at counts that are exponential in $1/\varepsilon$, and even then it takes a large exponent to break it.</p>
+  </div>
+
+  <figure>
+    <div class="controls">
+      <label>Growth of the count
+        <select id="intMode">
+          <option value="poly">N(ε) = Cε^−K — polynomial, the usual case</option>
+          <option value="exp1">log N(ε) = C/ε — the monotone class</option>
+          <option value="explog">log N(ε) = (C/ε)·log(1/ε) — the construction actually used</option>
+          <option value="exp2">log N(ε) = C/ε² — past the boundary</option>
+        </select>
+      </label>
+      <label>$K$ or $C$ <input type="range" id="intK" min="1" max="40" value="4"></label>
+    </div>
+    <div id="intFig"></div>
+    <p class="readout" id="intRead"></p>
+    <figcaption>The curve is the integrand $\sqrt{\log \Nb(\varepsilon)}$; the shaded area is the entropy integral. Polynomial counts give an integrand that grows like $\sqrt{\log(1/\varepsilon)}$ — so slowly that the degree is barely visible. The last option makes the integrand grow like $1/\varepsilon$, which is exactly not integrable, and the area is infinite.</figcaption>
+  </figure>
+
+  <div class="col">
+    <div class="box key">
+      <span class="lbl">What to say, and when the shortcut is unavailable</span>
+      <p>With a polynomial count write the invariant sentence and stop. The shortcut fails in exactly one place in this course — the class of all monotone functions, where $\log \Nb(\varepsilon)\approx\varepsilon^{-1}\log(1/\varepsilon)$ and you must evaluate the integral yourself: $\sqrt{\log \Nb(\varepsilon)}\lesssim\varepsilon^{-1/2}\sqrt{\log(1/\varepsilon)}$, which is integrable near $0$ because $\int_0^1\varepsilon^{-1/2}d\varepsilon=2$. <b>If a question is engineered so the count is not polynomial, that is the point of the question</b> — it is testing whether you know the condition or only the shortcut.</p>
+    </div>
+  </div>
+</section>
+
+<section id="marks" class="col">
+  <p class="kick">Marker's eye</p>
+  <h2>Where marks are actually won and lost</h2>
+  <p>Almost none of the available marks are in the algebra, which is why answers that compute beautifully can still score badly. These are the lines that get ticked.</p>
+
+  <table>
+    <thead><tr><th style="width:46%">Costs you</th><th>Fix, in one line</th></tr></thead>
+    <tbody>
+      <tr><td>Never stating the class, so the whole answer floats free of the question</td><td>Open with “Put $f_\theta(z)=\dots$, so that $\Gn f_\theta$ is the process in question.”</td></tr>
+      <tr><td>Proving equicontinuity and forgetting the finite-dimensional half</td><td>One paragraph with the multivariate CLT and the covariance. It also names your limit.</td></tr>
+      <tr><td>Asserting $l_j\le f\le u_j$ without checking it holds at every $z$</td><td>Two clauses: what happens for $z$ below the cell, and above it.</td></tr>
+      <tr><td>Writing a grid before saying “let $\varepsilon&gt;0$ be given”</td><td>Order matters: $\varepsilon$ first, then everything that depends on it.</td></tr>
+      <tr><td>$F(t_j)-F(t_{j-1})$ instead of $F(t_j-)-F(t_{j-1})$</td><td>Use the left limit. It is the only thing protecting you from atoms.</td></tr>
+      <tr><td>Using $\varepsilon$ where the gap is an indicator, or $\varepsilon^2$ where it is not</td><td>Compute the gap first. The exponent is a consequence, never a choice.</td></tr>
+      <tr><td>One index for two parameters, so the cover misses off-diagonal cells</td><td>One index per number in the parameter, and say the union covers.</td></tr>
+      <tr><td>Not using a hypothesis you were given</td><td>Go back: $\E[Z_1^2]&lt;\infty$, a bounded range or a bounded density each mark a specific row of the setup.</td></tr>
+      <tr><td>Stopping at “the integral is finite”</td><td>Add the conclusion in $\linf$, with the limit named.</td></tr>
+      <tr><td>Polishing constants, and running out of time</td><td>$\lceil2/\varepsilon^2\rceil$ and $\lceil17/\varepsilon^2\rceil$ score identically. Move on.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="box flag">
+    <span class="lbl">If you are stuck with five minutes left</span>
+    <p>Write the skeleton with the blanks unfilled, state which currency you are in and why, and say what remains to be computed. A structurally correct answer with one missing computation scores far better than a page of algebra with no statement of what is being proved.</p>
+  </div>
+</section>
+
+<section id="drill">
+  <div class="col">
+    <p class="kick">Rapid drill</p>
+    <h2>Name the setup before you compute anything</h2>
+    <p>You are shown a class. Say which mechanism builds the cage, which currency you are in, and what shape the count takes. Under exam conditions this decision should take about fifteen seconds, and everything else follows from it.</p>
+  </div>
+  <div class="col">
+    <div class="drill">
+      <p class="prompt" id="drPrompt">—</p>
+      <div class="row">
+        <div class="rowlabel">Mechanism</div>
+        <select id="drMech">
+          <option value="">choose…</option>
+          <option value="order">ORDER — monotone, cage at the ends of the cell</option>
+          <option value="corner">ORDER at the corners — affine, min/max over ends</option>
+          <option value="size">SIZE — pad the centre by δm</option>
+          <option value="adapt">Adaptive cut points from a fixed candidate list</option>
+          <option value="none">Neither — the class is not bracketable</option>
+        </select>
+      </div>
+      <div class="row">
+        <div class="rowlabel">Currency</div>
+        <select id="drCur">
+          <option value="">choose…</option>
+          <option value="mass">Mass — gap is an indicator, budget ε²</option>
+          <option value="massw">Mass, under a weighted measure μ</option>
+          <option value="len">Length — gap has a size, budget ε</option>
+          <option value="none">Neither applies</option>
+        </select>
+      </div>
+      <div class="row">
+        <div class="rowlabel">Count</div>
+        <select id="drCount">
+          <option value="">choose…</option>
+          <option value="e2">O(ε⁻²)</option>
+          <option value="e4">O(ε⁻⁴)</option>
+          <option value="e8">O(ε⁻⁸)</option>
+          <option value="e1">O(ε⁻¹)</option>
+          <option value="e1d">O(ε⁻ᵈ)</option>
+          <option value="e2d">O(ε^−2(d+1))</option>
+          <option value="expo">exponential in 1/ε</option>
+          <option value="inf">infinite</option>
+        </select>
+      </div>
+      <p style="margin-top:.9rem">
+        <button class="solid" id="drCheck">Check</button>
+        <button class="ghostbtn" id="drNext">Next class</button>
+        <span class="score" id="drScore" style="margin-left:.6rem"></span>
+      </p>
+      <div class="fb" id="drFb"></div>
+    </div>
+  </div>
+</section>
+
+<section id="recall">
+  <div class="col">
+    <p class="kick">Recall</p>
+    <h2>The dozen facts to have without thinking</h2>
+    <p>Tap to turn each card over. These are the ones that show up inside every answer, so they should be retrieval, not reconstruction.</p>
+  </div>
+  <div class="col">
+    <div class="cards" id="cards"></div>
+  </div>
+
+  <div class="col">
+    <div class="box key">
+      <span class="lbl">The whole method, on one card</span>
+      <p><b>Class</b> — write the statistic as an average; what is inside is $f$, what you sweep is the index.<br>
+      <b>Margins</b> — multivariate CLT on finitely many coordinates; covariance $Pfg-Pf\,Pg$.<br>
+      <b>Cage</b> — monotone? the two ends of the cell. Otherwise the centre, padded by $\delta m$.<br>
+      <b>Size</b> — compute $\|u-l\|_{L_2}$ as a formula in the fineness. Indicator gives $\sqrt{\rm mass}$; anything else gives $\delta\|m\|_{L_2}$.<br>
+      <b>Count</b> — extent over fineness, to the power of how many numbers; budget split $r$ ways if the gap has $r$ pieces.<br>
+      <b>Sentence</b> — polynomial, so the entropy integral converges, so Donsker, so weak convergence in $\linf$.</p>
+    </div>
+  </div>
+</section>
+
+<footer class="col">
+  <p>Companion to <a href="bracketing-3.html">the derivation page</a>, which builds the theory forwards from a single average (keep the two files in the same folder for the link to work). This page assumes it and is arranged for recall under time pressure: decoder, skeleton, currencies, scripts, drill.</p>
+  <p>Numbering of results follows the Week 1 chapter. The bracketing central limit theorem is quoted; everything else here is either derived on the companion page or is a matter of exam technique.</p>
+</footer>
+</main>
+
+<div class="cheat" id="cheat">
+  <div class="panel">
+    <p><b>$\Nb(\varepsilon)\le\big(\text{extent}/\text{fineness}\big)^{\#\text{params}}$</b></p>
+    <p class="mini">Fineness: solve $\|u-l\|_{L_2}=\varepsilon$.<br>
+    Indicator gap → mass $=\varepsilon^2$, extent $1$.<br>
+    Sized gap → $\delta=\varepsilon/\|m\|_{L_2}$, extent $=$ range.<br>
+    $r$ strips → mass $\varepsilon^2/r$. $r$ other pieces → norm $\varepsilon/r$.</p>
+  </div>
+  <button class="toggle" id="cheatBtn">Formula card</button>
+</div>
+
+<script>
+(function(){
+"use strict";
+var NS="http://www.w3.org/2000/svg";
+function el(n,a){var e=document.createElementNS(NS,n);for(var k in a){if(a.hasOwnProperty(k))e.setAttribute(k,a[k]);}return e;}
+function svg(w,h){return el("svg",{viewBox:"0 0 "+w+" "+h,role:"img"});}
+function txt(x,y,s,anchor,fill,size){
+  var t=el("text",{x:x,y:y,"font-size":size||11,"font-family":'"Archivo",sans-serif',fill:fill||"#77807a"});
+  if(anchor)t.setAttribute("text-anchor",anchor);
+  t.textContent=s;return t;
+}
+var C={ink:"#191c1a",ink3:"#77807a",rule:"#e0e5df",mass:"#0d5b5f",len:"#95510f",flag:"#7d1f3d"};
+function tex(node){ if(window.MathJax&&MathJax.typesetPromise){MathJax.typesetPromise([node]).catch(function(){});} }
+
+/* ============================ 1. DECODER ============================ */
+(function(){
+  var state={q1:null,q2:null,q3:null,q4:null,q5:null};
+  var groups=document.querySelectorAll(".opts");
+  groups.forEach(function(g){
+    g.addEventListener("click",function(e){
+      var b=e.target.closest(".opt"); if(!b||b.disabled)return;
+      var q=g.getAttribute("data-q"), v=b.getAttribute("data-v");
+      state[q]=(state[q]===v)?null:v;
+      g.querySelectorAll(".opt").forEach(function(o){
+        o.setAttribute("aria-pressed", String(o.getAttribute("data-v")===state[q]));
+      });
+      render();
+    });
+  });
+  document.getElementById("dreset").addEventListener("click",function(){
+    for(var k in state)state[k]=null;
+    document.querySelectorAll(".opt").forEach(function(o){o.setAttribute("aria-pressed","false");});
+    render();
+  });
+
+  function set(id,html,pending){
+    var n=document.getElementById(id);
+    n.innerHTML=html;
+    n.className=pending?"pending":"";
+  }
+
+  function render(){
+    var answered=0; for(var k in state){ if(state[k])answered++; }
+    document.getElementById("dcount").textContent=answered+" of 5 answered";
+
+    /* route */
+    if(!state.q1){ set("o-route","answer Q1",true); }
+    else if(state.q1==="func"){
+      set("o-route","<span class='verdict v-flag'>delta method</span> bracket the average underneath, then push it through φ");
+    } else {
+      set("o-route","<span class='verdict v-ok'>bracketing</span> the statistic is P⁽ⁿ⁾f, so prove the class is Donsker");
+    }
+
+    /* mechanism + cage */
+    if(!state.q2){ set("o-mech","answer Q2",true); set("o-cage","—",true); }
+    else if(state.q2==="mono"){
+      set("o-mech","ORDER — exact, no padding, no factor 2");
+      set("o-cage","l and u are the family at the two ends of the cell, one coordinate at a time");
+    } else if(state.q2==="corner"){
+      set("o-mech","ORDER at the corners — still exact");
+      set("o-cage","l = min over the corners of the cell, u = max over the corners");
+    } else {
+      set("o-mech","SIZE — pad the centre; costs a factor 2 in the gap");
+      set("o-cage","l = f<sub>θⱼ</sub> − δm, u = f<sub>θⱼ</sub> + δm, with m the envelope from the derivative in θ");
+    }
+
+    /* currency, fineness, extent */
+    if(!state.q3){
+      set("o-cur","answer Q3",true); set("o-fine","—",true); set("o-ext","—",true);
+    } else if(state.q3==="ind"){
+      set("o-cur","<span class='verdict v-mass'>mass</span> the square collapses, ‖gap‖ = √mass");
+      set("o-fine","mass of a cell = ε²  — cut the probability axis: t<sub>j</sub> = inf{t : F(t) ≥ jε²}");
+      set("o-ext","total mass = 1, so about 1/ε² cells");
+    } else if(state.q3==="wind"){
+      set("o-cur","<span class='verdict v-mass'>mass, weighted</span> ‖gap‖ = √μ(cell) with μ(A) = E[w(Z₁)²1<sub>A</sub>]");
+      set("o-fine","μ(cell) = ε² — cut μ, not P");
+      set("o-ext","total mass of μ = ‖w‖²<sub>L₂</sub>, so about ‖w‖²/ε² cells");
+    } else if(state.q3==="const"){
+      set("o-cur","<span class='verdict v-len'>length</span> nothing collapses, ‖gap‖ = δ");
+      set("o-fine","δ = ε — no moment assumption is needed anywhere");
+      set("o-ext","the length of the parameter interval");
+    } else {
+      set("o-cur","<span class='verdict v-len'>length</span> ‖gap‖ = δ‖m‖<sub>L₂</sub>");
+      set("o-fine","δ = ε / ‖m‖<sub>L₂</sub> — this is where ‖Z₁‖<sub>L₂</sub> enters, and why a moment was assumed");
+      set("o-ext","the length of the parameter interval, times ‖m‖<sub>L₂</sub>");
+    }
+
+    /* budget + count */
+    var massish = (state.q3==="ind"||state.q3==="wind");
+    if(!state.q4||!state.q3){ set("o-bud","answer Q3 and Q4",true); set("o-count","—",true); }
+    else {
+      var r = state.q4==="d" ? "d" : (state.q4==="inf" ? null : state.q4);
+      if(state.q4==="inf"){
+        set("o-bud","no cell width to split — the parameter is a whole function");
+        set("o-count","combinatorial: count the possible choices, expect exponential in 1/ε");
+      } else if(r==="1"){
+        set("o-bud","one piece, so the whole budget goes to it");
+        set("o-count", massish ? "about 2/ε² brackets" : "about (range·‖m‖)/ε brackets");
+      } else {
+        var rr = (r==="d") ? "d" : r;
+        var mTab={"2":"O(ε⁻⁴)","4":"O(ε⁻⁸)","d":"O(ε⁻²ᵈ)"};
+        var lTab={"2":"O(ε⁻²)","4":"O(ε⁻⁴)","d":"O(ε⁻ᵈ)"};
+        set("o-bud", massish
+          ? "the gap is "+rr+" disjoint strips → mass ε²/"+rr+" each → the grid needs "+rr+"/ε² points"
+          : "the gap is "+rr+" pieces → norm ε/"+rr+" each → one fineness per parameter, solved separately");
+        set("o-count", massish
+          ? "(C/ε²)<sup>"+rr+"</sup> &nbsp;=&nbsp; "+mTab[rr]
+          : "(C/ε)<sup>"+rr+"</sup> &nbsp;=&nbsp; "+lTab[rr]);
+      }
+    }
+
+    /* Q5 warning */
+    var note="Nothing here is a choice. Each row is forced by the answer above it, which is why the setup can be assembled by a panel of buttons rather than by inspiration.";
+    if(state.q5==="unbdd" && !massish && state.q3){
+      note="<b>Stop.</b> An unbounded range in the length currency has no finite extent, and nothing collapses at the edge. Check the envelope sup<sub>θ</sub>|f<sub>θ</sub>| is in L₂(P) — if it is not, the class is not Donsker and the honest answer says so.";
+    } else if(state.q5==="collapse" && !massish){
+      note="Put the whole tail in <b>one bracket</b> [min, max] of the limiting function, priced by a tail expectation rather than a grid; grid only the bounded part. The count becomes U(ε)/ε + 1, and any U(ε) growing sub-exponentially in 1/ε is fine.";
+    } else if(state.q5==="unbdd" && massish){
+      note="An unbounded range is harmless here: in the mass currency the extent is the total mass, which is 1 however long the parameter runs. Say nothing about it.";
+    } else if(state.q1==="func"){
+      note="Nothing to bracket. Identify the average underneath, quote its functional CLT, show the map is Hadamard differentiable and state the derivative — then the delta method gives the limit and the covariance follows by pulling out the deterministic factors.";
+    }
+    document.getElementById("o-note").innerHTML=note;
+  }
+  render();
+})();
+
+/* ============================ 2. GAP LAB ============================ */
+(function(){
+  var box=document.getElementById("labFig"), read=document.getElementById("labRead"),
+      cap=document.getElementById("labCap"), sel=document.getElementById("labClass"),
+      dSl=document.getElementById("labDelta"), eSl=document.getElementById("labEps");
+  if(!box)return;
+
+  function quad(f,a,b,n){ var s=0,h=(b-a)/n; for(var i=0;i<n;i++){var x=a+(i+0.5)*h; s+=f(x)*h;} return s; }
+
+  var models={
+    halfline:{
+      zmax:1, dmin:0.004, dmax:0.5, c:0.32, kind:"mass",
+      l:function(z,d,m){return z<=m.c?1:0;},
+      u:function(z,d,m){return z<m.c+d?1:0;},
+      f:function(z,d,m){return z<=m.c+0.45*d?1:0;},
+      norm:function(d){return Math.sqrt(Math.min(d,1));},
+      bound:function(d){return Math.sqrt(d);}, blab:"√(mass of the cell) = √δ",
+      label:"l = 1[0,c] , u = 1[0,c+δ) , gap = 1(c, c+δ)",
+      cap:"Uniform data, so the mass of the cell is its length. The shaded strip has area δ but L₂ size √δ — the square of an indicator is itself, so the square root never disappears. Halving δ divides the norm by only 1.41, which is exactly why the budget must be squared."
+    },
+    excess:{
+      zmax:4, dmin:0.01, dmax:1.5, c:0.5, kind:"len",
+      l:function(z,d,m){return Math.max(z-(m.c+d),0);},
+      u:function(z,d,m){return Math.max(z-m.c,0);},
+      f:function(z,d,m){return Math.max(z-(m.c+0.45*d),0);},
+      norm:function(d){var c=0.5;return Math.sqrt(quad(function(z){var g=Math.min(Math.max(z-c,0),d);return g*g*Math.exp(-z);},0,25,4000));},
+      bound:function(d){return d;}, blab:"δ·‖m‖₂ with m ≡ 1, so just δ",
+      label:"l = (z−u₂)⁺ , u = (z−u₁)⁺ , gap ≤ δ everywhere",
+      cap:"The map u ↦ (z−u)⁺ is 1-Lipschitz, so the gap is squeezed between 0 and δ at every z and there is no set to collapse. The norm falls in exact proportion to δ, so the fineness is ε itself — and the parameter range now has to be finite, because it is what gets divided."
+    },
+    expo:{
+      zmax:4, dmin:0.01, dmax:1.2, c:0.2, kind:"len",
+      l:function(z,d,m){return Math.exp(-(m.c+d)*z);},
+      u:function(z,d,m){return Math.exp(-m.c*z);},
+      f:function(z,d,m){return Math.exp(-(m.c+0.45*d)*z);},
+      norm:function(d){var a=0.2,b=0.2+d;return Math.sqrt(1/(2*a+1)-2/(a+b+1)+1/(2*b+1));},
+      bound:function(d){return d*Math.SQRT2;}, blab:"δ·‖Z₁‖₂ = δ·1.414",
+      label:"l = e^(−λ₂z) , u = e^(−λ₁z) , gap ≤ δz",
+      cap:"Monotone in λ, so the cage is still exact — but the gap is bounded by δz, not by δ. Its norm is therefore δ‖Z₁‖₂, and the moment assumption in the question is precisely the statement that this multiplier is finite."
+    },
+    sine:{
+      zmax:4, dmin:0.01, dmax:0.6, c:1.0, kind:"len",
+      l:function(z,d,m){return Math.sin(m.c*z)-d*z;},
+      u:function(z,d,m){return Math.sin(m.c*z)+d*z;},
+      f:function(z,d,m){return Math.sin((m.c+0.6*d)*z);},
+      norm:function(d){return 2*d*Math.sqrt(2);},
+      bound:function(d){return 2*d*Math.SQRT2;}, blab:"2δ·‖Z₁‖₂ = 2δ·1.414",
+      label:"l = sin(θⱼz) − δz , u = sin(θⱼz) + δz , gap = 2δz",
+      cap:"No ordering along the cell, so the cage is the centre padded by δz on both sides — and the true function sits strictly inside, which is the slack SIZE pays for. The factor 2 in the gap doubles the count and changes nothing about convergence."
+    }
+  };
+
+  function draw(){
+    var key=sel.value, m=models[key];
+    var t=dSl.value/100, d=m.dmin*Math.pow(m.dmax/m.dmin,t);
+    var eps=eSl.value/100;
+    var W=700,H=250,L=44,R=16,T=14,B=34;
+    var px=function(z){return L+z/m.zmax*(W-L-R);};
+    var ymax=(key==="sine")?1.9:(key==="halfline"?1.25:(key==="excess"?3.6:1.25));
+    var ymin=(key==="sine")?-1.9:0;
+    var py=function(y){return H-B-(y-ymin)/(ymax-ymin)*(H-T-B);};
+    var s=svg(W,H);
+    s.appendChild(el("line",{x1:L,x2:W-R,y1:py(ymin<0?0:ymin),y2:py(ymin<0?0:ymin),stroke:"#8f9a93"}));
+    s.appendChild(el("line",{x1:L,x2:L,y1:T,y2:H-B,stroke:"#8f9a93"}));
+    for(var g=0;g<=4;g++){
+      var zz=m.zmax*g/4;
+      s.appendChild(el("line",{x1:px(zz),x2:px(zz),y1:T,y2:H-B,stroke:C.rule}));
+      s.appendChild(txt(px(zz),H-B+16,zz.toFixed(zz<1?2:1),"middle"));
+    }
+    s.appendChild(txt((L+W-R)/2,H-B+31,"observation z","middle"));
+
+    var N=520, up=[], lo=[], fp=[];
+    for(var i=0;i<=N;i++){
+      var z=m.zmax*i/N;
+      up.push([px(z),py(Math.min(m.u(z,d,m),ymax))]);
+      lo.push([px(z),py(Math.max(m.l(z,d,m),ymin))]);
+      fp.push([px(z),py(Math.max(Math.min(m.f(z,d,m),ymax),ymin))]);
+    }
+    var dd="M"+up.map(function(p){return p[0].toFixed(1)+","+p[1].toFixed(1);}).join(" L")+
+           " L"+lo.slice().reverse().map(function(p){return p[0].toFixed(1)+","+p[1].toFixed(1);}).join(" L")+" Z";
+    s.appendChild(el("path",{d:dd,fill:"#95510f",opacity:".16"}));
+    function poly(pts,color,w,dash){
+      var p=el("path",{d:"M"+pts.map(function(q){return q[0].toFixed(1)+","+q[1].toFixed(1);}).join(" L"),
+        fill:"none",stroke:color,"stroke-width":w});
+      if(dash)p.setAttribute("stroke-dasharray",dash);
+      return p;
+    }
+    s.appendChild(poly(lo,C.mass,2));
+    s.appendChild(poly(up,C.len,2));
+    s.appendChild(poly(fp,C.ink,1.6,"5 3"));
+    s.appendChild(txt(L+8,T+12,"upper bracket u",null,C.len));
+    s.appendChild(txt(L+8,T+27,"lower bracket l",null,C.mass));
+    s.appendChild(txt(L+8,T+42,"a member f of the cell",null,C.ink));
+    box.innerHTML=""; box.appendChild(s);
+
+    var nrm=m.norm(d), bnd=m.bound(d), ok=bnd<=eps;
+    read.innerHTML="δ = <b>"+d.toFixed(4)+"</b>"+
+      " &nbsp;·&nbsp; bound used in the proof: "+m.blab+" = <b>"+bnd.toFixed(4)+"</b>"+
+      " &nbsp;·&nbsp; exact ‖u−l‖₂ = <b>"+nrm.toFixed(4)+"</b>"+
+      " &nbsp;·&nbsp; target ε = <b>"+eps.toFixed(2)+"</b>"+
+      " &nbsp;·&nbsp; <b style='color:"+(ok?C.mass:C.flag)+"'>"+(ok?"inside budget":"too wide")+"</b>";
+    cap.innerHTML="<b>"+m.label+"</b><br>"+m.cap;
+  }
+  sel.addEventListener("change",draw);
+  dSl.addEventListener("input",draw);
+  eSl.addEventListener("input",draw);
+  draw();
+})();
+
+/* ============================ 3. LOG-LOG CURRENCIES ============================ */
+(function(){
+  var box=document.getElementById("curFig"); if(!box)return;
+  function quad(f,a,b,n){var s=0,h=(b-a)/n;for(var i=0;i<n;i++){var x=a+(i+0.5)*h;s+=f(x)*h;}return s;}
+  function excessNorm(d){var c=0.5;return Math.sqrt(quad(function(z){var g=Math.min(Math.max(z-c,0),d);return g*g*Math.exp(-z);},0,25,3000));}
+  function expoNorm(d){var a=0.2,b=0.2+d;return Math.sqrt(1/(2*a+1)-2/(a+b+1)+1/(2*b+1));}
+  var W=700,H=300,L=54,R=120,T=16,B=44;
+  var lo=-3, hi=Math.log10(0.5);
+  var ylo=-3.2, yhi=0.4;
+  var px=function(x){return L+(x-lo)/(hi-lo)*(W-L-R);};
+  var py=function(y){return H-B-(y-ylo)/(yhi-ylo)*(H-T-B);};
+  var s=svg(W,H);
+  for(var gx=-3;gx<=0;gx++){
+    if(gx>hi)continue;
+    s.appendChild(el("line",{x1:px(gx),x2:px(gx),y1:T,y2:H-B,stroke:C.rule}));
+    s.appendChild(txt(px(gx),H-B+16,"10"+(gx?"^"+gx:"⁰"),"middle"));
+  }
+  for(var gy=-3;gy<=0;gy++){
+    s.appendChild(el("line",{x1:L,x2:W-R,y1:py(gy),y2:py(gy),stroke:C.rule}));
+    s.appendChild(txt(L-8,py(gy)+4,"10"+(gy?"^"+gy:"⁰"),"end"));
+  }
+  s.appendChild(el("line",{x1:L,x2:W-R,y1:H-B,y2:H-B,stroke:"#8f9a93"}));
+  s.appendChild(el("line",{x1:L,x2:L,y1:T,y2:H-B,stroke:"#8f9a93"}));
+  s.appendChild(txt((L+W-R)/2,H-B+32,"cell width δ","middle"));
+  s.appendChild(txt(14,py((ylo+yhi)/2),"‖gap‖₂","middle",C.ink3));
+  var yl=s.lastChild; yl.setAttribute("transform","rotate(-90 14 "+py((ylo+yhi)/2)+")");
+
+  var curves=[
+    {f:function(d){return Math.sqrt(d);},c:C.mass,lab:"indicator: √δ",dash:null},
+    {f:excessNorm,c:C.len,lab:"(z−u)⁺: δ·1",dash:null},
+    {f:expoNorm,c:"#c07a2a",lab:"e^(−λz): δ‖Z‖₂",dash:"6 3"},
+    {f:function(d){return 2*d*Math.sqrt(2);},c:"#7d1f3d",lab:"sin(θz): 2δ‖Z‖₂",dash:"2 3"}
+  ];
+  curves.forEach(function(cv,idx){
+    var pts=[];
+    for(var i=0;i<=90;i++){
+      var lx=lo+(hi-lo)*i/90, d=Math.pow(10,lx), v=cv.f(d);
+      if(v<=0)continue;
+      pts.push(px(lx).toFixed(1)+","+py(Math.log10(v)).toFixed(1));
+    }
+    var p=el("path",{d:"M"+pts.join(" L"),fill:"none",stroke:cv.c,"stroke-width":2.1});
+    if(cv.dash)p.setAttribute("stroke-dasharray",cv.dash);
+    s.appendChild(p);
+    var last=pts[pts.length-1].split(",");
+    s.appendChild(txt(W-R+8, parseFloat(last[1])+4, cv.lab, null, cv.c));
+  });
+  s.appendChild(txt(px(-2.7),py(-0.35),"slope ½ — mass",null,C.mass));
+  s.appendChild(txt(px(-2.7),py(-0.75),"slope 1 — length",null,C.len));
+  box.appendChild(s);
+})();
+
+/* ============================ 4. ANNOTATED SCRIPTS ============================ */
+document.querySelectorAll(".line .txt").forEach(function(t){
+  t.setAttribute("tabindex","0");
+  t.setAttribute("role","button");
+  function toggle(){ t.parentElement.classList.toggle("open"); }
+  t.addEventListener("click",toggle);
+  t.addEventListener("keydown",function(e){ if(e.key==="Enter"||e.key===" "){e.preventDefault();toggle();} });
+});
+
+/* ============================ 5. ENTROPY INTEGRAL ============================ */
+(function(){
+  var box=document.getElementById("intFig"), read=document.getElementById("intRead"),
+      mode=document.getElementById("intMode"), kSl=document.getElementById("intK");
+  if(!box)return;
+  function draw(){
+    var m=mode.value, v=+kSl.value;
+    var K=Math.max(1,Math.round(v/2)), Cc=Math.max(.1,v/10);
+    var g, desc, diverges=false;
+    if(m==="poly"){ g=function(e){return Math.sqrt(Math.log(2)+K*Math.log(1/e));}; desc="N = 2ε^−"+K; }
+    else if(m==="exp1"){ g=function(e){return Math.sqrt(Cc/e);}; desc="log N = "+Cc.toFixed(1)+"/ε"; }
+    else if(m==="explog"){ g=function(e){return Math.sqrt(Cc/e*Math.log(1/e));}; desc="log N = ("+Cc.toFixed(1)+"/ε)·log(1/ε)"; }
+    else { g=function(e){return Math.sqrt(Cc)/e;}; desc="log N = "+Cc.toFixed(1)+"/ε²"; diverges=true; }
+
+    var lowCut=1e-5, total=0, n=20000, h=(1-lowCut)/n;
+    for(var i=0;i<n;i++){ var x=lowCut+(i+0.5)*h; total+=g(x)*h; }
+
+    var W=700,H=260,L=50,R=18,T=16,B=40;
+    var ymax = diverges? 30 : Math.max(3, g(0.002)*1.1);
+    var px=function(e){return L+e*(W-L-R);};
+    var py=function(y){return H-B-Math.min(y,ymax)/ymax*(H-T-B);};
+    var s=svg(W,H);
+    for(var gx=0;gx<=1.001;gx+=0.25){
+      s.appendChild(el("line",{x1:px(gx),x2:px(gx),y1:T,y2:H-B,stroke:C.rule}));
+      s.appendChild(txt(px(gx),H-B+16,gx.toFixed(2),"middle"));
+    }
+    s.appendChild(el("line",{x1:L,x2:W-R,y1:H-B,y2:H-B,stroke:"#8f9a93"}));
+    s.appendChild(el("line",{x1:L,x2:L,y1:T,y2:H-B,stroke:"#8f9a93"}));
+    s.appendChild(txt((L+W-R)/2,H-B+31,"ε","middle"));
+    var pts=[],M=600;
+    for(var i2=0;i2<=M;i2++){
+      var e=lowCut+(1-lowCut)*i2/M;
+      pts.push([px(e),py(g(e))]);
+    }
+    var area="M"+px(lowCut).toFixed(1)+","+py(0).toFixed(1)+" L"+
+      pts.map(function(p){return p[0].toFixed(1)+","+p[1].toFixed(1);}).join(" L")+
+      " L"+px(1).toFixed(1)+","+py(0).toFixed(1)+" Z";
+    s.appendChild(el("path",{d:area,fill:diverges?C.flag:C.mass,opacity:".14"}));
+    s.appendChild(el("path",{d:"M"+pts.map(function(p){return p[0].toFixed(1)+","+p[1].toFixed(1);}).join(" L"),
+      fill:"none",stroke:diverges?C.flag:C.mass,"stroke-width":2.2}));
+    s.appendChild(txt(L+10,T+14,"√(log N(ε))",null,diverges?C.flag:C.mass));
+    box.innerHTML=""; box.appendChild(s);
+    read.innerHTML=desc+" &nbsp;·&nbsp; ∫ √(log N) dε ≈ <b>"+
+      (diverges?"∞ (the numerical value keeps growing as the cut-off drops)":total.toFixed(3))+
+      "</b> &nbsp;·&nbsp; <b style='color:"+(diverges?C.flag:C.mass)+"'>"+(diverges?"not Donsker by this route":"Donsker")+"</b>";
+  }
+  mode.addEventListener("change",draw); kSl.addEventListener("input",draw); draw();
+})();
+
+/* ============================ 6. DRILL ============================ */
+(function(){
+  var items=[
+    {c:"$\\mathcal F=\\{\\mathbf 1_{[0,t]}:t\\ge0\\}$",m:"order",u:"mass",n:"e2",
+     w:"Monotone in $t$ at each fixed $z$, gap is the indicator of a cell, one parameter. The unbounded range is irrelevant because the extent is the total mass."},
+    {c:"$\\mathcal F=\\{\\mathbf 1_{(s,t]}:0\\le s\\le t\\}$",m:"order",u:"mass",n:"e4",
+     w:"Monotone in each coordinate separately. Two strips, so mass $\\varepsilon^2/2$ each and a grid of $4/\\varepsilon^2$ points, used twice."},
+    {c:"$\\mathcal H=\\{\\mathbf 1_{[0,s]}(x)\\mathbf 1_{[0,t]}(y)\\}$, data in pairs",m:"order",u:"mass",n:"e4",
+     w:"One class on $\\R^2$ under the joint law. The gap is an L-shape inside two marginal strips, so budget $\\varepsilon^2/2$ each, and the count is the grid size squared."},
+    {c:"$\\mathcal F=\\{\\mathbf 1_{(a,b]}(x)\\mathbf 1_{(c,d]}(y)\\}$",m:"order",u:"mass",n:"e8",
+     w:"Four endpoints, four strips, budget $\\varepsilon^2/4$ each, count raised to the fourth power."},
+    {c:"$\\mathcal F=\\{w\\cdot\\mathbf 1_{[0,t]}\\}$ with $w\\ge0$, $\\|w\\|_{L_2}&lt;\\infty$",m:"order",u:"massw",n:"e2",
+     w:"$(w\\mathbf 1_A)^2=w^2\\mathbf 1_A$, so the square still collapses — but onto $\\mu(A)=\\E[w^2\\mathbf 1_A]$, of total mass $\\|w\\|^2_{L_2}$."},
+    {c:"$\\mathcal F=\\{(z-u)^+:u\\in[0,U]\\}$",m:"order",u:"len",n:"e1",
+     w:"Decreasing in $u$, so ORDER; the gap is bounded by $\\delta$ with envelope $m\\equiv1$, so $\\delta=\\varepsilon$ and the count is $U/\\varepsilon$."},
+    {c:"$\\mathcal F=\\{\\min(z,c):c\\in[0,C]\\}$",m:"order",u:"len",n:"e1",
+     w:"Increasing in $c$, 1-Lipschitz, constant envelope. No moment assumption is needed anywhere in this one."},
+    {c:"$\\mathcal F=\\{e^{-\\lambda z}:\\lambda\\in[0,1]\\}$ on $z\\ge0$",m:"order",u:"len",n:"e1",
+     w:"Monotone in $\\lambda$, so ORDER is available and exact. Gap $\\le\\delta z$, so $\\delta=\\varepsilon/\\|Z_1\\|_{L_2}$ and the extent is the length of $[0,1]$."},
+    {c:"$\\mathcal F=\\{\\theta z:\\theta\\in[-1,1]\\}$",m:"corner",u:"len",n:"e1",
+     w:"Affine in $\\theta$ with direction depending on the sign of $z$, so take min and max over the ends. Count $2\\|Z_1\\|_{L_2}/\\varepsilon$, the 2 being the length of $[-1,1]$."},
+    {c:"$\\mathcal F=\\{a+bz:(a,b)\\in[-1,1]^2\\}$",m:"corner",u:"len",n:"e2",
+     w:"Affine, extremes at the four corners. Two parameters with different envelopes (1 and $|z|$), so split the plain budget and solve two finenesses."},
+    {c:"$\\mathcal F=\\{\\sin(\\theta z):\\theta\\in[0,T]\\}$",m:"size",u:"len",n:"e1",
+     w:"Not monotone in $\\theta$, so pad the centre. Envelope $m(z)=|z|$ from the mean value theorem, gap $2\\delta|z|$."},
+    {c:"$\\mathcal F=\\{K((z-x)/h):x\\in[-T,T]\\}$, $h$ fixed",m:"size",u:"len",n:"e1",
+     w:"A sliding bump is not monotone in $x$. The chain rule gives the constant envelope $L/h$, so no moment assumption and $h$ sits in the constant."},
+    {c:"$\\mathcal F=\\{f_\\theta:\\theta\\in[0,L]^d\\}$, Lipschitz with envelope $m$",m:"size",u:"len",n:"e1d",
+     w:"The general length-currency example: fineness $\\varepsilon/(\\sqrt d\\|m\\|_{L_2})$, extent $L$ per coordinate, count to the power $d$."},
+    {c:"$\\mathcal F=\\{|z-\\theta|:\\theta\\in[0,1]\\}$",m:"size",u:"len",n:"e1",
+     w:"Decreases then increases, so SIZE. The reverse triangle inequality gives the constant envelope $m\\equiv1$, so $\\delta=\\varepsilon/2$ and the count is $2/\\varepsilon$."},
+    {c:"balls $\\{\\mathbf 1\\{\\|z-x\\|\\le r\\}\\}$ in $\\R^d$, $P$ with bounded density",m:"order",u:"mass",n:"e2d",
+     w:"ORDER in the radius, with the centre absorbed by padding the radius via the triangle inequality. The gap is an annulus, and the density converts volume into mass: $\\varepsilon^{-2}$ per constraint, and there are $d+1$ of them."},
+    {c:"all non-decreasing $f:\\R\\to[0,1]$",m:"adapt",u:"mass",n:"expo",
+     w:"The parameter is a whole function, so there is no fineness to solve for. Cut points are chosen adaptively from a fixed candidate list, and the count is combinatorial — exponential in $1/\\varepsilon$, and Donsker anyway."},
+    {c:"$\\mathcal F=\\{\\mathbf 1_{(0,t]}/\\sqrt t:0&lt;t\\le1\\}$, $Z\\sim U(0,1)$",m:"none",u:"none",n:"inf",
+     w:"Every member has $\\|f_t\\|_{L_2}=1$ and the envelope $z^{-1/2}$ is not square-integrable. Taking $t_k=4^{-k}$ gives infinitely many functions pairwise at distance $\\ge1$, so $\\Nb(\\varepsilon)=\\infty$ for $\\varepsilon&lt;1$."}
+  ];
+  var cur=null, right=0, tries=0;
+  var P=document.getElementById("drPrompt"), fb=document.getElementById("drFb"),
+      sc=document.getElementById("drScore");
+  var sels=[document.getElementById("drMech"),document.getElementById("drCur"),document.getElementById("drCount")];
+  function next(){
+    cur=items[Math.floor(Math.random()*items.length)];
+    P.innerHTML="Name the setup for "+cur.c+".";
+    sels.forEach(function(s){s.value="";});
+    fb.className="fb"; fb.innerHTML="";
+    tex(P);
+  }
+  document.getElementById("drNext").addEventListener("click",next);
+  document.getElementById("drCheck").addEventListener("click",function(){
+    if(!cur)return;
+    if(!sels[0].value||!sels[1].value||!sels[2].value){
+      fb.className="fb show bad"; fb.innerHTML="Answer all three before checking — the three decisions are made together, not in sequence."; return;
+    }
+    tries++;
+    var got=[sels[0].value===cur.m, sels[1].value===cur.u, sels[2].value===cur.n];
+    var all=got[0]&&got[1]&&got[2];
+    if(all)right++;
+    var names=["mechanism","currency","count"];
+    var wrong=names.filter(function(n,i){return !got[i];});
+    fb.className="fb show "+(all?"good":"bad");
+    fb.innerHTML=(all?"<b>All three.</b> ":"<b>Off on the "+wrong.join(" and the ")+".</b> ")+cur.w;
+    sc.textContent=right+" / "+tries+" complete";
+    tex(fb);
+  });
+  next();
+})();
+
+/* ============================ 7. FLASHCARDS ============================ */
+(function(){
+  var data=[
+    ["$\\|\\mathbf 1_A\\|_{L_2(P)}$ and $\\|\\mathbf 1_A\\|_{L_1(P)}$?","$\\sqrt{P(A)}$ and $P(A)$. The square collapses, and that asymmetry is the source of every $\\varepsilon^2$."],
+    ["The bracketing CLT condition","$\\int_0^1\\sqrt{\\log \\Nb(\\varepsilon,\\mathcal F,L_2(P))}\\,d\\varepsilon&lt;\\infty$, and then $\\mathcal F$ is $P$-Donsker."],
+    ["The Glivenko–Cantelli condition","$\\Nb(\\varepsilon,\\mathcal F,L_1(P))&lt;\\infty$ for every $\\varepsilon&gt;0$. Note the norm: $L_1$, not $L_2$."],
+    ["What a maximum over $N$ costs","$\\E[\\max_{j\\le N}|X_j|]\\lesssim\\sigma\\sqrt{\\log N}$, from the union bound. Logarithmic, hence affordable."],
+    ["The two costs of a bracket","$|\\Gn(u-l)|$, of size $\\|u-l\\|_{L_2}$, and $\\sqrt n\\,P(u-l)$. The second is what breaks the one-level argument."],
+    ["The grid for an indicator class","$t_j=\\inf\\{t:F(t)\\ge j\\varepsilon^2\\}$, at most $\\lceil2/\\varepsilon^2\\rceil$ points, with the bound stated using the left limit $F(t_j-)$."],
+    ["Covariance of the limit for $F^{(n)}$","$F(s\\wedge t)-F(s)F(t)$; the limit is $B\\circ F$ with $B$ a Brownian bridge."],
+    ["Where $\\|Z_1\\|_{L_2}$ comes from","The envelope: differentiate $f_\\theta(z)$ in $\\theta$. If the bound involves $z$, its norm divides $\\varepsilon$ to give the fineness."],
+    ["Budget for $r$ disjoint strips","Mass $\\varepsilon^2/r$ each — masses add before the square root. For $r$ pieces of any other shape, norm $\\varepsilon/r$."],
+    ["Hadamard derivative of $\\phi(h)=-\\log(1-h)$","$\\phi'_f(h)=h/(1-f)$, giving the hazard limit $(B\\circ F)/(1-F)$."],
+    ["The boundary of the method","$\\log \\Nb(\\varepsilon)\\approx\\varepsilon^{-1}$ still integrates; $\\varepsilon^{-2}$ gives integrand $\\varepsilon^{-1}$ and fails."],
+    ["First check on any class","Is the envelope $\\sup_\\theta|f_\\theta|$ in $L_2(P)$? If not, stop — the limit would have infinite variance."],
+    ["The statistic is not an average","Delta method: bracket the average underneath, show the map is Hadamard differentiable, transport the limit."],
+    ["A parameter running to infinity","If the family collapses there, the whole tail is one bracket priced by a tail expectation. Grid only the bounded part."]
+  ];
+  var wrap=document.getElementById("cards");
+  data.forEach(function(d){
+    var c=document.createElement("div");
+    c.className="card"; c.setAttribute("tabindex","0"); c.setAttribute("role","button");
+    c.innerHTML="<div class='q'>"+d[0]+"</div><div class='a'>"+d[1]+"</div><div class='tap'>tap to turn</div>";
+    function flip(){c.classList.toggle("flip");}
+    c.addEventListener("click",flip);
+    c.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();flip();}});
+    wrap.appendChild(c);
+  });
+  tex(wrap);
+})();
+
+/* ============================ 8. CHEAT CARD ============================ */
+(function(){
+  var c=document.getElementById("cheat"), b=document.getElementById("cheatBtn");
+  b.addEventListener("click",function(){
+    c.classList.toggle("open");
+    b.textContent=c.classList.contains("open")?"Hide card":"Formula card";
+  });
+})();
+})();
+</script>
+</body>
+</html>

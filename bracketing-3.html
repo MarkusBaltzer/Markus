@@ -1,0 +1,1469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How the bracketing proof actually works — built from the ground up</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@400;500;600&family=Spectral:ital,wght@0,300;0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\\[','\\]']],
+    processEscapes: true,
+    macros: {
+      Nb: ["N_{[\\,]}"],
+      Jb: ["J_{[\\,]}"],
+      Pn: ["\\mathbb{P}^{(n)}"],
+      Gn: ["\\mathbb{G}^{(n)}"],
+      E: ["\\mathbb{E}"],
+      P: ["\\mathbb{P}"],
+      R: ["\\mathbb{R}"],
+      linf: ["\\ell^\\infty"],
+      wto: ["\\;\\overset{d}{\\longrightarrow}\\;"],
+      pto: ["\\;\\overset{P}{\\longrightarrow}\\;"]
+    }
+  },
+  chtml: { scale: 1.02 },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+};
+</script>
+<script id="MathJax-script" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js"></script>
+<style>
+:root{
+  --ink:#14181d;
+  --ink-soft:#4b5661;
+  --paper:#e9edf1;
+  --panel:#ffffff;
+  --rule:#c6d0d9;
+  --rule-soft:#dde4ea;
+  --deep:#1b4965;
+  --lower:#0f766e;
+  --upper:#6d28d9;
+  --warn:#9f1239;
+  --gold:#8a6d1f;
+  --shadow:0 1px 0 rgba(20,24,29,.06);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:1.5rem}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} *{animation:none!important; transition:none!important} }
+body{
+  margin:0;
+  background-color:var(--paper);
+  background-image:
+    linear-gradient(to right, rgba(27,73,101,.055) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(27,73,101,.055) 1px, transparent 1px);
+  background-size:26px 26px;
+  color:var(--ink);
+  font-family:"Spectral", Georgia, "Times New Roman", serif;
+  font-weight:400;
+  font-size:17.5px;
+  line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4,.sans{font-family:"IBM Plex Sans Condensed","Helvetica Neue",Arial,sans-serif;font-weight:600;letter-spacing:-.005em}
+code,kbd,.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;font-size:.87em}
+
+/* ---------- layout ---------- */
+.wrap{display:grid;grid-template-columns:250px minmax(0,1fr);gap:0;max-width:1320px;margin:0 auto}
+nav.rail{
+  position:sticky;top:0;align-self:start;height:100vh;overflow-y:auto;
+  padding:2.2rem 1.1rem 3rem 1.4rem;border-right:1px solid var(--rule);
+  background:linear-gradient(to right, rgba(255,255,255,.75), rgba(255,255,255,.35));
+}
+nav.rail .railtitle{font-family:"IBM Plex Sans Condensed",sans-serif;font-size:.82rem;color:var(--ink-soft);margin:0 0 1rem;line-height:1.35}
+nav.rail ol{list-style:none;margin:0;padding:0;counter-reset:sec}
+nav.rail li{counter-increment:sec;margin:0}
+nav.rail a{
+  display:grid;grid-template-columns:2.1rem 1fr;gap:.2rem;align-items:baseline;
+  padding:.3rem 0;color:var(--ink);text-decoration:none;
+  font-family:"IBM Plex Sans Condensed",sans-serif;font-size:.93rem;line-height:1.28;
+  border-top:1px solid var(--rule-soft);
+}
+nav.rail a:hover{color:var(--deep)}
+nav.rail a::before{content:"§" counter(sec);font-family:"IBM Plex Mono",monospace;font-size:.72rem;color:var(--deep);opacity:.8}
+nav.rail a.sub{grid-template-columns:2.1rem 1fr;font-size:.86rem;color:var(--ink-soft);border-top:none;padding-left:0}
+nav.rail a.sub::before{content:"";}
+main{padding:2.6rem 3.2rem 8rem;max-width:none;min-width:0}
+.col{max-width:74ch}
+@media (max-width:960px){
+  .wrap{grid-template-columns:1fr}
+  nav.rail{position:static;height:auto;border-right:none;border-bottom:1px solid var(--rule)}
+  main{padding:1.6rem 1.1rem 5rem}
+}
+
+/* ---------- hero ---------- */
+header.hero{border-bottom:2px solid var(--ink);padding-bottom:2rem;margin-bottom:2.4rem}
+header.hero h1{font-size:clamp(2rem,4.4vw,3.2rem);line-height:1.02;margin:.2rem 0 .6rem;max-width:20ch}
+header.hero .kicker{font-family:"IBM Plex Mono",monospace;font-size:.78rem;color:var(--deep);margin:0}
+header.hero .lede{font-size:1.14rem;max-width:66ch;color:var(--ink-soft)}
+.brackethead{position:relative;padding-left:1.5rem}
+.brackethead::before{
+  content:"";position:absolute;left:0;top:.25em;bottom:.25em;width:.62rem;
+  border-left:2px solid var(--deep);border-top:2px solid var(--deep);border-bottom:2px solid var(--deep);
+}
+
+/* ---------- sections ---------- */
+section{margin:0 0 3.4rem;scroll-margin-top:1rem}
+section > h2{
+  font-size:1.72rem;line-height:1.12;margin:3.2rem 0 .4rem;padding-top:1.1rem;border-top:2px solid var(--ink);
+}
+section > h2 .num{font-family:"IBM Plex Mono",monospace;font-size:.72rem;color:var(--deep);display:block;margin-bottom:.35rem}
+h3{font-size:1.18rem;margin:2rem 0 .35rem}
+h4{font-size:1rem;margin:1.4rem 0 .3rem;color:var(--deep)}
+p{margin:.7rem 0}
+ul,ol{padding-left:1.25rem}
+li{margin:.35rem 0}
+a{color:var(--deep)}
+
+/* ---------- panels ---------- */
+.panel{background:var(--panel);border:1px solid var(--rule);padding:1.1rem 1.3rem;margin:1.3rem 0;box-shadow:var(--shadow)}
+.panel > :first-child{margin-top:0}
+.panel > :last-child{margin-bottom:0}
+.tag{font-family:"IBM Plex Sans Condensed",sans-serif;font-size:.8rem;color:var(--deep);display:block;margin-bottom:.35rem}
+.thm{border-left:3px solid var(--deep)}
+.thm .tag{color:var(--deep)}
+.intuition{background:#fbfaf6;border-left:3px solid var(--gold)}
+.intuition .tag{color:var(--gold)}
+.trap{background:#fdf4f5;border-left:3px solid var(--warn)}
+.trap .tag{color:var(--warn)}
+.recipe{background:#f4f9fb;border-left:3px solid var(--lower)}
+.recipe .tag{color:var(--lower)}
+.setup{background:#f7f5fb;border-left:3px solid var(--upper)}
+.setup .tag{color:var(--upper)}
+.ex .panel.setup{margin:1.1rem 0 .2rem}
+.setup dl.rd{display:grid;grid-template-columns:auto 1fr;gap:.15rem .8rem;margin:.5rem 0 0}
+.setup dl.rd dt{font-family:"IBM Plex Sans Condensed",sans-serif;color:var(--upper);font-size:.9rem}
+.setup dl.rd dd{margin:0}
+@media (max-width:640px){ .setup dl.rd{grid-template-columns:1fr} .setup dl.rd dt{margin-top:.4rem} }
+blockquote{margin:1rem 0;padding-left:1rem;border-left:2px solid var(--rule);color:var(--ink-soft);font-style:italic}
+
+/* boilerplate steps */
+ol.steps{list-style:none;counter-reset:st;padding:0;margin:1.2rem 0}
+ol.steps > li{counter-increment:st;position:relative;padding:.75rem 0 .75rem 3.1rem;border-top:1px solid var(--rule-soft)}
+ol.steps > li::before{
+  content:"S" counter(st);position:absolute;left:0;top:.85rem;
+  font-family:"IBM Plex Mono",monospace;font-size:.74rem;color:#fff;background:var(--deep);
+  padding:.16rem .4rem;letter-spacing:.02em;
+}
+ol.steps > li b{font-family:"IBM Plex Sans Condensed",sans-serif;font-weight:600}
+
+/* example cards */
+.ex{border:1px solid var(--rule);background:var(--panel);margin:1.6rem 0;box-shadow:var(--shadow)}
+.ex > .exhead{display:flex;gap:.8rem;align-items:baseline;padding:.8rem 1.2rem;border-bottom:1px solid var(--rule-soft);background:#f6f8fa}
+.ex > .exhead .n{font-family:"IBM Plex Mono",monospace;font-size:.8rem;color:var(--deep)}
+.ex > .exhead h3{margin:0;font-size:1.1rem}
+.ex .exbody{padding:.9rem 1.2rem 1.1rem}
+.ex .exbody > :first-child{margin-top:0}
+.meta{display:grid;grid-template-columns:auto 1fr;gap:.2rem .9rem;font-size:.94rem;margin:.8rem 0;padding:.7rem .9rem;background:#f6f8fa;border:1px solid var(--rule-soft)}
+.meta dt{font-family:"IBM Plex Sans Condensed",sans-serif;color:var(--deep)}
+.meta dd{margin:0}
+
+table{border-collapse:collapse;width:100%;margin:1.1rem 0;font-size:.95rem;background:var(--panel)}
+th,td{border:1px solid var(--rule-soft);padding:.45rem .6rem;text-align:left;vertical-align:top}
+th{background:#f0f4f7;font-family:"IBM Plex Sans Condensed",sans-serif;font-weight:600;font-size:.9rem}
+
+figure{margin:1.6rem 0;background:var(--panel);border:1px solid var(--rule);padding:1rem;box-shadow:var(--shadow)}
+figcaption{font-size:.9rem;color:var(--ink-soft);margin-top:.6rem;line-height:1.45}
+svg{max-width:100%;height:auto;display:block}
+
+/* controls */
+.controls{display:flex;flex-wrap:wrap;gap:1rem;align-items:center;margin:.4rem 0 1rem;font-family:"IBM Plex Sans Condensed",sans-serif;font-size:.92rem}
+.controls label{display:flex;gap:.5rem;align-items:center}
+input[type=range]{accent-color:var(--deep);width:190px}
+button{font-family:"IBM Plex Sans Condensed",sans-serif;font-size:.92rem;background:var(--deep);color:#fff;border:none;padding:.42rem .85rem;cursor:pointer}
+button:hover{background:#16394f}
+button.ghost{background:transparent;color:var(--deep);border:1px solid var(--deep)}
+button.ghost:hover{background:#e6eef3}
+select{font-family:"IBM Plex Sans Condensed",sans-serif;font-size:.92rem;padding:.3rem .4rem;border:1px solid var(--rule)}
+:focus-visible{outline:2px solid var(--upper);outline-offset:2px}
+.readout{font-family:"IBM Plex Mono",monospace;font-size:.85rem;color:var(--ink)}
+.verdict{font-family:"IBM Plex Sans Condensed",sans-serif;font-weight:600;padding:.15rem .5rem;display:inline-block}
+.ok{background:#dff2ee;color:#0f766e}
+.no{background:#fbe3e7;color:var(--warn)}
+
+details{border-top:1px solid var(--rule-soft);padding:.5rem 0}
+details summary{cursor:pointer;font-family:"IBM Plex Sans Condensed",sans-serif;color:var(--deep)}
+details[open] summary{margin-bottom:.4rem}
+.q{font-weight:600}
+.legend{display:flex;gap:1.2rem;flex-wrap:wrap;font-size:.87rem;font-family:"IBM Plex Sans Condensed",sans-serif;color:var(--ink-soft);margin-top:.5rem}
+.swatch{display:inline-block;width:.85rem;height:.85rem;margin-right:.35rem;vertical-align:-1px}
+.footnote{font-size:.9rem;color:var(--ink-soft)}
+hr.thin{border:none;border-top:1px solid var(--rule-soft);margin:2rem 0}
+</style>
+</head><body>
+<div class="wrap">
+<nav class="rail" aria-label="Contents">
+  <p class="railtitle">How the bracketing<br>proof actually works</p>
+  <ol>
+    <li><a href="#setting"><span>Everything is an average</span></a></li>
+    <li><a href="#problem"><span>The problem: one function, N functions, all functions</span></a></li>
+    <li><a href="#tail"><span>Tool 1 — the tail of a single average</span></a></li>
+    <li><a href="#max"><span>Tool 2 — the cost of a maximum over N</span></a></li>
+    <li><a href="#brackets"><span>Tool 3 — turning infinity into N</span></a></li>
+    <li><a href="#gc"><span>A complete proof, start to finish</span></a></li>
+    <li><a href="#breaks"><span>Now multiply by √n and watch it break</span></a></li>
+    <li><a href="#chain"><span>The repair, and where the integral comes from</span></a></li>
+    <li><a href="#recipe"><span>What you actually have to do</span></a></li>
+    <li><a href="#setup"><span>Reading the setup off the exercise</span></a></li>
+    <li><a href="#examples"><span>Twenty examples, all algebra shown</span></a></li>
+    <li><a href="#drills"><span>Drills</span></a></li>
+    <li><a href="#close"><span>The whole page in one box</span></a></li>
+  </ol>
+  <p class="railtitle" style="margin-top:1.4rem">Assumes: iid samples, expectation and variance, Chebyshev, the LLN and the CLT. Nothing else.</p>
+</nav>
+
+<main>
+<header class="hero">
+  <p class="kicker">Companion page · built forwards, not backwards</p>
+  <h1>How the bracketing proof actually works</h1>
+  <p class="lede">Nothing here is quoted before it is derived. We start with a single average, find out exactly what goes wrong when you want to control many averages at once, and let the failure tell us what a bracket has to be. By the end of §6 you will have read one complete proof with no gaps, by the end of §8 you will know precisely which step is hard and why, §10 answers the question the worked solutions never answer — how the setup is found, why $\varepsilon^2$ appears in one problem and $\varepsilon/\|Z_1\|_{L_2}$ in the next, and why neither is a guess — and §11 runs the finished machine on twenty different classes with every line of algebra written out, including two that fall outside the polynomial pattern.</p>
+</header>
+
+<div class="panel intuition">
+<span class="tag">The promise</span>
+<p>If at any point something appears without a reason, that is a bug in this page. Three things are stated without proof, and each is flagged where it occurs: Bernstein's inequality (§3), the final assembly of the chaining argument (§8), and the law of the iterated logarithm, used once in example 20 to confirm that a failure is real rather than an artefact of the method. Everything else — including the whole of §6 and every bracketing count in §11 — is derived here in full.</p>
+</div>
+
+<section id="setting">
+<h2><span class="num">§1</span>Everything in sight is an average</h2>
+
+<p>We have $Z_1,\dots,Z_n$ iid with distribution $P$. Take any function $f$ of one observation. Then</p>
+$$\mathbb P^{(n)}f\;:=\;\frac1n\sum_{i=1}^nf(Z_i)$$
+<p>is just a sample average, and $Pf:=\mathbb E[f(Z_1)]$ is the number it estimates. Two facts from a first probability course, and we will use nothing deeper about a single $f$:</p>
+$$\mathbb E\big[\mathbb P^{(n)}f\big]=Pf,\qquad
+\operatorname{Var}\big(\mathbb P^{(n)}f\big)=\frac{\operatorname{Var}(f(Z_1))}{n}.$$
+<p>The error is therefore of size $n^{-1/2}$, so to see it we rescale. Define the <b>empirical process</b> applied to $f$:</p>
+$$\mathbb G^{(n)}f\;:=\;\sqrt n\big(\mathbb P^{(n)}f-Pf\big)=\frac1{\sqrt n}\sum_{i=1}^n\Big(f(Z_i)-Pf\Big).$$
+<p>This is a centred, normalised sum of iid terms. Its mean is $0$; its variance is $\operatorname{Var}(f(Z_1))$, independent of $n$; and by the CLT it converges to $\mathcal N\big(0,\operatorname{Var}(f(Z_1))\big)$. Nothing new so far.</p>
+
+<div class="panel">
+<span class="tag">The one piece of translation you need</span>
+<p>The distribution function is this construction with a particular $f$. Put $f_t(z)=\mathbf 1_{[0,t]}(z)$, which is $1$ if $z\le t$ and $0$ otherwise. Then
+$$\mathbb P^{(n)}f_t=\frac1n\#\{i:Z_i\le t\}=F^{(n)}(t),\qquad Pf_t=\mathbb P(Z_1\le t)=F(t),$$
+$$\mathbb G^{(n)}f_t=\sqrt n\big(F^{(n)}(t)-F(t)\big).$$
+So “the rescaled error of the empirical distribution function at $t$” and “the empirical process applied to the function $f_t$” are the same object. Studying a family of functions $\mathcal F=\{f_t:t\ge0\}$ is the same as studying the whole curve.</p>
+</div>
+
+<p>One more elementary fact, used constantly below, so let us record it now. For an indicator, squaring changes nothing: $\mathbf 1_A^2=\mathbf 1_A$. Hence</p>
+$$\mathbb E\big[\mathbf 1_A(Z_1)^2\big]=\mathbb E\big[\mathbf 1_A(Z_1)\big]=P(A),
+\qquad\text{so}\qquad \|\mathbf 1_A\|_{L_2(P)}=\sqrt{P(A)} .$$
+<p>Here $\|g\|_{L_2(P)}=\big(\mathbb E[g(Z_1)^2]\big)^{1/2}$ and $\|g\|_{L_1(P)}=\mathbb E|g(Z_1)|$. Remember the box: <b>for a set, the $L_2$ size is the square root of the probability, while the $L_1$ size is the probability itself.</b> This single asymmetry is responsible for every $\varepsilon^2$ you will meet.</p>
+</section>
+
+<section id="problem">
+<h2><span class="num">§2</span>One function, $N$ functions, all functions</h2>
+
+<p>Fix the goal: we want to say something about</p>
+$$\Big\|\mathbb G^{(n)}\Big\|_{\mathcal F}:=\sup_{f\in\mathcal F}\big|\mathbb G^{(n)}f\big| ,$$
+<p>because that is what a statement “uniformly in $t$” means. Watch what happens as the family grows.</p>
+
+<h4>One function</h4>
+<p>$\mathbb G^{(n)}f\wto\mathcal N(0,\sigma_f^2)$. Bounded in probability, nothing to do.</p>
+
+<h4>Two functions</h4>
+<p>$\max(|\mathbb G^{(n)}f_1|,|\mathbb G^{(n)}f_2|)$ converges to the max of two (correlated) normals. Still bounded. A maximum of finitely many convergent things converges.</p>
+
+<h4>$N$ functions</h4>
+<p>Still fine for fixed $N$, but the <em>size</em> now depends on $N$: the maximum of $N$ standard normals is roughly $\sqrt{2\log N}$, and this grows without bound as $N$ grows. So a bound that is uniform over a family must contain a price that depends on how many functions there effectively are. §4 derives that price.</p>
+
+<h4>Infinitely many functions</h4>
+<p>Now it can genuinely fail. Take $Z_i$ uniform on $[0,1]$ and
+$$\mathcal F=\{\mathbf 1_A:A\subset[0,1]\ \text{finite}\}.$$
+For each <em>fixed</em> finite $A$ we have $P(A)=0$ and, almost surely, no data point lands in $A$, so $\mathbb P^{(n)}\mathbf 1_A=0$ and $\mathbb G^{(n)}\mathbf 1_A=0$. Every individual function behaves perfectly. But now choose $A$ <em>after</em> seeing the data, namely $A=\{Z_1,\dots,Z_n\}$, which is finite and so belongs to $\mathcal F$. Then $\mathbb P^{(n)}\mathbf 1_A=1$ while $P\mathbf 1_A=0$, so
+$$\big\|\mathbb G^{(n)}\big\|_{\mathcal F}\ \ge\ \sqrt n\,(1-0)=\sqrt n\ \longrightarrow\ \infty .$$
+</p>
+
+<div class="panel trap">
+<span class="tag">The lesson to extract</span>
+<p>Pointwise information is worth nothing for a supremum, because the supremum is allowed to pick its $f$ <em>after</em> looking at the data. Any argument that is going to work must therefore control all $f$ <b>simultaneously and in advance</b>, using inequalities that hold for every possible dataset. Hold onto that phrase: it is exactly what a bracket delivers and what an “approximation on average” does not.</p>
+</div>
+
+<p>So the plan must be: reduce the infinite family to a finite one, in advance, with inequalities valid for all data; pay the $\sqrt{\log N}$ price for the finite maximum; and control the error made by the reduction. Three tools, one per §3, §4, §5.</p>
+</section>
+
+<section id="tail">
+<h2><span class="num">§3</span>Tool 1 — how likely is one average to be far out?</h2>
+
+<p>The CLT tells us $\mathbb G^{(n)}f$ is approximately normal, but a limit statement is not enough: to take a maximum over $N$ things we need a bound valid at finite $n$, and we need to know how the bound depends on $f$. That is Bernstein's inequality, the only result on this page quoted without proof.</p>
+
+<div class="panel thm">
+<span class="tag">Bernstein's inequality — quoted (Theorem 1.3 in the notes)</span>
+<p>Let $g$ satisfy $|g|\le M$ and $Pg=0$, and write $\sigma^2=\|g\|^2_{L_2(P)}$. Then for every $x\gt 0$,
+$$\mathbb P\Big(\big|\mathbb G^{(n)}g\big|\gt x\Big)\;\le\;2\exp\left(-\frac{\tfrac12x^2}{\sigma^2+\tfrac13Mx/\sqrt n}\right).$$</p>
+</div>
+
+<p>Two readings, and both matter later.</p>
+<ul>
+<li><b>For moderate $x$ the second term in the denominator is negligible</b> and the bound is $2e^{-x^2/2\sigma^2}$ — exactly a normal tail with standard deviation $\sigma$. So we may think of $\mathbb G^{(n)}g$ as “a normal with standard deviation $\|g\|_{L_2}$”, uniformly in $n$.</li>
+<li><b>The parameter controlling the tail is $\|g\|_{L_2(P)}$.</b> Not $\|g\|_{L_1}$, not the sup norm. This is not a stylistic choice: the variance of $\mathbb G^{(n)}g$ <em>is</em> $\operatorname{Var}(g(Z_1))\le\|g\|_{L_2}^2$, computed in §1. If you want to say “this piece of the process is small”, the quantity you must make small is its $L_2$ norm.</li>
+</ul>
+
+<div class="panel intuition">
+<span class="tag">Answer to “why is entropy measured in $L_2$?”</span>
+<p>Because the fluctuation size of $\mathbb G^{(n)}g$ is $\|g\|_{L_2(P)}$, and that is the only thing the tail bound sees. Later, when we approximate $f$ by a bracket endpoint, the leftover is some $g$, and the leftover's contribution to the process is governed by $\|g\|_{L_2}$. So brackets must be measured in $L_2$ — otherwise we would be controlling a quantity that does not appear in the bound we intend to use.</p>
+</div>
+</section>
+
+<section id="max">
+<h2><span class="num">§4</span>Tool 2 — what a maximum over $N$ costs</h2>
+
+<p>Now the derivation of $\sqrt{\log N}$, in full. Let $X_1,\dots,X_N$ be any random variables — not necessarily independent — each satisfying the normal-type tail</p>
+$$\mathbb P(|X_j|\gt x)\le2e^{-x^2/2\sigma^2}\qquad\text{for all }x\gt 0 .$$
+<p>The event that the maximum exceeds $x$ is the union of the $N$ events that some particular $X_j$ exceeds $x$. The union bound (probability of a union $\le$ sum of probabilities — no independence needed) gives</p>
+$$\mathbb P\Big(\max_{j\le N}|X_j|\gt x\Big)\;\le\;\sum_{j=1}^N\mathbb P(|X_j|\gt x)\;\le\;2N e^{-x^2/2\sigma^2}.$$
+<p>Now choose $x$ so that the right-hand side is small. Set $x=\sigma\sqrt{2\log(2N/\alpha)}$; then $2Ne^{-x^2/2\sigma^2}=2Ne^{-\log(2N/\alpha)}=\alpha$. In words:</p>
+
+<div class="panel recipe">
+<span class="tag">The maximal inequality, derived</span>
+<p>$$\max_{j\le N}|X_j|\;\le\;\sigma\sqrt{2\log(2N/\alpha)}\qquad\text{with probability at least }1-\alpha,$$
+and integrating the tail gives the expectation form $\mathbb E\big[\max_{j\le N}|X_j|\big]\le C\sigma\sqrt{\log N}$ for a universal constant $C$.</p>
+</div>
+
+<p>Look carefully at the shape, because the whole theory is a consequence of it:</p>
+<ul>
+<li>The cost of a maximum enters through $\sqrt{\log N}$ — you can afford <em>enormous</em> $N$. Going from $10$ functions to $10^{6}$ multiplies the bound by only $\sqrt{6}\approx2.4$.</li>
+<li>The cost is <em>multiplied</em> by $\sigma$, the common $L_2$ size. So a maximum over many <b>small</b> pieces is small: $N$ pieces each of $L_2$ size $\varepsilon$ contribute about $\varepsilon\sqrt{\log N}$. Keep this product in view — it is the integrand of the entropy integral, and it is the only thing the integral is made of.</li>
+</ul>
+
+<figure>
+  <div class="controls">
+    <button id="maxRun">Resample</button>
+    <span class="readout" id="maxRead"></span>
+  </div>
+  <div id="maxFig"></div>
+  <figcaption>Simulated $\mathbb E[\max_{j\le N}|X_j|]$ for iid standard normals, against the derived bound $\sqrt{2\log N}$. The bound is tight in shape: the maximum really does grow, but only like the square root of a logarithm.</figcaption>
+</figure>
+</section>
+
+<section id="brackets">
+<h2><span class="num">§5</span>Tool 3 — turning infinitely many functions into $N$ of them</h2>
+
+<p>We need to replace $\sup_{f\in\mathcal F}$ by $\max_{j\le N}$. The obvious idea is to pick representatives and hope the rest are close. Let us try it honestly and see it fail; the failure tells us what to do instead.</p>
+
+<h3>5.1 &nbsp;The naive attempt, and why it does not close</h3>
+<p>Pick $f_1,\dots,f_N$ such that every $f\in\mathcal F$ has some $f_j$ with $\|f-f_j\|_{L_2}\le\varepsilon$. Then for that $f$,
+$$\big|\mathbb G^{(n)}f\big|\;\le\;\big|\mathbb G^{(n)}f_j\big|+\big|\mathbb G^{(n)}(f-f_j)\big| .$$
+The first term is fine: a maximum over $N$ things, §4. The second term has small $L_2$ norm, so by §3 each single instance of it is small. But we need it small <em>for every $f$ at once</em>, and the collection $\{f-f_{j(f)}:f\in\mathcal F\}$ is still an infinite family. We have not reduced anything: we are trying to bound a supremum over an infinite family using a bound for one member at a time, which §2 showed is exactly the thing that does not work.</p>
+
+<div class="panel trap">
+<span class="tag">The precise defect</span>
+<p>“$\|f-f_j\|_{L_2}$ is small” is a statement about an <em>average over $z$</em>. The supremum is allowed to choose $f$ after seeing the data, so it will choose the $f$ whose deviation happens to sit exactly on the observed points. An averaged guarantee cannot rule that out. We need a guarantee that holds <b>at every $z$ separately</b>, so that it survives being evaluated at whatever the data turn out to be.</p>
+</div>
+
+<h3>5.2 &nbsp;What the defect forces: a pointwise two-sided cage</h3>
+<p>So demand approximation from below and above, valid at every point:
+$$l_j(z)\;\le\;f(z)\;\le\;u_j(z)\qquad\text{for every }z\text{ and every }f\in\mathcal F_j .$$
+A pair $[l_j,u_j]$ is called a <b>bracket</b>, and $\mathcal F_j$ is the set of functions caught inside it. That is all the word means: a floor and a ceiling that no member of the group is allowed to cross, anywhere.</p>
+
+<p>Why this is the right object becomes visible the moment you use it. The point is that inequalities between functions survive integration against <em>any</em> measure — including the random empirical one.</p>
+
+<div class="panel recipe">
+<span class="tag">The key derivation. Everything after this is bookkeeping.</span>
+<p>Let $l\le f\le u$ pointwise. Then $f-l\ge0$ and $f-l\le u-l$ pointwise, so applying both $\mathbb P^{(n)}$ and $P$ — each of which is a positive linear operator, i.e. preserves “$\ge0$” — gives four inequalities:
+$$0\le\mathbb P^{(n)}(f-l)\le\mathbb P^{(n)}(u-l),\qquad 0\le P(f-l)\le P(u-l).$$
+Now write the difference of processes and substitute:
+$$\mathbb G^{(n)}f-\mathbb G^{(n)}l=\sqrt n\Big(\mathbb P^{(n)}(f-l)-P(f-l)\Big).$$
+Upper bound: keep the largest possible first term and the smallest possible second term,
+$$\mathbb G^{(n)}f-\mathbb G^{(n)}l\;\le\;\sqrt n\,\mathbb P^{(n)}(u-l)\;=\;\underbrace{\mathbb G^{(n)}(u-l)}_{\text{random, mean }0}+\underbrace{\sqrt n\,P(u-l)}_{\text{deterministic}} .$$
+Lower bound: smallest first term, largest second term,
+$$\mathbb G^{(n)}f-\mathbb G^{(n)}l\;\ge\;-\sqrt n\,P(u-l).$$
+Combining,
+$$\boxed{\ \sup_{f\in[l,u]}\big|\mathbb G^{(n)}f-\mathbb G^{(n)}l\big|\;\le\;\big|\mathbb G^{(n)}(u-l)\big|\;+\;\sqrt n\,P(u-l).\ }$$</p>
+</div>
+
+<p>Read the box slowly, because it is the entire mechanism of the subject.</p>
+<ul>
+<li><b>The supremum on the left is over infinitely many $f$; the right-hand side does not mention $f$ at all.</b> It involves only the two fixed functions $l$ and $u$. That is the reduction we needed, and it works because the cage is pointwise.</li>
+<li><b>Two costs appear, and they pull in the same direction.</b> A random cost $|\mathbb G^{(n)}(u-l)|$, whose size is $\|u-l\|_{L_2}$ by §3, and a deterministic cost $\sqrt n\,P(u-l)$, i.e. $\sqrt n$ times the $L_1$ size. Both shrink when the bracket is tighter.</li>
+<li><b>The two costs are measured in different norms.</b> $L_2$ for the random one, $L_1$ for the deterministic one. Keep both in view; §7 is entirely about the fact that the second one carries a factor $\sqrt n$.</li>
+</ul>
+
+<div class="panel">
+<span class="tag">Definition, now unavoidable rather than arbitrary</span>
+<p>A bracket $[l,u]$ is an <b>$\varepsilon$-bracket</b> in $L_r(P)$ if $\|u-l\|_{L_r}\le\varepsilon$. The <b>bracketing number</b> $N_{[\,]}(\varepsilon,\mathcal F,L_r(P))$ is the smallest number of $\varepsilon$-brackets needed to cover $\mathcal F$. That is the $N$ that will go into the maximal inequality of §4.</p>
+</div>
+</section>
+
+<section id="gc">
+<h2><span class="num">§6</span>A complete proof, with no gaps: the uniform law of large numbers</h2>
+
+<p>Before touching $\sqrt n$, let us assemble the three tools into a full theorem at the easier scale. Everything below is derived; nothing is quoted except the ordinary strong law.</p>
+
+<div class="panel thm">
+<span class="tag">Theorem (Glivenko–Cantelli, bracketing form — Theorem 1.18 in the notes)</span>
+<p>If $N_{[\,]}(\varepsilon,\mathcal F,L_1(P))\lt \infty$ for every $\varepsilon\gt 0$, then
+$$\big\|\mathbb P^{(n)}-P\big\|_{\mathcal F}=\sup_{f\in\mathcal F}\big|\mathbb P^{(n)}f-Pf\big|\;\longrightarrow\;0\quad\text{almost surely.}$$</p>
+<p><b>Proof.</b> Fix $\varepsilon\gt 0$. By assumption there are finitely many brackets $[l_1,u_1],\dots,[l_N,u_N]$ with $P(u_j-l_j)\le\varepsilon$ whose union covers $\mathcal F$. Take any $f\in\mathcal F$ and let $j$ be an index with $l_j\le f\le u_j$.</p>
+<p><em>Upper bound.</em> Since $f\le u_j$ pointwise, $\mathbb P^{(n)}f\le\mathbb P^{(n)}u_j$. Add and subtract $Pu_j$:
+$$\mathbb P^{(n)}f-Pf\;\le\;\mathbb P^{(n)}u_j-Pf\;=\;\big(\mathbb P^{(n)}u_j-Pu_j\big)+\big(Pu_j-Pf\big).$$
+For the last bracket use $f\ge l_j$ pointwise, so $Pu_j-Pf\le Pu_j-Pl_j=P(u_j-l_j)\le\varepsilon$. Hence
+$$\mathbb P^{(n)}f-Pf\;\le\;\big(\mathbb P^{(n)}-P\big)u_j+\varepsilon .$$</p>
+<p><em>Lower bound.</em> Symmetrically, $\mathbb P^{(n)}f\ge\mathbb P^{(n)}l_j$ and $Pf\le Pu_j$, so
+$$\mathbb P^{(n)}f-Pf\;\ge\;\big(\mathbb P^{(n)}-P\big)l_j-\varepsilon .$$</p>
+<p><em>Combine.</em> Both bounds are indexed only by $j$, so taking the supremum over $f$ costs nothing:
+$$\big\|\mathbb P^{(n)}-P\big\|_{\mathcal F}\;\le\;\max_{j\le N}\Big\{\big|\big(\mathbb P^{(n)}-P\big)u_j\big|,\ \big|\big(\mathbb P^{(n)}-P\big)l_j\big|\Big\}+\varepsilon .$$
+The maximum is over $2N$ <em>fixed</em> functions, and for each one the strong law gives $(\mathbb P^{(n)}-P)u_j\to0$ almost surely. A maximum of finitely many sequences each tending to $0$ tends to $0$. Therefore
+$$\limsup_{n\to\infty}\big\|\mathbb P^{(n)}-P\big\|_{\mathcal F}\le\varepsilon\quad\text{a.s.}$$
+Since $\varepsilon\gt 0$ was arbitrary, intersecting countably many almost-sure events over $\varepsilon=1/k$ finishes the proof. $\square$</p>
+</div>
+
+<div class="panel intuition">
+<span class="tag">What this proof teaches, and what it hides</span>
+<p>It contains the full mechanism — cage, cover, finite maximum, residual $\varepsilon$ — and it is completely rigorous. Note where each tool went: §5's pointwise cage let the supremum be dropped, and the finite maximum was free because at this scale each term goes to $0$ on its own. <b>The maximal inequality of §4 was never needed</b>: a maximum of $N$ null sequences is null no matter how large $N$ is. That is the luxury we are about to lose.</p>
+</div>
+</section>
+
+<section id="breaks">
+<h2><span class="num">§7</span>Now multiply by $\sqrt n$, and watch exactly what breaks</h2>
+
+<p>Repeat §6 verbatim at the CLT scale. The box from §5.2 already did the algebra: for $f$ in bracket $j$,
+$$\big|\mathbb G^{(n)}f-\mathbb G^{(n)}l_j\big|\;\le\;\underbrace{\big|\mathbb G^{(n)}(u_j-l_j)\big|}_{\text{(A) fluctuation}}\;+\;\underbrace{\sqrt n\,P(u_j-l_j)}_{\text{(B) bias}} .$$
+So the whole process is within (A)+(B) of a process indexed by only $N$ fixed functions. Now size the two terms for the model case: the half-line class, with brackets built from cells of probability mass $m$. Then $u_j-l_j$ is the indicator of a cell, so by §1</p>
+$$\|u_j-l_j\|_{L_2}=\sqrt m,\qquad P(u_j-l_j)=m .$$
+<p>Using §4 with $\sigma=\sqrt m$ and §3's normal-type tail, and $N\approx1/m$ brackets:</p>
+$$\text{(A)}\ \approx\ \sqrt m\,\sqrt{2\log N}=\sqrt m\,\sqrt{2\log(1/m)},\qquad\qquad
+\text{(B)}\ =\ \sqrt n\,m .$$
+
+<h3>7.1 &nbsp;The conflict, in numbers</h3>
+<figure>
+  <div class="controls">
+    <label for="nSlider">sample size $n$</label>
+    <input id="nSlider" type="range" min="2" max="10" step="0.1" value="4">
+    <label for="mSlider">cell mass $m$</label>
+    <input id="mSlider" type="range" min="-8" max="-0.5" step="0.05" value="-2">
+    <span class="readout" id="tradeRead"></span>
+  </div>
+  <div id="tradeFig"></div>
+  <figcaption>The two costs from the single-level bound, as the cell mass $m$ varies at fixed $n$. Term (A), the fluctuation, falls as the brackets get finer. Term (B), the bias, falls too — but it carries a factor $\sqrt n$, so at any fixed refinement it grows without bound as $n\to\infty$. Slide $n$ upward with $m$ held fixed and watch the red curve lift off the floor.</figcaption>
+</figure>
+
+<p>Here is why that is fatal, stated precisely. What we must prove is <b>asymptotic equicontinuity</b>: for every $\eta\gt 0$,
+$$\lim_{\delta\downarrow0}\ \limsup_{n\to\infty}\ \mathbb P\Big(\sup_{\|f-g\|_{L_2}\lt \delta}\big|\mathbb G^{(n)}f-\mathbb G^{(n)}g\big|\gt \eta\Big)=0 .$$
+Read the order of the limits: <b>$\delta$ is fixed first, then $n\to\infty$, and only afterwards does $\delta$ shrink.</b> That order is not negotiable — it is what “the process does not develop fine-scale wiggles, uniformly in $n$” means. And the single-level bound contains the term $\sqrt n\,P(u-l)$, in which $P(u-l)$ depends on $\delta$ but not on $n$. So for every fixed $\delta$, the bound tends to $\infty$ as $n\to\infty$. The bound is useless, no matter how the constants are tuned.</p>
+
+<div class="panel trap">
+<span class="tag">And you cannot escape by letting the brackets shrink with $n$</span>
+<p>Choosing $m=m_n\to0$ fast enough kills (B), but then the finite family you compared against is $N_n\to\infty$ functions that change with $n$ — no longer a fixed finite-dimensional object, so you can no longer conclude anything from convergence of finite-dimensional distributions. You have moved the problem, not solved it.</p>
+</div>
+
+<h3>7.2 &nbsp;Where the crudeness is</h3>
+<p>Look back at the derivation in §5.2 and find the wasteful step. It is
+$$\mathbb P^{(n)}(f-l)\;\le\;\mathbb P^{(n)}(u-l).$$
+We replaced the actual leftover $f-l$ by the worst possible leftover $u-l$, at every data point simultaneously. For a typical $f$ sitting in the middle of the bracket, that is a gross overestimate — and we then paid $\sqrt n$ times it. The repair is not to be cleverer about one bracket, but to <b>never take a large step at all</b>.</p>
+</section>
+
+<section id="chain">
+<h2><span class="num">§8</span>The repair: many resolutions, and where the integral comes from</h2>
+
+<p>The idea is called <b>chaining</b>. Instead of approximating $f$ once by a coarse endpoint and paying for the whole leftover, approximate it repeatedly, at finer and finer resolutions, and pay only for the small corrections between consecutive levels.</p>
+
+<h3>8.1 &nbsp;The telescope</h3>
+<p>Fix the dyadic scales $\varepsilon_m=2^{-m}$ for $m=0,1,2,\dots$ At each level, cover $\mathcal F$ by $N_m:=N_{[\,]}(\varepsilon_m,\mathcal F,L_2(P))$ brackets, and let $\pi_mf$ denote the endpoint of the level-$m$ bracket containing $f$. Then for any $M$,
+$$\mathbb G^{(n)}f-\mathbb G^{(n)}\pi_0f\;=\;\sum_{m=1}^{M}\Big(\mathbb G^{(n)}\pi_mf-\mathbb G^{(n)}\pi_{m-1}f\Big)\;+\;\Big(\mathbb G^{(n)}f-\mathbb G^{(n)}\pi_Mf\Big).$$
+This is an identity — everything cancels. Its value is that each increment $\pi_mf-\pi_{m-1}f$ is <em>small</em>: both endpoints approximate the same $f$ at neighbouring resolutions, so their $L_2$ distance is at most $\varepsilon_{m-1}+\varepsilon_m\le3\varepsilon_m$. And there are at most $N_mN_{m-1}\le N_m^2$ distinct such increments, because each is determined by which bracket $f$ falls into at levels $m$ and $m-1$.</p>
+
+<p>Apply §4 to level $m$: a maximum over $N_m^2$ terms of common $L_2$ size $3\varepsilon_m$ costs</p>
+$$\mathbb E\Big[\max_{\text{level-}m\text{ increments}}\big|\mathbb G^{(n)}(\cdot)\big|\Big]\;\lesssim\;\varepsilon_m\sqrt{\log N_m^2}\;\asymp\;\varepsilon_m\sqrt{\log N_m}.$$
+<p>Summing over levels, the total cost of the entire chain is</p>
+$$\sum_{m\ge1}\varepsilon_m\sqrt{\log N_{[\,]}(\varepsilon_m)}\;=\;\sum_{m\ge1}2^{-m}\sqrt{\log N_{[\,]}(2^{-m})} .$$
+
+<h3>8.2 &nbsp;That sum is the integral</h3>
+<p>Now the punchline, and it is an elementary comparison. $N_{[\,]}(\varepsilon)$ is non-increasing in $\varepsilon$, so for $\varepsilon\in[2^{-m-1},2^{-m}]$ we have $\sqrt{\log N_{[\,]}(\varepsilon)}\ge\sqrt{\log N_{[\,]}(2^{-m})}$. That interval has length $2^{-m-1}$, so
+$$\int_{2^{-m-1}}^{2^{-m}}\sqrt{\log N_{[\,]}(\varepsilon)}\,d\varepsilon\;\ge\;2^{-m-1}\sqrt{\log N_{[\,]}(2^{-m})}\;=\;\tfrac12\,\varepsilon_m\sqrt{\log N_{[\,]}(\varepsilon_m)} .$$
+Summing over $m\ge1$, the intervals are disjoint and fill $(0,\tfrac12]$, so
+$$\sum_{m\ge1}\varepsilon_m\sqrt{\log N_{[\,]}(\varepsilon_m)}\;\le\;2\int_0^{1/2}\sqrt{\log N_{[\,]}(\varepsilon)}\,d\varepsilon\;\le\;2\int_0^{1}\sqrt{\log N_{[\,]}(\varepsilon)}\,d\varepsilon .$$
+</p>
+
+<div class="panel recipe">
+<span class="tag">This is the answer to “where does the entropy integral come from?”</span>
+<p>It is the total bill for the chain: <b>the sum over resolutions of (size of the correction at that resolution) × (price of a maximum at that resolution)</b>, and the dyadic sum is within a factor $2$ of
+$$\int_0^1\sqrt{\log N_{[\,]}(\varepsilon,\mathcal F,L_2(P))}\;d\varepsilon .$$
+Finite integral means the chain converges: the fine corrections are summable, so the process is uniformly close to a finite-dimensional one, uniformly in $n$. That is asymptotic equicontinuity, and with convergence of the finite-dimensional distributions it is weak convergence.</p>
+</div>
+
+<h3>8.3 &nbsp;What is still being hidden, stated plainly</h3>
+<p>The bias term of §7 has not vanished by magic; it has been made affordable. At each level the argument does not use the crude step “replace the leftover by the whole bracket width”. Instead the increment is split into a part bounded by a threshold — where Bernstein's inequality is in its sub-Gaussian regime and produces the clean $\varepsilon_m\sqrt{\log N_m}$ above — and a rare part where the function is large, which is handled by a moment bound and contributes at higher order. The thresholds are chosen level by level, roughly as $\sqrt n\,\varepsilon_m/\sqrt{\log N_m}$, which is exactly the point at which the second term in Bernstein's denominator stops mattering. Carrying this bookkeeping through is the content of the proof of Theorem 1.19; it is in van der Vaart, Theorem 19.5, and it is <em>not</em> examinable.</p>
+<p>What is examinable, and what you should now feel is inevitable rather than arbitrary, is the <b>statement</b>:</p>
+
+<div class="panel thm">
+<span class="tag">Theorem 1.19 — the Bracketing CLT</span>
+<p>If
+$$\int_0^1\sqrt{\log N_{[\,]}\big(\varepsilon,\mathcal F,L_2(P)\big)}\;d\varepsilon\;\lt \;\infty ,$$
+then $\mathcal F$ is $P$-Donsker: $\mathbb G^{(n)}=\sqrt n(\mathbb P^{(n)}-P)$ converges weakly in $\ell^\infty(\mathcal F)$ to a tight Gaussian process $\mathbb G$ with $\mathbb E[\mathbb G f]=0$ and $\operatorname{Cov}(\mathbb Gf,\mathbb Gg)=Pfg-Pf\,Pg$.</p>
+</div>
+
+<div class="panel intuition">
+<span class="tag">How forgiving the condition is — and why you will never lose a mark here</span>
+<p>Suppose $N_{[\,]}(\varepsilon)\le C\varepsilon^{-K}$ for some constants. Then $\log N_{[\,]}(\varepsilon)\le\log C+K\log(1/\varepsilon)$ and
+$$\int_0^1\sqrt{\log C+K\log(1/\varepsilon)}\;d\varepsilon\lt \infty ,$$
+because $\log(1/\varepsilon)$ is integrable on $(0,1]$ — indeed $\int_0^1\log(1/\varepsilon)d\varepsilon=1$ — and the square root only makes it smaller near $0$ where the integrand exceeds $1$. So: <b>any polynomial bracketing number, of any degree, passes.</b> In practice the last step of every proof is this one sentence, and it is identical every time.</p>
+</div>
+</section>
+
+<section id="recipe">
+<h2><span class="num">§9</span>What you actually have to do</h2>
+
+<p>Everything above says the theory has exactly one input: a bound on $N_{[\,]}(\varepsilon,\mathcal F,L_2(P))$. So an application has exactly five steps, and only steps 2 and 3 involve any thought.</p>
+
+<ol class="steps">
+<li><b>Name the family and its parameter.</b> $\mathcal F=\{f_\theta:\theta\in\Theta\}$. Say what $\Theta$ is and its dimension $d$; expect $N\approx(\text{something})^d$.</li>
+<li><b>Build the cage on a cell, and check it is a cage.</b> Choose cells in $\Theta$ of an <em>unnamed</em> fineness, and write $l_j,u_j$ with a one-line reason why every $f_\theta$ with $\theta$ in the cell satisfies $l_j\le f_\theta\le u_j$ <em>pointwise</em>. Two mechanisms exist, and they exhaust the course:
+<div style="margin:.5rem 0 .2rem">
+<b>ORDER</b> — if $\theta\mapsto f_\theta(z)$ is monotone for each fixed $z$, take $l_j,u_j$ to be the family evaluated at the two ends of the cell. The cage is then exact, by monotonicity.<br>
+<b>SIZE</b> — if instead $|f_\theta-f_{\theta'}|\le\|\theta-\theta'\|\,m(z)$ for an envelope $m$ with $\|m\|_{L_2}\lt \infty$, take $l_j=f_{\theta_j}-\delta m$ and $u_j=f_{\theta_j}+\delta m$ for a cell of diameter $\delta$ around $\theta_j$.
+</div></li>
+<li><b>Compute the gap and its $L_2$ norm as a formula in the fineness.</b> Write $u_j-l_j$ explicitly, then $\|u_j-l_j\|_{L_2}$. If the gap is an indicator, §1 says this is $\sqrt{\text{mass}}$; otherwise compute directly.</li>
+<li><b>Solve $\|u_j-l_j\|_{L_2}\le\varepsilon$ for the fineness, and count.</b> This is where $\varepsilon^2$ appears, or fails to — it is an algebraic consequence of step 3, never a choice. Then $N_{[\,]}(\varepsilon)=$ (size of $\Theta$) / (fineness), to the power $d$.</li>
+<li><b>Say the invariant sentence.</b> “$N_{[\,]}(\varepsilon)$ is polynomial in $1/\varepsilon$, so the entropy integral converges and Theorem 1.19 applies.”</li>
+</ol>
+
+<div class="panel">
+<span class="tag">The one refinement that step 3 sometimes needs</span>
+<p>If the gap is an indicator of a set built from <em>two</em> constraints — a union of two strips, as happens whenever $\Theta$ is two-dimensional — then bound its mass by a union bound and give each constraint half the budget: mass $\le\varepsilon^2/2+\varepsilon^2/2=\varepsilon^2$. Nothing else changes, and the count gets squared. Examples 3, 4 and 5 below all do exactly this.</p>
+</div>
+</section>
+
+<section id="setup">
+<h2><span class="num">§10</span>Reading the setup off the exercise: where every choice comes from</h2>
+
+<p>Everything up to here says what has to be supplied: a bound on $N_{[\,]}(\varepsilon,\mathcal F,L_2(P))$. What it does not say is how anyone knows, on being handed an exercise, to write $k\le\lceil2/\varepsilon^2\rceil$ in one problem and $k\le\lceil\|Z_1\|_{L_2}/\varepsilon\rceil$ in the next. That looks like a decision made from experience, or from having seen the answer. It is neither. Both numbers are the same formula, evaluated in two different units, and which unit you are in is dictated by one observable feature of the problem — a feature you can read off before choosing anything. This section makes that mechanical.</p>
+
+<div class="panel intuition">
+<span class="tag">The honest statement of the difficulty</span>
+<p>A finished bracketing proof reads: <em>here is a grid with this specific fineness; here are the brackets; here is the gap; look, its norm is $\le\varepsilon$; here is the count.</em> Read in that order it is impossible to reconstruct, because the fineness is announced before the only calculation that could have determined it. Nobody finds proofs in that order. The fineness is found <em>last</em> and written <em>first</em>. Once you write your own drafts in the order they are found, the choices stop being choices.</p>
+</div>
+
+<h3>10.1 &nbsp;Write the fineness as a symbol and do not commit to it</h3>
+
+<p>The practical instruction is one line: <b>never write a number in the grid until the gap has been computed.</b> Call the fineness $\delta$ (a length in the parameter) or $m$ (a mass), carry it as an unknown through the cage and the gap, get $\|u-l\|_{L_2}$ as a <em>formula in that unknown</em>, and only then set the formula equal to $\varepsilon$ and solve. The order in which the work is actually done:</p>
+
+<ol class="steps">
+<li><b>Identify $\mathcal F$.</b> Forced by the statistic — §10.2 below. Not a choice.</li>
+<li><b>Pick the mechanism, ORDER or SIZE.</b> Forced by whether $\theta\mapsto f_\theta(z)$ is monotone at fixed $z$. Not a choice.</li>
+<li><b>Write the cage with an unnamed fineness.</b> Forced by the mechanism: endpoints of the cell (ORDER) or centre $\pm$ pad (SIZE). Not a choice.</li>
+<li><b>Compute the gap and its $L_2$ norm as a formula in the fineness.</b> This is the only real work in the whole exercise, and it is pure calculation — no foresight required.</li>
+<li><b>Set that formula $\le\varepsilon$ and solve.</b> Arithmetic. This is where $\varepsilon^2$ appears, or does not.</li>
+<li><b>Count:</b> (extent of the parameter) / (fineness), to the power (number of parameters).</li>
+</ol>
+
+<p>Then write it up backwards, in the order of §11, so that the grid appears already chosen. The write-up conceals the derivation; that is a convention of the genre, not a sign that something was known in advance.</p>
+
+<h3>10.2 &nbsp;Step 0: manufacturing $\mathcal F$ from the exercise statement</h3>
+
+<p>Exercises rarely hand you $\mathcal F$. The week-2 problem says “prove a functional CLT for $\sqrt n(H^{(n)}-H)$”, and the class is something you must produce. There is a rule, and it has no freedom in it:</p>
+
+<div class="panel recipe">
+<span class="tag">How to produce the class</span>
+<p>Write the statistic as an average over the sample. Whatever sits inside the average, read as a function of <em>one whole observation</em>, is $f$. Whatever you are sweeping over is the index set. That is all:</p>
+$$\text{statistic}(\theta)=\frac1n\sum_{i=1}^n\underbrace{\big(\text{something}(Z_i,\theta)\big)}_{=\;f_\theta(Z_i)}\qquad\Longrightarrow\qquad \mathcal F=\{f_\theta:\theta\in\Theta\}.$$
+<p>Two traps live in the phrase <em>one whole observation</em>. First, if the data are pairs, then an observation is a pair: the domain of every $f$ is $\mathbb R^2$ and $P$ is the <em>joint</em> law. Second, the index set is the index of the process you want to converge — not the sample space, and not the parameter of any model.</p>
+</div>
+
+<table>
+<thead><tr><th>Exercise says</th><th>One observation is</th><th>$f$ is</th><th>Index</th></tr></thead>
+<tbody>
+<tr><td>$\sqrt n(F^{(n)}-F)$ in $\ell^\infty[0,\infty)$</td><td>$Z_i\in\mathbb R$</td><td>$f_t(z)=\mathbf 1\{z\le t\}$</td><td>$t\ge0$</td></tr>
+<tr><td>$\sqrt n(H^{(n)}-H)$, bivariate</td><td>the pair $(Z_i,W_i)\in\mathbb R^2$</td><td>$f_{s,t}(x,y)=\mathbf 1\{x\le s\}\mathbf 1\{y\le t\}$</td><td>$(s,t)$</td></tr>
+<tr><td>survival function $\widehat S$</td><td>$Z_i$</td><td>$f_t(z)=\mathbf 1\{z\gt t\}$</td><td>$t\ge0$</td></tr>
+<tr><td>$\sqrt n(\Lambda^{(n)}-\Lambda)$, cumulative hazard</td><td>$Z_i$</td><td colspan="2">not an average at all — see §10.9: bracket $F$, then push through $\phi$</td></tr>
+<tr><td>$\widehat f_h(x)=\frac1{nh}\sum K\big(\frac{x-Z_i}h\big)$</td><td>$Z_i$</td><td>$f_x(z)=K\big((z-x)/h\big)$</td><td>$x\in[-T,T]$</td></tr>
+<tr><td>“uniformly over $\theta\in\Theta$, the criterion converges”</td><td>$Z_i$</td><td>$f_\theta(z)=$ the criterion’s summand</td><td>$\theta\in\Theta$</td></tr>
+</tbody>
+</table>
+
+<div class="panel trap">
+<span class="tag">The bivariate trap, since it is the one in the week-2 sheet</span>
+<p>For the bivariate empirical distribution function the class is <em>not</em> two copies of the univariate class, and you do not bracket the two margins as separate problems. There is one function class, whose members are functions on $\mathbb R^2$, and one probability measure, the joint law $H$. The two grids you build are grids in the index $(s,t)$ — not two separate analyses. The reason this matters practically: the mass of a bracket is a <em>joint</em> probability, and joint probabilities are not determined by the margins. All you may use is the bound by a union of two marginal strips (§10.6), which is why a factor $2$ appears in the budget there and nowhere in example 1.</p>
+</div>
+
+<h3>10.3 &nbsp;The one formula that every count in §11 is an instance of</h3>
+
+<div class="panel thm">
+<span class="tag">The counting formula</span>
+$$N_{[\,]}(\varepsilon)\;\le\;\Big(\frac{\text{extent of the parameter, in the coordinate you are cutting}}{\text{fineness}}\Big)^{\#\text{parameters}},\qquad \text{fineness}=\text{solve }\|u-l\|_{L_2}=\varepsilon .$$
+<p>Nothing else ever varies. The exponent is the number of numbers in the parameter. The numerator is a fixed feature of the problem — a total mass, an interval length, a norm. The denominator is whatever the algebra of step 4 returns.</p>
+</div>
+
+<p>So there are precisely two things to determine in any exercise, and the question “which situation am I in?” is really the question “what are these two numbers?”. The rest of this section answers that, and it turns out the second determines the first.</p>
+
+<h3>10.4 &nbsp;Why there are exactly two cases, and why only one of them has an $\varepsilon^2$</h3>
+
+<p>Compute the gap. Then look at it and ask a single question: <b>is it $0/1$-valued (possibly times a fixed function), or does it have a size?</b> Everything follows from the answer, because of the one asymmetry recorded in §1: for an indicator, $\mathbf 1_A^2=\mathbf 1_A$, so squaring collapses instead of squaring.</p>
+
+<div class="panel">
+<span class="tag">Case A — the gap is an indicator</span>
+<p>Then $\|u-l\|_{L_2}=\sqrt{\text{mass of the cell}}$. The square root is the whole event. Setting it $\le\varepsilon$ gives</p>
+$$\text{mass}\le\varepsilon^2 ,$$
+<p>so the currency is <em>probability mass</em>, and the extent is the total mass available, namely $1$. Count $=1/\varepsilon^2$ per parameter. Note what is <em>absent</em>: the range of the parameter. It cannot appear — in example 1 that range is $[0,\infty)$, of infinite length, and the count is finite anyway.</p>
+</div>
+
+<div class="panel">
+<span class="tag">Case B — the gap has a size</span>
+<p>The gap is bounded pointwise by $\delta\,m(z)$, with $\delta$ the cell width in the parameter and $m$ a fixed function, the envelope produced by whatever Lipschitz-type bound you used. No collapse: $\|u-l\|_{L_2}=\delta\,\|m\|_{L_2}$. Setting that $\le\varepsilon$ gives</p>
+$$\delta=\frac{\varepsilon}{\|m\|_{L_2}} ,$$
+<p>a length in the parameter, so you must divide the actual parameter range $L$ by it. Count $=L\|m\|_{L_2}/\varepsilon$ per parameter. Here both the range <em>and</em> a norm appear, multiplied.</p>
+</div>
+
+<div class="panel intuition">
+<span class="tag">This is the answer to “sometimes $k$ is the range, sometimes $\|Z_1\|$ is in it”</span>
+<p>$\|Z_1\|_{L_2}$ is never a choice and never a trick. It is $\|m\|_{L_2}$ for the envelope $m$ that the Lipschitz bound handed you, and the envelope is determined by differentiating $f_\theta(z)$ in $\theta$:</p>
+<ul>
+<li>$\partial_\theta f_\theta(z)$ bounded by a <b>constant</b> — as for $(z-u)^+$, $\min(z,c)$, $|z-\theta|$, $K((z-x)/h)$ — gives $m\equiv$ const, $\|m\|_{L_2}=$ const, and <b>no norm of $Z$ appears</b>. Also no moment assumption is needed for the brackets.</li>
+<li>$\partial_\theta f_\theta(z)$ bounded by $|z|$ — as for $e^{-\lambda z}$, $\theta z$, $\sin(\theta z)$ — gives $m(z)=|z|$, hence $\|m\|_{L_2}=\|Z_1\|_{L_2}$, and <b>that is why $\mathbb E[Z_1^2]\lt\infty$ is in the hypotheses</b>. The assumption is not decoration; it is exactly the statement that the denominator of the fineness is finite.</li>
+</ul>
+<p>So you do not decide whether $\|Z_1\|$ appears. You differentiate, and it either appears or it does not.</p>
+</div>
+
+<h4>The two cases are one case</h4>
+
+<p>They are not two techniques. Reparametrise the half-line class by $p=F(t)\in[0,1]$ rather than $t\in[0,\infty)$ — same class of functions, relabelled. In the $p$ coordinate the parameter range has extent $1$; a cell of width $\Delta p$ has gap an indicator of mass $\Delta p$; and</p>
+$$\|u-l\|_{L_2}=\sqrt{\Delta p}\quad\Longrightarrow\quad \Delta p=\varepsilon^2\quad\Longrightarrow\quad N_{[\,]}=\frac{\text{extent}}{\text{fineness}}=\frac1{\varepsilon^2}.$$
+<p>which is §10.3 verbatim. The instruction “cut the probability axis” is nothing but “change to the coordinate in which the parameter range is finite”, and the quantile grid $t_j=\inf\{t:F(t)\ge j\varepsilon^2\}$ is the uniform grid on $[0,1]$ pushed back through $F^{-1}$. That is also why the same construction survives atoms and gaps in the support (drill 1): it was never about $t$.</p>
+
+<div class="panel thm">
+<span class="tag">The unification, in one line</span>
+<p>Let $\omega$ be the modulus of continuity of the map $\theta\mapsto f_\theta$ measured in $L_2(P)$:</p>
+$$\|f_\theta-f_{\theta'}\|_{L_2}\;\le\;\omega\big(|\theta-\theta'|\big).$$
+<p>Then fineness $=\omega^{-1}(\varepsilon)$ and $N_{[\,]}(\varepsilon)\approx\text{extent}/\omega^{-1}(\varepsilon)$. Indicator families have $\omega(h)=\sqrt h$ in the mass coordinate — <b>Hölder-$\tfrac12$, not Lipschitz</b> — so $\omega^{-1}(\varepsilon)=\varepsilon^2$. Smooth families have $\omega(h)=h\|m\|_{L_2}$, so $\omega^{-1}(\varepsilon)=\varepsilon/\|m\|_{L_2}$. Every $\varepsilon^2$ in this subject is the inverse of that square root and has no other source.</p>
+</div>
+
+<h3>10.5 &nbsp;The same five lines, run twice</h3>
+
+<p>Here are examples 1 and 9 side by side, in discovery order, with the fineness left as a symbol until the last possible moment. The columns differ in exactly one row.</p>
+
+<table>
+<thead><tr><th>Step</th><th>$\mathcal F=\{\mathbf 1_{[0,t]}\}$</th><th>$\mathcal F=\{e^{-\lambda z}\}$, $\lambda\in[0,1]$</th></tr></thead>
+<tbody>
+<tr><td>Monotone in the parameter at fixed $z$?</td><td>yes ⇒ ORDER</td><td>yes ⇒ ORDER</td></tr>
+<tr><td>Cage on a cell, fineness unnamed</td><td>$\mathbf 1_{[0,t_{j-1}]}\le f\le\mathbf 1_{[0,t_j)}$</td><td>$e^{-\lambda_jz}\le f\le e^{-\lambda_{j-1}z}$</td></tr>
+<tr><td>Gap</td><td>$\mathbf 1_{(t_{j-1},t_j)}(z)$ — an indicator</td><td>$\le\delta z$ — has a size</td></tr>
+<tr><td><b>$L_2$ norm of the gap</b></td><td>$\sqrt{\text{mass of cell}}$&nbsp; ← square collapses</td><td>$\delta\,\|Z_1\|_{L_2}$&nbsp; ← no collapse</td></tr>
+<tr><td>Solve $=\varepsilon$</td><td>mass $=\varepsilon^2$</td><td>$\delta=\varepsilon/\|Z_1\|_{L_2}$</td></tr>
+<tr><td>Extent of the parameter, in that coordinate</td><td>total mass $=1$</td><td>length of $[0,1]=1$</td></tr>
+<tr><td>Count $=$ extent / fineness</td><td>$1/\varepsilon^2$</td><td>$\|Z_1\|_{L_2}/\varepsilon$</td></tr>
+</tbody>
+</table>
+
+<p>One row differs. Everything that looks like a different technique — quantile grids versus uniform grids, $\varepsilon^2$ versus $\varepsilon$, moment assumptions present or absent — is downstream of that single row, and that row is a two-line computation you can always just do.</p>
+
+<h3>10.6 &nbsp;Splitting the budget: which budget, and into how many pieces</h3>
+
+<p>The other thing that looks arbitrary is the appearance of $\varepsilon^2/2$, $\varepsilon^2/4$, $\varepsilon/2$, $\varepsilon^2/(2k)$. The rule is mechanical once you notice that the gap is a <em>sum of pieces</em> — one piece per parameter that moved, or per constraint that could fail — and that pieces combine differently depending on their type.</p>
+
+<div class="panel recipe">
+<span class="tag">Which budget to split</span>
+<ul>
+<li><b>$r$ disjoint indicator pieces</b> (strips): masses add before the square root, $\|u-l\|_{L_2}^2\le\sum_i P(A_i)$. So split the <b>squared</b> budget: each piece gets mass $\le\varepsilon^2/r$. The grid then needs $r/\varepsilon^2$ points rather than $1/\varepsilon^2$ — this is the only reason example 3 has a $4$ where example 1 has a $2$.</li>
+<li><b>$r$ pieces of general shape</b>: use the triangle inequality in $L_2$, $\|u-l\|_{L_2}\le\sum_i\|g_i\|_{L_2}$. So split the <b>plain</b> budget: each piece gets norm $\le\varepsilon/r$.</li>
+<li><b>Mixed</b> (drill 3, example 11): split the plain budget first, $\varepsilon/2$ per piece; then an indicator piece that must have norm $\le\varepsilon/2$ needs mass $\le\varepsilon^2/4$. That is where the $4$ in drill 3 comes from — it is $2^2$, not a new constant.</li>
+</ul>
+<p>How many pieces? Change one parameter at a time and see what each change costs. A gap in which $r$ parameters moved telescopes into $r$ pieces, and each piece is a gap with one parameter moved, which you already know how to size.</p>
+</div>
+
+<p>And the licence to be crude: since $\log$ of the count is all that matters, splitting $r$ ways multiplies the count by $r^{r}$ or so, which changes $\log N_{[\,]}$ by an additive constant and $\sqrt{\log N_{[\,]}}$ by nothing that any integral notices. You are never penalised for a wasteful split, so never spend time optimising one.</p>
+
+<h3>10.7 &nbsp;When the extent is infinite: three escapes, in order of preference</h3>
+
+<p>The counting formula needs a finite extent. When the parameter set is unbounded, exactly one of the following applies, and checking which takes seconds:</p>
+
+<ol>
+<li><b>The mass coordinate is already finite.</b> Case A costs you nothing here: the extent is total mass $1$, whatever the range of $t$. Examples 1–5, 17. If the gap is an indicator, unbounded parameters are a non-issue and you should not even remark on it.</li>
+<li><b>The family collapses at the edge, so the whole edge is one bracket.</b> If $f_\theta\to f_\infty$ as $\theta$ leaves every compact, cage the entire tail by $[\,\min,\max\,]$ of the limit and pay a <em>tail expectation</em> rather than a grid: example 15, where $\big[0,(z-U)^+\big]$ catches every $u\ge U$ at once and $\|(Z_1-U)^+\|_{L_2}\to0$ by dominated convergence. The count becomes $U(\varepsilon)/\varepsilon+1$ and you then ask how fast $U(\varepsilon)$ must grow — anything sub-exponential in $1/\varepsilon$ is fine.</li>
+<li><b>Neither, and the class genuinely fails.</b> Example 20: every member has $\|f_t\|_{L_2}=1$, so nothing collapses anywhere, and the bracketing number is infinite at every scale. Before a long computation, always check the envelope $F(z)=\sup_{\theta}|f_\theta(z)|$ is in $L_2(P)$; if it is not, stop, because the limit process would have infinite variance and no method can succeed.</li>
+</ol>
+
+<h3>10.8 &nbsp;The five questions, to be asked in this order</h3>
+
+<div class="panel recipe">
+<span class="tag">Ask these of any exercise before writing anything</span>
+<ol>
+<li><b>What is one observation, and what is the index?</b> Gives $\mathcal F$ and the exponent $d$ (§10.2). If the data are pairs, $P$ is the joint law.</li>
+<li><b>At fixed $z$, is $\theta\mapsto f_\theta(z)$ monotone?</b> Yes in each coordinate ⇒ ORDER, cage $=$ the family at the two ends of the cell, exact. Affine but sign-varying ⇒ ORDER at the corners, cage $=$ $\min$/$\max$ over corners. Neither ⇒ SIZE: differentiate in $\theta$, read off the envelope $m$, cage $=f_{\theta_j}\pm\delta m$.</li>
+<li><b>Write the gap. Indicator, or does it have a size?</b> Decides Case A vs Case B, hence whether $\varepsilon^2$ or $\varepsilon$ appears (§10.4). This is the question that answers “which situation am I in”.</li>
+<li><b>Which measure comes out of $\mathbb E[\text{gap}^2]$?</b> Cut <em>that</em> one, not $P$ reflexively: $P$ for a bare indicator; $\mu(A)=\mathbb E[w(Z_1)^2\mathbf 1_A(Z_1)]$ for a weighted indicator (example 6); $\mathbb E[Y_1^2\mathbf 1_A(X_1)]$ in drill 3; Lebesgue volume times a density bound $\kappa$ for balls (example 18), which is why that one needs an assumption the others did not.</li>
+<li><b>How many pieces does the gap split into, and is the extent finite?</b> Gives the budget split (§10.6) and tells you whether you need a tail bracket (§10.7).</li>
+</ol>
+</div>
+
+<h3>10.9 &nbsp;Where the bracketing computation sits inside the full exercise</h3>
+
+<p>The week-2 solution to the bivariate problem has a shape worth copying exactly, because the bracketing count is only one of its three parts and the other two are short:</p>
+
+<ol class="steps">
+<li><b>Finite-dimensional distributions.</b> Fix an arbitrary grid $s_0\lt\dots\lt s_M$, $t_0\lt\dots\lt t_M$ and apply the multivariate CLT to the iid vectors $\big(\mathbf 1\{Z_i\le s_r,W_i\le t_r\}\big)_{r\le M}$. Compute the covariance directly from indicators: $\operatorname{Cov}\big(\mathbf 1\{Z\le s,W\le t\},\mathbf 1\{Z\le u,W\le v\}\big)=H(s\wedge u,t\wedge v)-H(s,t)H(u,v)$, using $\mathbf 1_A\mathbf 1_B=\mathbf 1_{A\cap B}$ and nothing else. This <em>identifies the limit</em>; it does not prove convergence in $\ell^\infty$.</li>
+<li><b>The class, then the entropy.</b> State $\mathcal H$ explicitly (§10.2), build the brackets, compute $\|u_j-l_j\|_{L_2}$, count, and finish with the invariant sentence: $N_{[\,]}(\varepsilon)\le\lceil C/\varepsilon^2\rceil^2$, so $\int_0^1\sqrt{\log N_{[\,]}(\varepsilon)}\,d\varepsilon\le\int_{(0,1]}\sqrt{\log(C/\varepsilon^2+1)}\,d\varepsilon\lt\infty$ — the integral computed in exercise 7 of the same sheet, by parts and L’Hôpital. This supplies <em>asymptotic equicontinuity</em>.</li>
+<li><b>Conclude.</b> Finite-dimensional convergence plus the entropy condition is weak convergence in $\ell^\infty$, by Theorem 1.19, to the Gaussian process whose covariance was computed in part 1.</li>
+</ol>
+
+<div class="panel intuition">
+<span class="tag">And when the statistic is not an average at all</span>
+<p>The cumulative hazard $\Lambda^{(n)}=-\log(1-F^{(n)})$ is not of the form $\mathbb P^{(n)}f$, so there is no class to bracket and no entropy to compute. The setup question has a different answer here: <b>find the average it is a function of</b>, prove the functional CLT there, and transport it. That is the delta method — show $\phi(h)=-\log(1-h)$ is Hadamard differentiable with $\phi_f'(h)=h/(1-f)$, then</p>
+$$\sqrt n\big(\Lambda^{(n)}-\Lambda\big)=\sqrt n\big(\phi(F^{(n)})-\phi(F)\big)\;\overset{d}{\longrightarrow}\;\frac{B\circ F}{1-F},\qquad
+\operatorname{Cov}=\frac{F(s\wedge t)-F(s)F(t)}{(1-F(s))(1-F(t))}.$$
+<p>Recognising which of the two situations you are in is the first decision of any such exercise: if the object is an average, bracket it; if it is a smooth functional of one, bracket the average and differentiate the functional.</p>
+</div>
+
+</section>
+
+<section id="examples">
+<h2><span class="num">§11</span>Twenty examples, with every line of algebra</h2>
+
+<p>Same five steps every time, and §10 has just supplied the reason each step comes out the way it does; each example ends with a box recording how its particular setup was found and what differs from the nearest earlier one.</p>
+
+<p>Same five steps every time. Read two or three carefully and the pattern will start doing the work for you; the point of having twenty is that you can check the pattern rather than take it on trust. Examples 1–12 are the core repertoire and share one shape. Examples 13–18 show how the same five steps handle a calculus of classes, a general $d$-dimensional parameter, an unbounded parameter, a bandwidth, many constraints at once, and a genuinely geometric class. Examples 19 and 20 are the two that matter most for understanding the theorem: one where the count is <em>not</em> polynomial and the conclusion holds anyway, and one where the computation correctly reports that nothing can be done.</p>
+
+<article class="ex">
+<div class="exhead"><span class="n">01</span><h3>Half-lines: $\mathcal F=\{\mathbf 1_{[0,t]}:t\ge0\}$</h3></div>
+<div class="exbody">
+<p><b>Parameter.</b> $t\in[0,\infty)$, so $d=1$.</p>
+<p><b>Mechanism.</b> For fixed $z$, the map $t\mapsto\mathbf 1_{[0,t]}(z)$ jumps from $0$ to $1$ at $t=z$ and never comes back down: monotone increasing. ORDER.</p>
+<p><b>The grid.</b> Let $\varepsilon\gt0$ be given. Consider brackets on the form
+$$l_j(z)=\mathbf 1_{[0,t_{j-1}]}(z),\qquad u_j(z)=\mathbf 1_{[0,t_j)}(z),\qquad j=1,\dots,k,$$
+for a grid $0=t_0\lt t_1\le\dots\le t_k=\infty$, to be chosen. Let $\mathcal F_j=\{f\in\mathcal F:l_j\le f\le u_j\}$; every $f_t\in\mathcal F$ falls into some $\mathcal F_j$, namely the one with $t\in[t_{j-1},t_j)$, so these brackets partition the class:
+$$\mathcal F=\bigcup_{j=1}^k\mathcal F_j .$$</p>
+<p><b>Check the cage holds pointwise.</b> Take $t\in[t_{j-1},t_j)$. If $z\le t_{j-1}$ then $z\le t$, so $l_j(z)=1$ forces $\mathbf 1_{[0,t]}(z)=1=l_j(z)$; if $z\ge t_j$ then $z\gt t$, so $u_j(z)=0$ forces $\mathbf 1_{[0,t]}(z)=0=u_j(z)$; for $z$ strictly between, both inequalities read $0=l_j(z)\le\mathbf 1_{[0,t]}(z)\le u_j(z)=1$ trivially. Hence $l_j\le f_t\le u_j$ at every $z$, for every $t\in[t_{j-1},t_j)$. ✓</p>
+<p><b>Choosing the grid.</b> It is possible to pick the grid so that it contains $k$ points, where $k\le\lceil2/\varepsilon^2\rceil$, such that
+$$F(t_j-)-F(t_{j-1})\;\le\;\varepsilon^2\qquad\text{for }1\le j\le k,$$
+which is possible because $F$ is a distribution function — in particular non-decreasing, right-continuous, and bounded by $1$: put $t_j=\inf\{t:F(t)\ge j\varepsilon^2\}$, and stop once $j\varepsilon^2\ge1$.</p>
+<p><b>Compute $\|u_j(Z_1)-l_j(Z_1)\|_{L_2}$.</b>
+$$\|u_j(Z_1)-l_j(Z_1)\|_{L_2}=\Big(\mathbb E\big[\big(\mathbf 1_{[0,t_j)}(Z_1)-\mathbf 1_{[0,t_{j-1}]}(Z_1)\big)^2\big]\Big)^{1/2}=\Big(\mathbb E\big[\mathbf 1_{(t_{j-1},t_j)}(Z_1)^2\big]\Big)^{1/2}$$
+$$=\Big(\mathbb E\big[\mathbf 1_{(t_{j-1},t_j)}(Z_1)\big]\Big)^{1/2}=\Big(\mathbb P(t_{j-1}\lt Z_1\lt t_j)\Big)^{1/2}\le\Big(F(t_j-)-F(t_{j-1})\Big)^{1/2}\le\varepsilon .$$
+The middle equality used $\mathbf 1_A^2=\mathbf 1_A$; the last inequality is exactly the condition imposed on the grid.</p>
+<p><b>Count.</b> Consequently $N_{[\,]}(\varepsilon,\mathcal F,L_2(P))\le k\le\lceil2/\varepsilon^2\rceil$.</p>
+<p><b>Conclude.</b> Polynomial in $1/\varepsilon$, so $\int_0^1\sqrt{\log N_{[\,]}(\varepsilon)}\,d\varepsilon\lt\infty$ by §8.2, and Theorem 1.19 applies. Donsker. $\square$</p>
+<div class="panel setup">
+<span class="tag">How this setup was found — the base case</span>
+<p>Every decision here is forced, in this order.</p><dl class="rd">
+<dt>Class</dt><dd>The statistic $F^{(n)}(t)$ <em>is</em> an average, so $f_t(z)=\mathbf 1\{z\le t\}$ and the index is $t$ — §10.2, no choice.</dd>
+<dt>Mechanism</dt><dd>$t\mapsto\mathbf 1_{[0,t]}(z)$ is a step up at $t=z$: monotone. ORDER, so the cage is the family at the two ends of the cell. No choice.</dd>
+<dt>Case</dt><dd>The gap is an indicator ⇒ Case A ⇒ the currency is mass and the budget is $\varepsilon^2$. This single observation produces every $\varepsilon^2$ on the page.</dd>
+<dt>Fineness</dt><dd>$\sqrt{\text{mass}}\le\varepsilon\iff\text{mass}\le\varepsilon^2$. Solved, not chosen.</dd>
+<dt>Extent</dt><dd>Total mass $=1$, so $k\approx1/\varepsilon^2$; the $2$ is slack for the ceiling and is worth nothing.</dd>
+</dl><p><b>The point to take forward.</b> The parameter range $[0,\infty)$ is infinite and never appears. That is the signature of Case A, and the reason the quantile grid $t_j=\inf\{t:F(t)\ge j\varepsilon^2\}$ shows up: it is the uniform grid on the mass coordinate $p=F(t)\in[0,1]$, where the extent <em>is</em> finite (§10.4).</p>
+</div>
+</div>
+</article>
+
+<article class="ex">
+<div class="exhead"><span class="n">02</span><h3>Survival indicators: $\mathcal F=\{\mathbf 1_{(t,\infty)}:t\ge0\}$</h3></div>
+<div class="exbody">
+<p><b>Mechanism.</b> $\mathbf 1_{(t,\infty)}=1-\mathbf 1_{[0,t]}$: monotone <em>decreasing</em> in $t$. ORDER, with the roles of the two ends swapped.</p>
+<p><b>The grid.</b> Let $\varepsilon\gt0$ be given, and reuse exactly the grid $0=t_0\lt t_1\le\dots\le t_k=\infty$ from example 1, with $k\le\lceil2/\varepsilon^2\rceil$ points satisfying $F(t_j-)-F(t_{j-1})\le\varepsilon^2$ for $1\le j\le k$. For $t\in[t_{j-1},t_j)$ define
+$$l_j(z)=\mathbf 1_{[t_j,\infty)}(z),\qquad u_j(z)=\mathbf 1_{(t_{j-1},\infty)}(z),$$
+and let $\mathcal F_j=\{f\in\mathcal F:l_j\le f\le u_j\}$, so again $\mathcal F=\bigcup_{j=1}^k\mathcal F_j$.</p>
+<p><b>Check the cage holds pointwise.</b> Applying "$1-(\cdot)$" to the example 1 cage $\mathbf 1_{[0,t_{j-1}]}\le\mathbf 1_{[0,t]}\le\mathbf 1_{[0,t_j)}$, valid for $t\in[t_{j-1},t_j)$, reverses both inequalities and both endpoints:
+$$1-\mathbf 1_{[0,t_j)}(z)\;\le\;1-\mathbf 1_{[0,t]}(z)\;\le\;1-\mathbf 1_{[0,t_{j-1}]}(z),$$
+i.e. $\mathbf 1_{[t_j,\infty)}(z)\le\mathbf 1_{(t,\infty)}(z)\le\mathbf 1_{(t_{j-1},\infty)}(z)$, which is $l_j(z)\le f_t(z)\le u_j(z)$. ✓</p>
+<p><b>Compute $\|u_j(Z_1)-l_j(Z_1)\|_{L_2}$.</b> Pointwise,
+$$u_j(z)-l_j(z)=\mathbf 1_{(t_{j-1},\infty)}(z)-\mathbf 1_{[t_j,\infty)}(z)=\mathbf 1_{(t_{j-1},t_j)}(z),$$
+identical to the gap in example 1. Hence, by the same chain of equalities used there,
+$$\|u_j(Z_1)-l_j(Z_1)\|_{L_2}=\Big(\mathbb E\big[\mathbf 1_{(t_{j-1},t_j)}(Z_1)^2\big]\Big)^{1/2}=\Big(\mathbb P(t_{j-1}\lt Z_1\lt t_j)\Big)^{1/2}\le\Big(F(t_j-)-F(t_{j-1})\Big)^{1/2}\le\varepsilon .$$</p>
+<p><b>Count and conclude.</b> $N_{[\,]}(\varepsilon,\mathcal F,L_2(P))\le k\le\lceil2/\varepsilon^2\rceil$. Polynomial, so Theorem 1.19 applies. Donsker. $\square$</p>
+<p class="footnote"><b>Worth extracting as a rule:</b> replacing $f$ by $c-f$ turns each bracket $[l,u]$ into $[c-u,c-l]$ and leaves the gap, hence the $L_2$ norm, unchanged. So $N_{[\,]}$ is unchanged by reflection, and likewise by adding a fixed function. If you are asked about $\{\mathbf 1_{[0,t]}-F(t)\}$, the brackets are the ones from example 1 shifted by a constant, and the gap is untouched.</p>
+<div class="panel setup">
+<span class="tag">How this setup was found — and how to notice you need no setup at all</span>
+<p>Before building anything, check whether the class is an affine image of one already done: $\mathbf 1_{(t,\infty)}=1-\mathbf 1_{[0,t]}$, and $f\mapsto c-f$ maps the bracket $[l,u]$ to $[c-u,c-l]$ with the <em>same</em> gap, hence the same norm and the same count. Nothing is recomputed.</p><p><b>What differs from example 1.</b> Only the bookkeeping of which endpoint is which. The mechanism is still ORDER, the case is still A, the fineness is still $\varepsilon^2$, the extent is still total mass. A monotone <em>decreasing</em> family is not a new situation.</p>
+</div>
+</div>
+</article>
+
+<article class="ex">
+<div class="exhead"><span class="n">03</span><h3>Intervals: $\mathcal F=\{\mathbf 1_{(s,t]}:0\le s\le t\}$</h3></div>
+<div class="exbody">
+<p><b>Parameter.</b> $(s,t)$, so $d=2$. Expect the count to be squared.</p>
+<p><b>Mechanism.</b> The set $(s,t]$ shrinks as $s$ grows and grows as $t$ grows: monotone in each coordinate separately. ORDER, applied twice.</p>
+<p><b>The grid.</b> Let $\varepsilon\gt0$ be given. Build a single grid $0=q_0\lt q_1\le\dots\le q_k=\infty$ with $k\le\lceil4/\varepsilon^2\rceil$ points and $F(q_i-)-F(q_{i-1})\le\varepsilon^2/2$ for each $i$ — possible for the same reason as in example 1, with the budget $\varepsilon^2$ there replaced by $\varepsilon^2/2$ here — and use it for both coordinates. For $s\in[q_{j-1},q_j)$, $t\in[q_{l-1},q_l)$ with $j\le l$, define
+$$l_{jl}=\mathbf 1_{(q_j,\,q_{l-1}]},\qquad u_{jl}=\mathbf 1_{(q_{j-1},\,q_l)} ,$$
+(the lower set being empty, so $l_{jl}\equiv0$, whenever $j\ge l$), and let $\mathcal F_{jl}=\{f\in\mathcal F:l_{jl}\le f\le u_{jl}\}$. Every $(s,t]$ with $s\in[q_{j-1},q_j)$, $t\in[q_{l-1},q_l)$ falls into $\mathcal F_{jl}$, so
+$$\mathcal F=\bigcup_{j\le l}\mathcal F_{jl}.$$</p>
+<p><b>Check the cage holds pointwise.</b> $(q_j,q_{l-1}]\subseteq(s,t]$ because $s\le q_j$ and $t\ge q_{l-1}$; and $(s,t]\subseteq(q_{j-1},q_l)$ because $s\ge q_{j-1}$ and $t\lt q_l$. Hence $l_{jl}\le\mathbf 1_{(s,t]}\le u_{jl}$ pointwise. ✓</p>
+<p><b>Compute $\|u_{jl}(Z_1)-l_{jl}(Z_1)\|_{L_2}$.</b> The set $(q_{j-1},q_l)\setminus(q_j,q_{l-1}]$ is contained in the union of the two disjoint strips $(q_{j-1},q_j]$ and $(q_{l-1},q_l)$, so pointwise
+$$u_{jl}(z)-l_{jl}(z)\;\le\;\mathbf 1_{(q_{j-1},q_j]}(z)+\mathbf 1_{(q_{l-1},q_l)}(z).$$
+Squaring preserves this bound between non-negative functions, so using $\mathbf 1_A^2=\mathbf 1_A$ and disjointness of the strips,
+$$\|u_{jl}(Z_1)-l_{jl}(Z_1)\|_{L_2}^2=\mathbb E\big[(u_{jl}(Z_1)-l_{jl}(Z_1))^2\big]\;\le\;\mathbb E\big[\mathbf 1_{(q_{j-1},q_j]}(Z_1)\big]+\mathbb E\big[\mathbf 1_{(q_{l-1},q_l)}(Z_1)\big]$$
+$$=\mathbb P(q_{j-1}\lt Z_1\le q_j)+\mathbb P(q_{l-1}\lt Z_1\lt q_l)\;\le\;\frac{\varepsilon^2}2+\frac{\varepsilon^2}2=\varepsilon^2,$$
+so $\|u_{jl}(Z_1)-l_{jl}(Z_1)\|_{L_2}\le\varepsilon$.</p>
+<p><b>Count.</b> The same grid of $k\le\lceil4/\varepsilon^2\rceil$ points serves both coordinates, and a bracket is a choice of cell index for $s$ and one for $t$: $N_{[\,]}(\varepsilon,\mathcal F,L_2(P))\le k^2\le\lceil4/\varepsilon^2\rceil^2\le C\varepsilon^{-4}$.</p>
+<p><b>Conclude.</b> Polynomial. Donsker. $\square$</p>
+<div class="panel setup">
+<span class="tag">How this setup was found — the first budget split</span>
+<dl class="rd">
+<dt>Class</dt><dd>Two numbers $(s,t)$, so $d=2$ and the count will be squared (§10.3).</dd>
+<dt>Mechanism</dt><dd>Monotone in each coordinate separately: shrinking in $s$, growing in $t$. ORDER twice — push $s$ to the top of its cell and $t$ to the bottom of its cell for $l$, the reverse for $u$.</dd>
+<dt>Case</dt><dd>Gap is still an indicator, so still Case A and still $\varepsilon^2$.</dd>
+<dt>Pieces</dt><dd>Two parameters moved, so the gap splits into two strips — one per endpoint. Disjoint indicators, so their <em>masses</em> add before the square root: split the <b>squared</b> budget, $\varepsilon^2/2$ each (§10.6).</dd>
+<dt>Count</dt><dd>Grid of $2/(\varepsilon^2/2)=4/\varepsilon^2$ points, used for both coordinates, so $k^2$.</dd>
+</dl><p><b>What differs from example 1.</b> Exactly two things, and both are consequences of $d=2$: the budget is halved (hence $4$ instead of $2$ in the grid size) and the count is squared. The $L_2$ computation is the same three lines.</p>
+</div>
+</div>
+</article>
+
+<article class="ex">
+<div class="exhead"><span class="n">04</span><h3>Bivariate quadrants: $\mathcal H=\{\mathbf 1_{[0,s]}(x)\mathbf 1_{[0,t]}(y):s,t\ge0\}$</h3></div>
+<div class="exbody">
+<p>This is the bivariate empirical distribution function, $H^{(n)}(s,t)=n^{-1}\sum_i\mathbf 1_{(Z_i\le s,\,W_i\le t)}$, for an iid sample $(Z_i,W_i)$ with joint law $H(s,t)=\mathbb P(Z_1\le s,\,W_1\le t)$.</p>
+<p><b>Mechanism.</b> The rectangle $[0,s]\times[0,t]$ grows in both coordinates. ORDER, applied to each margin — using, as in example 1, a single grid index for both.</p>
+<p><b>The grid.</b> Let $\varepsilon\gt0$ be given. Consider brackets on the form
+$$l_j(x,y)=\mathbf 1_{[0,s_{j-1}]}(x)\,\mathbf 1_{[0,t_{j-1}]}(y),\qquad u_j(x,y)=\mathbf 1_{[0,s_j)}(x)\,\mathbf 1_{[0,t_j)}(y),\qquad j=1,\dots,k,$$
+for grids $0=s_0\lt s_1\le\dots\le s_k=\infty$ and $0=t_0\lt t_1\le\dots\le t_k=\infty$. Let $\mathcal H_j=\{h\in\mathcal H:l_j\le h\le u_j\}$. Then we have the partition $\mathcal H=\bigcup_{j=1}^k\mathcal H_j$.</p>
+<p><b>Check the cage holds pointwise.</b> If $s\in[s_{j-1},s_j)$ and $t\in[t_{j-1},t_j)$, then $[0,s_{j-1}]\times[0,t_{j-1}]\subseteq[0,s]\times[0,t]\subseteq[0,s_j)\times[0,t_j)$, so $l_j\le\mathbf 1_{[0,s]}(x)\mathbf 1_{[0,t]}(y)\le u_j$ pointwise. ✓</p>
+<p><b>Choosing the grid.</b> Let $\varepsilon\gt0$ be given. It is possible to pick the grids such that each grid contains $k$ number of grid points, where $k\le\lceil2/\varepsilon^2\rceil$, such that
+$$H(s_j-,t_j-)-H(s_{j-1},t_{j-1})\;\le\;\varepsilon^2\qquad\text{for }0\le j\le k,$$
+which is possible because $H$ is a distribution function — in particular, it is càdlàg, non-decreasing, and bounded by $1$.</p>
+<p><b>Compute $\|u_j(Z_1,W_1)-l_j(Z_1,W_1)\|_{L_2}$.</b> Then $(H_j)$ cover all of $\mathcal H$ with brackets satisfying
+$$\|u_j(Z_1,W_1)-l_j(Z_1,W_1)\|_{L_2}=\Big(\mathbb E\big[\big(\mathbf 1_{[0,s_j)}(Z_1)\mathbf 1_{[0,t_j)}(W_1)-\mathbf 1_{[0,s_{j-1}]}(Z_1)\mathbf 1_{[0,t_{j-1}]}(W_1)\big)^2\big]\Big)^{1/2}$$
+$$=\Big(\mathbb E\big[\big(\mathbf 1_{(s_{j-1},s_j)}(Z_1)\mathbf 1_{(t_{j-1},t_j)}(W_1)\big)^2\big]\Big)^{1/2}=\Big(\mathbb E\big[\mathbf 1_{(s_{j-1},s_j)}(Z_1)\mathbf 1_{(t_{j-1},t_j)}(W_1)\big]\Big)^{1/2}$$
+$$=\Big(\mathbb P\big(s_{j-1}\lt Z_1\lt s_j,\ t_{j-1}\lt W_1\lt t_j\big)\Big)^{1/2}\;\le\;\Big(\mathbb P(Z_1\le s_j-,\,W_1\le t_j-)-\mathbb P(Z_1\le s_{j-1},\,W_1\le t_{j-1})\Big)^{1/2}$$
+$$=\Big(H(s_j-,t_j-)-H(s_{j-1},t_{j-1})\Big)^{1/2}\;\le\;\varepsilon .$$</p>
+<p><b>Count.</b> Consequently $N_{[\,]}(\varepsilon,\mathcal H,L_2(P))\le k\le\lceil2/\varepsilon^2\rceil$.</p>
+<p><b>Conclude.</b> Polynomial. Donsker. $\square$</p>
+<p class="footnote">This reproduces the week-2 solution's argument exactly: one grid index $j$ pairs a cell in $s$ with a cell in $t$, and the size of the bracket is read off the joint distribution function $H$ at the paired grid points, rather than gridding the two margins independently.</p>
+<div class="panel setup">
+<span class="tag">How this setup was found — and one place to read the solution carefully</span>
+<dl class="rd">
+<dt>Class</dt><dd>The data are <em>pairs</em>, so one observation is $(Z_i,W_i)\in\mathbb R^2$, every $f$ is a function on $\mathbb R^2$, and $P$ is the joint law $H$. This is the whole content of §10.2 for this problem — do not treat it as two univariate problems.</dd>
+<dt>Mechanism</dt><dd>The rectangle $[0,s]\times[0,t]$ grows in both coordinates: ORDER in each.</dd>
+<dt>Case</dt><dd>Indicator gap ⇒ Case A ⇒ $\varepsilon^2$, and the mass that appears is a <em>joint</em> probability, which is why the grid condition is stated on $H$ and not on the margins.</dd>
+</dl><p><b>On the single index $j$.</b> As written above — following the solution sheet — the bracket $[l_j,u_j]$ pairs the $j$-th $s$-cell with the $j$-th $t$-cell, so $\bigcup_j\mathcal H_j$ catches the pairs $(s,t)$ lying in matched cells. To catch a general pair — $s$ in cell $j$, $t$ in cell $l$, with $j\ne l$ — carry a double index, which is example 3 with the two coordinates living in different margins:</p>$$l_{jl}=\mathbf 1_{[0,s_{j-1}]}(x)\mathbf 1_{[0,t_{l-1}]}(y),\qquad u_{jl}=\mathbf 1_{[0,s_j)}(x)\mathbf 1_{[0,t_l)}(y),$$<p>whose gap is the L-shape $\big([0,s_j)\times[0,t_l)\big)\setminus\big([0,s_{j-1}]\times[0,t_{l-1}]\big)$, contained in the union of one vertical and one horizontal strip. Union bound with budget $\varepsilon^2/2$ per strip — the $s$-grid built on the $Z$-marginal, the $t$-grid on the $W$-marginal — gives $\|u_{jl}-l_{jl}\|_{L_2}\le\varepsilon$ with $k\le\lceil4/\varepsilon^2\rceil$ and</p>$$N_{[\,]}(\varepsilon,\mathcal H,L_2(P))\;\le\;k^2\;\le\;\Big\lceil\frac4{\varepsilon^2}\Big\rceil^2=O(\varepsilon^{-4}),$$<p>which is what the summary table records. Polynomial either way, so the conclusion is identical and nothing about the exercise changes — but when you build a cover, check that it covers, and if in doubt use the double index. The diagonal pairing is safe only when the two parameters are tied together.</p>
+</div>
+</div>
+</article>
+
+<article class="ex">
+<div class="exhead"><span class="n">05</span><h3>Rectangles in the plane: $\mathcal F=\{\mathbf 1_{(a,b]}(x)\mathbf 1_{(c,d]}(y)\}$</h3></div>
+<div class="exbody">
+<p><b>Parameter.</b> Four numbers $(a,b,c,d)$. Expect a fourth power.</p>
+<p><b>The grid.</b> Let $\varepsilon\gt0$ be given. Take a single grid $0=q_0\lt q_1\le\dots\le q_k=\infty$, applied independently to each of the four margins, with $k\le\lceil8/\varepsilon^2\rceil$ points chosen so that every cell carries $X$-mass (respectively $Y$-mass) at most $\varepsilon^2/4$ — the same construction as example 3, with budget $\varepsilon^2/4$ per strip instead of $\varepsilon^2/2$. For $a\in[q_{j-1},q_j)$, $b\in[q_{l-1},q_l)$ (with $j\le l$), $c\in[q_{p-1},q_p)$, $d\in[q_{r-1},q_r)$ (with $p\le r$), define
+$$l_{jlpr}=\mathbf 1_{(q_j,\,q_{l-1}]}(x)\,\mathbf 1_{(q_p,\,q_{r-1}]}(y),\qquad u_{jlpr}=\mathbf 1_{(q_{j-1},\,q_l)}(x)\,\mathbf 1_{(q_{p-1},\,q_r)}(y),$$
+and let $\mathcal F_{jlpr}=\{f\in\mathcal F:l_{jlpr}\le f\le u_{jlpr}\}$, so $\mathcal F=\bigcup_{j\le l,\,p\le r}\mathcal F_{jlpr}$.</p>
+<p><b>Check the cage holds pointwise.</b> $(q_j,q_{l-1}]\subseteq(a,b]\subseteq(q_{j-1},q_l)$ exactly as in example 3, and likewise $(q_p,q_{r-1}]\subseteq(c,d]\subseteq(q_{p-1},q_r)$; the product of two nested inclusions is a nested inclusion, so $l_{jlpr}\le\mathbf 1_{(a,b]}(x)\mathbf 1_{(c,d]}(y)\le u_{jlpr}$ pointwise. ✓</p>
+<p><b>Compute the gap.</b> The symmetric-difference set is contained in the union of four strips, one per parameter, by the same reasoning as example 3 applied once to each of the two endpoints in each coordinate:
+$$u_{jlpr}(x,y)-l_{jlpr}(x,y)\;\le\;\mathbf 1_{(q_{j-1},q_j]}(x)+\mathbf 1_{(q_{l-1},q_l)}(x)+\mathbf 1_{(q_{p-1},q_p]}(y)+\mathbf 1_{(q_{r-1},q_r)}(y).$$</p>
+<p><b>Compute $\|u_{jlpr}(Z,Y)-l_{jlpr}(Z,Y)\|_{L_2}$.</b> Squaring the bound above between non-negative functions and taking expectations, using that the four strips are pairwise disjoint and $\mathbf 1_A^2=\mathbf 1_A$:
+$$\|u_{jlpr}-l_{jlpr}\|_{L_2}^2\;\le\;\mathbb P(q_{j-1}\lt X\le q_j)+\mathbb P(q_{l-1}\lt X\lt q_l)+\mathbb P(q_{p-1}\lt Y\le q_p)+\mathbb P(q_{r-1}\lt Y\lt q_r)\;\le\;4\cdot\frac{\varepsilon^2}4=\varepsilon^2,$$
+so $\|u_{jlpr}-l_{jlpr}\|_{L_2}\le\varepsilon$.</p>
+<p><b>Count.</b> The grid needs $\lceil8/\varepsilon^2\rceil$ points, and a bracket is a choice of one of two cell-indices for each of the four parameters:
+$$N_{[\,]}(\varepsilon,\mathcal F,L_2(P))\;\le\;\Big\lceil\frac8{\varepsilon^2}\Big\rceil^4=O(\varepsilon^{-8}).$$</p>
+<p><b>Conclude.</b> Polynomial. Donsker. $\square$</p>
+<p class="footnote">The general rule this example is here to display: <b>$k$ monotone constraints ⇒ split the budget $k$ ways ⇒ the count is raised to the power $k$ ⇒ $\log N_{[\,]}$ picks up a factor $k$ ⇒ nothing whatsoever changes about convergence.</b> This is why dimension is cheap for rectangle-type classes and expensive for, say, convex sets, where the number of constraints is not bounded.</p>
+<div class="panel setup">
+<span class="tag">How this setup was found — the pattern, stated once</span>
+<p>Four numbers, four monotone constraints, four strips. Read the three consequences straight off §10.3 and §10.6 without thinking: budget $\varepsilon^2/4$ per strip ⇒ grid of $4/(\varepsilon^2/4)=$ (up to the constant) $8/\varepsilon^2$ points ⇒ count raised to the fourth power. No new idea is present in this example, and that is why it is here: at four parameters you should already be writing the answer down without deriving anything.</p><p><b>What differs from example 3.</b> The number $2$ becomes $4$ in two places, and the exponent $2$ becomes $4$. Nothing else.</p>
+</div>
+</div>
+</article>
+
+<article class="ex">
+<div class="exhead"><span class="n">06</span><h3>Weighted indicators: $\mathcal F=\{w\cdot\mathbf 1_{[0,t]}:t\ge0\}$ with $w\ge0$, $\|w\|_{L_2}\lt \infty$</h3></div>
+<div class="exbody">
+<p><b>Mechanism.</b> Still monotone in $t$ because $w\ge0$ (this is where non-negativity is used — with a sign-changing $w$ you would take pointwise min and max instead, as in example 10). ORDER.</p>
+<p><b>The grid.</b> Let $\varepsilon\gt0$ be given, and define the finite measure $\mu(A):=\mathbb E\big[w(Z_1)^2\mathbf 1_A(Z_1)\big]$, of total mass $\mu(\mathbb R)=\|w\|_{L_2}^2\lt\infty$. Choose a grid $0=t_0\lt t_1\le\dots\le t_k=\infty$ with $k\le\lceil2\|w\|_{L_2}^2/\varepsilon^2\rceil$ points such that $\mu\big((t_{j-1},t_j)\big)\le\varepsilon^2$ for $1\le j\le k$ — possible since $\mu$ is a finite measure, by exactly the construction of example 1 with $\mu$ in place of $P$. For $t\in[t_{j-1},t_j)$ define
+$$l_j(z)=w(z)\,\mathbf 1_{[0,t_{j-1}]}(z),\qquad u_j(z)=w(z)\,\mathbf 1_{[0,t_j)}(z),$$
+and let $\mathcal F_j=\{f\in\mathcal F:l_j\le f\le u_j\}$, so $\mathcal F=\bigcup_{j=1}^k\mathcal F_j$.</p>
+<p><b>Check the cage holds pointwise.</b> Multiplying the example 1 cage $\mathbf 1_{[0,t_{j-1}]}(z)\le\mathbf 1_{[0,t]}(z)\le\mathbf 1_{[0,t_j)}(z)$ through by $w(z)\ge0$ preserves both inequalities, giving $l_j(z)\le w(z)\mathbf 1_{[0,t]}(z)\le u_j(z)$ for every $z$. ✓</p>
+<p><b>Compute $\|u_j(Z_1)-l_j(Z_1)\|_{L_2}$.</b>
+$$\|u_j(Z_1)-l_j(Z_1)\|_{L_2}^2=\mathbb E\big[(u_j(Z_1)-l_j(Z_1))^2\big]=\mathbb E\Big[w(Z_1)^2\,\mathbf 1_{(t_{j-1},t_j)}(Z_1)^2\Big]=\mathbb E\Big[w(Z_1)^2\,\mathbf 1_{(t_{j-1},t_j)}(Z_1)\Big]=\mu\big((t_{j-1},t_j)\big)\le\varepsilon^2,$$
+using $\mathbf 1_A^2=\mathbf 1_A$, so $\|u_j(Z_1)-l_j(Z_1)\|_{L_2}\le\varepsilon$.</p>
+<p><b>Count and conclude.</b> $N_{[\,]}(\varepsilon,\mathcal F,L_2(P))\le k\le\big\lceil2\|w\|^2_{L_2}/\varepsilon^2\big\rceil$. Polynomial. Donsker. $\square$</p>
+<p class="footnote">This example exists to show that “cut the probability axis” was never the rule. The rule is: compute the gap's $L_2$ norm, see which measure appears in the formula, and cut <em>that</em>. Example 1 is the special case $w\equiv1$, where $\mu=P$.</p>
+<div class="panel setup">
+<span class="tag">How this setup was found — question 4 of §10.8, in its simplest form</span>
+<p>The gap is $w\cdot\mathbf 1_{\text{cell}}$, and $(w\mathbf 1_A)^2=w^2\mathbf 1_A$: the square still collapses, so this is Case A. But the expectation that comes out is not $P(A)$ — it is $\mu(A)=\mathbb E[w(Z_1)^2\mathbf 1_A(Z_1)]$. <b>Cut the measure that appears in the formula</b>, not the one you cut last time.</p><dl class="rd">
+<dt>Fineness</dt><dd>$\mu(\text{cell})\le\varepsilon^2$ — same $\varepsilon^2$, different measure.</dd>
+<dt>Extent</dt><dd>The total mass of $\mu$, which is $\|w\|_{L_2}^2$ rather than $1$ — and this is exactly why $\|w\|_{L_2}^2$ appears in the count and $\|w\|_{L_2}\lt\infty$ is in the hypotheses.</dd>
+</dl><p><b>What differs from example 1.</b> One symbol: $P\to\mu$, and consequently $1\to\|w\|^2_{L_2}$ in the numerator. Example 1 is this example with $w\equiv1$.</p>
+</div>
+</div>
+</article>
+
+<article class="ex">
+<div class="exhead"><span class="n">07</span><h3>Excess functions: $\mathcal F=\{z\mapsto(z-u)^+:u\in[0,U]\}$, assuming $\mathbb E[Z_1^2]\lt \infty$</h3></div>
+<div class="exbody">
+<p><b>Mechanism.</b> $u\mapsto(z-u)^+$ is decreasing in $u$ for every $z$. ORDER.</p>
+<p><b>The grid.</b> Let $\varepsilon\gt0$ be given, and set $\delta=\varepsilon$. Partition $[0,U]$ into $k=\lceil U/\varepsilon\rceil$ cells of length at most $\delta$, with grid points $0=u_0\lt u_1\lt\dots\lt u_k=U$. For $u\in[u_{j-1},u_j)$ define
+$$l_j(z)=(z-u_j)^+,\qquad u_j^{\rm br}(z)=(z-u_{j-1})^+,$$
+and let $\mathcal F_j=\{f\in\mathcal F:l_j\le f\le u_j^{\rm br}\}$, so $\mathcal F=\bigcup_{j=1}^k\mathcal F_j$.</p>
+<p><b>Check the cage holds pointwise.</b> Since $x\mapsto(z-x)^+$ is non-increasing in $x$ for every fixed $z$, and $u_{j-1}\le u\le u_j$, we get $(z-u_j)^+\le(z-u)^+\le(z-u_{j-1})^+$ for every $z$, i.e. $l_j(z)\le f_u(z)\le u_j^{\rm br}(z)$. ✓</p>
+<p><b>Compute the gap.</b> $u_j^{\rm br}(z)-l_j(z)=(z-u_{j-1})^+-(z-u_j)^+$. The map $x\mapsto(z-x)^+$ is $1$-Lipschitz — it is the composition of the $1$-Lipschitz maps $x\mapsto z-x$ and $y\mapsto y^+$ — so
+$$0\;\le\;u_j^{\rm br}(z)-l_j(z)\;\le\;|u_j-u_{j-1}|\;\le\;\delta\qquad\text{for every }z.$$</p>
+<p><b>Compute $\|u_j^{\rm br}(Z_1)-l_j(Z_1)\|_{L_2}$.</b> Since $0\le u_j^{\rm br}(z)-l_j(z)\le\delta$ pointwise,
+$$\|u_j^{\rm br}(Z_1)-l_j(Z_1)\|_{L_2}=\Big(\mathbb E\big[(u_j^{\rm br}(Z_1)-l_j(Z_1))^2\big]\Big)^{1/2}\le\big(\mathbb E[\delta^2]\big)^{1/2}=\delta=\varepsilon .$$
+No square root of a probability appears here: there is no $\mathbf 1_A^2=\mathbf 1_A$ collapse to exploit, only the pointwise Lipschitz bound.</p>
+<p><b>Count and conclude.</b> $N_{[\,]}(\varepsilon,\mathcal F,L_2(P))\le k=\lceil U/\varepsilon\rceil$. Polynomial. Donsker. $\square$</p>
+<p class="footnote">The second moment is needed not for the brackets but so that the class has a square-integrable envelope, i.e. so that the limiting Gaussian process has finite variances at all. Bracketing controls complexity; integrability is a separate hypothesis.</p>
+<div class="panel setup">
+<span class="tag">How this setup was found — the first Case B, and the first time the range appears</span>
+<dl class="rd">
+<dt>Mechanism</dt><dd>$u\mapsto(z-u)^+$ decreases at every fixed $z$: ORDER, cage at the two ends of the cell.</dd>
+<dt>Case</dt><dd>Now look at the gap: $(z-u_{j-1})^+-(z-u_j)^+$ is not $0/1$-valued. There is no $\mathbf 1_A^2=\mathbf 1_A$ to exploit, so <b>Case B</b> — and with it, $\varepsilon$ rather than $\varepsilon^2$.</dd>
+<dt>Envelope</dt><dd>Differentiate in the parameter: $|\partial_u(z-u)^+|\le1$, so $m\equiv1$ and $\|m\|_{L_2}=1$. No norm of $Z$ appears, because the derivative does not involve $z$.</dd>
+<dt>Fineness</dt><dd>$\delta\|m\|_{L_2}=\delta\le\varepsilon$, so $\delta=\varepsilon$.</dd>
+<dt>Extent</dt><dd>$\delta$ is a length in the parameter, so the parameter range must now be divided by it — and the range had better be finite. Hence $U$ in the hypothesis and $U/\varepsilon$ in the count.</dd>
+</dl><p><b>What differs from example 1 — and it is only one row.</b> The gap has a size instead of being an indicator. Everything downstream follows: no square root, no $\varepsilon^2$, the range appears, and the range must therefore be bounded (example 15 is what happens when it is not).</p>
+</div>
+</div>
+</article>
+
+<article class="ex">
+<div class="exhead"><span class="n">08</span><h3>Truncations: $\mathcal F=\{z\mapsto\min(z,c):c\in[0,C]\}$</h3></div>
+<div class="exbody">
+<p><b>Mechanism.</b> $c\mapsto\min(z,c)$ is non-decreasing for every fixed $z$. ORDER.</p>
+<p><b>The grid.</b> Let $\varepsilon\gt0$ be given, and set $\delta=\varepsilon$. Partition $[0,C]$ into $k=\lceil C/\varepsilon\rceil$ cells of length at most $\delta$, with grid points $0=c_0\lt c_1\lt\dots\lt c_k=C$. For $c\in[c_{j-1},c_j)$ define
+$$l_j(z)=\min(z,c_{j-1}),\qquad u_j(z)=\min(z,c_j),$$
+and let $\mathcal F_j=\{f\in\mathcal F:l_j\le f\le u_j\}$, so $\mathcal F=\bigcup_{j=1}^k\mathcal F_j$.</p>
+<p><b>Check the cage holds pointwise.</b> Monotonicity of $c\mapsto\min(z,c)$ together with $c_{j-1}\le c\le c_j$ gives $\min(z,c_{j-1})\le\min(z,c)\le\min(z,c_j)$ for every $z$. ✓</p>
+<p><b>Compute the gap.</b> The map $x\mapsto\min(z,x)$ is $1$-Lipschitz — the pointwise minimum of the constant $z$ with the $1$-Lipschitz identity map — so
+$$0\;\le\;u_j(z)-l_j(z)=\min(z,c_j)-\min(z,c_{j-1})\;\le\;c_j-c_{j-1}\;\le\;\delta\qquad\text{for every }z.$$</p>
+<p><b>Compute $\|u_j(Z_1)-l_j(Z_1)\|_{L_2}$.</b> Since $0\le u_j(z)-l_j(z)\le\delta$ pointwise,
+$$\|u_j(Z_1)-l_j(Z_1)\|_{L_2}=\Big(\mathbb E\big[(u_j(Z_1)-l_j(Z_1))^2\big]\Big)^{1/2}\le\big(\mathbb E[\delta^2]\big)^{1/2}=\delta=\varepsilon .$$</p>
+<p><b>Count and conclude.</b> $N_{[\,]}(\varepsilon,\mathcal F,L_2(P))\le k=\lceil C/\varepsilon\rceil$. Polynomial. Donsker, and with no moment assumption at all — the whole class is bounded by $C$, so none of the bracket sizes above required anything about $P$. $\square$</p>
+<div class="panel setup">
+<span class="tag">How this setup was found</span>
+<p>Identical to example 7 in every respect: ORDER by monotonicity in $c$, Case B because the gap is a difference of Lipschitz functions, envelope $m\equiv1$ because $|\partial_c\min(z,c)|\le1$, fineness $\delta=\varepsilon$, extent $C$.</p><p><b>Worth noticing:</b> no moment assumption anywhere. That is not an oversight — the envelope came out as a constant, so $\|m\|_{L_2}$ is finite under any $P$ whatsoever. Compare example 9, where the same five steps do require $\mathbb E[Z_1^2]\lt\infty$, and see §10.4 for why the difference is decided by one derivative.</p>
+</div>
+</div>
+</article>
+
+<article class="ex">
+<div class="exhead"><span class="n">09</span><h3>Exponential weights: $\mathcal F=\{z\mapsto e^{-\lambda z}:\lambda\in[0,1]\}$ on $z\ge0$, assuming $\mathbb E[Z_1^2]\lt \infty$</h3></div>
+<div class="exbody">
+<p><b>Mechanism.</b> $\lambda\mapsto e^{-\lambda z}$ is non-increasing for every fixed $z\ge0$. ORDER — use it even though a Lipschitz bound also exists, because ORDER is exact and gives a smaller count.</p>
+<p><b>The grid.</b> Let $\varepsilon\gt0$ be given, and set $\delta=\varepsilon/\|Z_1\|_{L_2}$. Partition $[0,1]$ into $k=\lceil\|Z_1\|_{L_2}/\varepsilon\rceil$ cells of length at most $\delta$, with grid points $0=\lambda_0\lt\lambda_1\lt\dots\lt\lambda_k=1$. For $\lambda\in[\lambda_{j-1},\lambda_j)$ define
+$$l_j(z)=e^{-\lambda_jz},\qquad u_j(z)=e^{-\lambda_{j-1}z},$$
+and let $\mathcal F_j=\{f\in\mathcal F:l_j\le f\le u_j\}$, so $\mathcal F=\bigcup_{j=1}^k\mathcal F_j$.</p>
+<p><b>Check the cage holds pointwise.</b> By monotonicity, $\lambda_{j-1}\le\lambda\le\lambda_j$ gives $e^{-\lambda_jz}\le e^{-\lambda z}\le e^{-\lambda_{j-1}z}$ for every $z\ge0$. ✓</p>
+<p><b>Compute the gap.</b> Factorise and bound each factor:
+$$u_j(z)-l_j(z)=e^{-\lambda_{j-1}z}-e^{-\lambda_jz}=e^{-\lambda_{j-1}z}\big(1-e^{-(\lambda_j-\lambda_{j-1})z}\big)\le1\cdot\big(1-e^{-\delta z}\big)\le\delta z,$$
+using $e^{-\lambda_{j-1}z}\le1$ (as $\lambda_{j-1},z\ge0$) and $1-e^{-x}\le x$ for $x\ge0$.</p>
+<p><b>Compute $\|u_j(Z_1)-l_j(Z_1)\|_{L_2}$.</b> Since $0\le u_j(z)-l_j(z)\le\delta z$ pointwise,
+$$\|u_j(Z_1)-l_j(Z_1)\|_{L_2}=\Big(\mathbb E\big[(u_j(Z_1)-l_j(Z_1))^2\big]\Big)^{1/2}\le\Big(\mathbb E[\delta^2Z_1^2]\Big)^{1/2}=\delta\big(\mathbb E[Z_1^2]\big)^{1/2}=\delta\|Z_1\|_{L_2}=\varepsilon .$$</p>
+<p><b>Count and conclude.</b> $N_{[\,]}(\varepsilon,\mathcal F,L_2(P))\le k=\lceil\|Z_1\|_{L_2}/\varepsilon\rceil$. Polynomial. Donsker. $\square$</p>
+<div class="panel setup">
+<span class="tag">How this setup was found — this is where $\|Z_1\|_{L_2}$ comes from</span>
+<dl class="rd">
+<dt>Mechanism</dt><dd>$\lambda\mapsto e^{-\lambda z}$ decreases at fixed $z\ge0$: ORDER. (A Lipschitz bound would also work, but ORDER is exact and loses no factor of $2$.)</dd>
+<dt>Case</dt><dd>Gap has a size ⇒ Case B.</dd>
+<dt>Envelope</dt><dd>$|\partial_\lambda e^{-\lambda z}|=ze^{-\lambda z}\le z$, so $m(z)=z$ — <b>the derivative involves $z$</b>, and therefore $\|m\|_{L_2}=\|Z_1\|_{L_2}$.</dd>
+<dt>Fineness</dt><dd>$\delta\|Z_1\|_{L_2}\le\varepsilon\iff\delta=\varepsilon/\|Z_1\|_{L_2}$. The norm lands in the denominator of the fineness, hence in the numerator of the count.</dd>
+<dt>Extent</dt><dd>The length of $[0,1]$, which is $1$.</dd>
+</dl><p><b>So the answer to “when does a norm of $Z$ appear?”</b> Exactly when the Lipschitz constant of $\theta\mapsto f_\theta(z)$ depends on $z$. It is not a modelling decision and not a trick you have to spot: you differentiate, and whatever multiplies $|\theta-\theta'|$ is $m$, and $\|m\|_{L_2}$ is what divides $\varepsilon$. The hypothesis $\mathbb E[Z_1^2]\lt\infty$ in the exercise statement is precisely the assertion that this denominator is finite — the exercise is telling you which case you are in.</p>
+</div>
+</div>
+</article>
+
+<article class="ex">
+<div class="exhead"><span class="n">10</span><h3>A one-parameter linear class: $\mathcal F=\{z\mapsto\theta z:\theta\in[-1,1]\}$, $\mathbb E[Z_1^2]\lt \infty$</h3></div>
+<div class="exbody">
+<p><b>Mechanism.</b> For fixed $z$, $\theta\mapsto\theta z$ is monotone — but increasing when $z\gt 0$ and decreasing when $z\lt 0$. ORDER still applies, provided the cage is built from <em>whichever endpoint is smaller at that $z$</em>.</p>
+<p><b>The grid.</b> Let $\varepsilon\gt0$ be given, and set $\delta=\varepsilon/\|Z_1\|_{L_2}$. Partition $[-1,1]$ into $k=\lceil2\|Z_1\|_{L_2}/\varepsilon\rceil$ cells of length at most $\delta$, with grid points $-1=\theta_0\lt\theta_1\lt\dots\lt\theta_k=1$. For $\theta\in[\theta_{j-1},\theta_j)$ define
+$$l_j(z)=\min\big(\theta_{j-1}z,\;\theta_jz\big),\qquad u_j(z)=\max\big(\theta_{j-1}z,\;\theta_jz\big),$$
+and let $\mathcal F_j=\{f\in\mathcal F:l_j\le f\le u_j\}$, so $\mathcal F=\bigcup_{j=1}^k\mathcal F_j$.</p>
+<p><b>Check the cage holds pointwise.</b> For fixed $z$, $\theta\mapsto\theta z$ is affine in $\theta$, so on $[\theta_{j-1},\theta_j]$ it attains its minimum and maximum at the two endpoints — whichever order they come in depending on the sign of $z$. Hence for $\theta\in[\theta_{j-1},\theta_j]$, $\min(\theta_{j-1}z,\theta_jz)\le\theta z\le\max(\theta_{j-1}z,\theta_jz)$, i.e. $l_j(z)\le\theta z\le u_j(z)$. ✓</p>
+<p><b>Compute the gap.</b> $u_j(z)-l_j(z)=\max(\theta_{j-1}z,\theta_jz)-\min(\theta_{j-1}z,\theta_jz)=|\theta_j-\theta_{j-1}|\,|z|=\delta|z|$.</p>
+<p><b>Compute $\|u_j(Z_1)-l_j(Z_1)\|_{L_2}$.</b>
+$$\|u_j(Z_1)-l_j(Z_1)\|_{L_2}=\Big(\mathbb E\big[(u_j(Z_1)-l_j(Z_1))^2\big]\Big)^{1/2}=\Big(\mathbb E[\delta^2Z_1^2]\Big)^{1/2}=\delta\big(\mathbb E[Z_1^2]\big)^{1/2}=\delta\|Z_1\|_{L_2}=\varepsilon .$$</p>
+<p><b>Count and conclude.</b> The parameter interval has length $2$, so $N_{[\,]}(\varepsilon,\mathcal F,L_2(P))\le k=\lceil2\|Z_1\|_{L_2}/\varepsilon\rceil$. Polynomial. Donsker. $\square$</p>
+<p class="footnote">This is the moment where “ORDER” and “SIZE” meet: taking min and max over the corners of the parameter cell is the general recipe, and for a Lipschitz family it reproduces the padded brackets $f_{\theta_j}\pm\delta m$ up to a constant.</p>
+<div class="panel setup">
+<span class="tag">How this setup was found — ORDER when the direction of monotonicity depends on $z$</span>
+<p>$\theta\mapsto\theta z$ is monotone at each fixed $z$, but increasing for $z\gt0$ and decreasing for $z\lt0$, so “the family at the left end of the cell” is not consistently the lower bracket. The repair is the general form of ORDER: take the pointwise $\min$ and $\max$ over the <em>ends</em> of the cell. For an affine function of the parameter the extremes over a cell are always attained at its corners, so the cage is still exact and nothing is lost.</p><dl class="rd">
+<dt>Envelope</dt><dd>$|\partial_\theta\theta z|=|z|$, so $m(z)=|z|$ and $\|m\|_{L_2}=\|Z_1\|_{L_2}$ — same as example 9, same reason.</dd>
+<dt>Extent</dt><dd>The parameter interval $[-1,1]$ has length $2$, and the $2$ in the count is <b>literally that length</b>. If the exercise said $\theta\in[-5,5]$ the count would read $10\|Z_1\|_{L_2}/\varepsilon$.</dd>
+</dl><p><b>What differs from example 9.</b> Only that ORDER is applied via $\min$/$\max$ rather than by naming which end is which. The fineness is identical.</p>
+</div>
+</div>
+</article>
+
+<article class="ex">
+<div class="exhead"><span class="n">11</span><h3>An affine class: $\mathcal F=\{z\mapsto a+bz:(a,b)\in[-1,1]^2\}$</h3></div>
+<div class="exbody">
+<p><b>Parameter.</b> $d=2$. Expect $\varepsilon^{-2}$.</p>
+<p><b>The grid.</b> Let $\varepsilon\gt0$ be given, and set $\Delta_a=\varepsilon/2$, $\Delta_b=\varepsilon/(2\|Z_1\|_{L_2})$. Partition $[-1,1]$ into $k_a=\lceil2/\Delta_a\rceil$ cells for $a$, with grid points $-1=a_0\lt\dots\lt a_{k_a}=1$, and independently into $k_b=\lceil2/\Delta_b\rceil$ cells for $b$, with grid points $-1=b_0\lt\dots\lt b_{k_b}=1$. For $a\in[a_{j-1},a_j]$, $b\in[b_{p-1},b_p]$ define
+$$l_{jp}(z)=\min_{\substack{a\in\{a_{j-1},a_j\}\\b\in\{b_{p-1},b_p\}}}(a+bz),\qquad u_{jp}(z)=\max_{\substack{a\in\{a_{j-1},a_j\}\\b\in\{b_{p-1},b_p\}}}(a+bz),$$
+the min and max taken over the four corners of the rectangle cell $[a_{j-1},a_j]\times[b_{p-1},b_p]$, and let $\mathcal F_{jp}=\{f\in\mathcal F:l_{jp}\le f\le u_{jp}\}$, so $\mathcal F=\bigcup_{j,p}\mathcal F_{jp}$.</p>
+<p><b>Check the cage holds pointwise.</b> For fixed $z$, $(a,b)\mapsto a+bz$ is affine, so its extremes over any rectangle are attained at one of the four corners; hence for $(a,b)$ in the cell, $l_{jp}(z)\le a+bz\le u_{jp}(z)$. ✓</p>
+<p><b>Compute the gap.</b> Bound the corner-to-corner spread by moving one parameter at a time, from $(a_{j-1},b_{p-1})$ to $(a_j,b_{p-1})$ to $(a_j,b_p)$:
+$$u_{jp}(z)-l_{jp}(z)\;\le\;\underbrace{|a_j-a_{j-1}|}_{\text{from }a,\ \le\Delta_a}+\underbrace{|b_p-b_{p-1}|\,|z|}_{\text{from }b,\ \le\Delta_b|z|}\;\le\;\Delta_a+\Delta_b|z|.$$</p>
+<p><b>Compute $\|u_{jp}(Z_1)-l_{jp}(Z_1)\|_{L_2}$.</b> By the triangle inequality in $L_2$ applied to the pointwise bound above,
+$$\|u_{jp}(Z_1)-l_{jp}(Z_1)\|_{L_2}\;\le\;\|\Delta_a\|_{L_2}+\|\Delta_bZ_1\|_{L_2}=\Delta_a+\Delta_b\|Z_1\|_{L_2}=\frac\varepsilon2+\frac\varepsilon2=\varepsilon,$$
+using the chosen values of $\Delta_a,\Delta_b$ in the last step — the same budget-splitting move as examples 3–5, now for two different <em>units</em> (a constant shift and a slope) rather than two strips.</p>
+<p><b>Count and conclude.</b> $N_{[\,]}(\varepsilon,\mathcal F,L_2(P))\le k_a\cdot k_b=\lceil2/\Delta_a\rceil\cdot\lceil2/\Delta_b\rceil=\lceil4/\varepsilon\rceil\cdot\lceil4\|Z_1\|_{L_2}/\varepsilon\rceil\le C/\varepsilon^2$. Polynomial. Donsker. $\square$</p>
+<div class="panel setup">
+<span class="tag">How this setup was found — two parameters with two different units</span>
+<p>Here the budget split of §10.6 is not between strips but between <em>parameters</em>, and the two are measured in different units: moving the intercept $a$ by $\Delta_a$ changes the function by $\Delta_a$ pointwise, while moving the slope $b$ by $\Delta_b$ changes it by $\Delta_b|z|$. Their envelopes are $1$ and $|z|$ respectively.</p><dl class="rd">
+<dt>Which budget</dt><dd>The two pieces are not disjoint indicators, so they combine by the triangle inequality in $L_2$: split the <b>plain</b> budget, $\varepsilon/2$ each.</dd>
+<dt>Two finenesses</dt><dd>$\Delta_a\cdot1=\varepsilon/2$ and $\Delta_b\|Z_1\|_{L_2}=\varepsilon/2$, so the two grids have different spacings — one carries a norm of $Z$ and one does not, for the reason given in example 9.</dd>
+<dt>Count</dt><dd>$(2/\Delta_a)\cdot(2/\Delta_b)$: extent over fineness, once per parameter, multiplied.</dd>
+</dl><p><b>The general rule this example displays.</b> With several parameters, do <em>not</em> look for a single fineness. Give each parameter its own, solved from its own envelope, and split the budget between them. The count is then the product, which is what makes the exponent equal the number of parameters.</p>
+</div>
+</div>
+</article>
+
+<article class="ex">
+<div class="exhead"><span class="n">12</span><h3>An oscillating class: $\mathcal F=\{z\mapsto\sin(\theta z):\theta\in[0,T]\}$, $\mathbb E[Z_1^2]\lt \infty$</h3></div>
+<div class="exbody">
+<p><b>Mechanism.</b> Now genuinely <em>not</em> monotone in $\theta$: as $\theta$ grows, $\sin(\theta z)$ oscillates. ORDER is unavailable, so use SIZE.</p>
+<p><b>Lipschitz bound.</b> By the mean value theorem applied to $\theta\mapsto\sin(\theta z)$, whose derivative is $z\cos(\theta z)$, bounded in absolute value by $|z|$:
+$$|\sin(\theta_1z)-\sin(\theta_2z)|\le|\theta_1-\theta_2|\,|z|\qquad\text{for all }\theta_1,\theta_2,\ \text{every }z,$$
+so the envelope is $m(z)=|z|$, with $\|m\|_{L_2}=\|Z_1\|_{L_2}\lt\infty$ by hypothesis. ✓</p>
+<p><b>The grid.</b> Let $\varepsilon\gt0$ be given, and set $\delta=\varepsilon/(2\|Z_1\|_{L_2})$. Partition $[0,T]$ into $k=\lceil T/\delta\rceil=\lceil2T\|Z_1\|_{L_2}/\varepsilon\rceil$ cells of width $\delta$, with centres $\theta_1,\dots,\theta_k$ spaced $\delta$ apart, so that every $\theta$ in the $j$-th cell satisfies $|\theta-\theta_j|\le\delta$. Define
+$$l_j(z)=\sin(\theta_jz)-\delta|z|,\qquad u_j(z)=\sin(\theta_jz)+\delta|z|,$$
+and let $\mathcal F_j=\{f\in\mathcal F:l_j\le f\le u_j\}$, so $\mathcal F=\bigcup_{j=1}^k\mathcal F_j$.</p>
+<p><b>Check the cage holds pointwise.</b> For $\theta$ in cell $j$, $|\theta-\theta_j|\le\delta$, so the Lipschitz bound gives $|\sin(\theta z)-\sin(\theta_jz)|\le\delta|z|$ for every $z$, i.e. $l_j(z)\le\sin(\theta z)\le u_j(z)$. ✓</p>
+<p><b>Compute the gap.</b> $u_j(z)-l_j(z)=2\delta|z|$, pointwise.</p>
+<p><b>Compute $\|u_j(Z_1)-l_j(Z_1)\|_{L_2}$.</b>
+$$\|u_j(Z_1)-l_j(Z_1)\|_{L_2}=\Big(\mathbb E\big[(2\delta Z_1)^2\big]\Big)^{1/2}=2\delta\,\|Z_1\|_{L_2}=2\cdot\frac\varepsilon{2\|Z_1\|_{L_2}}\cdot\|Z_1\|_{L_2}=\varepsilon .$$</p>
+<p><b>Count and conclude.</b> $N_{[\,]}(\varepsilon,\mathcal F,L_2(P))\le k=\lceil2T\|Z_1\|_{L_2}/\varepsilon\rceil$. Polynomial. Donsker. $\square$</p>
+<p class="footnote">The same computation with $e^{i\theta z}$ in place of $\sin(\theta z)$, using $|e^{i\theta_1z}-e^{i\theta_2z}|\le|\theta_1-\theta_2||z|$, gives the empirical characteristic function on $[-T,T]$.</p>
+<div class="panel setup">
+<span class="tag">How this setup was found — the first genuine SIZE</span>
+<p>Question 2 of §10.8 fails here for the first time: as $\theta$ grows, $\sin(\theta z)$ goes up and down, so there is no ordering of the family along the cell and no exact cage. That failure is what selects SIZE — you are not choosing between two techniques, you are being left with one.</p><dl class="rd">
+<dt>What SIZE requires</dt><dd>A bound $|f_\theta-f_{\theta'}|\le|\theta-\theta'|m(z)$ valid at <em>every</em> $z$, which the mean value theorem supplies with $m(z)=|z|$: the derivative is $z\cos(\theta z)$.</dd>
+<dt>The cage</dt><dd>Centre $\pm$ pad: $f_{\theta_j}\pm\delta m$. Not exact — the true functions sit strictly inside — and that slack is the price of losing monotonicity.</dd>
+<dt>The price, quantified</dt><dd>The gap is $2\delta m$ rather than $\delta m$, so the fineness halves and the count doubles. A factor $2$ in $N_{[\,]}$, i.e. an additive $\log 2$ in $\log N_{[\,]}$, i.e. nothing.</dd>
+</dl><p><b>What differs from example 9.</b> The mechanism, and a factor $2$. The envelope, the fineness $\varepsilon/\|Z_1\|_{L_2}$ up to that factor, and the shape of the count are unchanged — which is the concrete sense in which ORDER and SIZE are the same computation.</p>
+</div>
+</div>
+</article>
+
+<article class="ex">
+<div class="exhead"><span class="n">13</span><h3>Building new bounds out of old: $\mathcal F+\mathcal G$, $\phi\circ\mathcal F$, $\mathcal F\cdot\mathcal G$</h3></div>
+<div class="exbody">
+<p><b>What is being computed.</b> Not a new class from scratch, but the three moves that let you reuse a count you already have. Each one is the same two-line argument: <em>build the new cage out of the old cages, read off the new gap, split the budget.</em></p>
+
+<p><b>A preliminary that is used three times.</b> If every $f\in\mathcal F$ satisfies $0\le f\le A$ pointwise, then every bracket may be assumed to satisfy $0\le l\le u\le A$. Replace $l$ by $\max(l,0)$ and $u$ by $\min(u,A)$: the cage still holds, because $f$ itself lies in $[0,A]$, and the gap can only have shrunk, so the $L_2$ bound survives. Trimming brackets to the envelope is always free.</p>
+
+<p><b>(a) Sums.</b> Let $l\le f\le u$ and $l'\le g\le u'$ pointwise. Adding two pointwise inequalities is legal, so
+$$l+l'\;\le\;f+g\;\le\;u+u' ,$$
+and the gap is exactly $(u-l)+(u'-l')$. By the triangle inequality in $L_2$,
+$$\|(u+u')-(l+l')\|_{L_2}\;\le\;\|u-l\|_{L_2}+\|u'-l'\|_{L_2} .$$
+<b>Solve.</b> Give each class half the budget: take $\varepsilon/2$-brackets for $\mathcal F$ and for $\mathcal G$. <b>Count.</b> A bracket for the sum is a choice of one from each list, so
+$$N_{[\,]}\big(\varepsilon,\mathcal F+\mathcal G\big)\;\le\;N_{[\,]}(\varepsilon/2,\mathcal F)\cdot N_{[\,]}(\varepsilon/2,\mathcal G).$$
+Polynomial times polynomial is polynomial, and the $\varepsilon/2$ only changes the constant.</p>
+
+<p><b>(b) A Lipschitz transform.</b> Let $\phi:\mathbb R\to\mathbb R$ satisfy $|\phi(a)-\phi(b)|\le L|a-b|$. Two cases, and the difference between them is instructive.</p>
+<p>If $\phi$ is also <em>non-decreasing</em>, it preserves the cage: $\phi(l)\le\phi(f)\le\phi(u)$, with gap $\phi(u)-\phi(l)\le L(u-l)$. So $\varepsilon/L$-brackets for $\mathcal F$ give $\varepsilon$-brackets for $\phi\circ\mathcal F$:
+$$N_{[\,]}(\varepsilon,\phi\circ\mathcal F)\;\le\;N_{[\,]}(\varepsilon/L,\mathcal F).$$
+If $\phi$ is not monotone it can invert the cage, and $[\phi(l),\phi(u)]$ is not even a bracket. Use SIZE instead, with the old gap playing the role of the envelope: since $|\phi(f)-\phi(l)|\le L|f-l|\le L(u-l)$,
+$$\phi(l)-L(u-l)\;\le\;\phi(f)\;\le\;\phi(l)+L(u-l),$$
+whose gap is $2L(u-l)$, so $N_{[\,]}(\varepsilon,\phi\circ\mathcal F)\le N_{[\,]}\big(\varepsilon/(2L),\mathcal F\big)$. The factor $2$ is the whole price of losing monotonicity — this is the general form of the ORDER-versus-SIZE distinction of §9.</p>
+
+<p><b>(c) Products.</b> Suppose $0\le f\le A$ for $f\in\mathcal F$ and $0\le g\le B$ for $g\in\mathcal G$, and trim the brackets as above so $0\le l\le u\le A$ and $0\le l'\le u'\le B$. Multiplying non-negative pointwise inequalities is legal:
+$$l\,l'\;\le\;f\,g\;\le\;u\,u' .$$
+<b>Gap.</b> The standard add-and-subtract, chosen so that each factor left over is one we control:
+$$u u'-l l'\;=\;\underbrace{u\,(u'-l')}_{\le\;A\,(u'-l')}\;+\;\underbrace{l'\,(u-l)}_{\le\;B\,(u-l)} .$$
+<b>Its $L_2$ norm.</b> $\|uu'-ll'\|_{L_2}\le A\|u'-l'\|_{L_2}+B\|u-l\|_{L_2}$.
+<b>Solve.</b> Split the budget with the constants in the right places: brackets of size $\varepsilon/(2A)$ for $\mathcal G$ and of size $\varepsilon/(2B)$ for $\mathcal F$. <b>Count.</b>
+$$N_{[\,]}(\varepsilon,\mathcal F\cdot\mathcal G)\;\le\;N_{[\,]}\big(\varepsilon/(2B),\mathcal F\big)\cdot N_{[\,]}\big(\varepsilon/(2A),\mathcal G\big).$$
+Donsker is preserved by all three operations. $\square$</p>
+<p class="footnote"><b>Consistency check.</b> Example 4 is the product of two copies of example 1 with $A=B=1$. Rule (c) predicts $N_{[\,]}(\varepsilon)\le N^{(1)}(\varepsilon/2)^2\le\lceil8/\varepsilon^2\rceil^2=O(\varepsilon^{-4})$, and the hand computation in example 4 gave $O(\varepsilon^{-4})$. The two agree, which is the point of having a calculus: once three or four classes are done by hand, most of the rest are assembled.</p>
+<div class="panel setup">
+<span class="tag">How this setup was found — the setup you should try first</span>
+<p>Before answering any of the five questions, check whether the class is built from classes you have already counted. Sums, monotone or Lipschitz transforms, and products of bounded classes all inherit a count, and the derivation is two lines each: build the new cage out of the old cages, read off the new gap, split the budget.</p><p><b>Where the constants in the split come from.</b> They are read off the gap formula, not guessed. For products the gap is $u(u'-l')+l'(u-l)$, so the first term is multiplied by a bound on $u$ and the second by a bound on $l'$ — hence budget $\varepsilon/(2A)$ for $\mathcal G$ and $\varepsilon/(2B)$ for $\mathcal F$, with the constants sitting opposite the class they do not belong to. If you write the gap first, you cannot place them wrongly.</p>
+</div>
+</div>
+</article>
+
+<article class="ex">
+<div class="exhead"><span class="n">14</span><h3>The general SIZE example: $\mathcal F=\{f_\theta:\theta\in\Theta\}$ with $\Theta\subseteq[0,L]^d$</h3></div>
+<div class="exbody">
+<p><b>Parameter.</b> $\theta\in\Theta\subseteq[0,L]^d$, dimension $d$. The one standing assumption is a Lipschitz bound in the parameter, valid at every point:
+$$|f_\theta(z)-f_{\theta'}(z)|\;\le\;\|\theta-\theta'\|\;m(z)\qquad\text{for all }z,\ \text{with }\|m\|_{L_2(P)}\lt\infty .$$
+<b>Mechanism.</b> SIZE, in its general form. This example is worth doing once in full because examples 7–12 and drill 2 are all special cases, and because it shows exactly how $d$ enters.</p>
+
+<p><b>Cage.</b> Chop the cube $[0,L]^d$ into sub-cubes of side $h$. A cube of side $h$ in $\mathbb R^d$ has diameter $h\sqrt d$, so if $\theta_j$ is the centre of a cube, every $\theta$ in that cube satisfies $\|\theta-\theta_j\|\le h\sqrt d/2$. Hence, for those $\theta$,
+$$\underbrace{f_{\theta_j}-\tfrac{h\sqrt d}{2}\,m}_{l_j}\;\le\;f_\theta\;\le\;\underbrace{f_{\theta_j}+\tfrac{h\sqrt d}{2}\,m}_{u_j},$$
+directly from the displayed Lipschitz bound, at every $z$ separately. ✓</p>
+<p><b>Gap.</b> $u_j-l_j=h\sqrt d\,m$, a fixed function times a number.</p>
+<p><b>Its $L_2$ norm.</b> $\|u_j-l_j\|_{L_2}=h\sqrt d\,\|m\|_{L_2}$. No square root of a mass appears, because the gap is not an indicator.</p>
+<p><b>Solve.</b> $h\sqrt d\,\|m\|_{L_2}\le\varepsilon\iff h=\varepsilon/\big(\sqrt d\,\|m\|_{L_2}\big)$.</p>
+<p><b>Count.</b> Cubes of side $h$ needed to cover $[0,L]^d$: $\lceil L/h\rceil$ per coordinate, so
+$$N_{[\,]}(\varepsilon)\;\le\;\Big\lceil \frac{L\sqrt d\,\|m\|_{L_2}}{\varepsilon}\Big\rceil^{\,d}\;=\;O(\varepsilon^{-d}).$$</p>
+<p><b>Conclude.</b> Polynomial of degree $d$, for every finite $d$. Donsker. $\square$</p>
+<p class="footnote"><b>Read what $d$ does and does not do.</b> It sits in the exponent of the count, so $\log N_{[\,]}(\varepsilon)\le d\log(C/\varepsilon)$ and the entropy integral picks up a factor $\sqrt d$ — a constant, not a divergence. <em>Dimension costs a constant; it never costs Donsker.</em> The theory only breaks when the parameter set is not finite-dimensional at all, which is example 19.</p>
+<div class="panel setup">
+<span class="tag">How this setup was found — Case B in general, with $d$ visible</span>
+<p>This is §10.3 and §10.4 written out with no specialisation: a Lipschitz bound in the parameter gives envelope $m$, fineness $h=\varepsilon/(\sqrt d\,\|m\|_{L_2})$, extent $L$ per coordinate, count $(L\sqrt d\|m\|_{L_2}/\varepsilon)^d$. Examples 7–12 and drill 2 are all this formula with a specific $m$ and $d$.</p><dl class="rd">
+<dt>Where $\sqrt d$ comes from</dt><dd>A cube of side $h$ has diameter $h\sqrt d$, and the Lipschitz bound is stated in the norm $\|\theta-\theta'\|$, so the pad must be half the diameter, not half the side. It is a geometry constant and it ends up multiplying $\|m\|_{L_2}$.</dd>
+<dt>What $d$ does</dt><dd>It is the exponent, so $\log N_{[\,]}\le d\log(C/\varepsilon)$ and the entropy integral picks up $\sqrt d$ — a constant. Dimension never costs Donsker; it costs a constant.</dd>
+</dl><p><b>Use this as the default.</b> If an exercise gives you a finite-dimensional parameter and any derivative bound, you can write the answer immediately and spend your time only on computing $m$ and checking $\|m\|_{L_2}\lt\infty$.</p>
+</div>
+</div>
+</article>
+
+<article class="ex">
+<div class="exhead"><span class="n">15</span><h3>An unbounded parameter: $\mathcal F=\{z\mapsto(z-u)^+:u\ge0\}$, with the tail in one bracket</h3></div>
+<div class="exbody">
+<p><b>The difficulty.</b> Example 7 needed $u\in[0,U]$ and produced $N_{[\,]}(\varepsilon)\le\lceil U/\varepsilon\rceil$, which is useless as $U\to\infty$. A grid of fixed fineness over an infinite interval has infinitely many cells. But the class does not really get bigger as $u$ grows: $(z-u)^+$ shrinks to zero. That observation is the whole example.</p>
+
+<p><b>Split the parameter set at a threshold $U$, to be chosen.</b></p>
+
+<p><b>The tail, in a single bracket.</b> For every $u\ge U$ and every $z$,
+$$0\;\le\;(z-u)^+\;\le\;(z-U)^+ ,$$
+because $u\mapsto(z-u)^+$ is decreasing. So the <em>one</em> bracket $\big[\,0,\ (z-U)^+\,\big]$ cages every $f_u$ with $u\ge U$ at once. Its gap is $(z-U)^+$, with
+$$\big\|(Z_1-U)^+\big\|_{L_2}^2=\mathbb E\big[(Z_1-U)^{+2}\big]\;\le\;\mathbb E\big[Z_1^2\,\mathbf 1\{Z_1\gt U\}\big]\;\xrightarrow[U\to\infty]{}\;0$$
+by dominated convergence, using only $\mathbb E[Z_1^2]\lt\infty$. Define $U(\varepsilon)$ to be any threshold making this $\le\varepsilon$.</p>
+
+<p><b>The body.</b> On $[0,U(\varepsilon)]$ run example 7 verbatim: cells of length $\varepsilon$, $\lceil U(\varepsilon)/\varepsilon\rceil$ of them.</p>
+<p><b>Count.</b> $N_{[\,]}(\varepsilon)\;\le\;\lceil U(\varepsilon)/\varepsilon\rceil+1$, the $+1$ being the tail bracket.</p>
+
+<p><b>Is that good enough?</b> It depends on how fast $U(\varepsilon)$ has to grow, and this is the first example on the page where you have to look.</p>
+<ul>
+<li><b>With a moment above two</b>, say $\mathbb E|Z_1|^p\lt\infty$ for some $p\gt2$: on the event $\{Z_1\gt U\}$ we have $Z_1^2=Z_1^p\,Z_1^{2-p}\le Z_1^p\,U^{2-p}$, so $\mathbb E[Z_1^2\mathbf 1\{Z_1\gt U\}]\le U^{2-p}\,\mathbb E|Z_1|^p$. Setting this $\le\varepsilon^2$ gives $U(\varepsilon)=\big(\mathbb E|Z_1|^p/\varepsilon^{2}\big)^{1/(p-2)}$ and hence
+$$N_{[\,]}(\varepsilon)\;\le\;C\,\varepsilon^{-1-\frac{2}{p-2}} ,$$
+polynomial. Say the invariant sentence and stop.</li>
+<li><b>With exactly two moments</b>, $U(\varepsilon)$ can grow faster than any power — but the theorem does not ask for a power. Even $U(\varepsilon)=e^{1/\varepsilon}$ gives $\log N_{[\,]}(\varepsilon)\le 1/\varepsilon+\log(1/\varepsilon)+1$, so $\sqrt{\log N_{[\,]}(\varepsilon)}\le C\varepsilon^{-1/2}$, and $\int_0^1\varepsilon^{-1/2}d\varepsilon=2\lt\infty$. Still Donsker.</li>
+</ul>
+<p><b>Conclude.</b> Donsker under $\mathbb E[Z_1^2]\lt\infty$ alone, provided $U(\varepsilon)$ grows sub-exponentially in $1/\varepsilon$ — a very weak demand. $\square$</p>
+<p class="footnote">Two things to take away. <b>The tail trick:</b> whenever the family collapses towards a single function at the edge of the parameter set, that whole edge is one bracket, and its size is a tail expectation rather than a grid computation. <b>Polynomial was never the condition.</b> Step 5 of §9 is a shortcut that happens to apply to examples 1–18; here the count is exponential in $1/\varepsilon$ and the integral converges anyway. What the theorem asks about is $\log N_{[\,]}$, so an exponential count is the true boundary of the method — as example 19 shows in earnest.</p>
+<div class="panel setup">
+<span class="tag">How this setup was found — question 5, when the extent is infinite</span>
+<p>Example 7 with $U=\infty$ breaks at exactly one step: the count is extent over fineness, and the extent is now infinite. Case A does not rescue it, because the gap has a size rather than being an indicator. So you are at escape 2 of §10.7, and the thing to notice is a <em>property of the family</em>, not of the algebra: as $u\to\infty$, $(z-u)^+\to0$ for every $z$. The family collapses to a single function at the edge of the parameter set.</p><dl class="rd">
+<dt>The consequence</dt><dd>A collapsing edge can be caged by <b>one</b> bracket, $[0,(z-U)^+]$, however long the edge is. Its size is a tail expectation, computed by dominated convergence, not by a grid.</dd>
+<dt>The new question</dt><dd>You must now choose the threshold $U(\varepsilon)$, and the only thing to check is how fast it grows. Anything sub-exponential in $1/\varepsilon$ passes, because the theorem asks about $\log N_{[\,]}$.</dd>
+</dl><p><b>The general shape to recognise.</b> Whenever a parameter can run to a limit at which the functions become trivial — a threshold going to infinity, a bandwidth going to zero from the harmless side, a weight vanishing — that entire region is one bracket and is priced by a tail moment. The grid only ever covers the part of the parameter set where the family is genuinely moving.</p>
+</div>
+</div>
+</article>
+
+<article class="ex">
+<div class="exhead"><span class="n">16</span><h3>A moving window: $\mathcal F=\{z\mapsto K\big((z-x)/h\big):x\in[-T,T]\}$, $h\gt0$ fixed</h3></div>
+<div class="exbody">
+<p><b>Setting.</b> $K$ is a fixed kernel, bounded and $L$-Lipschitz — a box, a triangle, a Gaussian. This is the class behind kernel density estimation and behind any statistic of the form “count the observations within a window around $x$, and sweep $x$”.</p>
+<p><b>Mechanism.</b> As $x$ moves, the bump slides across $z$, so $K((z-x)/h)$ rises and then falls: <em>not</em> monotone in $x$ for fixed $z$. ORDER is unavailable. SIZE.</p>
+<p><b>Lipschitz bound.</b> The chain rule puts the bandwidth in the denominator, and this is the only place $h$ appears:
+$$\Big|K\Big(\frac{z-x}{h}\Big)-K\Big(\frac{z-x'}{h}\Big)\Big|\;\le\;L\,\Big|\frac{z-x}{h}-\frac{z-x'}{h}\Big|\;=\;\frac{L}{h}\,|x-x'| .$$
+So the envelope is the <em>constant</em> $m\equiv L/h$, with $\|m\|_{L_2}=L/h$ under any $P$ whatsoever. No moment assumption is needed. ✓</p>
+<p><b>Cage.</b> On a cell of length $\delta$ with centre $x_j$: $l_j=K\big((z-x_j)/h\big)-\delta L/h$ and $u_j=K\big((z-x_j)/h\big)+\delta L/h$.</p>
+<p><b>Gap.</b> $u_j-l_j=2\delta L/h$, a constant function.</p>
+<p><b>Its $L_2$ norm.</b> $2\delta L/h$ — the $L_2$ norm of a constant is that constant.</p>
+<p><b>Solve.</b> $2\delta L/h\le\varepsilon\iff\delta=\varepsilon h/(2L)$.</p>
+<p><b>Count.</b> $N_{[\,]}(\varepsilon)\le\lceil 2T/\delta\rceil=\lceil 4TL/(h\varepsilon)\rceil=O(\varepsilon^{-1})$. Polynomial. Donsker. $\square$</p>
+<p class="footnote"><b>Where the bandwidth went, and the warning that comes with it.</b> $h$ enters the <em>constant</em> $4TL/h$, never the exponent, so for each fixed $h$ the class is Donsker and the entropy integral is finite. But the constant blows up as $h\downarrow0$, so the bound is not uniform over $h$, and the interesting regime in density estimation — $h=h_n\to0$ — is not covered by this calculation at all. That is not a defect of the bookkeeping: at shrinking bandwidth the process genuinely does not converge at rate $\sqrt n$, and one needs rate-$\sqrt{nh}$ arguments instead. The entropy calculation is telling you the truth about where its own regime ends.</p>
+<div class="panel setup">
+<span class="tag">How this setup was found — where a constant of the problem lands</span>
+<p>Sliding a bump is not monotone at fixed $z$ (the bump rises then falls), so question 2 gives SIZE. Differentiating in $x$ puts the bandwidth in the denominator by the chain rule, so the envelope is the constant $L/h$.</p><dl class="rd">
+<dt>Consequence 1</dt><dd>The envelope is a constant, so $\|m\|_{L_2}=L/h$ under any $P$ and <b>no moment assumption appears</b> — compare example 9.</dd>
+<dt>Consequence 2</dt><dd>$h$ is a fixed constant of the problem, so it lands in the numerator of the count, $4TL/(h\varepsilon)$, and never in the exponent. That is why the class is Donsker for each fixed $h$.</dd>
+<dt>Consequence 3</dt><dd>The bound degenerates as $h\downarrow0$, and it should: at shrinking bandwidth the process genuinely does not converge at rate $\sqrt n$. The entropy computation reports the boundary of its own regime honestly.</dd>
+</dl><p><b>Diagnostic worth keeping.</b> When a constant appears in the numerator of a count, ask what happens as it degenerates. If the answer is “the theorem stops applying”, check whether the conclusion is also false there. Here it is.</p>
+</div>
+</div>
+</article>
+
+<article class="ex">
+<div class="exhead"><span class="n">17</span><h3>Unions of $k$ intervals: $\mathcal F_k=\big\{\mathbf 1_A:A=\bigcup_{i=1}^k(s_i,t_i]\big\}$</h3></div>
+<div class="exbody">
+<p><b>Parameter.</b> The $2k$ endpoints $s_1\le t_1\le s_2\le\dots\le s_k\le t_k$, so $d=2k$. Expect a $2k$-th power, and watch what happens to the constant.</p>
+<p><b>Mechanism.</b> ORDER, applied $2k$ times: growing any $t_i$ enlarges $A$, growing any $s_i$ shrinks it, one coordinate at a time. This is example 3 with $k$ copies of the same idea.</p>
+<p><b>Cage.</b> Fix one grid $\{q_0\lt q_1\lt\dots\}$ and a cell for each of the $2k$ endpoints. Push every endpoint to the end of its cell that makes the set as large as possible for $u$, and as small as possible for $l$:
+$$l=\mathbf 1_{\bigcup_i(s_i^{\rm hi},\,t_i^{\rm lo}]},\qquad u=\mathbf 1_{\bigcup_i(s_i^{\rm lo},\,t_i^{\rm hi})},$$
+where $s_i^{\rm lo},s_i^{\rm hi}$ are the two ends of $s_i$'s cell and likewise for $t_i$. Each true interval $(s_i,t_i]$ contains $(s_i^{\rm hi},t_i^{\rm lo}]$ and is contained in $(s_i^{\rm lo},t_i^{\rm hi})$, and taking unions preserves both inclusions. ✓ (Some of the lower intervals may be empty; an empty interval contributes $0$ and nothing breaks.)</p>
+<p><b>Gap.</b> $u-l$ is the indicator of a set contained in the union of $2k$ strips, one per endpoint:
+$$\{u\ne l\}\;\subseteq\;\bigcup_{i=1}^k\Big[(s_i^{\rm lo},s_i^{\rm hi}]\cup(t_i^{\rm lo},t_i^{\rm hi})\Big].$$</p>
+<p><b>Its $L_2$ norm.</b> An indicator again, so a square root of a mass, bounded by a union bound over $2k$ strips.</p>
+<p><b>Solve.</b> Split the budget $2k$ ways: build the grid on the probability axis so that every cell has mass $\le\varepsilon^2/(2k)$. Then
+$$\|u-l\|_{L_2}\;\le\;\Big(2k\cdot\frac{\varepsilon^2}{2k}\Big)^{1/2}=\varepsilon .$$ ✓</p>
+<p><b>Count.</b> The grid needs $\lceil 4k/\varepsilon^2\rceil$ points, and a bracket is a choice of cell for each of the $2k$ endpoints:
+$$N_{[\,]}(\varepsilon)\;\le\;\Big\lceil\frac{4k}{\varepsilon^2}\Big\rceil^{2k}=O\big(\varepsilon^{-4k}\big).$$
+Polynomial for each fixed $k$. Donsker. $\square$</p>
+<p class="footnote"><b>Now let $k$ grow, and watch the theory report the failure quantitatively.</b> $\log N_{[\,]}(\varepsilon)\approx 2k\log(4k/\varepsilon^2)$, so the entropy integral is finite for every $k$ but grows like $\sqrt{k\log k}$: the bound on the process degrades steadily. And the union $\mathcal F_\infty=\bigcup_k\mathcal F_k$ — all finite unions of intervals — contains sets shrinking around each data point, which is exactly the class of §2 that made $\|\mathbb G^{(n)}\|_{\mathcal F}=\sqrt n$. So the divergence of the constant as $k\to\infty$ is not slack in the argument; it is the finite-$k$ shadow of a class that genuinely fails.</p>
+<div class="panel setup">
+<span class="tag">How this setup was found — counting the constraints</span>
+<p>Nothing new is needed: $2k$ monotone constraints, so ORDER $2k$ times, Case A because the gap is still an indicator, and $2k$ strips. Apply §10.6 mechanically — <b>squared</b> budget split $2k$ ways, so each cell carries mass $\varepsilon^2/(2k)$, the grid needs $2k/\varepsilon^2$ points, and the count is raised to the power $2k$.</p><p><b>What this example is really for.</b> To show that the formula degrades gracefully and tells you where the method ends. $\log N_{[\,]}\approx2k\log(4k/\varepsilon^2)$ is finite for each $k$ but grows with $k$, and the union over all $k$ is the class of §2 for which the supremum was $\sqrt n$. The constant blowing up is not slack in the argument — it is the finite-$k$ shadow of a real failure.</p>
+</div>
+</div>
+</article>
+
+<article class="ex">
+<div class="exhead"><span class="n">18</span><h3>Balls in $\mathbb R^d$: $\mathcal F=\big\{z\mapsto\mathbf 1\{\|z-x\|\le r\}:x\in[-T,T]^d,\ r\in[0,R]\big\}$</h3></div>
+<div class="exbody">
+<p><b>Why this one needs an assumption when the earlier ones did not.</b> In dimension one we always escaped by cutting the <em>probability</em> axis: whatever $P$ is, quantiles give cells of mass $\le\varepsilon^2$. In $\mathbb R^d$ the sets are indexed by a centre and a radius, and there is no reparametrisation that turns “a thin annulus” into “a cell of small mass” for every $P$. So we must assume it. <b>Assume $P$ has a density bounded by $\kappa$ on $\mathbb R^d$.</b> Without it the class is not bracketable: if $P$ sits on a sphere of radius $r_0$ about the origin, an annulus of any thickness straddling $r_0$ has mass $1$, and no bracket is ever small.</p>
+<p><b>Mechanism.</b> ORDER in $r$ — the ball grows with $r$ — and for the centre, the triangle inequality lets you <em>pad the radius</em> instead. Call it ORDER with padding; it is the standard way to convert a translation parameter into a monotone one.</p>
+<p><b>Cage.</b> Cells: a cube of side $h$ with centre $x_j$, so $\|x-x_j\|\le\rho:=h\sqrt d/2$, and $r\in[r_{k-1},r_k]$ with $r_k-r_{k-1}=\delta$. Then for any $z$:
+<br>• if $\|z-x\|\le r$ then $\|z-x_j\|\le\|z-x\|+\rho\le r_k+\rho$;
+<br>• if $\|z-x_j\|\le r_{k-1}-\rho$ then $\|z-x\|\le\|z-x_j\|+\rho\le r_{k-1}\le r$.
+<br>So with $l_{jk}=\mathbf 1\{\|z-x_j\|\le r_{k-1}-\rho\}$ and $u_{jk}=\mathbf 1\{\|z-x_j\|\le r_k+\rho\}$ the cage holds at every $z$. ✓</p>
+<p><b>Gap.</b> The indicator of the annulus $\{r_{k-1}-\rho\lt\|z-x_j\|\le r_k+\rho\}$, of thickness $\tau:=\delta+2\rho$ and outer radius at most $R+1$ (taking $\tau\le1$).</p>
+<p><b>Its $L_2$ norm.</b> An indicator, so the square root of the mass, and here is where the density earns its keep — it converts <em>volume</em> into <em>probability</em>:
+$$P(\text{annulus})\;\le\;\kappa\cdot\mathrm{vol}(\text{annulus})\;\le\;\kappa\,c_d\,(R+1)^{d-1}\,\tau\;=:\;C\tau ,$$
+using that a spherical shell of outer radius $\varrho$ and thickness $\tau$ has volume at most $c_d\varrho^{d-1}\tau$.</p>
+<p><b>Solve.</b> Want $C\tau\le\varepsilon^2$, so $\tau=\varepsilon^2/C$. Split the thickness between its two sources: $\delta=\tau/2$ for the radius grid, and $2\rho=\tau/2$, i.e. $h=\tau/(2\sqrt d)$, for the centre grid.</p>
+<p><b>Count.</b> Radii: $\lceil R/\delta\rceil=O(\varepsilon^{-2})$. Centres: $\lceil 2T/h\rceil^d=O(\varepsilon^{-2d})$. So
+$$N_{[\,]}(\varepsilon)\;\le\;O\big(\varepsilon^{-2(d+1)}\big).$$
+Polynomial. Donsker. $\square$</p>
+<p class="footnote">The exponent counts what it should: $\varepsilon^{-2}$ per constraint, as in examples 3–5, and there are $d+1$ constraints ($d$ coordinates of the centre, one radius). The same computation with half-spaces $\{\langle a,z\rangle\le c\}$, $\|a\|=1$, runs identically — pad the offset $c$ instead of the radius — and gives $O(\varepsilon^{-2d})$. What does <em>not</em> run identically is all convex sets: the number of constraints is unbounded, exactly as in example 17 with $k\to\infty$, and the entropy is then a genuinely harder computation.</p>
+<div class="panel setup">
+<span class="tag">How this setup was found — the hardest instance of question 4</span>
+<p>Two things are new, and both are instances of questions already listed.</p><dl class="rd">
+<dt>Mechanism</dt><dd>The radius is monotone (ORDER), the centre is not — but a translation can be converted into a monotone parameter by the triangle inequality: shift the centre to a grid point and <em>pad the radius</em> by $\rho$. Recognising this move is worth more than the example: a translation parameter is almost always absorbed into another parameter this way.</dd>
+<dt>Which measure</dt><dd>The gap is the indicator of an annulus, so Case A and mass — but in $\mathbb R^d$ there is no reparametrisation that turns a thin annulus into a cell of small mass for <em>every</em> $P$. You must import an assumption, a bounded density $\kappa$, which converts volume into mass. This is question 4 of §10.8 in its non-trivial form: the measure you can cut is Lebesgue volume, and $\kappa$ is the exchange rate.</dd>
+</dl><p><b>How you would know the assumption is needed.</b> Try to do without it and watch the construction fail: if $P$ sits on a sphere, an annulus straddling it has mass $1$ at any thickness and no bracket is ever small. An exercise that hands you a density bound is telling you it knows this.</p>
+</div>
+</div>
+</article>
+
+<article class="ex">
+<div class="exhead"><span class="n">19</span><h3>All monotone functions: $\mathcal F=\{f:\mathbb R\to[0,1],\ f\text{ non-decreasing}\}$</h3></div>
+<div class="exbody">
+<p><b>Why this is the interesting one.</b> The parameter is a whole function, not a point of $\mathbb R^d$, so example 14 does not apply and there is no fineness to solve for. Every count so far has been polynomial; this one is <em>exponential</em> in $1/\varepsilon$, and the entropy integral converges anyway. It is the example that shows what Theorem 1.19 actually asks for.</p>
+
+<p><b>Two grids, both fixed in advance.</b> Given $\varepsilon\in(0,1)$:
+<br>• a <em>value</em> grid: the multiples of $\varepsilon$ in $[0,1]$, of which there are $\lceil1/\varepsilon\rceil+1$;
+<br>• a <em>candidate point</em> grid: quantiles $-\infty=q_0\lt q_1\lt\dots\lt q_M=+\infty$ with $P\big((q_{m-1},q_m]\big)\le\eta:=\varepsilon^3$ for each $m$, so $M=\lceil\varepsilon^{-3}\rceil$.</p>
+
+<p><b>Cage, chosen adaptively.</b> A single grid cannot work: a monotone $f$ may do all of its rising inside one cell. So let each $f$ pick its own cut points <em>from the fixed candidate list</em> — the list is common to all $f$, which is what keeps the count finite. Greedily: set $s_0=q_0$, and given $s_{i-1}$, let $s_i=q_{m_i}$ where $m_i$ is the <em>largest</em> index with
+$$f(q_{m_i-1})-f(s_{i-1})\;\le\;\varepsilon .$$
+Now define, for each $i$, a bracket on two pieces:
+<br>• the <b>good piece</b> $G_i=(s_{i-1},q_{m_i-1}]$, on which $f$ rises by at most $\varepsilon$ by construction. Put $l=\varepsilon\lfloor f(s_{i-1})/\varepsilon\rfloor$ and $u=\varepsilon\lceil f(q_{m_i-1})/\varepsilon\rceil$, both constants. Monotonicity gives $f(s_{i-1})\le f\le f(q_{m_i-1})$ on $G_i$, and rounding outwards only widens, so $l\le f\le u$ there. ✓
+<br>• the <b>bad piece</b> $B_i=(q_{m_i-1},q_{m_i}]$ — one single candidate cell, on which $f$ may jump by anything at all. Put $l=0$, $u=1$. ✓ trivially.</p>
+
+<p><b>How many pieces?</b> By maximality of $m_i$, the next candidate fails the test: $f(s_i)-f(s_{i-1})\gt\varepsilon$. Each step therefore consumes more than $\varepsilon$ of the total rise, which is at most $1$. So there are at most $\lceil1/\varepsilon\rceil$ steps, hence at most that many good and bad pieces each.</p>
+
+<p><b>Gap, and its $L_2$ norm.</b> Here is the move the whole example exists for: the gap is small on a set of full mass and large on a set of tiny mass, and $L_2$ charges the second one only $\text{(size)}^2\times\text{(mass)}$.
+$$\|u-l\|_{L_2}^2=\underbrace{\sum_i\int_{G_i}(u-l)^2\,dP}_{\text{gap}\le\;\varepsilon+2\varepsilon\;=\;3\varepsilon}\;+\;\underbrace{\sum_i\int_{B_i}(u-l)^2\,dP}_{\text{gap}\le1,\ \text{mass}\le\eta\text{ each}}\;\le\;(3\varepsilon)^2\cdot1\;+\;\Big\lceil\frac1\varepsilon\Big\rceil\cdot\varepsilon^3\;\le\;9\varepsilon^2+2\varepsilon^2 .$$
+So $\|u-l\|_{L_2}\le\sqrt{11}\,\varepsilon\le4\varepsilon$. (The $3\varepsilon$ is $\varepsilon$ of genuine rise plus $\varepsilon$ from each of the two roundings; the choice $\eta=\varepsilon^3$ was made precisely so that $\varepsilon^{-1}\cdot\eta\le\varepsilon^2$.)</p>
+
+<p><b>Count.</b> A bracket is determined by two finite choices:
+<br>• <em>which</em> candidate points were selected: at most $\lceil1/\varepsilon\rceil$ of them out of $M+1$, giving at most $(M+1)^{\lceil1/\varepsilon\rceil}$ possibilities;
+<br>• the rounded values at them: a non-decreasing sequence of $\lceil1/\varepsilon\rceil+1$ multiples of $\varepsilon$ in $[0,1]$, of which there are at most $\binom{2\lceil1/\varepsilon\rceil+1}{\lceil1/\varepsilon\rceil}\le 4^{\lceil1/\varepsilon\rceil+1}$.
+<br>Taking logarithms of the product, with $M+1\le2\varepsilon^{-3}$:
+$$\log N_{[\,]}(4\varepsilon)\;\le\;\frac{1}{\varepsilon}\Big(3\log\frac1\varepsilon+\log 2\Big)+\frac{2}{\varepsilon}\log 2+C\;\le\;\frac{C'}{\varepsilon}\log\frac1\varepsilon .$$
+Rescaling $\varepsilon$ by the constant $4$ changes nothing of the form.</p>
+
+<p><b>Conclude — and note that step 5 of §9 no longer applies.</b> The count is $N_{[\,]}(\varepsilon)\approx\exp\{C\varepsilon^{-1}\log(1/\varepsilon)\}$, not polynomial, so “polynomial, therefore Donsker” is unavailable and you must check the integral itself:
+$$\int_0^1\sqrt{\log N_{[\,]}(\varepsilon)}\;d\varepsilon\;\le\;\sqrt{C}\int_0^1\varepsilon^{-1/2}\sqrt{\log(1/\varepsilon)}\;d\varepsilon\;\lt\;\infty ,$$
+which converges comfortably — the integrand is smaller than $\varepsilon^{-0.6}$ near $0$. Donsker. $\square$</p>
+<p class="footnote">The sharp bound is $\log N_{[\,]}(\varepsilon)\asymp1/\varepsilon$ (van der Vaart, Theorem 2.7.5); the construction above loses the factor $\log(1/\varepsilon)$ by insisting on a fixed candidate grid rather than letting the cut points be arbitrary, and pays nothing for it, since $\varepsilon^{-1/2}\log^{1/2}(1/\varepsilon)$ is integrable just as $\varepsilon^{-1/2}$ is. <b>The general lesson:</b> exponential-in-$1/\varepsilon$ counts are the boundary of the method. $\log N_{[\,]}(\varepsilon)\approx\varepsilon^{-1}$ passes; $\log N_{[\,]}(\varepsilon)\approx\varepsilon^{-2}$ gives $\sqrt{\log N_{[\,]}}\approx\varepsilon^{-1}$, which is not integrable, and the argument stops. Uniformly bounded classes of functions with $\alpha$ derivatives on a bounded domain in $\mathbb R^d$ sit exactly on this scale, with $\log N_{[\,]}(\varepsilon)\approx\varepsilon^{-d/\alpha}$: Donsker when the functions are smooth enough relative to the dimension, $d\lt2\alpha$, and not otherwise.</p>
+<div class="panel setup">
+<span class="tag">How this setup was found — when there is no fineness to solve for</span>
+<p>Question 1 already gives a different answer here: the parameter is a whole function, not a point of $\mathbb R^d$, so “extent over fineness” has no meaning and §10.3 does not apply. The setup changes character in three ways worth naming, because they are what you do whenever a class is infinite-dimensional.</p><dl class="rd">
+<dt>Fixed candidates, adaptive choice</dt><dd>A single grid cannot work, since a monotone $f$ may do all its rising inside one cell. So the cut points are chosen <em>by each $f$</em>, but from a list fixed in advance — which is what keeps the number of possible brackets finite.</dd>
+<dt>A third kind of budget split</dt><dd>The gap is now small on a set of full mass and equal to $1$ on a few rare cells. $L_2$ charges the second only $(\text{size})^2\times(\text{mass})$, so you make the rare cells have mass $\eta=\varepsilon^3$: then $\varepsilon^{-1}$ of them contribute $\varepsilon^{-1}\cdot1\cdot\varepsilon^3=\varepsilon^2$. The exponent $3$ is solved, not chosen — it is whatever makes that product $\le\varepsilon^2$.</dd>
+<dt>Counting by choices</dt><dd>With no grid to divide, the count is combinatorial: how many ways to pick the cut points, times how many ways to pick the rounded values.</dd>
+</dl><p><b>And the last step changes too.</b> The count is exponential in $1/\varepsilon$, so the invariant sentence “polynomial, therefore Donsker” is unavailable and you must actually evaluate $\int_0^1\sqrt{\log N_{[\,]}}$. It converges. This is the example that shows what the theorem asks for, as opposed to what the shortcut checks.</p>
+</div>
+</div>
+</article>
+
+<article class="ex">
+<div class="exhead"><span class="n">20</span><h3>Where it genuinely fails: the standardised process $\mathcal F=\big\{\mathbf 1_{(0,t]}/\sqrt t:0\lt t\le1\big\}$</h3></div>
+<div class="exbody">
+<p><b>The setting.</b> Let $Z_1$ be uniform on $(0,1]$, so $F(t)=t$, and divide each indicator by its own standard deviation scale. Statistically this is the natural thing to want: the unstandardised process $\mathbb G^{(n)}f_t$ has variance $t(1-t)$, which vanishes at the ends, so a confidence band of constant width is wasteful near $0$. Dividing by $\sqrt t$ is an attempt to make the process homoscedastic. Every worked example so far has ended in “Donsker”; this one does not, and the computation says so before any probability is done.</p>
+
+<p><b>First diagnostic: every member has the same size.</b> $\ \|f_t\|_{L_2}^2=\mathbb E\big[\mathbf 1\{Z_1\le t\}/t\big]=t/t=1$. The class does not shrink anywhere. That alone is not fatal, but it means there is no “small end” to the family that a single bracket could absorb, as in example 15.</p>
+
+<p><b>The key inequality about brackets.</b> If $f$ and $g$ lie in the same bracket $[l,u]$ then $|f-g|\le u-l$ pointwise, hence
+$$\|f-g\|_{L_2}\;\le\;\|u-l\|_{L_2}\;\le\;\varepsilon .$$
+So a set of functions that are pairwise more than $\varepsilon$ apart in $L_2$ needs one bracket <em>each</em>: $N_{[\,]}(\varepsilon)$ is at least the size of any such set. This is the standard way to prove a bracketing number is large, and it is the mirror image of everything done above.</p>
+
+<p><b>Compute the pairwise distance.</b> For $s\le t$, expand directly:
+$$\|f_t-f_s\|_{L_2}^2=\int_0^s\Big(\frac1{\sqrt s}-\frac1{\sqrt t}\Big)^2dz+\int_s^t\frac{dz}{t}
+= s\Big(\frac1s-\frac{2}{\sqrt{st}}+\frac1t\Big)+\frac{t-s}{t}
+=2-2\sqrt{\frac st} .$$
+Every term of the expansion is elementary, and the answer depends only on the ratio $s/t$ — which is the scale-invariance that causes the trouble.</p>
+
+<p><b>Now exhibit infinitely many separated functions.</b> Take $t_k=4^{-k}$ for $k=0,1,2,\dots$ For $j\gt k$ the ratio is $t_j/t_k\le1/4$, so
+$$\|f_{t_k}-f_{t_j}\|_{L_2}^2=2-2\sqrt{t_j/t_k}\;\ge\;2-2\cdot\tfrac12=1 .$$
+Infinitely many functions, pairwise at $L_2$ distance at least $1$.</p>
+
+<p><b>Count.</b> By the key inequality, for every $\varepsilon\lt1$,
+$$N_{[\,]}\big(\varepsilon,\mathcal F,L_2(P)\big)=\infty ,$$
+so the entropy integral is $+\infty$ and Theorem 1.19 is silent. $\square$</p>
+
+<p><b>Is the class really not Donsker, or is bracketing just too crude here?</b> Really not, and one can see it without any empirical process theory. If $\mathcal F$ were Donsker the limit would be the Gaussian process $\mathbb Gf_t=B(t)/\sqrt t$ with $B$ a Brownian bridge, and it would have to be bounded. But near the origin $B$ behaves like a Brownian motion, and the law of the iterated logarithm gives
+$$\limsup_{t\downarrow0}\frac{|B(t)|}{\sqrt{2t\log\log(1/t)}}=1\quad\text{a.s.},$$
+so $\sup_{0\lt t\le\delta}|B(t)|/\sqrt t=\infty$ almost surely, for every $\delta\gt0$. The candidate limit does not exist as a bounded process, so no method could have succeeded.</p>
+<p class="footnote"><b>A third diagnostic, worth knowing because it is the quickest.</b> The envelope of this class is $\sup_{t\ge z}z^{-1/2}\cdot\mathbf 1=z^{-1/2}$, and $\mathbb E[Z_1^{-1}]=\int_0^1z^{-1}dz=\infty$: the class has no square-integrable envelope, so even the variance of the limit is infinite. Whenever the envelope fails, stop — no bracketing computation can rescue it. <b>The repair used in practice</b> is to standardise only on $[a,1]$ for a fixed $a\gt0$, where the multiplier $t^{-1/2}$ is bounded by $a^{-1/2}$ and Lipschitz in $t$, so examples 1 and 13(c) combine to give a polynomial count; or to weight by $\big(F(t)(1-F(t))\big)^{1/2-\nu}$ with $\nu\gt0$, which pulls the envelope back into $L_2$ and restores weak convergence.</p>
+<div class="panel setup">
+<span class="tag">How this setup was found — running the questions in reverse</span>
+<p>The setup procedure also detects failure, and it does so before any real work. Two of the checks in §10.7 fire immediately:</p><dl class="rd">
+<dt>Envelope check</dt><dd>$\sup_t|f_t(z)|=z^{-1/2}$ and $\mathbb E[Z_1^{-1}]=\infty$: no square-integrable envelope, so the limit would have infinite variance. Stop here — this check costs one line and should precede every bracketing computation.</dd>
+<dt>Collapse check</dt><dd>$\|f_t\|_{L_2}=1$ for every $t$, so nothing becomes negligible anywhere and escape 2 of §10.7 is unavailable.</dd>
+</dl><p><b>The reversal.</b> To <em>prove</em> a bracketing number is large rather than small, use that two functions in one bracket satisfy $\|f-g\|_{L_2}\le\|u-l\|_{L_2}\le\varepsilon$: any family that is pairwise $\varepsilon$-separated needs one bracket each. So the same inequality that builds upper bounds gives lower bounds when read backwards, and that is the standard way to show a class is not bracketable.</p>
+</div>
+</div>
+</article>
+
+<h3>The twenty at a glance</h3>
+<div style="overflow-x:auto">
+<table>
+<thead><tr><th>#</th><th>Class</th><th>Mech.</th><th>Gap</th><th>$\|{\rm gap}\|_{L_2}$</th><th>$N_{[\,]}(\varepsilon)$</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>$\mathbf 1_{[0,t]}$</td><td>ORDER</td><td>$\mathbf 1_{\rm cell}$</td><td>$\sqrt{\rm mass}$</td><td>$2/\varepsilon^2$</td></tr>
+<tr><td>2</td><td>$\mathbf 1_{(t,\infty)}$</td><td>ORDER</td><td>$\mathbf 1_{\rm cell}$</td><td>$\sqrt{\rm mass}$</td><td>$2/\varepsilon^2$</td></tr>
+<tr><td>3</td><td>$\mathbf 1_{(s,t]}$</td><td>ORDER$^2$</td><td>$\mathbf 1_{\rm 2\ strips}$</td><td>$\sqrt{2\times\rm mass}$</td><td>$(4/\varepsilon^2)^2$</td></tr>
+<tr><td>4</td><td>quadrants in $\mathbb R^2$</td><td>ORDER$^2$</td><td>$\mathbf 1_{\rm L\text{-}shape}$</td><td>$\sqrt{2\times\rm mass}$</td><td>$(4/\varepsilon^2)^2$</td></tr>
+<tr><td>5</td><td>rectangles in $\mathbb R^2$</td><td>ORDER$^4$</td><td>$\mathbf 1_{\rm 4\ strips}$</td><td>$\sqrt{4\times\rm mass}$</td><td>$(8/\varepsilon^2)^4$</td></tr>
+<tr><td>6</td><td>$w\,\mathbf 1_{[0,t]}$</td><td>ORDER</td><td>$w\,\mathbf 1_{\rm cell}$</td><td>$\sqrt{\mu({\rm cell})}$</td><td>$2\|w\|^2/\varepsilon^2$</td></tr>
+<tr><td>7</td><td>$(z-u)^+$</td><td>ORDER</td><td>$\le\delta$</td><td>$\le\delta$</td><td>$U/\varepsilon$</td></tr>
+<tr><td>8</td><td>$\min(z,c)$</td><td>ORDER</td><td>$\le\delta$</td><td>$\le\delta$</td><td>$C/\varepsilon$</td></tr>
+<tr><td>9</td><td>$e^{-\lambda z}$</td><td>ORDER</td><td>$\le\delta z$</td><td>$\delta\|Z\|$</td><td>$\|Z\|/\varepsilon$</td></tr>
+<tr><td>10</td><td>$\theta z$</td><td>ORDER (corners)</td><td>$\delta|z|$</td><td>$\delta\|Z\|$</td><td>$2\|Z\|/\varepsilon$</td></tr>
+<tr><td>11</td><td>$a+bz$</td><td>ORDER (corners)</td><td>$\Delta_a+\Delta_b|z|$</td><td>$\Delta_a+\Delta_b\|Z\|$</td><td>$C/\varepsilon^2$</td></tr>
+<tr><td>12</td><td>$\sin(\theta z)$</td><td>SIZE</td><td>$2\delta|z|$</td><td>$2\delta\|Z\|$</td><td>$C/\varepsilon$</td></tr>
+<tr><td>13</td><td>$\mathcal F+\mathcal G$, $\phi\circ\mathcal F$, $\mathcal F\cdot\mathcal G$</td><td>inherited</td><td>gaps add</td><td>norms add</td><td>counts multiply</td></tr>
+<tr><td>14</td><td>$f_\theta$, $\theta\in\mathbb R^d$, Lipschitz</td><td>SIZE</td><td>$h\sqrt d\,m$</td><td>$h\sqrt d\,\|m\|$</td><td>$(C/\varepsilon)^d$</td></tr>
+<tr><td>15</td><td>$(z-u)^+$, $u\ge0$</td><td>ORDER + tail</td><td>$\le\delta$; tail $(z-U)^+$</td><td>$\delta$; $\|(Z-U)^+\|$</td><td>$U(\varepsilon)/\varepsilon$</td></tr>
+<tr><td>16</td><td>$K((z-x)/h)$</td><td>SIZE</td><td>$2\delta L/h$</td><td>$2\delta L/h$</td><td>$4TL/(h\varepsilon)$</td></tr>
+<tr><td>17</td><td>$k$ intervals</td><td>ORDER$^{2k}$</td><td>$\mathbf 1_{2k\ \rm strips}$</td><td>$\sqrt{2k\times\rm mass}$</td><td>$(4k/\varepsilon^2)^{2k}$</td></tr>
+<tr><td>18</td><td>balls in $\mathbb R^d$</td><td>ORDER + padding</td><td>$\mathbf 1_{\rm annulus}$</td><td>$\sqrt{\kappa\cdot\rm vol}$</td><td>$C\varepsilon^{-2(d+1)}$</td></tr>
+<tr><td>19</td><td>monotone $f$ into $[0,1]$</td><td>adapted grid</td><td>$3\varepsilon$, plus $1$ on rare cells</td><td>$\le4\varepsilon$</td><td>$e^{C\varepsilon^{-1}\log(1/\varepsilon)}$</td></tr>
+<tr><td>20</td><td>$\mathbf 1_{(0,t]}/\sqrt t$</td><td>none — fails</td><td>$\ge1$ always</td><td>$\ge1$</td><td>$\infty$</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="panel intuition">
+<span class="tag">Read the fifth column</span>
+<p>The square root appears exactly where the gap is an indicator, possibly weighted: rows 1–6, and again in 17 and 18. That is the only source of $\varepsilon^2$ in this entire subject. The rows with an honest-sized gap — 7–12, 14, 16 — give $\delta=\varepsilon$ directly and cost $1/\varepsilon$ per parameter. Nothing else varies, and the last column is then just (row count) to the power (number of parameters).</p>
+<p>Rows 19 and 20 are where the pattern stops, and they mark the two real boundaries. In 19 the parameter is infinite-dimensional, so there is no fineness to solve for; the count becomes exponential in $1/\varepsilon$, which is precisely the scale at which $\sqrt{\log N_{[\,]}}$ is still integrable. In 20 the count is infinite at every scale, and a separate argument confirms the class is genuinely not Donsker. Everything between those two boundaries is the same five steps.</p>
+</div>
+</section>
+
+<section id="drills">
+<h2><span class="num">§12</span>Drills</h2>
+<p>Work on paper first: name the parameter, choose the mechanism, write the cage and justify it pointwise, compute the gap's $L_2$ norm as a formula in the fineness, solve, count.</p>
+
+<details><summary class="q">Drill 1. &nbsp;$\mathcal F=\{\mathbf 1_{[0,t]}\}$ when $Z_1$ is discrete, say uniform on $\{1,2,3\}$. Does anything break?</summary>
+<p>No. Take $\varepsilon=0.4$, so $\varepsilon^2=0.16$, and build the grid by $t_j=\inf\{t:F(t)\ge0.16j\}$. Since $F$ jumps by $1/3$ at each of $1,2,3$, the grid points come out as $t_1=t_2=1$, $t_3=t_4=2$, and so on: consecutive grid points coincide. The cells between coinciding points are empty and carry mass $0\le\varepsilon^2$; the cells that straddle an atom have mass $F(t_j-)-F(t_{j-1})=0$ as well, because the atom sits <em>at</em> the grid point and the open cell excludes it. Every cell satisfies the requirement, the count is still at most $\lceil2/\varepsilon^2\rceil$, and the proof runs unchanged. This is exactly what the left limit $F(t_j-)$ in example 1 is for.</p></details>
+
+<details><summary class="q">Drill 2. &nbsp;$\mathcal F=\{z\mapsto|z-\theta|:\theta\in[0,1]\}$.</summary>
+<p>Not monotone in $\theta$ (it decreases then increases), so SIZE. The reverse triangle inequality gives $\big||z-\theta_1|-|z-\theta_2|\big|\le|\theta_1-\theta_2|$, so the envelope is the constant $m\equiv1$ and $\|m\|_{L_2}=1$. Cage on a cell of diameter $\delta$ with centre $\theta_j$: $l_j=|z-\theta_j|-\delta$, $u_j=|z-\theta_j|+\delta$. Gap $=2\delta$, $L_2$ norm $=2\delta$. Solve: $\delta=\varepsilon/2$. Count: $N_{[\,]}(\varepsilon)\le\lceil2/\varepsilon\rceil$. Polynomial, Donsker, and no moment assumption is needed for the brackets — though $\mathbb E[Z_1^2]\lt \infty$ is needed for the class to have square-integrable envelope.</p></details>
+
+<details><summary class="q">Drill 3. &nbsp;$\mathcal F=\{(x,y)\mapsto\mathbf 1_{[0,s]}(x)\,(y-u)^+:s\ge0,\ u\in[0,U]\}$, with $\mathbb E[Y_1^2]\lt \infty$. (Hard: two parameters, two different mechanisms.)</summary>
+<p>Increasing in $s$, decreasing in $u$, so ORDER in both, with the cage
+$$l_{jk}=\mathbf 1_{[0,s_{j-1}]}(x)(y-u_k)^+,\qquad u^{\rm br}_{jk}=\mathbf 1_{[0,s_j)}(x)(y-u_{k-1})^+ .$$
+Split the gap by changing one parameter at a time:
+$$u^{\rm br}_{jk}-l_{jk}\;\le\;\underbrace{\mathbf 1_{(s_{j-1},s_j)}(x)\,(y-u_{k-1})^+}_{\text{from }s}\;+\;\underbrace{\mathbf 1_{[0,s_j)}(x)\big[(y-u_{k-1})^+-(y-u_k)^+\big]}_{\text{from }u}.$$
+The second piece is bounded pointwise by $\delta_u$, so its $L_2$ norm is $\le\delta_u$. The first piece has
+$$\big\|\mathbf 1_{(s_{j-1},s_j)}(X)\,(Y-u_{k-1})^+\big\|_{L_2}^2\le\mathbb E\big[Y_1^2\,\mathbf 1_{(s_{j-1}\lt X_1\lt s_j)}\big]=\mu\big((s_{j-1},s_j)\big),$$
+which is example 6's weighted measure $\mu(A)=\mathbb E[Y_1^2\mathbf 1_A(X_1)]$, of finite total mass $\mathbb E[Y_1^2]$. Triangle inequality, then split the budget in half: choose the $s$-grid so that $\mu(\text{cell})\le\varepsilon^2/4$ and $\delta_u=\varepsilon/2$. Then $\|u^{\rm br}-l\|_{L_2}\le\varepsilon/2+\varepsilon/2=\varepsilon$. Count: $\lceil4\mathbb E[Y_1^2]/\varepsilon^2\rceil\cdot\lceil2U/\varepsilon\rceil=O(\varepsilon^{-3})$. Polynomial, Donsker.</p></details>
+
+<details><summary class="q">Drill 4. &nbsp;Why is the class of all indicators of finite subsets of $[0,1]$ not covered by any of this?</summary>
+<p>Try to build a cage. Any bracket containing $\mathbf 1_A$ for every finite $A$ must have $u\ge\mathbf 1_A$ for all of them, hence $u\equiv1$ on $[0,1]$, while $l\le\mathbf 1_\emptyset=0$ gives $l\le0$. So the only bracket covering more than a negligible part of the class has $\|u-l\|_{L_2}=1$, and for $\varepsilon\lt 1$ you would need one bracket per function — infinitely many. Thus $N_{[\,]}(\varepsilon)=\infty$ and the theorem simply does not apply, in agreement with §2 where the supremum was computed to be $\sqrt n$.</p></details>
+</section>
+
+<section id="close">
+<h2><span class="num">§13</span>The whole page in one box</h2>
+
+<div class="panel recipe">
+<span class="tag">What was proved, in order</span>
+<ol>
+<li>$\mathbb G^{(n)}f$ is a normalised sum; its fluctuation size is $\|f\|_{L_2(P)}$ (§1, §3).</li>
+<li>A maximum over $N$ such things costs a factor $\sqrt{\log N}$, by the union bound (§4).</li>
+<li>A supremum over infinitely many cannot be handled by averaged approximation, because the supremum sees the data (§2, §5.1). A pointwise cage can, because inequalities survive integration against the empirical measure (§5.2).</li>
+<li>Caging plus a finite maximum proves the uniform law of large numbers outright (§6).</li>
+<li>At the $\sqrt n$ scale the same argument leaves a term $\sqrt n\,P(u-l)$, which for fixed bracket size diverges. One resolution is not enough (§7).</li>
+<li>Approximating across all resolutions instead, the cost is $\sum_m\varepsilon_m\sqrt{\log N_{[\,]}(\varepsilon_m)}$, which is within a factor $2$ of $\int_0^1\sqrt{\log N_{[\,]}(\varepsilon)}\,d\varepsilon$ (§8).</li>
+<li>Hence the only thing an application must supply is a bound on $N_{[\,]}(\varepsilon,\mathcal F,L_2(P))$, and any polynomial bound suffices (§8, §9).</li>
+<li>Supplying it is five mechanical steps, with two mechanisms and one algebraic move — solve for the fineness (§9).</li>
+<li>None of those steps is a choice. The class is fixed by the statistic; the mechanism by whether the family is monotone; the currency — mass, giving $\varepsilon^2$, or length, giving $\varepsilon/\|m\|_{L_2}$ — by whether the gap is an indicator; and the count is always extent over fineness, per parameter (§10).</li>
+</ol>
+</div>
+
+<p class="footnote">Numbering of results follows the Week 1 chapter. The quoted ingredient in the main line of argument is Bernstein's inequality; the single unproved assembly is the truncation-and-chaining bookkeeping inside Theorem 1.19, which is where the $\sqrt n\,P(u-l)$ term of §7 is finally disposed of, and which is not examinable. In §11 two further results are cited, both only in footnotes and neither load-bearing: the sharp entropy of the monotone class (example 19, where a complete if slightly lossier derivation is given in the text) and the law of the iterated logarithm (example 20).</p>
+</section>
+
+<script>
+(function(){
+  "use strict";
+  var NS="http://www.w3.org/2000/svg";
+  function el(n,a){var e=document.createElementNS(NS,n);for(var k in a){if(a.hasOwnProperty(k))e.setAttribute(k,a[k]);}return e;}
+  function txt(x,y,s,cls,anchor,fill){var t=el("text",{x:x,y:y,"font-size":"12","font-family":'"IBM Plex Sans Condensed",sans-serif',fill:fill||"#4b5661"});if(anchor)t.setAttribute("text-anchor",anchor);t.textContent=s;return t;}
+  function svg(w,h){return el("svg",{viewBox:"0 0 "+w+" "+h,role:"img"});}
+
+  /* --- max of N normals vs sqrt(2 log N) --- */
+  (function(){
+    var box=document.getElementById("maxFig"),btn=document.getElementById("maxRun"),read=document.getElementById("maxRead");
+    if(!box)return;
+    function nrm(){var u=0,v=0;while(u===0)u=Math.random();while(v===0)v=Math.random();
+      return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+    function meanMax(N,reps){var acc=0;
+      for(var r=0;r<reps;r++){var m=0;for(var i=0;i<N;i++){var x=Math.abs(nrm());if(x>m)m=x;}acc+=m;}
+      return acc/reps;}
+    function run(){
+      var Ns=[2,5,20,100,1000,10000,100000,1000000],pts=[];
+      for(var i=0;i<Ns.length;i++){var N=Ns[i],reps=N>=100000?3:(N>=1000?20:200);
+        pts.push({N:N,y:meanMax(N,reps),b:Math.sqrt(2*Math.log(N))});}
+      draw(pts);
+    }
+    function draw(pts){
+      var W=700,H=270,L=64,R=28,T=20,Bm=48,maxY=6.2;
+      var px=function(N){return L+Math.log10(N)/6*(W-L-R);},py=function(y){return H-Bm-y/maxY*(H-T-Bm);};
+      var s=svg(W,H);
+      for(var g=0;g<=6;g++){s.appendChild(el("line",{x1:px(Math.pow(10,g)),x2:px(Math.pow(10,g)),y1:T,y2:H-Bm,stroke:"#eef2f5"}));
+        s.appendChild(txt(px(Math.pow(10,g)),H-Bm+18,"10^"+g,null,"middle"));}
+      for(var v=0;v<=6;v+=2){s.appendChild(el("line",{x1:L,x2:W-R,y1:py(v),y2:py(v),stroke:"#eef2f5"}));
+        s.appendChild(txt(L-8,py(v)+4,String(v),null,"end"));}
+      s.appendChild(el("line",{x1:L,x2:W-R,y1:H-Bm,y2:H-Bm,stroke:"#8fa0ad"}));
+      s.appendChild(el("line",{x1:L,x2:L,y1:T,y2:H-Bm,stroke:"#8fa0ad"}));
+      s.appendChild(txt((L+W-R)/2,H-Bm+38,"number of functions N (log scale)",null,"middle"));
+      var d="";for(var q=0;q<=120;q++){var N=Math.pow(10,6*q/120);if(N<1.2)continue;
+        d+=(d?" L":"M")+px(N).toFixed(1)+","+py(Math.sqrt(2*Math.log(N))).toFixed(1);}
+      s.appendChild(el("path",{d:d,stroke:"#6d28d9","stroke-width":"2.2",fill:"none","stroke-dasharray":"7 4"}));
+      var d2="";pts.forEach(function(p,i){d2+=(i?" L":"M")+px(p.N).toFixed(1)+","+py(p.y).toFixed(1);
+        s.appendChild(el("circle",{cx:px(p.N),cy:py(p.y),r:"4",fill:"#1b4965"}));});
+      s.appendChild(el("path",{d:d2,stroke:"#1b4965","stroke-width":"2",fill:"none"}));
+      s.appendChild(txt(L+8,T+4,"bound √(2 log N)",null,null,"#6d28d9"));
+      s.appendChild(txt(L+8,T+22,"simulated E[max |X_j|]",null,null,"#1b4965"));
+      box.innerHTML="";box.appendChild(s);
+      var last=pts[pts.length-1];
+      if(read)read.textContent="At N = 10^6 the simulated maximum is "+last.y.toFixed(2)+" against the bound "+last.b.toFixed(2)+".";
+    }
+    run(); if(btn)btn.addEventListener("click",run);
+  })();
+
+  /* --- the two competing terms of the single-level bound --- */
+  (function(){
+    var box=document.getElementById("tradeFig"),ns=document.getElementById("nSlider"),
+        ms=document.getElementById("mSlider"),read=document.getElementById("tradeRead");
+    if(!box||!ns||!ms)return;
+    function A(m){return Math.sqrt(m)*Math.sqrt(2*Math.log(2/m));}
+    function B(m,n){return Math.sqrt(n)*m;}
+    function draw(){
+      var n=Math.pow(10,parseFloat(ns.value)), m0=Math.pow(10,parseFloat(ms.value));
+      var W=700,H=280,L=66,R=28,T=22,Bm=52;
+      var lo=-8,hi=-0.5;
+      var px=function(lm){return L+(lm-lo)/(hi-lo)*(W-L-R);};
+      var ylo=-4,yhi=3; /* log10 scale */
+      var py=function(v){var lv=Math.log10(Math.max(v,1e-4));
+        return H-Bm-(Math.min(Math.max(lv,ylo),yhi)-ylo)/(yhi-ylo)*(H-T-Bm);};
+      var s=svg(W,H);
+      for(var g=-8;g<=0;g++){if(g<lo||g>hi)continue;
+        s.appendChild(el("line",{x1:px(g),x2:px(g),y1:T,y2:H-Bm,stroke:"#eef2f5"}));
+        s.appendChild(txt(px(g),H-Bm+18,"10^"+g,null,"middle"));}
+      for(var v=ylo;v<=yhi;v++){
+        s.appendChild(el("line",{x1:L,x2:W-R,y1:py(Math.pow(10,v)),y2:py(Math.pow(10,v)),stroke:"#eef2f5"}));
+        s.appendChild(txt(L-8,py(Math.pow(10,v))+4,"10^"+v,null,"end"));}
+      s.appendChild(el("line",{x1:L,x2:W-R,y1:H-Bm,y2:H-Bm,stroke:"#8fa0ad"}));
+      s.appendChild(el("line",{x1:L,x2:L,y1:T,y2:H-Bm,stroke:"#8fa0ad"}));
+      s.appendChild(txt((L+W-R)/2,H-Bm+38,"cell mass m (log scale)",null,"middle"));
+      var da="",db="";
+      for(var q=0;q<=160;q++){var lm=lo+(hi-lo)*q/160,m=Math.pow(10,lm);
+        da+=(q?" L":"M")+px(lm).toFixed(1)+","+py(A(m)).toFixed(1);
+        db+=(q?" L":"M")+px(lm).toFixed(1)+","+py(B(m,n)).toFixed(1);}
+      s.appendChild(el("path",{d:da,stroke:"#1b4965","stroke-width":"2.2",fill:"none"}));
+      s.appendChild(el("path",{d:db,stroke:"#9f1239","stroke-width":"2.2",fill:"none"}));
+      var lm0=Math.log10(m0);
+      s.appendChild(el("line",{x1:px(lm0),x2:px(lm0),y1:T,y2:H-Bm,stroke:"#6d28d9","stroke-dasharray":"5 4"}));
+      s.appendChild(txt(L+8,T+4,"(A) fluctuation  √m·√(2 log N)",null,null,"#1b4965"));
+      s.appendChild(txt(L+8,T+22,"(B) bias  √n·m",null,null,"#9f1239"));
+      box.innerHTML="";box.appendChild(s);
+      var a=A(m0),b=B(m0,n);
+      read.innerHTML="n = 10^"+parseFloat(ns.value).toFixed(1)+", m = 10^"+lm0.toFixed(2)+
+        " &nbsp;·&nbsp; (A) = "+a.toFixed(3)+" &nbsp;·&nbsp; (B) = "+b.toFixed(3)+
+        " &nbsp;<span class='verdict "+(b<0.1?"ok":"no")+"'>"+(b<0.1?"bias still small":"bias out of control")+"</span>";
+    }
+    draw();
+    ns.addEventListener("input",draw); ms.addEventListener("input",draw);
+  })();
+})();
+</script>
+</main>
+</div>
+</body>
+</html>
