@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Γ, variation, sgn og λ — forklaring og 50 spørgsmål</title>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] },
+  options: { skipHtmlTags: ['script','noscript','style','textarea'] },
+  startup: { typeset: false }
+};
+</script>
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+
+<style>
+  :root{
+    --ink:#131f36; --soft:#4b5870; --line:#c6d0e0; --paper:#f5f8fc; --card:#fff;
+    --band:#131f36; --key:#1d5b46; --warn:#8c2f39; --gold:#8a6a1f;
+    --right:#1c6b4a; --right-bg:#e6f3ec; --wrong:#a32723; --wrong-bg:#fbe9e8; --focus:#3457a6;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:var(--paper);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-size:15.5px;line-height:1.58}
+  body:not(.ready){visibility:hidden}
+  .sheet{max-width:840px;margin:0 auto;padding:0 18px 80px}
+
+  header{border-bottom:3px solid var(--band);padding:30px 0 14px;margin-bottom:22px}
+  header h1{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+    font-size:28px;font-weight:600;margin:0 0 6px}
+  header p{margin:0;color:var(--soft);max-width:70ch}
+
+  .part{display:flex;align-items:center;gap:12px;margin:34px 0 16px}
+  .part span{font-family:"Iowan Old Style",Palatino,Georgia,serif;font-size:21px}
+  .part i{flex:1;height:1px;background:var(--line)}
+
+  .lesson{background:var(--card);border:1px solid var(--line);padding:16px 18px 14px;margin:0 0 20px}
+  .lesson h2{font-family:"Iowan Old Style",Palatino,Georgia,serif;font-size:19px;font-weight:600;
+    margin:0 0 10px;padding-bottom:7px;border-bottom:1px solid var(--line)}
+  .lesson h3{font-size:14px;margin:16px 0 4px;color:var(--soft)}
+  .lesson p{margin:8px 0}
+  .lesson ul{margin:8px 0;padding-left:19px}
+  .lesson li{margin:5px 0}
+  .eq{margin:10px 0;padding:8px 12px;background:#f3f6fb;border-left:3px solid var(--line);overflow-x:auto}
+  .idea{border-left:3px solid var(--key);background:#edf5f1;padding:10px 12px;margin:11px 0}
+  .idea b{display:block;font-size:12.5px;color:var(--key);margin-bottom:2px}
+  .warnb{border-left:3px solid var(--warn);background:#fbf0f1;padding:10px 12px;margin:11px 0}
+  .warnb b{display:block;font-size:12.5px;color:var(--warn);margin-bottom:2px}
+  .exm{border-left:3px solid var(--gold);background:#fbf7ec;padding:10px 12px;margin:11px 0}
+  .exm b{display:block;font-size:12.5px;color:var(--gold);margin-bottom:2px}
+  table{border-collapse:collapse;width:100%;margin:10px 0;font-size:14.5px}
+  th,td{border-bottom:1px solid var(--line);padding:5px 8px;text-align:left;vertical-align:top}
+  th{font-size:12.5px;color:var(--soft);border-bottom:2px solid var(--line)}
+
+  /* quiz */
+  .meter{display:flex;align-items:baseline;gap:14px;border-bottom:1px solid var(--line);
+    padding-bottom:9px;margin-bottom:0;font-size:14px;color:var(--soft)}
+  .meter .count{font-family:"Iowan Old Style",Palatino,Georgia,serif;font-size:21px;color:var(--ink)}
+  .meter .spacer{flex:1}
+  .bar{height:3px;background:var(--line);margin:0 0 20px;position:relative}
+  .bar span{position:absolute;inset:0 auto 0 0;background:var(--band);width:0;transition:width .25s ease}
+  .card{background:var(--card);border:1px solid var(--line);padding:0 0 6px}
+  .qhead{display:flex;align-items:center;gap:12px;background:var(--band);color:#e7ecf5;padding:8px 16px;font-size:13px}
+  .qhead .n{font-family:"Iowan Old Style",Palatino,Georgia,serif;font-size:17px;color:#fff}
+  .qhead .topic{color:#93a3bd}
+  .qtext{padding:20px 20px 4px;font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+    font-size:18.5px;line-height:1.65}
+  ul.opts{list-style:none;margin:14px 0 0;padding:0 14px}
+  ul.opts li{margin:0 0 6px}
+  ul.opts button{width:100%;text-align:left;display:flex;align-items:flex-start;gap:11px;
+    background:#fff;border:1px solid var(--line);padding:11px 13px;font:inherit;font-size:16px;color:var(--ink);cursor:pointer}
+  ul.opts button:hover:not([disabled]){border-color:var(--band);background:#f7f9fc}
+  ul.opts button:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+  ul.opts .key{flex:0 0 auto;width:22px;height:22px;line-height:20px;text-align:center;
+    border:1px solid var(--line);border-radius:50%;font-size:12.5px;color:var(--soft)}
+  li.right button{border-color:var(--right);background:var(--right-bg)}
+  li.right .key{border-color:var(--right);background:var(--right);color:#fff}
+  li.wrong button{border-color:var(--wrong);background:var(--wrong-bg)}
+  li.wrong .key{border-color:var(--wrong);background:var(--wrong);color:#fff}
+  .exp{display:none;margin:14px 14px 4px;padding:13px 15px;background:#f3f6fb;border-top:2px solid var(--band);font-size:15px}
+  .exp.show{display:block}
+  .exp .verdict{font-weight:600;margin-right:6px}
+  .exp .verdict.ok{color:var(--right)} .exp .verdict.no{color:var(--wrong)}
+  .nav{display:flex;gap:10px;align-items:center;margin-top:16px}
+  .nav .spacer{flex:1}
+  button.btn{font:inherit;font-size:15px;background:#fff;color:var(--ink);border:1px solid var(--line);
+    padding:9px 16px;cursor:pointer}
+  button.btn:hover:not([disabled]){border-color:var(--band)}
+  button.btn[disabled]{opacity:.4;cursor:default}
+  button.btn.primary{background:var(--band);color:#fff;border-color:var(--band)}
+  .final{display:none;background:var(--card);border:1px solid var(--line);padding:26px 22px}
+  .final.show{display:block}
+  .final h2{font-family:"Iowan Old Style",Palatino,Georgia,serif;font-size:22px;margin:0 0 8px}
+  .final .score{font-family:"Iowan Old Style",Palatino,Georgia,serif;font-size:42px;margin:4px 0}
+  .final ol{padding-left:20px;font-size:14.5px;color:var(--soft)}
+  .hint{margin-top:14px;font-size:13px;color:var(--soft)}
+  .hint kbd{font:inherit;font-size:12px;background:#fff;border:1px solid var(--line);border-bottom-width:2px;border-radius:3px;padding:1px 5px}
+  @media (max-width:560px){ .qtext{font-size:17px;padding:16px 14px 4px} ul.opts{padding:0 10px} header h1{font-size:22px} }
+  @media (prefers-reduced-motion:reduce){ *{transition:none !important} }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+<header>
+  <h1>Variansfunktionen $\Gamma$, kvadratisk variation, $\mathrm{sgn}$ og $|B|$, og $\lambda$-projektioner</h1>
+  <p>Først forklaringen med den intuition, formlerne kommer fra. Derefter 70 spørgsmål, der udelukkende træner de fire ting. Notation: $B$ er en Brownsk bevægelse, $M$ en kontinuert gaussisk martingal med $M_0=0$, og $\Gamma(t)=E[M_t^2]$.</p>
+</header>
+
+<div class="part"><span>Del 1 · Forstå det først</span><i></i></div>
+
+<div class="lesson">
+  <h2>1. $\Gamma$ er processens ur</h2>
+
+  <p>En kontinuert gaussisk martingal ser kompliceret ud, men er i virkeligheden bare en Brownsk bevægelse, der kigges på med et andet ur. Det er hele idéen:</p>
+  <div class="eq">$M_t \overset{d}{=} B_{\Gamma(t)}$, hvor $\Gamma(t)=E[M_t^2]$.</div>
+
+  <div class="idea">
+    <b>Intuitionen</b>
+    $\Gamma(t)$ måler <em>hvor meget tilfældighed der er nået at hobe sig op</em> til tid $t$. En almindelig BM samler $1$ enhed tilfældighed op pr. tidsenhed, så dér er $\Gamma(t)=t$. Hvis $\Gamma(t)=2t$, kører uret dobbelt så hurtigt: på ét sekund er der sket lige så meget som på to sekunder for en almindelig BM. Hvis $\Gamma(t)=t^3$, starter uret langsomt og accelererer.
+  </div>
+
+  <p>Derfor gælder <b>den eneste regel du behøver</b>: tag en hvilken som helst formel for Brownsk bevægelse og erstat $t$ med $\Gamma(t)$.</p>
+
+  <table>
+    <tr><th>For $B$</th><th>For $M$</th></tr>
+    <tr><td>$\mathrm{var}(B_t)=t$</td><td>$\mathrm{var}(M_t)=\Gamma(t)$</td></tr>
+    <tr><td>$\mathrm{cov}(B_s,B_t)=s\wedge t$</td><td>$\mathrm{cov}(M_s,M_t)=\Gamma(s\wedge t)$</td></tr>
+    <tr><td>$B_t-B_s\sim N(0,t-s)$</td><td>$M_t-M_s\sim N(0,\Gamma(t)-\Gamma(s))$</td></tr>
+    <tr><td>$E[B_t^4]=3t^2$</td><td>$E[M_t^4]=3\Gamma(t)^2$</td></tr>
+    <tr><td>$E[e^{\theta B_t}]=e^{\theta^2t/2}$</td><td>$E[e^{\theta M_t}]=e^{\theta^2\Gamma(t)/2}$</td></tr>
+    <tr><td>$\langle B,B\rangle_t=t$</td><td>$\langle M,M\rangle_t=\Gamma(t)$</td></tr>
+    <tr><td>$B_t^2-t$ martingal</td><td>$M_t^2-\Gamma(t)$ martingal</td></tr>
+    <tr><td>$e^{\theta B_t-\theta^2t/2}$ martingal</td><td>$e^{\theta M_t-\theta^2\Gamma(t)/2}$ martingal</td></tr>
+  </table>
+
+  <h3>Hvorfor er $\Gamma$ altid voksende og kontinuert?</h3>
+  <p>Fordi $\Gamma(t)-\Gamma(s)=\mathrm{var}(M_t-M_s)\ge0$ — et ur kan ikke gå baglæns, og en varians kan ikke være negativ. Det giver et gratis eksamenstrick: hvis en foreslået $\Gamma$ ikke er voksende med $\Gamma(0)=0$, kan den ikke være variansfunktion for nogen gaussisk martingal.</p>
+
+  <h3>Hvor kommer $\Gamma$ fra i praksis?</h3>
+  <p>Enten står den direkte i opgaven ("$E[M_t^2]=2t$"), eller også er $M$ givet som et Itô-integral med deterministisk integrand:</p>
+  <div class="eq">$M_t=\int_0^t f(s)\,\mathrm{d}B_s\quad\Longrightarrow\quad \Gamma(t)=\int_0^t f(s)^2\,\mathrm{d}s$</div>
+  <p>Det er bare Itô-isometrien. Omvendt: hvis du får $\Gamma$ og skal finde $f$, differentier og tag kvadratrod, $f(s)=\sqrt{\Gamma'(s)}$. For $\Gamma(t)=t^4$ er $f(s)=\sqrt{4s^3}=2s^{3/2}$.</p>
+
+  <div class="exm">
+    <b>Eksempel: den klassiske $\theta$-opgave</b>
+    "$E[M_t^2]=2t$. For hvilke $\theta$ er $\exp(\theta M_t-4t)$ en martingal?" Skabelonen er $\exp(\theta M_t-\tfrac{\theta^2}{2}\Gamma(t))$, og her er $\tfrac{\theta^2}{2}\Gamma(t)=\tfrac{\theta^2}{2}\cdot 2t=\theta^2 t$. Sæt $\theta^2t=4t$: $\theta=\pm2$.
+  </div>
+
+  <div class="warnb">
+    <b>Fælde</b>
+    Trækker man bare $\tfrac{\theta^2}{2}t$ fra i stedet for $\tfrac{\theta^2}{2}\Gamma(t)$, får man $\theta=\pm2\sqrt2$ — og det tal står altid som svarmulighed. Skriv $\Gamma$ ned <em>først</em>, hver gang.
+  </div>
+</div>
+
+<div class="lesson">
+  <h2>2. Kvadratisk variation: kun det tilfældige tæller</h2>
+
+  <p>Den hele historie ligger i tre regneregler:</p>
+  <div class="eq">$(\mathrm{d}B)^2=\mathrm{d}t,\qquad \mathrm{d}B\cdot\mathrm{d}t=0,\qquad (\mathrm{d}t)^2=0$</div>
+
+  <div class="idea">
+    <b>Intuitionen</b>
+    På et lille tidsinterval $\mathrm{d}t$ flytter den tilfældige del sig ca. $\sqrt{\mathrm{d}t}$ (det er BM's signatur), så kvadratet er $\mathrm{d}t$ — og de lægger sig sammen til noget af størrelse $t$. En glat del flytter sig kun $\mathrm{d}t$, så kvadratet er $(\mathrm{d}t)^2$, som er forsvindende lille i sammenligning. Derfor: <b>kvadratisk variation ser kun martingaldelen. Alle $\mathrm{d}t$-led er usynlige.</b>
+  </div>
+
+  <p>Opskriften, hver gang:</p>
+  <div class="eq">$\mathrm{d}X_t=H_t\,\mathrm{d}B_t+K_t\,\mathrm{d}t\quad\Longrightarrow\quad \langle X,X\rangle_t=\int_0^t H_s^2\,\mathrm{d}s$</div>
+  <p>På ord: <em>find koefficienten foran $\mathrm{d}B$, kvadrér den, og integrer $\mathrm{d}s$.</em> Smid $K$ væk.</p>
+
+  <table>
+    <tr><th>Proces</th><th>$\langle X,X\rangle_t$</th><th>Hvorfor</th></tr>
+    <tr><td>$B_t$</td><td>$t$</td><td>koefficient $1$</td></tr>
+    <tr><td>$3B_t+5t$</td><td>$9t$</td><td>$3^2$; $5t$ er usynligt</td></tr>
+    <tr><td>$\int_0^tH\,\mathrm{d}B$</td><td>$\int_0^tH_s^2\,\mathrm{d}s$</td><td>definitionen</td></tr>
+    <tr><td>$B_t^2$</td><td>$4\int_0^tB_s^2\mathrm{d}s$</td><td>$\mathrm{d}(B^2)=2B\,\mathrm{d}B+\mathrm{d}t$</td></tr>
+    <tr><td>$f(B_t)$</td><td>$\int_0^tf'(B_s)^2\mathrm{d}s$</td><td>$\mathrm{d}f=f'\mathrm{d}B+\ldots$</td></tr>
+    <tr><td>$\int_0^tB_s\,\mathrm{d}s$</td><td>$0$</td><td>ingen $\mathrm{d}B$-del</td></tr>
+  </table>
+
+  <h3>Krydsvariation</h3>
+  <div class="eq">$\langle X,Y\rangle_t=\int_0^t H^X_sH^Y_s\,\mathrm{d}s$ — gang de to $\mathrm{d}B$-koefficienter.</div>
+
+  <div class="warnb">
+    <b>Den dyreste forveksling</b>
+    $\langle X,X\rangle_t$ er ikke $\mathrm{var}(X_t)$. For $I_t=\int_0^tB_s\,\mathrm{d}s$ er $\mathrm{var}(I_t)=t^3/3$, men $\langle I,I\rangle_t=0$: processen er glat, den har bare en tilfældig hældning. Omvendt er $\langle B^2\rangle_t=4\int B_s^2\mathrm{d}s$ stokastisk, mens variansen er et tal.<br><br>
+    De to falder kun sammen, når integranden er deterministisk — og det er præcis tilfældet for gaussiske martingaler. Derfor er $\langle M,M\rangle_t=\Gamma(t)$ både variansen og den kvadratiske variation på én gang. Det er forbindelsen mellem afsnit 1 og 2.
+  </div>
+
+  <h3>Lévys karakterisering</h3>
+  <p>Kontinuert lokal martingal $+$ $X_0=0$ $+$ $\langle X,X\rangle_t=t$ $\Rightarrow$ $X$ er en standard Brownsk bevægelse. Man behøver altså ikke tjekke fordelinger — kun at den kvadratiske variation er $t$.</p>
+</div>
+
+<div class="lesson">
+  <h2>3. $\mathrm{sgn}$, $|B|$ og indikatorer: fortegnet forsvinder, når man kvadrerer</h2>
+
+  <div class="idea">
+    <b>Intuitionen</b>
+    Isometri og kvadratisk variation kvadrerer altid integranden. Så integrander, der kun handler om <em>fortegn</em>, bliver trivielle: $\mathrm{sgn}(x)^2=1$, $\mathbf{1}_A^2=\mathbf{1}_A$, $|x|^2=x^2$. Det svære forsvinder i samme øjeblik, du kvadrerer. Til gengæld er <em>første</em> momenter af de samme størrelser ikke trivielle — det er dér, de gemmer fælderne.
+  </div>
+
+  <table>
+    <tr><th>Integrand $H$</th><th>$H^2$</th><th>$E[H_s^2]$</th><th>$E[H_s]$</th></tr>
+    <tr><td>$\mathrm{sgn}(B_s)$</td><td>$1$</td><td>$1$</td><td>$0$</td></tr>
+    <tr><td>$\mathbf{1}_{\{B_s\ge0\}}$</td><td>$\mathbf{1}_{\{B_s\ge0\}}$</td><td>$\tfrac12$</td><td>$\tfrac12$</td></tr>
+    <tr><td>$|B_s|$</td><td>$B_s^2$</td><td>$s$</td><td>$\sqrt{2s/\pi}$</td></tr>
+  </table>
+
+  <h3>Tre processer, du skal kende</h3>
+  <ul>
+    <li><b>$X_t=\int_0^t\mathrm{sgn}(B_s)\,\mathrm{d}B_s$ er selv en standard Brownsk bevægelse.</b> $\langle X,X\rangle_t=\int_0^t1\,\mathrm{d}s=t$, og Lévy gør resten. Intuitivt: du vender fortegnet på tilvæksterne alt efter hvor $B$ er, men en tilvækst $\pm\mathrm{d}B$ har samme fordeling som $\mathrm{d}B$ — du blander kortene uden at ændre spillet.</li>
+    <li><b>$\int_0^t\mathbf{1}_{\{B_s\ge0\}}\,\mathrm{d}B_s$</b> har $\langle X,X\rangle_t=\int_0^t\mathbf{1}_{\{B_s\ge0\}}\,\mathrm{d}s$, altså <em>den tid $B$ har tilbragt over nul</em>. Den er stokastisk, men har middelværdi $t/2$, fordi $P(B_s\ge0)=\tfrac12$.</li>
+    <li><b>$|B_t|$, reflekteret BM.</b> $|x|$ har hældning $\pm1$ overalt, så $\langle |B|\rangle_t=t$ — lige som $B$ selv. Men $|B_t|$ er ikke en martingal: $|x|$ er konveks, så den er en <em>submartingal</em> ($E[|B_t|]=\sqrt{2t/\pi}$ vokser).</li>
+  </ul>
+
+  <div class="exm">
+    <b>Regnetricks</b>
+    $E[B_s|B_s|]=0$ og $E[B_s\,\mathrm{sgn}(B_s)]=E[|B_s|]=\sqrt{2s/\pi}$. Første er ulige og dermed nul; anden er definitionen af absolutværdi. Og to disjunkte indikatorer gør krydsleddet nul: $\mathbf{1}_{\{B_s\ge0\}}\mathbf{1}_{\{B_s\lt0\}}=0$.
+  </div>
+
+  <div class="warnb">
+    <b>Fælde</b>
+    $\mathbf{1}_A^2=\mathbf{1}_A$, ikke $\mathbf{1}_A/2$ eller $\mathbf{1}_A^2/2$. Halvdelen kommer først, når du tager middelværdi. Og $\mathrm{sgn}(B_s)$ giver $1$ efter kvadrering, ikke $B_s^2$.
+  </div>
+</div>
+
+<div class="lesson">
+  <h2>4. $\lambda$-projektioner: skyggen af en flerdimensional BM</h2>
+
+  <p>En $d$-dimensional Brownsk bevægelse er bare $d$ uafhængige almindelige BM'er stablet i en vektor: $B_t=(B^{(1)}_t,\ldots,B^{(d)}_t)$. En vektor $\lambda=(\lambda_1,\ldots,\lambda_d)$ giver processen</p>
+  <div class="eq">$X_t=\langle\lambda,B_t\rangle=\lambda_1B^{(1)}_t+\lambda_2B^{(2)}_t+\cdots+\lambda_dB^{(d)}_t$</div>
+
+  <div class="idea">
+    <b>Intuitionen: det er en skygge</b>
+    Tænk på $B_t$ som en tilfældig prik i rummet. Fordelingen er kuglesymmetrisk — den ser ens ud i alle retninger. $\langle\lambda,B_t\rangle$ er prikkens <em>koordinat langs retningen $\lambda$</em>, altså skyggen på en akse der peger den vej.<br><br>
+    Er $\lambda$ en <b>enhedsvektor</b> ($\|\lambda\|=1$), måler du bare med en almindelig lineal langs en almindelig akse. Og fordi en kugle ser ens ud fra alle sider, er den skygge nøjagtig en <b>standard Brownsk bevægelse</b> — ligegyldigt hvilken retning du vælger.<br><br>
+    Er $\|\lambda\|=c$, har du samme retning, men en lineal der er strukket med faktor $c$. Så alt bliver ganget med $c$, og variansen med $c^2$.
+  </div>
+
+  <div class="eq">$\mathrm{var}(X_t)=\|\lambda\|^2t,\qquad \langle X,X\rangle_t=\|\lambda\|^2t,\qquad X \text{ er standard BM}\iff\|\lambda\|=1$</div>
+
+  <p>Hvorfor $\|\lambda\|^2$? Fordi koordinaterne er uafhængige, så varianserne lægges sammen:</p>
+  <div class="eq">$\mathrm{var}\big(\textstyle\sum_i\lambda_iB^{(i)}_t\big)=\sum_i\lambda_i^2\,\mathrm{var}(B^{(i)}_t)=\big(\sum_i\lambda_i^2\big)t=\|\lambda\|^2t$</div>
+
+  <h3>To retninger på én gang</h3>
+  <p>Tag to vektorer $\lambda$ og $\mu$ og se på skyggerne $X=\langle\lambda,B\rangle$ og $Y=\langle\mu,B\rangle$. Alle krydsled mellem <em>forskellige</em> koordinater forsvinder (uafhængighed), og der bliver netop prikproduktet tilbage:</p>
+  <div class="eq">$\langle X,Y\rangle_t=\langle\lambda,\mu\rangle\,t,\qquad \mathrm{corr}(X_t,Y_t)=\frac{\langle\lambda,\mu\rangle}{\|\lambda\|\,\|\mu\|}=\cos(\text{vinklen mellem }\lambda\text{ og }\mu)$</div>
+
+  <div class="exm">
+    <b>Det forklarer den korrelerede BM fra sæt 3.3</b>
+    $W_t=\sqrt{1-\rho^2}B^{(1)}_t+\rho B^{(2)}_t$ svarer til $\lambda=(\sqrt{1-\rho^2},\rho)$, som har $\|\lambda\|^2=(1-\rho^2)+\rho^2=1$ — derfor er $W$ en standard BM. Og $B^{(2)}$ svarer til $\mu=(0,1)$, så $\langle\lambda,\mu\rangle=\rho$, hvilket giver $\langle W,B^{(2)}\rangle_t=\rho t$ og korrelation $\rho$ direkte. To vektorer med vinklen $\arccos\rho$ imellem sig.
+  </div>
+
+  <h3>Længden af hele vektoren</h3>
+  <p>Hver koordinat bidrager med martingalen $(B^{(i)}_t)^2-t$, så summen giver:</p>
+  <div class="eq">$\|B_t\|^2-dt$ er en martingal; $\ \|B_t\|^2\overset{d}{=}t\chi_d^2$; $\ E[\|B_t\|^2]=dt$; $\ E[\|B_t\|^4]=d(d+2)t^2$</div>
+
+  <div class="warnb">
+    <b>Fælder</b>
+    $\|\lambda\|^2$, ikke $\|\lambda\|$: $\lambda=(3,4)$ giver varians $25t$, ikke $5t$. Og dimensionen $d$ optræder lineært i $\|B_t\|^2-dt$, ikke som $d^2$.
+  </div>
+</div>
+
+<div class="part"><span>Del 2 · 70 spørgsmål</span><i></i></div>
+
+<div class="meter">
+  <span class="count"><b id="cur">1</b> / <span id="tot">70</span></span>
+  <span class="spacer"></span>
+  <span>Score: <b id="score">0</b></span>
+</div>
+<div class="bar"><span id="fill"></span></div>
+
+<div id="quiz"></div>
+
+<div class="final" id="final">
+  <h2>Færdig</h2>
+  <div class="score"><span id="finalScore">0</span> / <span id="tot2">70</span></div>
+  <p id="finalWord"></p>
+  <p>Emner du missede:</p>
+  <ol id="missed"></ol>
+  <button class="btn primary" id="restart">Start forfra</button>
+</div>
+
+<div class="hint">Tastatur: <kbd>1</kbd>–<kbd>5</kbd> vælger, <kbd>&rarr;</kbd> frem, <kbd>&larr;</kbd> tilbage.</div>
+
+<div id="bank" hidden>
+
+<!-- ============ Γ ============ -->
+
+<section class="q" data-correct="0" data-topic="Γ · kvadratisk variation">
+  <div class="qtext">Lad $M$ være en kontinuert gaussisk martingal med $M_0=0$ og $E[M_t^2]=3t$. Bestem $\langle M,M\rangle_5$.</div>
+  <ul class="opts">
+    <li>$15$</li><li>$5$</li><li>$3$</li><li>$45$</li><li>$75$</li>
+  </ul>
+  <div class="exp">$\langle M,M\rangle_t=\Gamma(t)=3t$, så ved $t=5$: $15$. Den kvadratiske variation <em>er</em> variansfunktionen for en gaussisk martingal.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="Γ · kvadratisk variation">
+  <div class="qtext">Lad $M$ være en kontinuert gaussisk martingal med $E[M_t^2]=t^3$. Bestem $\langle M,M\rangle_t$.</div>
+  <ul class="opts">
+    <li>$t^3$</li><li>$3t^2$</li><li>$\dfrac{t^3}{3}$</li><li>$\dfrac{t^4}{4}$</li><li>$t$</li>
+  </ul>
+  <div class="exp">$\langle M,M\rangle_t=\Gamma(t)=t^3$. Ingen differentiation, ingen integration — den kvadratiske variation aflæses direkte af variansen.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="Γ · kovarians">
+  <div class="qtext">Lad $\Gamma(t)=E[M_t^2]=2t$. Bestem $\mathrm{cov}(M_1,M_4)$.</div>
+  <ul class="opts">
+    <li>$2$</li><li>$8$</li><li>$4$</li><li>$2\sqrt2$</li><li>$10$</li>
+  </ul>
+  <div class="exp">$\mathrm{cov}(M_s,M_t)=\Gamma(s\wedge t)=\Gamma(1)=2$. Præcis som $\mathrm{cov}(B_s,B_t)=s\wedge t$, bare med $\Gamma$ udenom.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="Γ · tilvækster">
+  <div class="qtext">Lad $\Gamma(t)=t^3$. Bestem $\mathrm{var}(M_2-M_1)$.</div>
+  <ul class="opts">
+    <li>$7$</li><li>$1$</li><li>$8$</li><li>$9$</li><li>$\dfrac73$</li>
+  </ul>
+  <div class="exp">$\mathrm{var}(M_t-M_s)=\Gamma(t)-\Gamma(s)=8-1=7$. Bemærk at det ikke er $\Gamma(t-s)=1$ — uret er ikke lineært, så tilvæksterne er ikke stationære.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="Γ · momenter">
+  <div class="qtext">Lad $\Gamma(t)=t^3$. Bestem $E[M_2^4]$.</div>
+  <ul class="opts">
+    <li>$192$</li><li>$64$</li><li>$24$</li><li>$48$</li><li>$8$</li>
+  </ul>
+  <div class="exp">$E[M_t^4]=3\Gamma(t)^2$ (erstat $t$ med $\Gamma(t)$ i $3t^2$). Her $3\cdot8^2=192$.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="Γ · Wick">
+  <div class="qtext">Lad $\Gamma(t)=2t$. Bestem $E[M_1^2M_3^2]$.</div>
+  <ul class="opts">
+    <li>$20$</li><li>$12$</li><li>$8$</li><li>$6$</li><li>$24$</li>
+  </ul>
+  <div class="exp">Wick med $\mathrm{cov}(M_s,M_t)=\Gamma(s\wedge t)$: $\Gamma(1)\Gamma(3)+2\Gamma(1)^2=2\cdot6+2\cdot4=20$.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="Γ · Wick">
+  <div class="qtext">Lad $\Gamma(t)=2t$. Bestem $E[M_1^3M_3]$.</div>
+  <ul class="opts">
+    <li>$12$</li><li>$6$</li><li>$4$</li><li>$18$</li><li>$0$</li>
+  </ul>
+  <div class="exp">Wick på $E[M_1M_1M_1M_3]$: tre parringer, hver $\Gamma(1)\cdot\Gamma(1)=4$, i alt $12$. (Svarer til $E[B_s^3B_t]=3s^2$ med $s\to\Gamma(s)$.)</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="Γ · hvilke funktioner virker">
+  <div class="qtext">Bestem hvilken funktion der <em>ikke</em> kan være variansfunktion $\Gamma(t)=E[M_t^2]$ for en kontinuert gaussisk martingal.</div>
+  <ul class="opts">
+    <li>$\Gamma(t)=t-t^2$</li><li>$\Gamma(t)=\sqrt{t}$</li><li>$\Gamma(t)=e^{t}-1$</li><li>$\Gamma(t)=2t$</li><li>$\Gamma(t)=t^3$</li>
+  </ul>
+  <div class="exp">$\Gamma$ skal være voksende med $\Gamma(0)=0$, fordi $\Gamma(t)-\Gamma(s)=\mathrm{var}(M_t-M_s)\ge0$. $t-t^2$ aftager for $t\gt\tfrac12$ og ville give negativ varians. De øvrige er alle voksende og starter i $0$.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="Γ · eksponentiel martingal">
+  <div class="qtext">Lad $\Gamma(t)=e^{2t}-1$. Bestem $\theta\gt0$ således at $Y_t=\exp\!\big(\theta M_t-(e^{2t}-1)\big)$ er en martingal.</div>
+  <ul class="opts">
+    <li>$\sqrt2$</li><li>$2$</li><li>$1$</li><li>$\tfrac12$</li><li>$2\sqrt2$</li>
+  </ul>
+  <div class="exp">Skabelonen er $\exp(\theta M_t-\tfrac{\theta^2}{2}\Gamma(t))$. Kravet er $\tfrac{\theta^2}{2}(e^{2t}-1)=e^{2t}-1$, altså $\theta^2=2$ og $\theta=\sqrt2$.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="Γ · fra integral">
+  <div class="qtext">Lad $M_t=\int_0^t s\,\mathrm{d}B_s$. Bestem $\langle M,M\rangle_3$.</div>
+  <ul class="opts">
+    <li>$9$</li><li>$27$</li><li>$3$</li><li>$\dfrac{81}{4}$</li><li>$\dfrac92$</li>
+  </ul>
+  <div class="exp">$\Gamma(t)=\int_0^ts^2\mathrm{d}s=\tfrac{t^3}{3}$, så $\langle M,M\rangle_3=\tfrac{27}{3}=9$.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="Γ · fordeling">
+  <div class="qtext">Lad $\Gamma(t)=4t$. Bestem $P(M_1\le 2)$.</div>
+  <ul class="opts">
+    <li>$\Phi(1)$</li><li>$\Phi(2)$</li><li>$\Phi(\tfrac12)$</li><li>$\Phi(4)$</li><li>$\tfrac12$</li>
+  </ul>
+  <div class="exp">$M_1\sim N(0,\Gamma(1))=N(0,4)$, så $P(M_1\le2)=P(Z\le 2/\sqrt4)=\Phi(1)$. Standardisér altid med $\sqrt{\Gamma}$, ikke med $\sqrt t$.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="Γ · Laplace-transform">
+  <div class="qtext">Lad $\Gamma(t)=t^2$. Bestem $E[e^{M_2}]$.</div>
+  <ul class="opts">
+    <li>$e^{2}$</li><li>$e^{4}$</li><li>$e$</li><li>$e^{8}$</li><li>$e^{1/2}$</li>
+  </ul>
+  <div class="exp">$E[e^{\theta M_t}]=e^{\theta^2\Gamma(t)/2}$ med $\theta=1$, $\Gamma(2)=4$: $e^{4/2}=e^2$.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="Γ · martingaler">
+  <div class="qtext">Lad $\Gamma(t)=2t$. Bestem hvilken proces der er en martingal.</div>
+  <ul class="opts">
+    <li>$M_t^2-2t$</li><li>$M_t^2-t$</li><li>$M_t^2-4t$</li><li>$M_t^2$</li><li>$M_t^2-2t^2$</li>
+  </ul>
+  <div class="exp">$M_t^2-\Gamma(t)$ er martingalen, og $\Gamma(t)=2t$. Det er samme udsagn som $\langle M,M\rangle_t=2t$.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="Γ · find integranden">
+  <div class="qtext">Bestem den deterministiske funktion $f$ så $M_t=\int_0^tf(s)\,\mathrm{d}B_s$ har $\Gamma(t)=t^4$.</div>
+  <ul class="opts">
+    <li>$f(s)=2s^{3/2}$</li><li>$f(s)=s^2$</li><li>$f(s)=4s^3$</li><li>$f(s)=s^{3/2}$</li><li>$f(s)=2s^2$</li>
+  </ul>
+  <div class="exp">$\Gamma(t)=\int_0^tf^2$, så $f(s)^2=\Gamma'(s)=4s^3$ og $f(s)=2s^{3/2}$. Tjek: $\int_0^t4s^3\mathrm{d}s=t^4$.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="Γ · uafhængige tilvækster">
+  <div class="qtext">Lad $\Gamma(t)=2t$. Bestem $E\big[M_2(M_5-M_2)^2\big]$.</div>
+  <ul class="opts">
+    <li>$0$</li><li>$6$</li><li>$12$</li><li>$24$</li><li>$4$</li>
+  </ul>
+  <div class="exp">Tilvæksten er uafhængig af $\mathscr{F}_2$, så udtrykket faktoriserer: $E[M_2]\cdot E[(M_5-M_2)^2]=0\cdot6=0$. (Paritet virker også: tre gaussiske faktorer.)</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="Γ · tidsskift">
+  <div class="qtext">Lad $\Gamma(t)=t^2$. Bestem hvilken proces $M$ svarer til i fordeling.</div>
+  <ul class="opts">
+    <li>$B_{t^2}$</li><li>$tB_t$</li><li>$B_t^2$</li><li>$tB_{1/t}$</li><li>$\int_0^t s\,\mathrm{d}B_s$</li>
+  </ul>
+  <div class="exp">$M_t\overset{d}{=}B_{\Gamma(t)}=B_{t^2}$ — en BM kørt på uret $\Gamma$. $tB_t$ er ikke en martingal, $B_t^2$ er ikke centreret, $tB_{1/t}$ er en standard BM, og $\int_0^ts\,\mathrm{d}B_s$ har $\Gamma(t)=t^3/3$.</div>
+</section>
+
+<!-- ============ kvadratisk variation ============ -->
+
+<section class="q" data-correct="0" data-topic="Variation · dt er usynligt">
+  <div class="qtext">Bestem $\langle X,X\rangle_t$ for $X_t=3B_t+5t$.</div>
+  <ul class="opts">
+    <li>$9t$</li><li>$9t+25t^2$</li><li>$3t$</li><li>$34t$</li><li>$9t+5t$</li>
+  </ul>
+  <div class="exp">Koefficienten foran $\mathrm{d}B$ er $3$, så $\langle X\rangle_t=\int_0^t3^2\mathrm{d}s=9t$. Driftleddet $5t$ har endelig variation og bidrager med nul.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="Variation · Itô">
+  <div class="qtext">Bestem $\langle X,X\rangle_t$ for $X_t=B_t^2-t$.</div>
+  <ul class="opts">
+    <li>$4\displaystyle\int_0^tB_s^2\,\mathrm{d}s$</li>
+    <li>$\displaystyle\int_0^tB_s^2\,\mathrm{d}s$</li>
+    <li>$4\displaystyle\int_0^tB_s^2\,\mathrm{d}s-t$</li>
+    <li>$2t^2$</li>
+    <li>$t^2$</li>
+  </ul>
+  <div class="exp">$\mathrm{d}(B_t^2-t)=2B_t\,\mathrm{d}B_t$, så $\langle X\rangle_t=\int_0^t4B_s^2\,\mathrm{d}s$. At man har trukket $t$ fra ændrer intet: $\mathrm{d}t$-led er usynlige for variationen.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="Variation · absolutværdi">
+  <div class="qtext">Bestem $\langle X,X\rangle_t$ for $X_t=\int_0^t|B_s|\,\mathrm{d}B_s$.</div>
+  <ul class="opts">
+    <li>$\displaystyle\int_0^tB_s^2\,\mathrm{d}s$</li>
+    <li>$\displaystyle\int_0^t|B_s|\,\mathrm{d}s$</li>
+    <li>$\dfrac{t^2}{2}$</li>
+    <li>$t$</li>
+    <li>$\displaystyle\int_0^tB_s^4\,\mathrm{d}s$</li>
+  </ul>
+  <div class="exp">$|B_s|^2=B_s^2$ — absolutværdien forsvinder ved kvadrering. Så $\langle X\rangle_t=\int_0^tB_s^2\,\mathrm{d}s$, det samme som for integranden $B_s$.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="Variation · eksponentiel">
+  <div class="qtext">Bestem $\langle X,X\rangle_t$ for $X_t=e^{B_t-t/2}$.</div>
+  <ul class="opts">
+    <li>$\displaystyle\int_0^te^{2B_s-s}\,\mathrm{d}s$</li>
+    <li>$\displaystyle\int_0^te^{2B_s}\,\mathrm{d}s$</li>
+    <li>$\displaystyle\int_0^te^{B_s-s/2}\,\mathrm{d}s$</li>
+    <li>$e^{2B_t-t}-1$</li>
+    <li>$t$</li>
+  </ul>
+  <div class="exp">$X$ er en martingal med $\mathrm{d}X_t=X_t\,\mathrm{d}B_t$, så $\langle X\rangle_t=\int_0^tX_s^2\,\mathrm{d}s=\int_0^te^{2B_s-s}\,\mathrm{d}s$.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="Variation · blandet proces">
+  <div class="qtext">Bestem $\langle X,X\rangle_t$ for $X_t=\int_0^tB_s\,\mathrm{d}B_s+\int_0^tB_s\,\mathrm{d}s$.</div>
+  <ul class="opts">
+    <li>$\displaystyle\int_0^tB_s^2\,\mathrm{d}s$</li>
+    <li>$2\displaystyle\int_0^tB_s^2\,\mathrm{d}s$</li>
+    <li>$\displaystyle\int_0^tB_s^2\,\mathrm{d}s+\dfrac{t^3}{3}$</li>
+    <li>$\dfrac{t^3}{3}$</li>
+    <li>$0$</li>
+  </ul>
+  <div class="exp">Kun $\mathrm{d}B$-koefficienten tæller, og den er $B_s$. Det andet led har endelig variation, så det bidrager hverken med egen variation eller med krydsvariation.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="Variation · indikator">
+  <div class="qtext">Lad $X_t=\int_0^t\mathbf{1}_{\{B_s\gt0\}}\,\mathrm{d}B_s$. Bestem $E[\langle X,X\rangle_t]$.</div>
+  <ul class="opts">
+    <li>$\dfrac t2$</li><li>$t$</li><li>$\dfrac{t^2}{4}$</li><li>$\dfrac{t}{4}$</li><li>$\dfrac{t^2}{2}$</li>
+  </ul>
+  <div class="exp">$\langle X\rangle_t=\int_0^t\mathbf{1}_{\{B_s\gt0\}}\,\mathrm{d}s$ er den tid, $B$ har været positiv — stokastisk. Middelværdien er $\int_0^tP(B_s\gt0)\,\mathrm{d}s=t/2$.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="Variation · krydsvariation">
+  <div class="qtext">Lad $X_t=\int_0^t\mathrm{sgn}(B_s)\,\mathrm{d}B_s$. Bestem $\langle X,B\rangle_t$.</div>
+  <ul class="opts">
+    <li>$\displaystyle\int_0^t\mathrm{sgn}(B_s)\,\mathrm{d}s$</li>
+    <li>$t$</li>
+    <li>$0$</li>
+    <li>$\displaystyle\int_0^t|B_s|\,\mathrm{d}s$</li>
+    <li>$\displaystyle\int_0^t\mathrm{sgn}(B_s)\,\mathrm{d}B_s$</li>
+  </ul>
+  <div class="exp">Gang de to $\mathrm{d}B$-koefficienter: $\mathrm{sgn}(B_s)\cdot1$, og integrér $\mathrm{d}s$. Pointen: $X$ og $B$ er hver for sig standard BM'er, men de er ikke uafhængige — krydsvariationen er ikke nul.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="Variation · reflekteret BM">
+  <div class="qtext">Bestem $\langle X,X\rangle_t$ for $X_t=|B_t|$.</div>
+  <ul class="opts">
+    <li>$t$</li><li>$0$</li><li>$\displaystyle\int_0^t|B_s|\,\mathrm{d}s$</li><li>$\displaystyle\int_0^tB_s^2\,\mathrm{d}s$</li><li>$\dfrac t2$</li>
+  </ul>
+  <div class="exp">$|x|$ har hældning $\pm1$ overalt, så $\mathrm{d}|B_t|=\mathrm{sgn}(B_t)\,\mathrm{d}B_t+(\text{voksende led})$, og kvadratet af koefficienten er $1$: $\langle X\rangle_t=t$. Den reflekterede BM "vibrerer" nøjagtig lige så meget som $B$ selv.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="Variation · endelig variation">
+  <div class="qtext">Bestem $\langle X,X\rangle_t$ for $X_t=\int_0^tB_s\,\mathrm{d}s$.</div>
+  <ul class="opts">
+    <li>$0$</li><li>$\dfrac{t^3}{3}$</li><li>$\displaystyle\int_0^tB_s^2\,\mathrm{d}s$</li><li>$t$</li><li>$\dfrac{t^2}{2}$</li>
+  </ul>
+  <div class="exp">Der er ingen $\mathrm{d}B$-del. Processen er glat (kontinuert med endelig variation), så variationen er $0$ — mens variansen er $t^3/3$. Det er de to størrelser, der oftest forveksles.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="Variation · deterministisk eller ej">
+  <div class="qtext">Bestem hvilken proces der har <em>deterministisk</em> kvadratisk variation.</div>
+  <ul class="opts">
+    <li>$\displaystyle\int_0^ts\,\mathrm{d}B_s$</li>
+    <li>$\displaystyle\int_0^tB_s\,\mathrm{d}B_s$</li>
+    <li>$e^{B_t}$</li>
+    <li>$B_t^2$</li>
+    <li>$\displaystyle\int_0^t|B_s|\,\mathrm{d}B_s$</li>
+  </ul>
+  <div class="exp">$\langle X\rangle_t=\int_0^tH_s^2\mathrm{d}s$ er deterministisk netop når integranden er deterministisk. Her giver $H_s=s$ variationen $t^3/3$; de fire andre har stokastiske integrander. Deterministisk integrand $\Rightarrow$ gaussisk martingal $\Rightarrow$ $\langle X\rangle_t=\Gamma(t)$.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="Variation · Lévy">
+  <div class="qtext">Bestem hvilken proces der er en standard Brownsk bevægelse.</div>
+  <ul class="opts">
+    <li>$\displaystyle\int_0^t\mathrm{sgn}(B_s)\,\mathrm{d}B_s$</li>
+    <li>$\displaystyle\int_0^t|B_s|\,\mathrm{d}B_s$</li>
+    <li>$\displaystyle\int_0^t\mathbf{1}_{\{B_s\ge0\}}\,\mathrm{d}B_s$</li>
+    <li>$|B_t|$</li>
+    <li>$\displaystyle\int_0^ts\,\mathrm{d}B_s$</li>
+  </ul>
+  <div class="exp">Lévy: kontinuert lokal martingal med $\langle X\rangle_t=t$. Kun $\mathrm{sgn}$ giver $\int_0^t1\,\mathrm{d}s=t$. Indikatoren giver okkupationstiden, $|B_s|$ giver $\int B_s^2\mathrm{d}s$, $|B_t|$ er ikke en martingal, og $\int s\,\mathrm{d}B_s$ har variation $t^3/3$.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="Variation · λ og krydsvariation">
+  <div class="qtext">Lad $(B^{(1)},B^{(2)})$ være todimensional BM, $\lambda=(2,3)$ og $X_t=\langle\lambda,B_t\rangle$. Bestem $\langle X,B^{(1)}\rangle_t$.</div>
+  <ul class="opts">
+    <li>$2t$</li><li>$13t$</li><li>$3t$</li><li>$5t$</li><li>$t$</li>
+  </ul>
+  <div class="exp">$B^{(1)}$ svarer til $\mu=(1,0)$, så $\langle X,B^{(1)}\rangle_t=\langle\lambda,\mu\rangle t=2t$. Kun komponenten langs $\mu$ overlever, fordi koordinaterne er uafhængige.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="Variation · Itô på $B^3$">
+  <div class="qtext">Bestem $\langle X,X\rangle_t$ for $X_t=B_t^3$.</div>
+  <ul class="opts">
+    <li>$9\displaystyle\int_0^tB_s^4\,\mathrm{d}s$</li>
+    <li>$3\displaystyle\int_0^tB_s^2\,\mathrm{d}s$</li>
+    <li>$\displaystyle\int_0^tB_s^4\,\mathrm{d}s$</li>
+    <li>$9\displaystyle\int_0^tB_s^2\,\mathrm{d}s$</li>
+    <li>$6\displaystyle\int_0^tB_s\,\mathrm{d}s$</li>
+  </ul>
+  <div class="exp">$\langle f(B)\rangle_t=\int_0^tf'(B_s)^2\mathrm{d}s$ med $f'(x)=3x^2$, altså $\int_0^t9B_s^4\,\mathrm{d}s$. Driftleddet $3B_s\,\mathrm{d}s$ fra Itô er uden betydning.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="Variation · aflæs koefficienten">
+  <div class="qtext">Lad $\mathrm{d}X_t=B_t\,\mathrm{d}B_t+B_t^2\,\mathrm{d}t$ med $X_0=0$. Bestem $\langle X,X\rangle_t$.</div>
+  <ul class="opts">
+    <li>$\displaystyle\int_0^tB_s^2\,\mathrm{d}s$</li>
+    <li>$\displaystyle\int_0^tB_s^4\,\mathrm{d}s$</li>
+    <li>$\displaystyle\int_0^t(B_s^2+B_s^4)\,\mathrm{d}s$</li>
+    <li>$\displaystyle\int_0^t(B_s+B_s^2)^2\,\mathrm{d}s$</li>
+    <li>$\dfrac{t^2}{2}$</li>
+  </ul>
+  <div class="exp">Kvadrér kun $\mathrm{d}B$-koefficienten $B_t$: $\int_0^tB_s^2\,\mathrm{d}s$. $\mathrm{d}t$-leddet $B_t^2$ indgår aldrig, uanset hvor stort det er.</div>
+</section>
+
+<!-- ============ sgn / |B| / indikator ============ -->
+
+<section class="q" data-correct="0" data-topic="sgn · isometri">
+  <div class="qtext">Bestem $E\!\left[\left(\int_0^t\mathrm{sgn}(B_s)\,\mathrm{d}B_s\right)^{2}\right]$.</div>
+  <ul class="opts">
+    <li>$t$</li><li>$\dfrac t2$</li><li>$\dfrac{t^2}{2}$</li><li>$0$</li><li>$2t$</li>
+  </ul>
+  <div class="exp">$\mathrm{sgn}(B_s)^2=1$, så isometrien giver $\int_0^t1\,\mathrm{d}s=t$. Fortegnet er ligegyldigt, når man kvadrerer.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="|B| · isometri">
+  <div class="qtext">Bestem $E\!\left[\left(\int_0^t|B_s|\,\mathrm{d}B_s\right)^{2}\right]$.</div>
+  <ul class="opts">
+    <li>$\dfrac{t^2}{2}$</li><li>$t$</li><li>$\dfrac{t^3}{3}$</li><li>$\sqrt{\dfrac{2t}{\pi}}$</li><li>$\dfrac{2t}{\pi}$</li>
+  </ul>
+  <div class="exp">$E[|B_s|^2]=E[B_s^2]=s$, så $\int_0^ts\,\mathrm{d}s=\tfrac{t^2}{2}$. Absolutværdien giver nøjagtig samme svar som integranden $B_s$ — $\sqrt{2/\pi}$ hører til <em>første</em> moment og har intet at gøre her.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="|B| · paritet">
+  <div class="qtext">Bestem $E\big[B_t|B_t|\big]$.</div>
+  <ul class="opts">
+    <li>$0$</li><li>$\sqrt{\dfrac{2t}{\pi}}$</li><li>$t$</li><li>$\dfrac{2t}{\pi}$</li><li>$t\sqrt{\dfrac2\pi}$</li>
+  </ul>
+  <div class="exp">$x\mapsto x|x|$ er en ulige funktion, og $B_t$ er symmetrisk fordelt, så middelværdien er $0$. Til sammenligning er $E[B_t\,\mathrm{sgn}(B_t)]=E[|B_t|]=\sqrt{2t/\pi}$.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="|B| · første moment">
+  <div class="qtext">Bestem $E\big[|B_t|\big]$.</div>
+  <ul class="opts">
+    <li>$\sqrt{\dfrac{2t}{\pi}}$</li><li>$\sqrt{t}$</li><li>$\dfrac{t}{2}$</li><li>$\dfrac{2t}{\pi}$</li><li>$\sqrt{\dfrac{t}{2\pi}}$</li>
+  </ul>
+  <div class="exp">$E[|B_t|]=\sqrt t\,E[|Z|]=\sqrt t\cdot\sqrt{2/\pi}=\sqrt{2t/\pi}$. Samme værdi som $E[\max_{s\le t}B_s]$, fordi $\bar B_t\overset{d}{=}|B_t|$.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="|B| · varians">
+  <div class="qtext">Bestem $\mathrm{var}\big(|B_t|\big)$.</div>
+  <ul class="opts">
+    <li>$t\left(1-\dfrac2\pi\right)$</li><li>$t$</li><li>$\dfrac{2t}{\pi}$</li><li>$t\left(\dfrac2\pi-1\right)$</li><li>$\dfrac t2$</li>
+  </ul>
+  <div class="exp">$E[|B_t|^2]=E[B_t^2]=t$ og $E[|B_t|]^2=2t/\pi$, så variansen er $t(1-2/\pi)\approx0{,}363t$.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="|B| · klassifikation">
+  <div class="qtext">Bestem hvilken klassifikation der gælder for $X_t=|B_t|$.</div>
+  <ul class="opts">
+    <li>Submartingal, men ikke martingal.</li>
+    <li>Martingal.</li>
+    <li>Supermartingal, men ikke martingal.</li>
+    <li>Hverken sub- eller supermartingal.</li>
+    <li>Standard Brownsk bevægelse.</li>
+  </ul>
+  <div class="exp">$x\mapsto|x|$ er konveks, så Jensen giver $E[|B_t|\mid\mathscr{F}_s]\ge|B_s|$: submartingal. At det ikke er en martingal ses af $E[|B_t|]=\sqrt{2t/\pi}$, som vokser.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="Indikator · disjunkte mængder">
+  <div class="qtext">Bestem $E\!\left[\left(\int_0^t\mathbf{1}_{\{B_s\ge0\}}\mathrm{d}B_s\right)\left(\int_0^t\mathbf{1}_{\{B_s\lt0\}}\mathrm{d}B_s\right)\right]$.</div>
+  <ul class="opts">
+    <li>$0$</li><li>$\dfrac t2$</li><li>$\dfrac t4$</li><li>$t$</li><li>$\dfrac{t^2}{4}$</li>
+  </ul>
+  <div class="exp">Polariseret isometri: $\int_0^tE[\mathbf{1}_{\{B_s\ge0\}}\mathbf{1}_{\{B_s\lt0\}}]\,\mathrm{d}s$. Produktet af to disjunkte indikatorer er $0$ punktvis, så svaret er $0$ — de to integraler er ukorrelerede.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="Indikator · forklædt sgn">
+  <div class="qtext">Bestem $E\!\left[\left(\int_0^1\big(2\cdot\mathbf{1}_{\{B_s\ge0\}}-1\big)\,\mathrm{d}B_s\right)^{2}\right]$.</div>
+  <ul class="opts">
+    <li>$1$</li><li>$\dfrac12$</li><li>$2$</li><li>$\dfrac14$</li><li>$4$</li>
+  </ul>
+  <div class="exp">$2\cdot\mathbf{1}_{\{B_s\ge0\}}-1$ er $+1$ når $B_s\ge0$ og $-1$ ellers — altså $\mathrm{sgn}(B_s)$ i forklædning. Kvadratet er $1$, og integralet giver $1$.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="|B| · tredje moment">
+  <div class="qtext">Bestem $E\big[|B_t|^3\big]$.</div>
+  <ul class="opts">
+    <li>$2\sqrt{\dfrac2\pi}\,t^{3/2}$</li><li>$\sqrt{\dfrac2\pi}\,t^{3/2}$</li><li>$3t^{3/2}$</li><li>$2t^{3/2}$</li><li>$\dfrac32t^{3/2}$</li>
+  </ul>
+  <div class="exp">Skalering: $E[|B_t|^3]=t^{3/2}E[|Z|^3]$, og $E[|Z|^3]=2\sqrt{2/\pi}$. Bemærk at ulige absolutte momenter involverer $\sqrt{2/\pi}$, mens de lige er de sædvanlige $(2n-1)!!\,t^n$.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="|B| · polariseret isometri">
+  <div class="qtext">Bestem $E\!\left[\left(\int_0^t|B_s|\,\mathrm{d}B_s\right)\left(\int_0^tB_s\,\mathrm{d}B_s\right)\right]$.</div>
+  <ul class="opts">
+    <li>$0$</li><li>$\dfrac{t^2}{2}$</li><li>$\dfrac{t^3}{3}$</li><li>$t$</li><li>$\sqrt{\dfrac2\pi}\dfrac{t^2}{2}$</li>
+  </ul>
+  <div class="exp">$\int_0^tE[|B_s|B_s]\,\mathrm{d}s$, og $E[B_s|B_s|]=0$ ved symmetri, så hele integralet er $0$. To martingaler kan sagtens være ukorrelerede uden at være uafhængige.</div>
+</section>
+
+<!-- ============ λ / flerdimensionalt ============ -->
+
+<section class="q" data-correct="0" data-topic="λ · variation">
+  <div class="qtext">Lad $(B^{(1)},B^{(2)})$ være todimensional BM, $\lambda=(3,4)$ og $X_t=\langle\lambda,B_t\rangle$. Bestem $\langle X,X\rangle_t$.</div>
+  <ul class="opts">
+    <li>$25t$</li><li>$5t$</li><li>$7t$</li><li>$12t$</li><li>$t$</li>
+  </ul>
+  <div class="exp">$\|\lambda\|^2=9+16=25$, så $\langle X\rangle_t=25t$. Kvadratet af længden, ikke længden — $5t$ er fælden.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="λ · normering">
+  <div class="qtext">Med $\lambda=(3,4)$ og $X_t=\langle\lambda,B_t\rangle$, bestem hvilken proces der er en standard Brownsk bevægelse.</div>
+  <ul class="opts">
+    <li>$\dfrac{X_t}{5}$</li><li>$\dfrac{X_t}{25}$</li><li>$X_t$</li><li>$\dfrac{X_t}{\sqrt5}$</li><li>$\dfrac{X_t}{7}$</li>
+  </ul>
+  <div class="exp">$X$ har varians $25t$, så divisionen med $5=\|\lambda\|$ giver varians $t$. Ækvivalent: $\lambda/\|\lambda\|$ er en enhedsvektor, og skyggen langs en enhedsvektor er en standard BM.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="λ · varians">
+  <div class="qtext">Lad $B$ være tredimensional BM, $\lambda=(1,1,1)$ og $X_t=\langle\lambda,B_t\rangle$. Bestem $\mathrm{var}(X_1)$.</div>
+  <ul class="opts">
+    <li>$3$</li><li>$1$</li><li>$\sqrt3$</li><li>$9$</li><li>$\dfrac13$</li>
+  </ul>
+  <div class="exp">Uafhængige koordinater, så varianserne lægges sammen: $1+1+1=3$. Generelt $\|\lambda\|^2t$.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="λ · krydsvariation">
+  <div class="qtext">Lad $B$ være todimensional BM, $\lambda=(1,0)$, $\mu=(1,1)$, $X=\langle\lambda,B\rangle$ og $Y=\langle\mu,B\rangle$. Bestem $\langle X,Y\rangle_t$.</div>
+  <ul class="opts">
+    <li>$t$</li><li>$2t$</li><li>$0$</li><li>$\sqrt2\,t$</li><li>$\dfrac{t}{\sqrt2}$</li>
+  </ul>
+  <div class="exp">$\langle X,Y\rangle_t=\langle\lambda,\mu\rangle t=(1\cdot1+0\cdot1)t=t$. Prikproduktet af de to retningsvektorer, gange $t$.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="λ · korrelation">
+  <div class="qtext">Med $\lambda=(1,0)$ og $\mu=(1,1)$ som ovenfor, bestem $\mathrm{corr}(X_t,Y_t)$.</div>
+  <ul class="opts">
+    <li>$\dfrac{1}{\sqrt2}$</li><li>$1$</li><li>$\dfrac12$</li><li>$0$</li><li>$\sqrt2$</li>
+  </ul>
+  <div class="exp">$\mathrm{corr}=\dfrac{\langle\lambda,\mu\rangle}{\|\lambda\|\|\mu\|}=\dfrac{1}{1\cdot\sqrt2}$ — cosinus til vinklen mellem de to retninger, her $45^\circ$.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="λ · normkvadrat">
+  <div class="qtext">Lad $B$ være femdimensional BM. Bestem hvilken proces der er en martingal.</div>
+  <ul class="opts">
+    <li>$\|B_t\|^2-5t$</li><li>$\|B_t\|^2-t$</li><li>$\|B_t\|^2-25t$</li><li>$\|B_t\|^2-5t^2$</li><li>$\|B_t\|-5t$</li>
+  </ul>
+  <div class="exp">Hver koordinat bidrager med martingalen $(B^{(i)}_t)^2-t$, og der er $5$ af dem: $\|B_t\|^2-5t$. Dimensionen optræder lineært.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="λ · fjerde moment">
+  <div class="qtext">Lad $B$ være todimensional BM. Bestem $E\big[\|B_t\|^4\big]$.</div>
+  <ul class="opts">
+    <li>$8t^2$</li><li>$4t^2$</li><li>$2t^2$</li><li>$12t^2$</li><li>$6t^2$</li>
+  </ul>
+  <div class="exp">$E[\|B_t\|^4]=d(d+2)t^2$ med $d=2$: $2\cdot4\cdot t^2=8t^2$. Tjek direkte: to diagonalled à $3t^2$ plus to krydsled à $t^2$ giver $6t^2+2t^2=8t^2$.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="λ · ikke en BM">
+  <div class="qtext">Lad $\lambda=\big(\tfrac12,\tfrac12\big)$ og $X_t=\langle\lambda,B_t\rangle$ for en todimensional BM. Bestem hvilket udsagn der er korrekt.</div>
+  <ul class="opts">
+    <li>$X$ er ikke en standard BM; $\langle X,X\rangle_t=\tfrac t2$.</li>
+    <li>$X$ er en standard BM.</li>
+    <li>$X$ er ikke en standard BM; $\langle X,X\rangle_t=\tfrac t4$.</li>
+    <li>$X$ er ikke en martingal.</li>
+    <li>$X$ er ikke en standard BM; $\langle X,X\rangle_t=2t$.</li>
+  </ul>
+  <div class="exp">$\|\lambda\|^2=\tfrac14+\tfrac14=\tfrac12\ne1$, så $X$ er en martingal og gaussisk, men med varians $t/2$ — altså ikke standard. $\sqrt2\,X$ ville være det.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="λ · korreleret BM">
+  <div class="qtext">Lad $W_t=\sqrt{1-\rho^2}B^{(1)}_t+\rho B^{(2)}_t$. Bestem $\langle W,B^{(2)}\rangle_t$ ved hjælp af $\lambda$-reglen.</div>
+  <ul class="opts">
+    <li>$\rho t$</li><li>$t$</li><li>$\rho^2t$</li><li>$\sqrt{1-\rho^2}\,t$</li><li>$0$</li>
+  </ul>
+  <div class="exp">$\lambda=(\sqrt{1-\rho^2},\rho)$ og $\mu=(0,1)$, så $\langle\lambda,\mu\rangle=\rho$ og krydsvariationen er $\rho t$. Samtidig er $\|\lambda\|=1$, så $W$ selv er en standard BM.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="λ · find enhedsvektoren">
+  <div class="qtext">Bestem hvilket $\lambda\in\mathbb{R}^3$ der gør $X_t=\langle\lambda,B_t\rangle$ til en standard Brownsk bevægelse.</div>
+  <ul class="opts">
+    <li>$\lambda=\big(\tfrac{1}{\sqrt3},\tfrac{1}{\sqrt3},\tfrac{1}{\sqrt3}\big)$</li>
+    <li>$\lambda=(1,1,1)$</li>
+    <li>$\lambda=\big(\tfrac13,\tfrac13,\tfrac13\big)$</li>
+    <li>$\lambda=(1,1,0)$</li>
+    <li>$\lambda=\big(\tfrac12,\tfrac12,\tfrac12\big)$</li>
+  </ul>
+  <div class="exp">Kravet er $\|\lambda\|^2=1$. Her: $3\cdot\tfrac13=1$. De øvrige giver $3$, $\tfrac13$, $2$ og $\tfrac34$.</div>
+</section>
+
+<!-- ============ blandede, tværgående ============ -->
+
+<section class="q" data-correct="0" data-topic="Γ · variation vs varians">
+  <div class="qtext">Lad $X_t=\int_0^tB_s\,\mathrm{d}B_s$. Bestem hvilket udsagn der er korrekt.</div>
+  <ul class="opts">
+    <li>$\langle X,X\rangle_t=\int_0^tB_s^2\mathrm{d}s$ er stokastisk, mens $\mathrm{var}(X_t)=t^2/2$.</li>
+    <li>$\langle X,X\rangle_t=\mathrm{var}(X_t)=t^2/2$.</li>
+    <li>$\langle X,X\rangle_t=t$ og $\mathrm{var}(X_t)=t^2/2$.</li>
+    <li>$X$ er en gaussisk martingal.</li>
+    <li>$\langle X,X\rangle_t=0$, da $X$ har endelig variation.</li>
+  </ul>
+  <div class="exp">Integranden $B_s$ er stokastisk, så variationen er stokastisk og $X$ er ikke gaussisk. Middelværdien af variationen er dog $\int_0^ts\,\mathrm{d}s=t^2/2$, som netop er variansen — variansen er altid $E[\langle X,X\rangle_t]$ for en martingal.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="Γ · isometri bagfra">
+  <div class="qtext">Lad $M_t=\int_0^t\mathrm{sgn}(B_s)\,\mathrm{d}B_s$. Bestem $\Gamma(t)=E[M_t^2]$ og afgør om $M$ er en gaussisk martingal.</div>
+  <ul class="opts">
+    <li>$\Gamma(t)=t$, og $M$ er en gaussisk martingal (faktisk en BM).</li>
+    <li>$\Gamma(t)=t$, men $M$ er ikke gaussisk, da integranden er stokastisk.</li>
+    <li>$\Gamma(t)=t^2/2$, og $M$ er gaussisk.</li>
+    <li>$\Gamma(t)=t/2$, og $M$ er ikke gaussisk.</li>
+    <li>$\Gamma(t)=0$.</li>
+  </ul>
+  <div class="exp">Et sjældent tilfælde, hvor en stokastisk integrand alligevel giver en gaussisk proces: variationen $\int_0^t1\,\mathrm{d}s=t$ er deterministisk, og Lévy giver derfor en ægte Brownsk bevægelse. Tommelfingerreglen "stokastisk integrand $\Rightarrow$ ikke gaussisk" har netop denne undtagelse, fordi integranden kun ændrer fortegn.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="Γ · sammensat">
+  <div class="qtext">Lad $M_t=\int_0^te^{s}\,\mathrm{d}B_s$. Bestem $\theta\gt0$ så $\exp\!\big(\theta M_t-(e^{2t}-1)\big)$ er en martingal.</div>
+  <ul class="opts">
+    <li>$2$</li><li>$\sqrt2$</li><li>$1$</li><li>$4$</li><li>$2\sqrt2$</li>
+  </ul>
+  <div class="exp">Først $\Gamma(t)=\int_0^te^{2s}\mathrm{d}s=\tfrac12(e^{2t}-1)$. Kravet $\tfrac{\theta^2}{2}\Gamma(t)=e^{2t}-1$ giver $\tfrac{\theta^2}{4}(e^{2t}-1)=e^{2t}-1$, altså $\theta^2=4$ og $\theta=2$.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="Γ · tilvækster i fordeling">
+  <div class="qtext">Lad $\Gamma(t)=e^{t}-1$. Bestem fordelingen af $M_2-M_1$.</div>
+  <ul class="opts">
+    <li>$N(0,e^2-e)$</li><li>$N(0,e-1)$</li><li>$N(0,e^2-1)$</li><li>$N(0,e)$</li><li>$N(0,1)$</li>
+  </ul>
+  <div class="exp">$\mathrm{var}(M_2-M_1)=\Gamma(2)-\Gamma(1)=(e^2-1)-(e-1)=e^2-e$. Tilvæksten er centreret gaussisk og uafhængig af $\mathscr{F}_1$.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="Γ · optional stopping">
+  <div class="qtext">Lad $\Gamma(t)=2t$ og lad $T$ være en begrænset stoptid. Bestem $E[M_T^2]$.</div>
+  <ul class="opts">
+    <li>$2E[T]$</li><li>$E[T]$</li><li>$4E[T]$</li><li>$2E[T]^2$</li><li>$0$</li>
+  </ul>
+  <div class="exp">$M_t^2-\Gamma(t)=M_t^2-2t$ er en martingal, så optional stopping giver $E[M_T^2]=E[\Gamma(T)]=2E[T]$.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="Variation · to integraler">
+  <div class="qtext">Lad $X_t=\int_0^t\mathrm{sgn}(B_s)\,\mathrm{d}B_s$ og $Y_t=\int_0^t|B_s|\,\mathrm{d}B_s$. Bestem $\langle X,Y\rangle_t$.</div>
+  <ul class="opts">
+    <li>$\displaystyle\int_0^tB_s\,\mathrm{d}s$</li>
+    <li>$\displaystyle\int_0^t|B_s|\,\mathrm{d}s$</li>
+    <li>$0$</li>
+    <li>$\displaystyle\int_0^tB_s^2\,\mathrm{d}s$</li>
+    <li>$t$</li>
+  </ul>
+  <div class="exp">Gang integranderne: $\mathrm{sgn}(B_s)\cdot|B_s|=B_s$. Så $\langle X,Y\rangle_t=\int_0^tB_s\,\mathrm{d}s$ — den integrerede Brownske bevægelse dukker op som krydsvariation.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="Variation · middelværdi af variationen">
+  <div class="qtext">Lad $X_t=\int_0^t|B_s|\,\mathrm{d}B_s$. Bestem $E[\langle X,X\rangle_t]$.</div>
+  <ul class="opts">
+    <li>$\dfrac{t^2}{2}$</li><li>$\dfrac{t^3}{3}$</li><li>$t$</li><li>$\sqrt{\dfrac{2}{\pi}}\dfrac{t^2}{2}$</li><li>$\dfrac t2$</li>
+  </ul>
+  <div class="exp">$\langle X\rangle_t=\int_0^tB_s^2\mathrm{d}s$, og middelværdien er $\int_0^ts\,\mathrm{d}s=t^2/2$. Den er også lig $\mathrm{var}(X_t)$, som isometrien giver direkte.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="sgn · deterministisk fortegn">
+  <div class="qtext">Bestem $E\!\left[\left(\int_0^t\mathrm{sgn}\!\big(s-\tfrac t2\big)\,\mathrm{d}B_s\right)^{2}\right]$.</div>
+  <ul class="opts">
+    <li>$t$</li><li>$0$</li><li>$\dfrac t2$</li><li>$\dfrac{t^2}{4}$</li><li>$2t$</li>
+  </ul>
+  <div class="exp">Integranden er deterministisk og har kvadrat $1$ overalt, så svaret er $t$. Her er integralet endda gaussisk: $N(0,t)$, altså igen en BM-værdi.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="Indikator · tidsindikator">
+  <div class="qtext">Bestem $E\!\left[\left(\int_0^t\mathbf{1}_{\{s\le t/2\}}\,\mathrm{d}B_s\right)^{2}\right]$.</div>
+  <ul class="opts">
+    <li>$\dfrac t2$</li><li>$t$</li><li>$\dfrac t4$</li><li>$\dfrac{t^2}{4}$</li><li>$\dfrac{t^2}{8}$</li>
+  </ul>
+  <div class="exp">Integralet er simpelthen $B_{t/2}$, og andet moment er $t/2$. Isometrisk: $\int_0^{t/2}1\,\mathrm{d}s=t/2$. Bemærk forskellen fra den <em>stokastiske</em> indikator $\mathbf{1}_{\{B_s\ge0\}}$, som også giver $t/2$ — men først efter middelværdi.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="Γ · hvilken er gaussisk martingal">
+  <div class="qtext">Bestem hvilken proces der er en kontinuert gaussisk martingal.</div>
+  <ul class="opts">
+    <li>$\displaystyle\int_0^t\cos(s)\,\mathrm{d}B_s$</li>
+    <li>$\displaystyle\int_0^tB_s\,\mathrm{d}B_s$</li>
+    <li>$B_t^2-t$</li>
+    <li>$|B_t|$</li>
+    <li>$\displaystyle\int_0^tB_s\,\mathrm{d}s$</li>
+  </ul>
+  <div class="exp">Deterministisk integrand giver en gaussisk martingal, her med $\Gamma(t)=\int_0^t\cos^2(s)\,\mathrm{d}s=\tfrac t2+\tfrac{\sin(2t)}{4}$ — voksende, som den skal være. De øvrige er enten ikke gaussiske, ikke martingaler, eller begge dele.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="λ · projektion af variation">
+  <div class="qtext">Lad $B$ være tredimensional BM og $X_t=B^{(1)}_t-2B^{(2)}_t+2B^{(3)}_t$. Bestem $\langle X,X\rangle_t$.</div>
+  <ul class="opts">
+    <li>$9t$</li><li>$t$</li><li>$3t$</li><li>$5t$</li><li>$\sqrt9\,t$</li>
+  </ul>
+  <div class="exp">$\lambda=(1,-2,2)$, $\|\lambda\|^2=1+4+4=9$. Fortegnene forsvinder ved kvadrering, ligesom ved $\mathrm{sgn}$.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="λ · ortogonale retninger">
+  <div class="qtext">Lad $\lambda=(1,1)$ og $\mu=(1,-1)$ i $\mathbb{R}^2$, og sæt $X=\langle\lambda,B\rangle$, $Y=\langle\mu,B\rangle$. Bestem $\langle X,Y\rangle_t$.</div>
+  <ul class="opts">
+    <li>$0$</li><li>$2t$</li><li>$t$</li><li>$-2t$</li><li>$\sqrt2\,t$</li>
+  </ul>
+  <div class="exp">$\langle\lambda,\mu\rangle=1-1=0$: retningerne står vinkelret på hinanden, så skyggerne er uafhængige BM'er (op til skalering med $\sqrt2$), og krydsvariationen er $0$.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="λ · norm og fordeling">
+  <div class="qtext">Lad $B$ være tredimensional BM. Bestem $E\big[\|B_t\|^2\big]$ og fordelingen af $\|B_t\|^2$.</div>
+  <ul class="opts">
+    <li>$3t$, og $\|B_t\|^2\overset{d}{=}t\chi^2_3$</li>
+    <li>$t$, og $\|B_t\|^2\overset{d}{=}\chi^2_3$</li>
+    <li>$9t$, og $\|B_t\|^2\overset{d}{=}t\chi^2_9$</li>
+    <li>$3t$, og $\|B_t\|^2$ er normalfordelt</li>
+    <li>$3t^2$, og $\|B_t\|^2\overset{d}{=}t^2\chi^2_3$</li>
+  </ul>
+  <div class="exp">Hver koordinat er $N(0,t)$, så $\|B_t\|^2=t\sum_iZ_i^2\overset{d}{=}t\chi^2_3$ med middelværdi $3t$.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="Γ · forkert skabelon">
+  <div class="qtext">Lad $\Gamma(t)=2t$. Bestem hvilken proces der er en martingal.</div>
+  <ul class="opts">
+    <li>$\exp(M_t-t)$</li><li>$\exp(M_t-t/2)$</li><li>$\exp(M_t-2t)$</li><li>$\exp(M_t)$</li><li>$\exp(2M_t-2t)$</li>
+  </ul>
+  <div class="exp">Skabelonen $\exp(\theta M_t-\tfrac{\theta^2}{2}\Gamma(t))$ med $\theta=1$ giver $\exp(M_t-\tfrac12\cdot2t)=\exp(M_t-t)$. Fælden $\exp(M_t-t/2)$ er BM-versionen, hvor man har glemt $\Gamma$.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="Variation · summen af to">
+  <div class="qtext">Lad $X_t=B_t+\int_0^t\mathrm{sgn}(B_s)\,\mathrm{d}B_s$. Bestem $\langle X,X\rangle_t$.</div>
+  <ul class="opts">
+    <li>$\displaystyle\int_0^t\big(1+\mathrm{sgn}(B_s)\big)^2\mathrm{d}s$</li>
+    <li>$2t$</li>
+    <li>$t$</li>
+    <li>$4t$</li>
+    <li>$0$</li>
+  </ul>
+  <div class="exp">Saml under ét integral: integranden er $1+\mathrm{sgn}(B_s)$, som er $2$ når $B_s\ge0$ og $0$ ellers. Kvadratet er $4\cdot\mathbf{1}_{\{B_s\ge0\}}$, så variationen er $4\times$ okkupationstiden — stokastisk, med middelværdi $2t$. Svaret $2t$ er derfor kun middelværdien, ikke variationen selv.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="Γ · hvad bestemmer hvad">
+  <div class="qtext">Bestem hvilket udsagn om en kontinuert gaussisk martingal $M$ der er <em>forkert</em>.</div>
+  <ul class="opts">
+    <li>$\Gamma$ kan være strengt aftagende på et interval.</li>
+    <li>$M$ har uafhængige tilvækster.</li>
+    <li>$\langle M,M\rangle_t$ er deterministisk.</li>
+    <li>$E[M_t]=0$ for alle $t$.</li>
+    <li>$\mathrm{cov}(M_s,M_t)=\Gamma(s\wedge t)$.</li>
+  </ul>
+  <div class="exp">$\Gamma(t)-\Gamma(s)=\mathrm{var}(M_t-M_s)\ge0$, så $\Gamma$ er altid voksende. De fire andre udsagn er netop de egenskaber, der gør $M$ til en tidsskiftet Brownsk bevægelse.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="Variation · ikke-martingal">
+  <div class="qtext">Bestem $\langle X,X\rangle_t$ for $X_t=B_t+t$.</div>
+  <ul class="opts">
+    <li>$t$</li><li>$2t$</li><li>$t+t^2$</li><li>$0$</li><li>$t^2$</li>
+  </ul>
+  <div class="exp">Driftet ændrer ikke variationen: $\langle X\rangle_t=t$. Derfor er $X$ ved Lévy <em>ikke</em> en BM — den er ikke en martingal, og Lévy kræver begge dele.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="sgn · martingalegenskab">
+  <div class="qtext">Lad $X_t=\int_0^t\mathrm{sgn}(B_s)\,\mathrm{d}B_s$. Bestem $E[X_3X_7]$.</div>
+  <ul class="opts">
+    <li>$3$</li><li>$7$</li><li>$21$</li><li>$0$</li><li>$\sqrt{21}$</li>
+  </ul>
+  <div class="exp">$X$ er en standard BM, så $\mathrm{cov}(X_s,X_t)=s\wedge t=3$. Man kan også regne det som $\Gamma(3)=3$, da $\Gamma(t)=t$.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="λ · isometriform">
+  <div class="qtext">Lad $B$ være todimensional BM og $X_t=\int_0^t\big(2\,\mathrm{d}B^{(1)}_s+\mathrm{d}B^{(2)}_s\big)$. Bestem $E[X_t^2]$.</div>
+  <ul class="opts">
+    <li>$5t$</li><li>$3t$</li><li>$9t$</li><li>$\sqrt5\,t$</li><li>$4t$</li>
+  </ul>
+  <div class="exp">Det er $\langle\lambda,B_t\rangle$ med $\lambda=(2,1)$, altså varians $\|\lambda\|^2t=5t$. Krydsleddet $2\cdot2\cdot\mathrm{cov}(B^{(1)}_t,B^{(2)}_t)$ er nul, fordi koordinaterne er uafhængige.</div>
+</section>
+
+<section class="q" data-correct="0" data-topic="Γ · afsluttende syntese">
+  <div class="qtext">Lad $M_t=\int_0^t\mathbf{1}_{\{s\le1\}}\,\mathrm{d}B_s$ for $t\ge0$. Bestem $\langle M,M\rangle_t$ for $t\ge1$.</div>
+  <ul class="opts">
+    <li>$1$</li><li>$t$</li><li>$t-1$</li><li>$0$</li><li>$\min(t,1)^2$</li>
+  </ul>
+  <div class="exp">$\Gamma(t)=\int_0^t\mathbf{1}_{\{s\le1\}}\mathrm{d}s=\min(t,1)$, som er $1$ for $t\ge1$. Uret står stille efter tid $1$: $M_t=B_1$ derefter, og en konstant proces samler ingen variation. $\Gamma$ må gerne være konstant — den skal bare ikke aftage.</div>
+</section>
+
+</div>
+
+<script>
+(function () {
+  var bank = document.getElementById('bank');
+  var sections = Array.prototype.slice.call(bank.querySelectorAll('section.q'));
+  var quiz = document.getElementById('quiz');
+  var total = sections.length;
+  var correctArr = sections.map(function (s) { return parseInt(s.getAttribute('data-correct'), 10); });
+  var letters = ['A','B','C','D','E'];
+  document.getElementById('tot').textContent = total;
+  document.getElementById('tot2').textContent = total;
+
+  sections.forEach(function (sec, i) {
+    var card = document.createElement('div');
+    card.className = 'card';
+
+    var head = document.createElement('div');
+    head.className = 'qhead';
+    head.innerHTML = '<span class="n">' + (i+1) + '</span><span class="topic">' +
+      (sec.getAttribute('data-topic') || '') + '</span>';
+    card.appendChild(head);
+    card.appendChild(sec.querySelector('.qtext'));
+
+    var ul = sec.querySelector('ul.opts');
+    var items = Array.prototype.map.call(ul.children, function (li, k) {
+      return { html: li.innerHTML, right: (k === correctArr[i]) };
+    });
+    for (var j = items.length - 1; j > 0; j--) {
+      var r = Math.floor(Math.random() * (j + 1));
+      var tmp = items[j]; items[j] = items[r]; items[r] = tmp;
+    }
+    ul.innerHTML = '';
+    items.forEach(function (it, k) {
+      if (it.right) correctArr[i] = k;
+      var li = document.createElement('li');
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.innerHTML = '<span class="key">' + letters[k] + '</span><span class="lbl">' + it.html + '</span>';
+      li.appendChild(b);
+      ul.appendChild(li);
+    });
+    card.appendChild(ul);
+    card.appendChild(sec.querySelector('.exp'));
+
+    var nav = document.createElement('div');
+    nav.className = 'nav';
+    nav.innerHTML = '<button class="btn prev" type="button">Forrige</button><span class="spacer"></span>' +
+      '<button class="btn next primary" type="button">' + (i === total-1 ? 'Afslut' : 'Næste') + '</button>';
+    card.appendChild(nav);
+
+    quiz.appendChild(card);
+    sec.remove();
+  });
+
+  var cards = Array.prototype.slice.call(quiz.children);
+  var answers = new Array(total).fill(null);
+  var idx = 0;
+  var curEl = document.getElementById('cur');
+  var scoreEl = document.getElementById('score');
+  var fill = document.getElementById('fill');
+  var finalBox = document.getElementById('final');
+
+  function score(){ var s=0; for (var i=0;i<total;i++) if (answers[i]===correctArr[i]) s++; return s; }
+
+  function show(i, scroll) {
+    if (i < 0) i = 0;
+    if (i >= total) { finish(); return; }
+    idx = i;
+    cards.forEach(function (c,k){ c.style.display = (k===i ? '' : 'none'); });
+    finalBox.classList.remove('show');
+    curEl.textContent = i+1;
+    scoreEl.textContent = score();
+    fill.style.width = ((i+1)/total*100) + '%';
+    cards[i].querySelector('.prev').disabled = (i===0);
+    if (scroll) quiz.scrollIntoView({ block:'start', behavior:'auto' });
+  }
+
+  function reveal(i) {
+    var card = cards[i], c = correctArr[i], chosen = answers[i];
+    Array.prototype.forEach.call(card.querySelectorAll('ul.opts li'), function (li,k) {
+      li.className = '';
+      li.querySelector('button').disabled = true;
+      if (k===c) li.classList.add('right'); else if (k===chosen) li.classList.add('wrong');
+    });
+    var exp = card.querySelector('.exp');
+    if (!exp.dataset.tagged) {
+      exp.dataset.tagged = '1';
+      var v = document.createElement('span'); v.className = 'verdict';
+      exp.insertBefore(v, exp.firstChild);
+    }
+    var v = exp.querySelector('.verdict');
+    if (chosen===c) { v.className='verdict ok'; v.textContent='Rigtigt.'; }
+    else { v.className='verdict no'; v.textContent='Ikke helt.'; }
+    exp.classList.add('show');
+    scoreEl.textContent = score();
+  }
+
+  function choose(i,k){ if (answers[i]!==null) return; answers[i]=k; reveal(i); }
+
+  function finish() {
+    cards.forEach(function(c){ c.style.display='none'; });
+    finalBox.classList.add('show');
+    var s = score();
+    document.getElementById('finalScore').textContent = s;
+    document.getElementById('finalWord').textContent =
+      s>=0.9*total ? 'De fire emner sidder.' :
+      s>=0.7*total ? 'Godt. Læs forklaringen til de missede emner igen.' :
+      s>=0.5*total ? 'Halvvejs. Genlæs Del 1, især afsnittet bag de emner du missede.' :
+                     'Læs Del 1 igennem igen fra en ende af, og tag så quizzen forfra.';
+    var ol = document.getElementById('missed'); ol.innerHTML='';
+    for (var i=0;i<total;i++) if (answers[i]!==correctArr[i]) {
+      var li=document.createElement('li'); li.value=i+1;
+      li.textContent = cards[i].querySelector('.topic').textContent;
+      ol.appendChild(li);
+    }
+    if (!ol.children.length) ol.innerHTML = '<li style="list-style:none;margin-left:-20px">Ingen. Alle rigtige.</li>';
+    fill.style.width='100%';
+    quiz.scrollIntoView({ block:'start', behavior:'auto' });
+  }
+
+  cards.forEach(function (card,i) {
+    Array.prototype.forEach.call(card.querySelectorAll('ul.opts button'), function (b,k) {
+      b.addEventListener('click', function(){ choose(i,k); });
+    });
+    card.querySelector('.next').addEventListener('click', function(){ if (i===total-1) finish(); else show(i+1,true); });
+    card.querySelector('.prev').addEventListener('click', function(){ show(i-1,true); });
+  });
+
+  document.getElementById('restart').addEventListener('click', function () {
+    answers = new Array(total).fill(null);
+    cards.forEach(function (card) {
+      Array.prototype.forEach.call(card.querySelectorAll('ul.opts li'), function (li) {
+        li.className=''; li.querySelector('button').disabled=false;
+      });
+      card.querySelector('.exp').classList.remove('show');
+    });
+    show(0,true);
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (finalBox.classList.contains('show')) return;
+    if (e.key>='1' && e.key<='5') choose(idx, parseInt(e.key,10)-1);
+    else if (e.key==='ArrowRight') { if (idx===total-1) finish(); else show(idx+1,true); }
+    else if (e.key==='ArrowLeft') show(idx-1,true);
+  });
+
+  var started=false;
+  function begin(){ if (started) return; started=true; show(0,false); document.body.classList.add('ready'); }
+  function go(){
+    if (window.MathJax && MathJax.startup && MathJax.startup.promise) {
+      MathJax.startup.promise.then(function(){ return MathJax.typesetPromise([document.body]); })
+        .then(begin).catch(begin);
+    } else setTimeout(go,120);
+  }
+  go();
+  setTimeout(begin, 7000);
+})();
+</script>
+</div>
+</body>
+</html>

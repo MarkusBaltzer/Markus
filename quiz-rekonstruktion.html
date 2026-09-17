@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rekonstruktion af quizeksamen 23-10-2025</title>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] },
+  options: { skipHtmlTags: ['script','noscript','style','textarea'] },
+  startup: { typeset: false }
+};
+</script>
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+
+<style>
+  :root{
+    --ink:#12203a; --soft:#4d5a72; --line:#c3cee0; --paper:#f6f8fc;
+    --band:#12203a; --hit:#1d5b46; --warn:#8c2f39; --gold:#8a6a1f;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:var(--paper);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-size:15.5px;line-height:1.55}
+  body:not(.ready){visibility:hidden}
+  .sheet{max-width:860px;margin:0 auto;padding:0 18px 70px}
+
+  header{border-bottom:3px solid var(--band);padding:30px 0 14px;margin-bottom:8px}
+  header h1{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+    font-size:28px;font-weight:600;margin:0 0 6px}
+  header p{margin:0;color:var(--soft);max-width:70ch}
+
+  .legend{background:#fff;border:1px solid var(--line);padding:12px 16px;margin:18px 0 26px}
+  .legend p{margin:6px 0}
+
+  article{background:#fff;border:1px solid var(--line);margin:0 0 20px}
+  .top{display:flex;align-items:center;gap:14px;background:var(--band);color:#fff;padding:9px 16px}
+  .top .no{font-family:"Iowan Old Style",Palatino,Georgia,serif;font-size:19px}
+  .top .ans{margin-left:auto;background:#fff;color:var(--ink);padding:2px 12px;border-radius:2px}
+  .body{padding:14px 16px 12px}
+
+  .fp{border-left:3px solid var(--gold);background:#fbf7ec;padding:9px 12px;margin:0 0 14px}
+  .fp b{display:block;font-size:12.5px;color:var(--gold);margin-bottom:2px}
+
+  .cand{border-top:1px solid var(--line);padding:12px 0 2px}
+  .cand:first-of-type{border-top:0;padding-top:2px}
+  .rank{display:flex;align-items:baseline;gap:9px;margin-bottom:4px}
+  .rank .pct{font-size:12px;color:#fff;background:var(--soft);padding:1px 8px;border-radius:2px;white-space:nowrap}
+  .rank .pct.a{background:var(--hit)}
+  .rank .pct.b{background:#4a6fa5}
+  .rank .why{font-size:12.5px;color:var(--soft)}
+  .qq{font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;font-size:17.5px;line-height:1.6;margin:4px 0 6px}
+  .sol{background:#f4f7fb;border-left:3px solid var(--line);padding:6px 11px;margin:6px 0;font-size:14.5px;overflow-x:auto}
+  .note{font-size:14px;color:var(--soft);margin:6px 0 0}
+  .traps{font-size:14px;color:var(--soft);margin:10px 0 0;border-top:1px dashed var(--line);padding-top:8px}
+  .traps b{color:var(--warn);font-size:12.5px;display:block;margin-bottom:2px}
+
+  footer{background:#fff;border:1px solid var(--line);padding:16px;margin-top:8px}
+  footer h2{font-family:"Iowan Old Style",Palatino,Georgia,serif;font-size:18px;margin:0 0 8px}
+  ul{margin:6px 0;padding-left:18px}
+  li{margin:5px 0}
+  @media (max-width:560px){ .qq{font-size:16px} .top .ans{font-size:14px} }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+<header>
+  <h1>Hvad blev der spurgt om? Rekonstruktion af quizzen 23-10-2025</h1>
+  <p>Kun de valgte svar er kendte. Herunder er hvert svar analyseret som et fingeraftryk: hvilke udregninger i pensum producerer præcis den værdi, og hvilke tre spørgsmål er mest sandsynlige. Rangeringen bygger på, hvor tæt kandidaten ligger på opgavesæt 3 og 4 og på prøvequizzens formuleringsmønster.</p>
+</header>
+
+<div class="legend">
+  <p><b>Sådan læses analysen.</b> For hvert svar: et fingeraftryk (hvad værdiens form røber), tre kandidatspørgsmål rangeret efter sandsynlighed, en etlinjes verifikation af at kandidaten faktisk giver svaret, og de distraktorer der sandsynligvis stod i de fire andre felter.</p>
+  <p>Svarene var: $\tfrac12(e^{2t}-1)$, $2$, $\tfrac{t^4}{4}$, $1$, $1$, $3T$, $0$, $e^3$, $0$, $\int_0^t B_s^4\,\mathrm{d}s$ — score 9 af 10.</p>
+</div>
+
+<!-- 1 -->
+<article>
+  <div class="top"><span class="no">1</span><span>Svar</span><span class="ans">$\tfrac12\left(e^{2t}-1\right)$</span></div>
+  <div class="body">
+    <div class="fp"><b>Fingeraftryk</b>
+      $\tfrac12(e^{2t}-1)=\int_0^t e^{2s}\,\mathrm{d}s$. Det er Itô-isometrien anvendt én gang på en integrand, hvis andet moment er $e^{2s}$. To integrander giver præcis det: den deterministiske $e^{s}$ og den stokastiske $e^{B_s}$ (fordi $E[e^{2B_s}]=e^{2s}$).</div>
+
+    <div class="cand">
+      <div class="rank"><span class="pct a">Mest sandsynlig</span><span class="why">Direkte parallel til prøvequizzens spørgsmål 7, men uden det ydre integral</span></div>
+      <div class="qq">Determine the value of $E\!\left[\left(\int_0^t e^{s}\,\mathrm{d}B_s\right)^{2}\right]$.</div>
+      <div class="sol">Itô-isometri: $\int_0^t (e^s)^2\,\mathrm{d}s=\int_0^t e^{2s}\,\mathrm{d}s=\tfrac12(e^{2t}-1)$.</div>
+    </div>
+
+    <div class="cand">
+      <div class="rank"><span class="pct b">Meget sandsynlig</span><span class="why">Samme værdi, men kræver også $E[e^{2B_s}]=e^{2s}$</span></div>
+      <div class="qq">Determine the value of $E\!\left[\left(\int_0^t e^{B_s}\,\mathrm{d}B_s\right)^{2}\right]$.</div>
+      <div class="sol">$\int_0^t E[e^{2B_s}]\,\mathrm{d}s=\int_0^t e^{2s}\,\mathrm{d}s=\tfrac12(e^{2t}-1)$.</div>
+    </div>
+
+    <div class="cand">
+      <div class="rank"><span class="pct">Mulig</span><span class="why">Kvadratisk variation i stedet for andet moment — samme tal, fordi integranden er deterministisk</span></div>
+      <div class="qq">Let $X_t=\int_0^t e^{s}\,\mathrm{d}B_s$. Determine the quadratic variation $\langle X,X\rangle_t$.</div>
+      <div class="sol">$\langle X,X\rangle_t=\int_0^t e^{2s}\,\mathrm{d}s=\tfrac12(e^{2t}-1)$, deterministisk, da $X$ er en gaussisk martingal.</div>
+    </div>
+
+    <div class="traps"><b>Distraktorerne har formentlig været</b>
+      $\tfrac14(e^{2t}-1)-\tfrac t2$ (svaret på det <em>dobbelte</em> integral fra prøvequizzen), $e^{2t}-1$ (glemt $\tfrac12$), $\tfrac12(e^{t}-1)$ (glemt at kvadrere integranden), $\tfrac14(e^{t}-1)$.</div>
+  </div>
+</article>
+
+<!-- 2 -->
+<article>
+  <div class="top"><span class="no">2</span><span>Svar</span><span class="ans">$2$</span></div>
+  <div class="body">
+    <div class="fp"><b>Fingeraftryk</b>
+      Et rent tal uden $t$. Spørgsmålet har altså enten fastlagt tidspunktet, spurgt efter en parameter ($\theta$, $\rho$, $d$) eller efter en middelværdi af en stoptid. Da hele opgavesæt 4.2 kører på en gaussisk martingal med $E[M_t^2]=2t$, peger to-tallet stærkt derhen.</div>
+
+    <div class="cand">
+      <div class="rank"><span class="pct a">Mest sandsynlig</span><span class="why">Ordret Problem 4.2(b)</span></div>
+      <div class="qq">Let $(M_t)$ be a continuous Gaussian martingale with $M_0=0$ and $E[M_t^2]=2t$. Determine the value of $\theta\gt0$ such that $Y_t=\exp(\theta M_t-4t)$ is a martingale.</div>
+      <div class="sol">$\langle M,M\rangle_t=\Gamma(t)=2t$, og $\exp(\theta M_t-\tfrac{\theta^2}{2}\cdot 2t)$ er martingal. Kravet $\theta^2=4$ giver $\theta=2$.</div>
+      <div class="note">Hvis spørgsmålet havde spurgt efter <em>alle</em> $\theta$, ville svaret være $\{-2,2\}$ — at der står et enkelt tal tyder på, at der stod "$\theta\gt0$" eller at svarmulighederne var mængder og du valgte tallet $2$.</div>
+    </div>
+
+    <div class="cand">
+      <div class="rank"><span class="pct b">Meget sandsynlig</span><span class="why">Problem 4.2(a) med indsat tidspunkt</span></div>
+      <div class="qq">Let $(M_t)$ be a continuous Gaussian martingale with $E[M_t^2]=2t$. Determine $\langle M,M\rangle_1$.</div>
+      <div class="sol">For en kontinuert gaussisk martingal er $\langle M,M\rangle_t=\Gamma(t,t)=E[M_t^2]=2t$, altså $2$ ved $t=1$.</div>
+    </div>
+
+    <div class="cand">
+      <div class="rank"><span class="pct">Mulig</span><span class="why">Krydsvariation/sum af uafhængige BM'er, sæt 3.2</span></div>
+      <div class="qq">Let $(B^{(1)},B^{(2)})$ be a two-dimensional Brownian motion and $X_t=B^{(1)}_t+B^{(2)}_t$. Determine $\langle X,X\rangle_1$.</div>
+      <div class="sol">$\langle X,X\rangle_t=\langle B^{(1)}\rangle_t+2\langle B^{(1)},B^{(2)}\rangle_t+\langle B^{(2)}\rangle_t=t+0+t=2t$, altså $2$.</div>
+      <div class="note">Beslægtet variant med samme svar: exit-tiden $T=\inf\{t\ge0\mid B_t\notin(-1,2)\}$ har $E[T]=ab=1\cdot2=2$.</div>
+    </div>
+
+    <div class="traps"><b>Distraktorerne har formentlig været</b>
+      $\sqrt2$ (glemt kvadratroden væk fra $\theta^2=4$), $4$, $\tfrac12$, $2\sqrt2$, $1$ — alle de sædvanlige fejl når $\Gamma(t)=2t$ forveksles med $t$.</div>
+  </div>
+</article>
+
+<!-- 3 -->
+<article>
+  <div class="top"><span class="no">3</span><span>Svar</span><span class="ans">$\tfrac{t^4}{4}$</span></div>
+  <div class="body">
+    <div class="fp"><b>Fingeraftryk</b>
+      $\tfrac{t^4}{4}=\int_0^t s^3\,\mathrm{d}s$. Integranden skal altså have andet moment $s^3$. Den kanoniske kandidat er $H_s=sB_s$, fordi $E[(sB_s)^2]=s^2\cdot s=s^3$. Tidsgraden er $4$, hvilket passer med to $\mathrm{d}B$-integraler af noget med både $s$ og $B_s$.</div>
+
+    <div class="cand">
+      <div class="rank"><span class="pct a">Mest sandsynlig</span><span class="why">Den reneste isometri-opgave med blandet integrand</span></div>
+      <div class="qq">Determine the value of $E\!\left[\left(\int_0^t sB_s\,\mathrm{d}B_s\right)^{2}\right]$.</div>
+      <div class="sol">$\int_0^t s^2E[B_s^2]\,\mathrm{d}s=\int_0^t s^3\,\mathrm{d}s=\tfrac{t^4}{4}$.</div>
+    </div>
+
+    <div class="cand">
+      <div class="rank"><span class="pct b">Meget sandsynlig</span><span class="why">Samme regning pakket ind i kvadratisk variation</span></div>
+      <div class="qq">Let $X_t=\int_0^t sB_s\,\mathrm{d}B_s$. Determine $E\!\left[\langle X,X\rangle_t\right]$.</div>
+      <div class="sol">$\langle X,X\rangle_t=\int_0^t s^2B_s^2\,\mathrm{d}s$, og middelværdien er $\int_0^t s^2\cdot s\,\mathrm{d}s=\tfrac{t^4}{4}$.</div>
+      <div class="note">Bemærk forskellen: selve $\langle X,X\rangle_t$ er stokastisk. Hvis svarmuligheden $\int_0^t s^2B_s^2\,\mathrm{d}s$ også stod på listen, spurgte de om middelværdien.</div>
+    </div>
+
+    <div class="cand">
+      <div class="rank"><span class="pct">Mulig</span><span class="why">Polariseret isometri — to forskellige deterministiske integrander</span></div>
+      <div class="qq">Determine the value of $E\!\left[\left(\int_0^t s\,\mathrm{d}B_s\right)\left(\int_0^t s^{2}\,\mathrm{d}B_s\right)\right]$.</div>
+      <div class="sol">$\int_0^t s\cdot s^2\,\mathrm{d}s=\int_0^t s^3\,\mathrm{d}s=\tfrac{t^4}{4}$.</div>
+    </div>
+
+    <div class="traps"><b>Distraktorerne har formentlig været</b>
+      $\tfrac{t^3}{3}$ (integranden $s$ eller $B_s$ alene), $\tfrac{t^4}{8}$, $\tfrac{t^4}{2}$, $\tfrac{t^5}{5}$, $\tfrac{t^2}{2}$.</div>
+  </div>
+</article>
+
+<!-- 4 -->
+<article>
+  <div class="top"><span class="no">4</span><span>Svar</span><span class="ans">$1$</span></div>
+  <div class="body">
+    <div class="fp"><b>Fingeraftryk</b>
+      To af de ti svar er $1$, så de to spørgsmål må have haft forskellig karakter. Tallet $1$ opstår typisk på tre måder: en eksponentiel martingal har konstant middelværdi $1$; en grænsesandsynlighed går mod $1$; eller en varians ved $t=1$. Da opgave 3.1(d) eksplicit handler om $\lim_tE[X_t]\ne E[\lim_tX_t]$, er grænse- og martingalvarianterne klart mest oplagte her.</div>
+
+    <div class="cand">
+      <div class="rank"><span class="pct a">Mest sandsynlig</span><span class="why">Direkte fra bemærkningen i Problem 3.1(d)</span></div>
+      <div class="qq">Determine $\displaystyle\lim_{t\to\infty}E\!\left[e^{B_t-t/2}\right]$.</div>
+      <div class="sol">$e^{B_t-t/2}$ er en martingal med start $1$, så $E=1$ for alle $t$ og grænsen er $1$ — selvom processen går mod $0$ n.s.</div>
+      <div class="note">Det er netop kontrasten fra sættet: $\lim E[X_t]=1$ men $E[\lim X_t]=0$. Et yndet quizspørgsmål, fordi $0$ står som fælde blandt mulighederne.</div>
+    </div>
+
+    <div class="cand">
+      <div class="rank"><span class="pct b">Meget sandsynlig</span><span class="why">Samme regel uden grænse, med skjult martingalstruktur</span></div>
+      <div class="qq">Determine the value of $E\!\left[e^{2B_t-2t}\right]$.</div>
+      <div class="sol">$E[e^{aB_t+bt}]=e^{(a^2/2+b)t}$ med $a=2,b=-2$ giver $e^{0}=1$.</div>
+    </div>
+
+    <div class="cand">
+      <div class="rank"><span class="pct">Mulig</span><span class="why">Grænseudgaven af prøvequizzens spørgsmål 10</span></div>
+      <div class="qq">Determine $\displaystyle\lim_{t\to\infty}E\!\left[\mathbf{1}_{\{B_t\le t\}}\right]$.</div>
+      <div class="sol">$P(B_t\le t)=\Phi(t/\sqrt t)=\Phi(\sqrt t)\to1$.</div>
+    </div>
+
+    <div class="traps"><b>Distraktorerne har formentlig været</b>
+      $0$, $\tfrac12$, $\infty$, $e^{-1/2}$ — hvor $0$ er den store fælde, fordi processen selv går mod $0$.</div>
+  </div>
+</article>
+
+<!-- 5 -->
+<article>
+  <div class="top"><span class="no">5</span><span>Svar</span><span class="ans">$1$</span></div>
+  <div class="body">
+    <div class="fp"><b>Fingeraftryk</b>
+      Det andet ettal. Hvis spørgsmål 4 var grænse- eller martingaltypen, er dette næsten sikkert kvadratisk variation eller et andet moment ved $t=1$ — de to steder hvor $1$ ellers dukker op i pensum. Et $\pm1$-integrand er den klassiske konstruktion.</div>
+
+    <div class="cand">
+      <div class="rank"><span class="pct a">Mest sandsynlig</span><span class="why">Lévy-konstruktionen: integrand med kvadrat $1$</span></div>
+      <div class="qq">Determine the value of $E\!\left[\left(\int_0^1 \mathrm{sgn}(B_s)\,\mathrm{d}B_s\right)^{2}\right]$, alternativt $\langle X,X\rangle_1$ for $X_t=\int_0^t \mathrm{sgn}(B_s)\,\mathrm{d}B_s$.</div>
+      <div class="sol">Integranden er $\pm1$, så kvadratet er konstant $1$: $\int_0^1 1\,\mathrm{d}s=1$. (Og $X$ er dermed selv en Brownsk bevægelse.)</div>
+      <div class="note">Samme svar fås med indikatorintegranden $\mathbf{1}_{\{B_s\ge0\}}-\mathbf{1}_{\{B_s\lt0\}}$, som er den forklædte version af $\mathrm{sgn}$.</div>
+    </div>
+
+    <div class="cand">
+      <div class="rank"><span class="pct b">Meget sandsynlig</span><span class="why">Refleksionsprincippet, hvor andet moment er let og første moment er fælden</span></div>
+      <div class="qq">Let $\bar B_1=\max_{t\in[0,1]}B_t$. Determine $E[\bar B_1^2]$.</div>
+      <div class="sol">$\bar B_1\overset{d}{=}|B_1|$, så $E[\bar B_1^2]=E[B_1^2]=1$.</div>
+      <div class="note">Fælden er $\sqrt{2/\pi}$, som er $E[\bar B_1]$, ikke $E[\bar B_1^2]$.</div>
+    </div>
+
+    <div class="cand">
+      <div class="rank"><span class="pct">Mulig</span><span class="why">Rekurrens — en af de få kvalitative værdier lig $1$</span></div>
+      <div class="qq">Let $T=\inf\{t\ge0\mid B_t=1\}$. Determine $P(T\lt\infty)$.</div>
+      <div class="sol">Brownsk bevægelse er rekurrent og ubegrænset opad, så niveauet nås n.s.: $P(T\lt\infty)=1$, selvom $E[T]=\infty$.</div>
+    </div>
+
+    <div class="traps"><b>Distraktorerne har formentlig været</b>
+      $\tfrac12$, $\sqrt{2/\pi}$, $2$, $0$, $\infty$.</div>
+  </div>
+</article>
+
+<!-- 6 -->
+<article>
+  <div class="top"><span class="no">6</span><span>Svar</span><span class="ans">$3T$</span></div>
+  <div class="body">
+    <div class="fp"><b>Fingeraftryk</b>
+      Det store $T$ er nøglen: spørgsmålet brugte et andet tidssymbol end de øvrige — enten en fast horisont eller en stoptid. Faktoren $3$ peger på præcis to steder i pensum: dimensionen $d=3$ i $\|B_t\|^2-dt$ (Problem 3.2(b)) eller en variansfunktion $\Gamma(t)=3t$. Lineariteten i $T$ udelukker alt med kvadrater.</div>
+
+    <div class="cand">
+      <div class="rank"><span class="pct a">Mest sandsynlig</span><span class="why">Problem 3.2(b) med $d=3$, kombineret med optional stopping</span></div>
+      <div class="qq">Let $B_t=(B^{(1)}_t,B^{(2)}_t,B^{(3)}_t)$ be a three-dimensional Brownian motion and let $T$ be a bounded stopping time. Determine $E\!\left[\|B_T\|^2\right]$.</div>
+      <div class="sol">$\|B_t\|^2-3t$ er en martingal, så optional stopping giver $E[\|B_T\|^2]=3E[T]$ — og med $T$ deterministisk: $3T$.</div>
+      <div class="note">Den simple udgave uden stoptid, "determine $E[\|B_T\|^2]$ for a fixed $T\gt0$", giver samme svar direkte: $3$ koordinater à varians $T$.</div>
+    </div>
+
+    <div class="cand">
+      <div class="rank"><span class="pct b">Meget sandsynlig</span><span class="why">Kvadratisk variation af en projektion, Problem 3.2(a)</span></div>
+      <div class="qq">Let $\lambda=(1,1,1)$ and $X_t=\langle\lambda,B_t\rangle$ for a three-dimensional Brownian motion. Determine $\langle X,X\rangle_T$.</div>
+      <div class="sol">$\langle X,X\rangle_t=\|\lambda\|^2t=3t$, altså $3T$. $X$ er kun en standard BM hvis $\|\lambda\|=1$ — her er den det ikke.</div>
+    </div>
+
+    <div class="cand">
+      <div class="rank"><span class="pct">Mulig</span><span class="why">Gaussisk martingal med $\Gamma(t)=3t$, sæt 4.1(h)</span></div>
+      <div class="qq">Let $M$ be a continuous Gaussian martingale with $E[M_t^2]=3t$. Determine $\langle M,M\rangle_T$.</div>
+      <div class="sol">$\langle M,M\rangle_t=\Gamma(t,t)=3t$, altså $3T$.</div>
+    </div>
+
+    <div class="traps"><b>Distraktorerne har formentlig været</b>
+      $T$ (glemt dimensionen), $9T$ ($d^2$ i stedet for $d$), $3T^2$, $T^2$, $\sqrt3\,T$.</div>
+  </div>
+</article>
+
+<!-- 7 -->
+<article>
+  <div class="top"><span class="no">7</span><span>Svar</span><span class="ans">$0$</span></div>
+  <div class="body">
+    <div class="fp"><b>Fingeraftryk</b>
+      Det første af to nuller. Den hyppigste kilde til $0$ i dette pensum er paritet: et produkt af et <em>ulige</em> antal centrerede gaussiske variable har middelværdi $0$. Hele Problem 3.4(c), (d) og (f) er af den type, og de er eksplicit markeret som "quiz-style questions" i sættet — så mindst ét af dem var med til eksamen.</div>
+
+    <div class="cand">
+      <div class="rank"><span class="pct a">Mest sandsynlig</span><span class="why">Ordret Problem 3.4(d), og allerede gennemgået på tavlen</span></div>
+      <div class="qq">Determine the value of $E\!\left[B_s^2B_t\right]$ for $0\le s\lt t$.</div>
+      <div class="sol">$B_t=(B_t-B_s)+B_s$: første led giver $E[B_s^2]E[B_t-B_s]=0$, andet led $E[B_s^3]=0$. Summen er $0$. (Paritetstricket: tre $B$'er, altså $0$ med det samme.)</div>
+    </div>
+
+    <div class="cand">
+      <div class="rank"><span class="pct b">Meget sandsynlig</span><span class="why">Problem 3.4(f), tre tidspunkter i stedet for to</span></div>
+      <div class="qq">Determine the value of $E\!\left[B_sB_tB_u\right]$ for $0\le s\lt t\lt u$.</div>
+      <div class="sol">Ulige antal faktorer i en centreret gaussisk vektor: $0$.</div>
+    </div>
+
+    <div class="cand">
+      <div class="rank"><span class="pct">Mulig</span><span class="why">Problem 3.4(c), hvor tilvæksten er kvadreret</span></div>
+      <div class="qq">Determine the value of $E\!\left[B_s(B_t-B_s)^2\right]$ for $0\le s\lt t$.</div>
+      <div class="sol">Uafhængighed: $E[B_s]\cdot E[(B_t-B_s)^2]=0\cdot(t-s)=0$.</div>
+    </div>
+
+    <div class="traps"><b>Distraktorerne har formentlig været</b>
+      $s$, $2s^2$, $3s^2$, $s(t-s)$, $st$ — alt sammen værdier man får ved at gå i gang med at gange ud i stedet for at tælle antallet af $B$'er.</div>
+  </div>
+</article>
+
+<!-- 8 -->
+<article>
+  <div class="top"><span class="no">8</span><span>Svar</span><span class="ans">$e^{3}$</span></div>
+  <div class="body">
+    <div class="fp"><b>Fingeraftryk</b>
+      Formen er $E[e^{\text{gaussisk}}]=e^{\sigma^2/2}$, så spørgsmålet har haft en normalfordelt eksponent med varians $6$. Præcis tre naturlige opsætninger giver varians $6$: $B_6$; $\sqrt2\,B_3$ eller en gaussisk martingal med $\Gamma(3)=6$; eller $2B_3$ kombineret med et $-3$ i eksponenten.</div>
+
+    <div class="cand">
+      <div class="rank"><span class="pct a">Mest sandsynlig</span><span class="why">Samme $E[M_t^2]=2t$-opsætning som spørgsmål 2 — eksamener genbruger typisk opsætningen</span></div>
+      <div class="qq">Let $(M_t)$ be a continuous Gaussian martingale with $M_0=0$ and $E[M_t^2]=2t$. Determine $E\!\left[e^{M_3}\right]$.</div>
+      <div class="sol">$M_3\sim N(0,6)$, så $E[e^{M_3}]=e^{6/2}=e^3$.</div>
+    </div>
+
+    <div class="cand">
+      <div class="rank"><span class="pct b">Meget sandsynlig</span><span class="why">Eksponentialmartingalen med indsatte tal, jf. Problem 3.1(b)</span></div>
+      <div class="qq">Determine the value of $E\!\left[e^{2B_3-3}\right]$.</div>
+      <div class="sol">$E[e^{aB_t+bt}]=e^{(a^2/2+b)t}$ med $a=2$, $bt=-3$: $e^{2\cdot3}\cdot e^{-3}=e^{3}$.</div>
+      <div class="note">Fælden her er $1$: mange læser $e^{2B_t-3}$ som en martingal, men martingalen ville kræve eksponenten $2B_t-2t$, altså $-6$ ved $t=3$.</div>
+    </div>
+
+    <div class="cand">
+      <div class="rank"><span class="pct">Mulig</span><span class="why">Itô-integral med deterministisk integrand, som dermed er gaussisk</span></div>
+      <div class="qq">Determine the value of $E\!\left[\exp\!\left(\int_0^3 \sqrt2\,\mathrm{d}B_s\right)\right]$, eller tilsvarende $E[e^{B_6}]$.</div>
+      <div class="sol">Eksponenten er $N(0,\int_0^3 2\,\mathrm{d}s)=N(0,6)$, så middelværdien er $e^{3}$. Samme regning for $B_6\sim N(0,6)$.</div>
+    </div>
+
+    <div class="traps"><b>Distraktorerne har formentlig været</b>
+      $e^{6}$ (glemt halvdelen), $e^{3/2}$ (brugt varians $3$), $e^{1/2}$, $1$, $e^{9}$.</div>
+  </div>
+</article>
+
+<!-- 9 -->
+<article>
+  <div class="top"><span class="no">9</span><span>Svar</span><span class="ans">$0$</span></div>
+  <div class="body">
+    <div class="fp"><b>Fingeraftryk</b>
+      Det andet nul. Hvis spørgsmål 7 var paritetstypen, er dette efter al sandsynlighed martingal- eller variationstypen: ortogonale tilvækster, eller en proces med endelig variation hvis kvadratiske variation er $0$. Begge dele står eksplicit i opgavesæt 4.</div>
+
+    <div class="cand">
+      <div class="rank"><span class="pct a">Mest sandsynlig</span><span class="why">Ordret Problem 4.2(c)</span></div>
+      <div class="qq">Let $(M_t)$ be a continuous Gaussian martingale with $E[M_t^2]=2t$. Determine $E\!\left[M_3(M_5-M_3)\right]$.</div>
+      <div class="sol">Tilvæksten $M_5-M_3$ er uafhængig af $\mathscr{F}^M_3$ og centreret, så produktets middelværdi er $E[M_3]\cdot0=0$. (Eller: martingalegenskaben giver $E[M_3(M_5-M_3)]=E[M_3(E[M_5\mid\mathscr{F}_3]-M_3)]=0$.)</div>
+    </div>
+
+    <div class="cand">
+      <div class="rank"><span class="pct b">Meget sandsynlig</span><span class="why">Problem 4.3(c): integreret BM har endelig variation</span></div>
+      <div class="qq">Determine the quadratic variation $\langle I,I\rangle_t$ of the integrated Brownian motion $I_t=\int_0^t B_s\,\mathrm{d}s$.</div>
+      <div class="sol">$I$ er kontinuert med endelig variation, og sådanne processer har kvadratisk variation $0$ — selvom $\mathrm{var}(I_t)=t^3/3$.</div>
+      <div class="note">Det er quizzens mest effektive fælde: $t^3/3$ stod med garanti som svarmulighed.</div>
+    </div>
+
+    <div class="cand">
+      <div class="rank"><span class="pct">Mulig</span><span class="why">Problem 4.3(d), det simpleste af alle</span></div>
+      <div class="qq">Determine the value of $E\!\left[\int_0^t B_s\,\mathrm{d}s\right]$.</div>
+      <div class="sol">Fubini: $\int_0^t E[B_s]\,\mathrm{d}s=0$.</div>
+    </div>
+
+    <div class="traps"><b>Distraktorerne har formentlig været</b>
+      $t^3/3$, $2t$, $t$, $\int_0^tB_s^2\,\mathrm{d}s$, $6$.</div>
+  </div>
+</article>
+
+<!-- 10 -->
+<article>
+  <div class="top"><span class="no">10</span><span>Svar</span><span class="ans">$\int_0^t B_s^4\,\mathrm{d}s$</span></div>
+  <div class="body">
+    <div class="fp"><b>Fingeraftryk</b>
+      Et stokastisk svar, ikke et tal — det er signaturen på et kvadratisk-variations-spørgsmål med stokastisk integrand. $\langle\int H\,\mathrm{d}B\rangle_t=\int_0^tH_s^2\,\mathrm{d}s$, og $H_s^2=B_s^4$ betyder $H_s=B_s^2$. Dette er direkte parallel til prøvequizzens spørgsmål 9, hvor integranden var $B_s$ og svaret $\int_0^tB_s^2\,\mathrm{d}s$.</div>
+
+    <div class="cand">
+      <div class="rank"><span class="pct a">Mest sandsynlig</span><span class="why">Prøvequizzens spørgsmål 9 med integranden hævet til $B_s^2$</span></div>
+      <div class="qq">Determine the quadratic variation of $X_t=\int_0^t B_s^2\,\mathrm{d}B_s$, that is, determine $\langle X,X\rangle_t$.</div>
+      <div class="sol">$\langle X,X\rangle_t=\int_0^t (B_s^2)^2\,\mathrm{d}\langle B,B\rangle_s=\int_0^t B_s^4\,\mathrm{d}s$.</div>
+    </div>
+
+    <div class="cand">
+      <div class="rank"><span class="pct b">Meget sandsynlig</span><span class="why">Samme proces, men skrevet via Itôs formel, så man selv skal genkende den</span></div>
+      <div class="qq">Let $X_t=\tfrac13B_t^3-\int_0^t B_s\,\mathrm{d}s$. Determine $\langle X,X\rangle_t$.</div>
+      <div class="sol">Itô giver $X_t=\int_0^tB_s^2\,\mathrm{d}B_s$; endelig-variations-leddet bidrager ikke, så $\langle X,X\rangle_t=\int_0^tB_s^4\,\mathrm{d}s$.</div>
+    </div>
+
+    <div class="cand">
+      <div class="rank"><span class="pct">Mulig</span><span class="why">Med et påklistret $\mathrm{d}t$-led, som skal ignoreres</span></div>
+      <div class="qq">Let $X_t=\int_0^t B_s^2\,\mathrm{d}B_s+\int_0^t B_s\,\mathrm{d}s$. Determine $\langle X,X\rangle_t$.</div>
+      <div class="sol">Endelig-variations-delen har hverken egen kvadratisk variation eller krydsvariation med martingaldelen, så svaret er stadig $\int_0^tB_s^4\,\mathrm{d}s$.</div>
+    </div>
+
+    <div class="traps"><b>Distraktorerne har formentlig været</b>
+      $\int_0^tB_s^2\,\mathrm{d}s$ (integranden ikke kvadreret), $\int_0^tB_s^4\,\mathrm{d}B_s$ ($\mathrm{d}B$ i stedet for $\mathrm{d}s$), $\tfrac13B_t^3$, $t^3$, $3t^2$.</div>
+  </div>
+</article>
+
+<footer>
+  <h2>Hvad mønsteret fortæller om eksamensformen</h2>
+  <ul>
+    <li><b>Fordelingen af emner.</b> Tre isometri-spørgsmål (1, 3, og formentlig 5), to gaussiske martingaler (2, 8, muligvis 9), to nul-ved-struktur (7, 9), ét flerdimensionalt (6), ét kvadratisk variation med stokastisk integrand (10) og ét grænse-/martingalspørgsmål (4). Det matcher prøvequizzen næsten emne for emne, bare med tungere integrander.</li>
+    <li><b>Svartyperne går igen.</b> Fire rene tal, fire funktioner af $t$, ét udtryk med $T$ og ét stokastisk integral. Når et svar er et tal, er tidspunktet fastlagt i spørgsmålet — og så er der næsten altid en konkret opsætning ($E[M_t^2]=2t$, en stoptid, $t=1$) at holde fast i.</li>
+    <li><b>Det tabte point.</b> Alle ti valgte værdier er de korrekte svar på de mest oplagte formuleringer, så fejlen ligger sandsynligvis i en formulering der afveg let fra standarden — typisk en "alle $\theta$"-variant (hvor $\pm$ skulle med), et $E[\langle X,X\rangle]$ over for $\langle X,X\rangle$, eller et $\lim E$ over for $E[\lim]$. Det er de tre steder, hvor det rigtige tal hører til det forkerte spørgsmål.</li>
+  </ul>
+</footer>
+
+</div>
+
+<script>
+(function () {
+  function reveal(){ document.body.classList.add('ready'); }
+  function go(){
+    if (window.MathJax && MathJax.startup && MathJax.startup.promise) {
+      MathJax.startup.promise
+        .then(function(){ return MathJax.typesetPromise([document.body]); })
+        .then(reveal).catch(reveal);
+    } else { setTimeout(go, 120); }
+  }
+  go();
+  setTimeout(reveal, 6000);
+})();
+</script>
+</body>
+</html>
