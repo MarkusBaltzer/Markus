@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mathematical Finance — cheat sheet til quizeksamen</title>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$'],['\\(','\\)']], displayMath: [['$$','$$'],['\\[','\\]']] },
+  options: { skipHtmlTags: ['script','noscript','style','textarea'] },
+  startup: { typeset: false }
+};
+</script>
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+
+<style>
+  :root{
+    --ink:#12203a;
+    --soft:#4d5a72;
+    --grid:#dbe3ee;
+    --paper:#f7f9fc;
+    --line:#c3cee0;
+    --hot:#8c2f39;      /* faldgruber */
+    --key:#1d5b46;      /* nøgletricks */
+    --band:#12203a;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    color:var(--ink);
+    background:
+      linear-gradient(var(--grid) 1px, transparent 1px) 0 0/100% 26px,
+      var(--paper);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-size:15px;line-height:1.55;
+  }
+  body:not(.ready){visibility:hidden}
+  .sheet{max-width:1140px;margin:0 auto;padding:0 18px 70px}
+
+  header{
+    border-bottom:3px solid var(--band);
+    padding:30px 0 14px;margin-bottom:22px;
+  }
+  header h1{
+    font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+    font-size:30px;font-weight:600;margin:0 0 4px;letter-spacing:.01em;
+  }
+  header p{margin:0;color:var(--soft);max-width:72ch}
+
+  .cols{column-count:2;column-gap:22px}
+  @media (max-width:900px){ .cols{column-count:1} }
+
+  section{
+    break-inside:avoid;page-break-inside:avoid;
+    background:#fff;border:1px solid var(--line);
+    padding:14px 16px 12px;margin:0 0 18px;
+  }
+  section.wide{break-inside:avoid}
+  h2{
+    font-family:"Iowan Old Style",Palatino,Georgia,serif;
+    font-size:17px;font-weight:600;margin:0 0 10px;
+    padding-bottom:6px;border-bottom:1px solid var(--line);
+  }
+  h3{font-size:13.5px;font-weight:600;margin:14px 0 4px;color:var(--soft)}
+  h3:first-of-type{margin-top:6px}
+  p{margin:6px 0}
+  ul{margin:6px 0;padding-left:18px}
+  li{margin:4px 0}
+  .eq{margin:8px 0;padding:6px 10px;background:#f4f7fb;border-left:3px solid var(--line);overflow-x:auto}
+  .trick{border-left:3px solid var(--key);background:#eef6f2;padding:8px 10px;margin:9px 0}
+  .trap{border-left:3px solid var(--hot);background:#fbf0f1;padding:8px 10px;margin:9px 0}
+  .trick b,.trap b{display:block;font-size:12.5px;letter-spacing:.02em;margin-bottom:2px}
+  .trick b{color:var(--key)}
+  .trap b{color:var(--hot)}
+
+  table{border-collapse:collapse;width:100%;margin:8px 0;font-size:14px}
+  th,td{border-bottom:1px solid var(--line);padding:5px 7px;text-align:left;vertical-align:top}
+  th{font-weight:600;font-size:12.5px;color:var(--soft);border-bottom:2px solid var(--line)}
+  td:first-child{white-space:nowrap}
+
+  .steps{counter-reset:s;list-style:none;padding-left:0}
+  .steps li{counter-increment:s;position:relative;padding-left:26px;margin:7px 0}
+  .steps li::before{
+    content:counter(s);position:absolute;left:0;top:1px;
+    width:18px;height:18px;line-height:18px;text-align:center;
+    background:var(--band);color:#fff;font-size:11px;border-radius:50%;
+  }
+  footer{margin-top:26px;color:var(--soft);font-size:13px;border-top:1px solid var(--line);padding-top:12px}
+
+  @media print{
+    body{background:#fff;font-size:10.5px;line-height:1.4}
+    .sheet{max-width:none;padding:0}
+    .cols{column-count:2;column-gap:14px}
+    section{border:1px solid #999;padding:8px 10px;margin-bottom:10px}
+    header{padding-top:0}
+    header h1{font-size:20px}
+    h2{font-size:13px}
+    .trick,.trap,.eq{padding:5px 8px}
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+<header>
+  <h1>Cheat sheet — Mathematical Finance, quizeksamen</h1>
+  <p>10 multiple choice-spørgsmål, 5 svarmuligheder, 60 minutter, ingen minuspoint. Altså 6 minutter pr. spørgsmål og <em>aldrig</em> et blankt felt. Alt herunder er skruet sammen til at give svaret på under to minutter. $B$ er en Brownsk bevægelse, $\mathscr{F}$ dens fuldstændiggjorte kanoniske filtration.</p>
+</header>
+
+<div class="cols">
+
+<section>
+  <h2>Angrebsplan: fire filtre før du regner</h2>
+  <ol class="steps">
+    <li><b>Paritet.</b> Tæl antallet af $B$'er i et forventningsudtryk. Ulige antal $\Rightarrow$ svaret er $0$. Gælder for alle centrerede gaussiske variable, også $B_t-B_s$, $\int f\,\mathrm{d}B$ og $\int_0^t B_s\,\mathrm{d}s$.</li>
+    <li><b>Skaleringsgrad.</b> $B_t\overset{d}{=}\sqrt{t}\,B_1$, så $B$ tæller som $t^{1/2}$, og $\mathrm{d}B_s$ ligeså. Udregn "tidsgraden" af udtrykket og smid alle svarmuligheder væk med forkert grad.</li>
+    <li><b>Randtjek.</b> Sæt $s=0$, $s=t$ eller $t=0$ ind. Ofte overlever kun ét svar.</li>
+    <li><b>Genkend mønsteret.</b> Næsten alle spørgsmål er én af otte opskrifter — se boksene herunder.</li>
+  </ol>
+  <div class="trick">
+    <b>Gradtjek i praksis</b>
+    $E[B_s^2B_t^2]$ har grad $4\cdot\tfrac12=2$: kun svar med samlet grad $2$ (fx $s(t-s)+3s^2$, $st$, $s^2$) er mulige — $s(t-s)$ alene overlever gradtjekket, men falder på randtjekket $s=t$, hvor svaret skal være $E[B_t^4]=3t^2$.
+  </div>
+</section>
+
+<section>
+  <h2>Grundfakta om $B$</h2>
+  <ul>
+    <li>$B_t\sim N(0,t)$, uafhængige tilvækster, $B_t-B_s\sim N(0,t-s)$ og uafhængig af $\mathscr{F}_s$.</li>
+    <li>$\mathrm{cov}(B_s,B_t)=s\wedge t$. $\ \langle B,B\rangle_t=t$, dvs. $\mathrm{d}\langle B,B\rangle_t=\mathrm{d}t$.</li>
+    <li>Momenter: $E[B_t^{2n}]=(2n-1)!!\,t^n$, dvs. $E[B_t^2]=t,\ E[B_t^4]=3t^2,\ E[B_t^6]=15t^3$. Ulige momenter $=0$.</li>
+    <li>$E[|B_t|]=\sqrt{2t/\pi}$.</li>
+  </ul>
+  <h3>Invarianser (bruges til "hvilken type proces"-spørgsmål)</h3>
+  <table>
+    <tr><td>Skalering</td><td>$\tfrac1c B_{c^2t}$ er BM</td></tr>
+    <tr><td>Tidsinversion</td><td>$tB_{1/t}$ (og $0$ i $0$) er BM</td></tr>
+    <tr><td>Spejling</td><td>$-B_t$ er BM</td></tr>
+    <tr><td>Markov-shift</td><td>$B_{t+h}-B_h$ er BM, uafh. af $\mathscr{F}_h$</td></tr>
+    <tr><td>OU</td><td>$e^{-\alpha t}B_{e^{2\alpha t}}$: centreret gaussisk, $\mathrm{cov}=e^{-\alpha|t-s|}$</td></tr>
+  </table>
+  <div class="trick">
+    <b>Kovarians på tre sekunder</b>
+    For $X_t=f(t)B_{g(t)}$ er $\mathrm{cov}(X_s,X_t)=f(s)f(t)\,\big(g(s)\wedge g(t)\big)$. Middelværdien er altid $0$, så alle svar med $E[X_t]\ne0$ kan streges med det samme.
+  </div>
+</section>
+
+<section>
+  <h2>Gaussisk værktøjskasse</h2>
+  <h3>Wick / Isserlis (fjerde moment uden regning)</h3>
+  <div class="eq">$E[XYZW]=\sigma_{XY}\sigma_{ZW}+\sigma_{XZ}\sigma_{YW}+\sigma_{XW}\sigma_{YZ}$</div>
+  <p>Summen over de tre måder at parre fire faktorer. Med $\sigma_{B_sB_t}=s\wedge t$ giver det direkte:</p>
+  <table>
+    <tr><td>$E[B_s^2B_t^2]$</td><td>$st+2s^2=s(t-s)+3s^2$</td></tr>
+    <tr><td>$E[B_sB_t^3]$</td><td>$3st$</td></tr>
+    <tr><td>$E[B_s^3B_t]$</td><td>$3s^2$</td></tr>
+    <tr><td>$E[B_sB_tB_uB_v]$</td><td>$su+2st$ for $s\le t\le u\le v$</td></tr>
+  </table>
+  <h3>Betinget middelværdi</h3>
+  <p>Skriv altid $B_t=B_s+\sqrt{t-s}\,Z$ med $Z\sim N(0,1)$ uafhængig af $\mathscr{F}_s$, og gang ud:</p>
+  <div class="eq">$E[B_t^2\mid\mathscr{F}_s]=B_s^2+(t-s)$<br>$E[B_t^3\mid\mathscr{F}_s]=B_s^3+3(t-s)B_s$<br>$E[e^{\theta B_t}\mid\mathscr{F}_s]=e^{\theta B_s+\theta^2(t-s)/2}$</div>
+  <div class="trap">
+    <b>Faldgrube</b>
+    $E[XY^2]$ for centreret gaussisk $(X,Y)$ er $0$ — ikke $2\sigma_{XY}\sigma_{YY}$. Wick kræver <em>lige</em> antal faktorer.
+  </div>
+</section>
+
+<section>
+  <h2>Itô-integralet</h2>
+  <ul>
+    <li>$\int_0^t H_s\,\mathrm{d}B_s$ er en martingal med middelværdi $0$ (når $H$ er adapteret og kvadratisk integrabel).</li>
+    <li><b>Isometri:</b> $E\big[(\int_0^t H\,\mathrm{d}B)^2\big]=\int_0^t E[H_s^2]\,\mathrm{d}s$.</li>
+    <li><b>Polariseret:</b> $E\big[\int_0^t H\,\mathrm{d}B\cdot\int_0^t K\,\mathrm{d}B\big]=\int_0^t E[H_sK_s]\,\mathrm{d}s$.</li>
+    <li><b>Deterministisk $f$:</b> $\int_0^t f\,\mathrm{d}B\sim N\big(0,\int_0^t f^2\big)$, og processen er en gaussisk martingal.</li>
+  </ul>
+  <div class="trick">
+    <b>Saml alt under ét integral først</b>
+    $B_t=\int_0^t 1\,\mathrm{d}B_s$, så fx $B_t+\int_0^t B_s\,\mathrm{d}B_s=\int_0^t(1+B_s)\,\mathrm{d}B_s$, og isometrien giver $\int_0^t E[(1+B_s)^2]\,\mathrm{d}s=\int_0^t(1+s)\,\mathrm{d}s$. Krydsleddet forsvinder, fordi $E[B_s]=0$.
+  </div>
+  <h3>Standardresultater</h3>
+  <table>
+    <tr><th>Integrand $H_s$</th><th>$E[(\int_0^tH\,\mathrm{d}B)^2]=\int_0^tE[H^2]\mathrm{d}s$</th></tr>
+    <tr><td>$1$</td><td>$t$</td></tr>
+    <tr><td>$s$</td><td>$t^3/3$</td></tr>
+    <tr><td>$B_s$</td><td>$t^2/2$</td></tr>
+    <tr><td>$sB_s$</td><td>$t^4/4$</td></tr>
+    <tr><td>$B_s^2$</td><td>$t^3$</td></tr>
+    <tr><td>$e^{B_s}$</td><td>$(e^{2t}-1)/2$</td></tr>
+    <tr><td>$e^{s}$</td><td>$(e^{2t}-1)/2$</td></tr>
+    <tr><td>$\mathbf{1}_{\{B_s\ge0\}}$</td><td>$t/2$</td></tr>
+  </table>
+  <p>Brug $E[B_s^2]=s$, $E[B_s^4]=3s^2$, $E[e^{2B_s}]=e^{2s}$, $\mathbf{1}^2=\mathbf{1}$, $E[\mathbf{1}_{\{B_s\ge0\}}]=\tfrac12$.</p>
+  <div class="trap">
+    <b>Faldgrube</b>
+    Dobbeltintegraler som $E[(\int_0^t X_s\,\mathrm{d}B_s)^2]$ med $X_s=\int_0^s e^u\mathrm{d}B_u$ kræver to runder: først isometri udefra, $\int_0^tE[X_s^2]\mathrm{d}s$, så isometri indeni, $E[X_s^2]=\tfrac12(e^{2s}-1)$.
+  </div>
+</section>
+
+<section>
+
+  <h2>Adaptet = ingen future peeking</h2>
+  <div class="trick">
+    <b>Husk:</b> En proces $H_t$ er <b>adaptet</b>, hvis $H_t$ kun bruger information, der er tilgængelig ved tid $t$.
+    Med filtreringen $(\mathcal F_t)$ betyder det $H_t\in\mathcal F_t$.
+    <br><br>
+    <b>Future peeking:</b> Hvis $H_s$ bruger $B_t$ for et $t>s$, kigger integranden ind i fremtiden → <b>ikke adaptet</b>.
+  </div>
+  <table>
+    <tr><th>Proces / integrand</th><th>Adaptet?</th><th>Hvorfor?</th></tr>
+    <tr><td>$B_s$</td><td>✓ Ja</td><td>Kun Brownian information frem til $s$.</td></tr>
+    <tr><td>$B_s^2$, $e^{B_s}$</td><td>✓ Ja</td><td>Funktion af $B_s$, som er kendt ved $s$.</td></tr>
+    <tr><td>$\int_0^s u\,dB_u$</td><td>✓ Ja</td><td>Bygger kun på fortiden op til $s$.</td></tr>
+    <tr><td>$sB_s$</td><td>✓ Ja</td><td>$s$ er deterministisk og $B_s$ er kendt.</td></tr>
+    <tr><td>$B_t$ i $\int_0^t B_t\,dB_s$</td><td>✗ Nej</td><td>For $s<t$ bruger den $B_t$: future peeking.</td></tr>
+    <tr><td>$B_1$ i $\int_0^t B_1\,dB_s$, $t<1$</td><td>✗ Nej</td><td>$B_1$ er fremtidig information, når $t<1$.</td></tr>
+    <tr><td>$\int_0^t e^{-(t-s)}\,dB_s$</td><td>⚠️ Ikke et standard-setup</td><td>$t$ ændrer hele integranden med tid; test martingale direkte. Det er ikke automatisk en martingal.</td></tr>
+  </table>
+  <div class="trick">
+    <b>Eksamen:</b> I $\int_0^t H_s\,dB_s$ skal du kigge på <b>$s$</b>.
+    Hvis $H_s$ kun bruger $s$ og information frem til $s$, er den adaptet.
+    Hvis der står <b>$B_t$</b>, $X_t$ eller anden information fra et senere tidspunkt inde i $H_s$ for $s<t$, er der typisk future peeking → <b>ikke adaptet</b>.
+    <br><br>
+    <b>Deterministisk $H_s$:</b> altid adaptet. Så er det vigtigste blot
+    $E[\int_0^t H_s^2\,ds]<\infty$.
+  </div>
+
+  <h2>Itôs formel og martingaltesten</h2>
+  <h3>Standardformlen</h3>
+  <div class="eq">
+    $\displaystyle \mathrm{d}f(t,X_t)
+    =f_t(t,X_t)\,\mathrm{d}t
+    +f_x(t,X_t)\,\mathrm{d}X_t
+    +\tfrac12 f_{xx}(t,X_t)\,\mathrm{d}\langle X\rangle_t$
+  </div>
+  <div class="trick">
+    <b>Hvis $\mathrm{d}X_t=\mu_t\,\mathrm{d}t+\sigma_t\,\mathrm{d}B_t$</b>
+    så er $\mathrm{d}\langle X\rangle_t=\sigma_t^2\,\mathrm{d}t$, og dermed
+    $\displaystyle \mathrm{d}f(t,X_t)
+    =\Big(f_t+\mu_t f_x+\tfrac12\sigma_t^2 f_{xx}\Big)\mathrm{d}t
+    +\sigma_t f_x\,\mathrm{d}B_t$.
+  </div>
+  <div class="eq">
+    <b>Specielt for $X_t=B_t$:</b>
+    $\displaystyle \mathrm{d}f(t,B_t)
+    =\underbrace{\Big(f_t+\tfrac12 f_{xx}\Big)}_{\text{drift}}\mathrm{d}t
+    +f_x\,\mathrm{d}B_t$.
+  </div>
+  <div class="trick">
+    <b>Hvad betyder $\langle X\rangle_t$ (quadratic variation)?</b><br>
+    Bracket-operatoren måler den <b>akkumulerede kvadratiske variation</b> i processen $X$.
+    For en partition $0=t_0<t_1<\cdots<t_n=t$ defineres den som grænsen
+    $\displaystyle \langle X\rangle_t
+    =\lim_{\|\Pi\|\to0}\sum_i(X_{t_{i+1}}-X_{t_i})^2$,
+    når grænsen eksisterer.
+    <br><br>
+    Derfor er $\mathrm{d}\langle X\rangle_t$ den <b>infinitesimale quadratic variation</b>. I Itô-notation kan den skrives som $\boxed{\mathrm{d}\langle X\rangle_t=(\mathrm{d}X_t)^2}$.
+    Hvis
+    $\displaystyle \mathrm{d}X_t=\mu_t\,\mathrm{d}t+\sigma_t\,\mathrm{d}B_t$,
+    så gælder
+    $\displaystyle \mathrm{d}\langle X\rangle_t=\sigma_t^2\,\mathrm{d}t$.
+    Driftleddet $\mu_t\,\mathrm{d}t$ bidrager ikke til quadratic variation.
+    <br><br>
+    <b>Huskeregel:</b> Tag koefficienten foran $\mathrm{d}B_t$, kvadrér den, og gang med $\mathrm{d}t$.
+    <br>
+    Eksempel: $\mathrm{d}X_t=t\,\mathrm{d}B_t
+    \Rightarrow \mathrm{d}\langle X\rangle_t=t^2\,\mathrm{d}t$.
+    For Brownsk bevægelse:
+    $\displaystyle \mathrm{d}\langle B\rangle_t=\mathrm{d}t$.
+  </div>
+  <div class="trick">
+    <b>Den hurtigste martingaltest der findes</b>
+    $f(t,B_t)$ er en martingal $\iff f_t+\tfrac12 f_{xx}=0$. Differentiér svarmulighederne i hovedet — det tager fem sekunder pr. mulighed.
+  </div>
+  <table>
+    <tr><th>Martingal</th><th>Tjek</th></tr>
+    <tr><td>$B_t$</td><td>trivielt</td></tr>
+    <tr><td>$B_t^2-t$</td><td>$-1+\tfrac12\cdot2=0$</td></tr>
+    <tr><td>$B_t^3-3tB_t$</td><td>$-3x+\tfrac12\cdot6x=0$</td></tr>
+    <tr><td>$B_t^4-6tB_t^2+3t^2$</td><td>$(-6x^2{+}6t)+\tfrac12(12x^2{-}12t)=0$</td></tr>
+    <tr><td>$e^{\theta B_t-\theta^2t/2}$</td><td>$-\tfrac{\theta^2}{2}+\tfrac{\theta^2}{2}=0$</td></tr>
+    <tr><td>$e^{-2(B_t+t)}$</td><td>$-2f+\tfrac12\cdot4f=0$</td></tr>
+  </table>
+  <h3>Martingaltest for Itô-integraler</h3>
+  <div class="trick">
+    <b>Hurtigtesten</b>
+    Hvis $M_t=\int_0^tH_s\,\mathrm{d}B_s$, så er $M$ en martingal, hvis du kan tjekke:
+    <ol>
+      <li>$H_s$ er $\mathscr F_s$-adaptet: $H_s$ må kun afhænge af information til og med tid $s$.</li>
+      <li>$H$ er kvadratisk integrabel på endelige tidsintervaller:
+      $\displaystyle E\!\left[\int_0^tH_s^2\,\mathrm{d}s\right]<\infty$.</li>
+    </ol>
+    <b>Nem huskeregel:</b> deterministisk $H_s$ $\Rightarrow$ adaptet automatisk. For $H_s=B_s$ eller $H_s=\int_0^s f(u)\,\mathrm{d}B_u$ er $H_s$ også adaptet, fordi det kun bruger fortiden.
+  </div>
+  <div class="eq">
+    $M_t=\int_0^tH_s\,\mathrm{d}B_s
+    \quad\Longrightarrow\quad
+    E[M_t\mid\mathscr F_r]=M_r,\qquad
+    E\!\left[\int_0^tH_s^2\,\mathrm{d}s\right]<\infty.$
+  </div>
+  <h3>To måder at teste en martingal</h3>
+  <table>
+    <tr><th>Metode</th><th>Hvad du gør</th><th>Hvornår den er hurtigst</th></tr>
+    <tr>
+      <td><b>1. Itôs formel</b></td>
+      <td>For $X_t=f(t,B_t)$: skriv $\mathrm dX_t=(f_t+\tfrac12f_{xx})\mathrm dt+f_x\mathrm dB_t$. Martingal $\iff$ driftleddet er $0$ (plus de nødvendige integrabilitetsbetingelser).</td>
+      <td>Når processen ligner $f(t,B_t)$, fx $B_t^2-t$, $B_t^3-3tB_t$ eller en eksponential.</td>
+    </tr>
+    <tr>
+      <td><b>2. Definitionen</b></td>
+      <td>Tjek direkte for $r<t$: $E[|X_t|]<\infty$ og $E[X_t\mid\mathscr F_r]=X_r$.</td>
+      <td>Når betingningen er nem, især ved at skrive $B_t=B_r+(B_t-B_r)$ og bruge, at tilvæksten er uafhængig af $\mathscr F_r$ og har middelværdi $0$.</td>
+    </tr>
+    <tr>
+      <td><b>Specialtilfælde: Itô-integral</b></td>
+      <td>Hvis $X_t=\int_0^tH_s\,\mathrm dB_s$, behøver du normalt <em>ikke</em> beregne betinget middelværdi: adaptet + $E\int_0^tH_s^2\,\mathrm ds<\infty$ giver martingal direkte.</td>
+      <td>Næsten altid den hurtigste metode for rene $\mathrm dB$-integraler.</td>
+    </tr>
+  </table>
+  <div class="trap">
+    <b>Vigtigt: nul drift er ikke alene nok i fuld præcision</b>
+    Hvis Itôs formel giver $\mathrm dX_t=G_t\,\mathrm dB_t$, er $X$ en <em>lokal</em> martingal. For at kalde den en ægte martingal skal du også have passende integrabilitet, fx $E\int_0^tG_s^2\,\mathrm ds<\infty$ for et Itô-integral. I quizzer er denne betingelse ofte automatisk opfyldt for de pæne processer, der gives.
+  </div>
+
+  <h3>Gennemregnet eksempel: $e^{-2X_t}$ med $X_t=B_t+t$</h3>
+  <ol class="steps">
+    <li><b>Opsæt.</b> $Y_t=f(X_t)$ med $f(x)=e^{-2x}$, så $f'=-2f$ og $f''=4f$. Desuden $\mathrm dX_t=\mathrm dt+\mathrm dB_t$ og $\mathrm d\langle X\rangle_t=\mathrm dt$.</li>
+    <li><b>Itôs formel.</b>
+      $\mathrm dY_t=-2Y_t(\mathrm dt+\mathrm dB_t)+\tfrac12\cdot4Y_t\,\mathrm dt
+      =\underbrace{(-2Y_t+2Y_t)}_{=0}\mathrm dt-2Y_t\,\mathrm dB_t.$
+      Driften forsvinder, så $Y_t=1-2\int_0^tY_s\,\mathrm dB_s$ er en <em>lokal</em> martingal.</li>
+    <li><b>Integrabilitet.</b> $Y_s$ er adaptet, og med $E[e^{aB_s}]=e^{a^2s/2}$:
+      $E[Y_s^2]=e^{-4s}E[e^{-4B_s}]=e^{-4s}e^{8s}=e^{4s}$.
+      Dermed $E\int_0^t(2Y_s)^2\,\mathrm ds=e^{4t}-1<\infty$, så $Y$ er en ægte martingal.</li>
+    <li><b>Sanity-tjek.</b> $E[Y_t]=e^{-2t}E[e^{-2B_t}]=e^{-2t}e^{2t}=1=Y_0$ ✓.</li>
+  </ol>
+  <div class="trick">
+    <b>Genvej: hvilke $\lambda$ gør $e^{\lambda X_t}$ til martingal?</b>
+    For $X_t=B_t+ct$ giver Itô driften $\big(\lambda c+\tfrac12\lambda^2\big)e^{\lambda X_t}$, som er $0$ præcis når $\lambda=0$ eller $\lambda=-2c$. Med $c=1$ får du $\lambda=-2$. Samme svar fra eksponentialreglen: $e^{-2X_t}=e^{-2B_t-2t}$ har $a=-2$, $b=-2=-a^2/2$.
+  </div>
+
+  <h3>Eksponentialreglen</h3>
+  <div class="eq">$e^{aB_t+bt}$ er martingal $\iff b=-\tfrac{a^2}{2}$;<br>submartingal hvis $b\gt-\tfrac{a^2}{2}$, supermartingal hvis $b\lt-\tfrac{a^2}{2}$.<br>Desuden $E[e^{aB_t+bt}]=e^{(a^2/2+b)t}$.</div>
+  <p>Skal du klassificere $e^{\theta B_t+(\mu-\theta^2/2)t}$: fortegnet på $\mu$ afgør det hele. Er $X_t=B_t+ct$, så skriv $e^{\theta X_t}=e^{\theta B_t+\theta ct}$ og løs $\theta c=-\theta^2/2$, dvs. $\theta=-2c$.</p>
+  <h3>Produktreglen</h3>
+  <div class="eq">$\mathrm{d}(X_tY_t)=X_t\,\mathrm{d}Y_t+Y_t\,\mathrm{d}X_t+\mathrm{d}\langle X,Y\rangle_t$</div>
+  <p>Skal en martingal laves ud af $X_tY_t$, trækkes $\langle X,Y\rangle_t$ fra. Det giver $B_t^2-t$, $\|B_t\|^2-dt$ og $W_t^{(1)}B_t^{(2)}-\rho t$ i ét hug.</p>
+  <h3>Nyttige omskrivninger</h3>
+  <div class="eq">$\int_0^t B_s\,\mathrm{d}B_s=\tfrac12(B_t^2-t)$<br>$\int_0^t B_s^2\,\mathrm{d}B_s=\tfrac13B_t^3-\int_0^tB_s\,\mathrm{d}s$<br>$\int_0^t s\,\mathrm{d}B_s=tB_t-\int_0^tB_s\,\mathrm{d}s$</div>
+</section>
+
+<section>
+  <h2>Sådan vælger du $f$ — og husker formlen</h2>
+
+  <h3>Lær én formel, ikke fem</h3>
+  <p>Lær <em>kun</em> den generelle. Den gælder for enhver Itô-proces $X$ og enhver $f\in C^{1,2}$, og der står hverken $\mu$ eller $\sigma$ i den:</p>
+  <div class="eq">
+    $\displaystyle \mathrm{d}f(t,X_t)=
+    \underbrace{f_t\,\mathrm{d}t}_{\text{eksplicit }t}
+    +\underbrace{f_x\,\mathrm{d}X_t}_{\text{1.\ orden}}
+    +\underbrace{\tfrac12 f_{xx}\,\mathrm{d}\langle X\rangle_t}_{\text{Itô-korrektion}}$
+  </div>
+  <p><b>Først bagefter</b> indsætter du dynamikken. Er $\mathrm dX_t=\mu_t\,\mathrm dt+\sigma_t\,\mathrm dB_t$, så er $\mathrm d\langle X\rangle_t=\sigma_t^2\,\mathrm dt$, og den "lange" version falder ud af sig selv:</p>
+  <div class="eq">$\mathrm df=\big(f_t+\mu_tf_x+\tfrac12\sigma_t^2f_{xx}\big)\mathrm dt+\sigma_tf_x\,\mathrm dB_t$</div>
+  <p>Pointen med de to trin: drift/martingal-opdelingen skal <em>udregnes</em>, ikke huskes.</p>
+
+  <div class="trick">
+    <b>Går du i sort: det er bare Taylor til anden orden</b>
+    $\mathrm df\approx f_t\,\mathrm dt+f_x\,\mathrm dX+\tfrac12f_{xx}(\mathrm dX)^2$, plus multiplikationstabellen
+    <table>
+      <tr><th>$\cdot$</th><th>$\mathrm dt$</th><th>$\mathrm dB$</th></tr>
+      <tr><td>$\mathrm dt$</td><td>$0$</td><td>$0$</td></tr>
+      <tr><td>$\mathrm dB$</td><td>$0$</td><td>$\mathrm dt$</td></tr>
+    </table>
+    så $(\mathrm dX)^2=(\mu\,\mathrm dt+\sigma\,\mathrm dB)^2=\sigma^2\,\mathrm dt=\mathrm d\langle X\rangle_t$. Krydsled og $(\mathrm dt)^2$ dør, fordi $\mathrm dt$ er "for lille"; $(\mathrm dB)^2$ overlever, fordi $B$ har kvadratisk variation. Husker du <em>historien</em>, behøver du aldrig huske formlen.
+  </div>
+
+  <h3>Den mekaniske opskrift — fire trin</h3>
+  <ol class="steps">
+    <li><b>Vælg basisprocessen $X$.</b> Den skal være noget, du <em>allerede har dynamik for</em>: enten $B$ selv, eller det $X$, opgaven giver en SDE for. Det er det eneste reelle valg, du træffer.</li>
+    <li><b>Skriv målet som $f(t,X_t)$ ved substitution.</b> Erstat hver forekomst af basisprocessen med dummy-bogstavet $x$, og hvert <em>eksplicit</em> $t$ med dummy-$t$. Det der står tilbage, skal være en helt almindelig deterministisk funktion af to variable. Er der stadig noget stokastisk tilbage, har du valgt forkert basis (eller skal bruge den 2-dimensionale version).</li>
+    <li><b>Differentiér $f$ som almindelig kalkulus</b>, med $t$ og $x$ som <em>uafhængige</em> variable. Her fejler de fleste: inde i $f$ afhænger $x$ ikke af $t$. Du differentierer aldrig $X_t$ mht. $t$.</li>
+    <li><b>Sæt ind i formlen</b>, og indsæt derefter $\mathrm dX_t$ og $\mathrm d\langle X\rangle_t$.</li>
+  </ol>
+
+  <h3>Trin 2 i praksis (substitutionstabellen)</h3>
+  <table>
+    <tr><th>Proces</th><th>Basis</th><th>$f$</th></tr>
+    <tr><td>$e^{-bt^2}X_t$, SDE givet for $X$</td><td>$X$</td><td>$f(t,x)=e^{-bt^2}x$, $f_{xx}=0$</td></tr>
+    <tr><td>$e^{-2X_t}$, $X_t=B_t+t$</td><td>$X$</td><td>$f(x)=e^{-2x}$, $f_t=0$</td></tr>
+    <tr><td>— samme, anden basis</td><td>$B$</td><td>$f(t,x)=e^{-2x-2t}$</td></tr>
+    <tr><td>$B_t^3-3tB_t$</td><td>$B$</td><td>$f(t,x)=x^3-3tx$</td></tr>
+    <tr><td>$tB_t$</td><td>$B$</td><td>$f(t,x)=tx$, $f_{xx}=0$</td></tr>
+    <tr><td>$e^{B_t-t/2}$</td><td>$B$</td><td>$f(t,x)=e^{x-t/2}$</td></tr>
+    <tr><td>$\dfrac{B_t}{1+t}$</td><td>$B$</td><td>$f(t,x)=\dfrac{x}{1+t}$</td></tr>
+    <tr><td>$S_0e^{\sigma B_t+(\mu-\sigma^2/2)t}$</td><td>$B$</td><td>$f(t,x)=S_0e^{\sigma x+(\mu-\sigma^2/2)t}$</td></tr>
+  </table>
+
+  <h3>Gennemregnet: integrerende faktor (eksamenstypen)</h3>
+  <p>$M_t=e^{-bt^2}X_t$ med $\mathrm dX_t=\tfrac12tX_t\,\mathrm dt+\mathrm dW_t$.</p>
+  <ol class="steps">
+    <li><b>Basis</b> $X$ (jeg har dens dynamik), så $\mathrm d\langle X\rangle_t=1^2\,\mathrm dt=\mathrm dt$.</li>
+    <li><b>Substitution:</b> $f(t,x)=e^{-bt^2}x$, altså $f_t=-2bt\,e^{-bt^2}x$, $f_x=e^{-bt^2}$, $f_{xx}=0$.</li>
+    <li><b>Indsæt:</b>
+      $\mathrm dM_t=-2bt\,e^{-bt^2}X_t\,\mathrm dt+e^{-bt^2}\big(\tfrac12tX_t\,\mathrm dt+\mathrm dW_t\big)+0
+      =\big(\tfrac12-2b\big)t\,e^{-bt^2}X_t\,\mathrm dt+e^{-bt^2}\,\mathrm dW_t.$</li>
+    <li><b>Drift $=0$</b> $\iff b=\tfrac14$. Bemærk $f_{xx}=0$, fordi $f$ er lineær i $x$ — normalt for integrerende-faktor-opgaver og et godt tegn på, at opsætningen er rigtig.</li>
+  </ol>
+
+  <div class="trick">
+    <b>Valget af basis kan ikke gå galt</b>
+    $Y_t=e^{-2X_t}$, $X_t=B_t+t$. Med basis $X$: $\mathrm dY=-2Y\,\mathrm dX+2Y\,\mathrm dt=-2Y\,\mathrm dB$. Med basis $B$ og $f(t,x)=e^{-2x-2t}$: $\mathrm dY=-2Y\,\mathrm dt-2Y\,\mathrm dB+2Y\,\mathrm dt=-2Y\,\mathrm dB$. <b>Samme svar.</b> Enhver gyldig basis giver samme facit — du kan kun vælge forkert ved at vælge noget, hvis dynamik du ikke kender.
+    <br><br>
+    <b>Tommelfingerregel til eksamen:</b> brug $B$ som basis og put alt andet ind i $f$. Så er $\mathrm d\langle B\rangle_t=\mathrm dt$ altid, og $f_x$ er automatisk koefficienten foran $\mathrm dB$. Brug kun en anden basis, når opgaven <em>giver</em> dig en SDE for $X$ og spørger til en funktion af netop det $X$.
+  </div>
+
+  <div class="trap">
+    <b>De tre fejl der koster point</b>
+    <b>1.</b> $f_t$ glemmes, når der er et eksplicit $t$ i $f$ ($e^{-bt^2}x$, $tx^2$, $e^{-rt}x$). Screeningsspørgsmål: "optræder $t$ andre steder end som indeks på $X$?" Ja $\Rightarrow$ $f_t\ne0$.<br>
+    <b>2.</b> $\mathrm d\langle X\rangle_t=\mathrm dt$ skrives, selv om $X$ ikke er en BM. Det er $\sigma_t^2\,\mathrm dt$. For geometrisk BM er $\mathrm d\langle X\rangle_t=\sigma^2X_t^2\,\mathrm dt$, så korrektionen er $\tfrac12\sigma^2x^2f_{xx}$.<br>
+    <b>3.</b> $X_t$ differentieres mht. $t$. Brownske stier er ingen steder differentiable; $\partial_t$ rammer <em>kun</em> den eksplicitte $t$-plads.
+  </div>
+
+  <div class="trick">
+    <b>To genveje der sparer tid</b>
+    <b>Produktreglen</b> $\mathrm d(X_tY_t)=X_t\,\mathrm dY_t+Y_t\,\mathrm dX_t+\mathrm d\langle X,Y\rangle_t$ er ofte hurtigere end 2-dim Itô. For $M_t=e^{-bt^2}X_t$ er første faktor deterministisk med endelig variation, så $\mathrm d\langle\cdot\rangle=0$, og svaret står på én linje.
+    <br><br>
+    <b>Martingal-screenen:</b> du behøver næsten aldrig andet end driften. Løs $f_t+\mu f_x+\tfrac12\sigma^2f_{xx}=0$ — én algebraisk ligning — og tjek bagefter $E\int_0^t(\sigma f_x)^2\,\mathrm ds\lt\infty$ for at gå fra lokal til ægte martingal.
+  </div>
+
+  <h3>Den ærlige udgave (integralform)</h3>
+  <div class="eq">
+    $\displaystyle f(t,X_t)=f(0,X_0)+\int_0^t f_t(s,X_s)\,\mathrm ds+\int_0^t f_x(s,X_s)\,\mathrm dX_s+\tfrac12\int_0^t f_{xx}(s,X_s)\,\mathrm d\langle X\rangle_s$
+  </div>
+  <p>Differentialnotationen er bare stenografi for denne. Skal du argumentere for en martingal, er det $\mathrm dX$-integralet, der bærer martingalegenskaben — $\mathrm ds$-leddene er drift.</p>
+</section>
+
+<section>
+  <h2>Kvadratisk variation</h2>
+  <ul>
+    <li>$\big\langle \int H\,\mathrm{d}B\big\rangle_t=\int_0^t H_s^2\,\mathrm{d}s$ — kvadrér integranden, byt $\mathrm{d}B$ ud med $\mathrm{d}s$.</li>
+    <li>$\mathrm{d}t$-led bidrager <em>ikke</em>: $\langle X\rangle$ ser kun martingaldelen.</li>
+    <li>$\langle f(B)\rangle_t=\int_0^t f'(B_s)^2\,\mathrm{d}s$. Fx $\langle B^2\rangle_t=4\int_0^tB_s^2\mathrm{d}s$, $\langle e^{B}\rangle_t=\int_0^te^{2B_s}\mathrm{d}s$.</li>
+    <li>Kontinuert proces med endelig variation (fx $\int_0^tB_s\,\mathrm{d}s$ eller $t$) har $\langle X\rangle_t=0$.</li>
+    <li>Krydsvariation er bilineær: $\langle \int H\mathrm{d}B,\int K\mathrm{d}B\rangle_t=\int_0^tH_sK_s\,\mathrm{d}s$.</li>
+    <li><b>Lévy:</b> kontinuert lokal martingal, $X_0=0$, $\langle X\rangle_t=t$ $\Rightarrow$ $X$ er en standard BM. Bruges på $\int_0^t\mathrm{sgn}(B_s)\mathrm{d}B_s$.</li>
+  </ul>
+  <div class="trap">
+    <b>Faldgrube</b>
+    Varians og kvadratisk variation er ikke det samme. $I_t=\int_0^tB_s\mathrm{d}s$ har $\mathrm{var}(I_t)=t^3/3$ men $\langle I\rangle_t=0$. Omvendt er $\langle B^2\rangle_t$ stokastisk, selvom $\mathrm{var}(B_t^2)=2t^2$ er deterministisk.
+  </div>
+</section>
+
+<section>
+  <h2>Stoptider</h2>
+  <p>Definition: $T$ er stoptid hvis $\{T\le t\}\in\mathscr{F}_t$ for alle $t$.</p>
+  <ul>
+    <li><b>Ja:</b> $\inf\{t\ge0\mid B_t\in F\}$ for lukket $F$; $\inf\{t\mid B_t=t-1\}$; $T\wedge S$, $T\vee S$, $T+S$, $T+c$ for $c\ge0$; konstanter.</li>
+    <li><b>Nej:</b> $T-c$; sidste besøgstid $\sup\{t\le1\mid B_t=0\}$; tidspunktet for maksimum $\sup\{t\in[0,1]\mid B_t=\sup_sB_s\}$ — alt der kræver kendskab til fremtiden.</li>
+  </ul>
+  <div class="trick">
+    <b>Indikatoropskriften (fast quizspørgsmål)</b>
+    $T=a\,\mathbf{1}_A+b\,\mathbf{1}_{A^c}$ med $A\in\mathscr{F}_u$ er en stoptid $\iff$ <em>begge</em> værdier $a,b\ge u$. Så i "$2\cdot\mathbf{1}_{\{B_2\gt1\}}+4\cdot\mathbf{1}_{\{B_2\le1\}}$" ser du bare efter, at ingen værdi er mindre end $2$. Rækkefølgen af $a$ og $b$ er ligegyldig.
+  </div>
+</section>
+
+<section>
+  <h2>Optional stopping og hittetider</h2>
+  <p>Stop $B_t$, $B_t^2-t$ eller $e^{\theta B_t-\theta^2t/2}$ til $T$ og tag middelværdi.</p>
+  <h3>Exit fra $(-a,b)$, $a,b\gt0$</h3>
+  <div class="eq">$P(B_T=b)=\dfrac{a}{a+b},\qquad P(B_T=-a)=\dfrac{b}{a+b},\qquad E[T]=ab$</div>
+  <p>Symmetrisk: $T=\inf\{t\mid |B_t|=a\}$ giver $E[T]=a^2$.</p>
+  <h3>Ensidig hittetid $T_a=\inf\{t\mid B_t=a\}$, $a\gt0$</h3>
+  <ul>
+    <li>$P(T_a\lt\infty)=1$, men $E[T_a]=\infty$.</li>
+    <li>$E[e^{-\lambda T_a}]=e^{-a\sqrt{2\lambda}}$.</li>
+    <li>$T_a\overset{d}{=}a^2T_1$ (skalering).</li>
+  </ul>
+  <div class="trap">
+    <b>Faldgrube</b>
+    $E[B_{T_a}]=a\ne0$ selvom $B$ er martingal: optional stopping kræver uniform integrabilitet eller en begrænset stoptid. Med to barrierer er alt fint.
+  </div>
+</section>
+
+<section>
+  <h2>Maksimum og refleksionsprincippet</h2>
+  <div class="eq">$P(\bar B_t\ge a)=2P(B_t\ge a)=P(|B_t|\ge a),\qquad \bar B_t\overset{d}{=}|B_t|$</div>
+  <ul>
+    <li>$E[\bar B_t]=\sqrt{2t/\pi}$, $\ \mathrm{var}(\bar B_t)=t\big(1-\tfrac2\pi\big)$.</li>
+    <li>$P(T_a\le t)=P(\bar B_t\ge a)=2\big(1-\Phi(a/\sqrt t)\big)$.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Grænseværdier for $t\to\infty$ eller $t\to0$</h2>
+  <div class="trick">
+    <b>Standardiser først</b>
+    Skriv $P(B_t\le c(t))=\Phi\!\big(c(t)/\sqrt t\big)$ og se på $c(t)/\sqrt t$. Fast grænse $c$: $\to\Phi(0)=\tfrac12$. $c(t)=\sqrt t$: konstant $\Phi(1)$. $c(t)=t$: $\to\Phi(\infty)=1$.
+  </div>
+  <p>For middelværdier af eksponentialer: brug $E[e^{aB_t+bt}]=e^{(a^2/2+b)t}$ og se på fortegnet af $a^2/2+b$. Bemærk $e^{B_t-t/2}\to0$ n.s., men $E=1$ hele vejen — det klassiske eksempel på $\lim E\ne E\lim$.</p>
+</section>
+
+<section>
+  <h2>Gaussiske martingaler (opgave 4.1–4.2)</h2>
+  <p>Lad $M$ være kontinuert gaussisk martingal, $M_0=0$, $\Gamma(t)=E[M_t^2]$.</p>
+  <div class="trick">
+    <b>Ét trick dækker hele opgavesættet</b>
+    $M_t=B_{\Gamma(t)}$ i fordeling: <em>erstat $t$ med $\Gamma(t)$ i alle BM-formler</em>. Så følger alt.
+  </div>
+  <table>
+    <tr><td>Centreret</td><td>$E[M_t]=0$</td></tr>
+    <tr><td>Kovarians</td><td>$\mathrm{cov}(M_s,M_t)=\Gamma(s\wedge t)$</td></tr>
+    <tr><td>Tilvækster</td><td>uafhængige, $M_t-M_s\sim N(0,\Gamma(t)-\Gamma(s))$</td></tr>
+    <tr><td>Kvadratisk var.</td><td>$\langle M\rangle_t=\Gamma(t)$, deterministisk</td></tr>
+    <tr><td>Martingal</td><td>$M_t^2-\Gamma(t)$</td></tr>
+    <tr><td>Eksponentiel</td><td>$\exp\!\big(\theta M_t-\tfrac{\theta^2}{2}\Gamma(t)\big)$</td></tr>
+    <tr><td>$\Gamma$</td><td>voksende og kontinuert</td></tr>
+  </table>
+  <p>Eksempel: $\Gamma(t)=2t$ $\Rightarrow$ $\langle M\rangle_t=2t$; $\exp(\theta M_t-\theta^2t)$ martingal, så $\exp(\theta M_t-4t)$ kræver $\theta=\pm2$. Og $E[M_3(M_5-M_3)]=0$, $E[M_3^2(M_5-M_3)^2]=6\cdot4=24$.</p>
+</section>
+
+<section>
+  <h2>Integreret Brownsk bevægelse (opgave 4.3)</h2>
+  <div class="trick">
+    <b>Omskriv til et Itô-integral</b>
+    $\displaystyle\int_0^t B_s\,\mathrm{d}s=\int_0^t (t-s)\,\mathrm{d}B_s$ (partiel integration). Så er alt isometri: $\mathrm{var}=\int_0^t(t-s)^2\mathrm{d}s=\tfrac{t^3}{3}$.
+  </div>
+  <table>
+    <tr><td>Fordeling</td><td>$I_t\sim N(0,t^3/3)$, gaussisk proces</td></tr>
+    <tr><td>Kovarians</td><td>$\mathrm{cov}(I_s,I_t)=s^2\big(\tfrac t2-\tfrac s6\big)$, $s\le t$</td></tr>
+    <tr><td>Med $B$</td><td>$\mathrm{cov}(I_t,B_t)=t^2/2$</td></tr>
+    <tr><td>Variation</td><td>endelig variation, $\langle I\rangle_t=0$</td></tr>
+    <tr><td>Martingal?</td><td>Nej: $E[I_t\mid\mathscr{F}_s]=I_s+(t-s)B_s$</td></tr>
+    <tr><td>Tilvækster</td><td>hverken uafhængige eller stationære</td></tr>
+  </table>
+  <p>Tilvækst over $[u,v]$: $\mathrm{var}\big(\int_u^vB_s\mathrm{d}s\big)=\int_u^v(s^2-u^2)\,\mathrm{d}s$ — voksende i $u$, hvilket netop viser ikke-stationaritet.</p>
+</section>
+
+<section>
+  <h2>Flerdimensional og korreleret BM (opgave 3.2–3.3)</h2>
+  <ul>
+    <li>$\langle\lambda,B_t\rangle$ er BM $\iff\|\lambda\|=1$; generelt $\langle X\rangle_t=\|\lambda\|^2t$.</li>
+    <li>$\|B_t\|^2-dt$ er martingal; $E[\|B_t\|^4]=d(d+2)t^2$; $\|B_t\|^2\overset{d}{=}t\chi^2_d$.</li>
+    <li>$\exp\big(\langle\lambda,B_t\rangle-\tfrac12\|\lambda\|^2t\big)$ er martingal.</li>
+    <li>$W_t=\sqrt{1-\rho^2}B_t^{(1)}+\rho B_t^{(2)}$ er standard BM; $\mathrm{cov}(W_s,B_t^{(2)})=\rho(s\wedge t)$; $\mathrm{corr}(W_t,B_t^{(2)})=\rho$; $\langle W,B^{(2)}\rangle_t=\rho t$; $W_tB_t^{(2)}-\rho t$ er martingal.</li>
+  </ul>
+  <p>Uafhængige koordinater betyder, at krydsvariationen $\langle B^{(i)},B^{(j)}\rangle_t=\delta_{ij}t$ — alle blandede led forsvinder.</p>
+</section>
+
+<section>
+  <h2>Brownsk bro</h2>
+  <p>$X_t=B_t-tB_1$, $0\le t\le1$: centreret gaussisk, $X_0=X_1=0$.</p>
+  <div class="eq">$\mathrm{cov}(X_s,X_t)=s(1-t)=s\wedge t-st$</div>
+  <p>Uafhængig af $B_1$. Ikke en martingal. $\mathrm{var}\big(\int_0^1X_t\mathrm{d}t\big)=\tfrac1{12}$.</p>
+  <p>Regnetrick: gang bare ud og brug $E[B_sB_t]=s\wedge t$ — fire led, og det hele kollapser til $s-st-ts+st=s(1-t)$.</p>
+</section>
+
+<section class="wide">
+  <h2>Mønstergenkendelse: se spørgsmålet, vælg opskriften</h2>
+  <table>
+    <tr><th>Hvis du ser …</th><th>Så gør du</th></tr>
+    <tr><td>$E[(\int H\,\mathrm{d}B)^2]$</td><td>Itô-isometri: $\int_0^tE[H_s^2]\mathrm{d}s$</td></tr>
+    <tr><td>$B_t$ plus et $\mathrm{d}B$-integral, i anden</td><td>Saml til $\int(1+H)\mathrm{d}B$, så isometri</td></tr>
+    <tr><td>Produkt af 3 (eller 5) $B$'er</td><td>Svaret er $0$ (paritet)</td></tr>
+    <tr><td>Produkt af 4 $B$'er</td><td>Wick: tre parringer af $s\wedge t$</td></tr>
+    <tr><td>"Brug Itô på …" — men hvilken $f$?</td><td>Basis = den proces du har dynamik for; erstat den med $x$ og eksplicit $t$ med $t$; differentiér $f$ som almindelig kalkulus</td></tr>
+    <tr><td>"Hvilken er en martingal?"</td><td>Hvis $f(t,B_t)$: Itô, test $f_t+\tfrac12f_{xx}=0$. Hvis $\int H\,\mathrm dB$: adaptet + $E\int H^2\mathrm ds<\infty$. Ellers: brug definitionen $E[X_t\mid\mathscr F_s]=X_s$.</td></tr>
+    <tr><td>"Hvilken type proces er $f(t)B_{g(t)}$?"</td><td>Centreret; $\mathrm{cov}=f(s)f(t)(g(s)\wedge g(t))$</td></tr>
+    <tr><td>"Hvilken er en stoptid?"</td><td>Indikatoropskriften: alle værdier $\ge$ måletidspunktet</td></tr>
+    <tr><td>$\langle X,X\rangle_t$</td><td>Kvadrér integranden, $\mathrm{d}B\to\mathrm{d}s$; $\mathrm{d}t$-led ignoreres</td></tr>
+    <tr><td>$E[\mathbf{1}_{\{\cdot\}}]$ eller grænse heraf</td><td>Det er en sandsynlighed; standardiser med $\sqrt t$</td></tr>
+    <tr><td>$E[T]$ for en exit-tid</td><td>$ab$ ved to barrierer; $\infty$ ved én</td></tr>
+    <tr><td>$\int_0^tB_s\,\mathrm{d}s$ optræder</td><td>Omskriv til $\int_0^t(t-s)\mathrm{d}B_s$</td></tr>
+    <tr><td>Gaussisk martingal med $E[M_t^2]=\Gamma(t)$</td><td>Erstat $t$ med $\Gamma(t)$ i BM-formlerne</td></tr>
+  </table>
+</section>
+
+<section class="wide">
+  <h2>Tyve faldgruber, kort</h2>
+  <ul>
+    <li>$\int_0^tB_s\mathrm{d}B_s=\tfrac12B_t^2-\tfrac12t$ — ikke $\tfrac12B_t^2$.</li>
+    <li>Itô-korrektionen $\tfrac12f_{xx}$ glemmes; den er hele forskellen mellem rigtigt og forkert svar.</li>
+    <li>$f_t$ glemmes, når $f$ indeholder et eksplicit $t$ (fx $e^{-bt^2}x$, $tx$, $e^{-rt}x$).</li>
+    <li>$X_t$ differentieres mht. $t$ inde i Itô — $\partial_t$ rammer kun den eksplicitte $t$-plads.</li>
+    <li>$\langle X\rangle_t$ er ikke $\mathrm{var}(X_t)$ — kun for gaussiske martingaler falder de sammen.</li>
+    <li>Endelig variation $\Rightarrow$ kvadratisk variation $0$, ikke omvendt.</li>
+    <li>$\int H\,\mathrm{d}B$ er kun gaussisk når $H$ er deterministisk.</li>
+    <li>$\mathbf{1}_A^2=\mathbf{1}_A$, ikke $\mathbf{1}_A/2$.</li>
+    <li>$E[B_s^2B_t]=0$ ved paritet — spild ikke tid på betingning.</li>
+    <li>Ved betingning: uafhængigheden gælder for tilvæksten $B_t-B_s$, ikke for $B_t$.</li>
+    <li>$E[B_{T}]=0$ kræver pæn $T$; ved ensidig hittetid holder det ikke.</li>
+    <li>$\theta$ i eksponentialmartingalen har to løsninger, $\pm$; svar med kun ét fortegn er fælder.</li>
+    <li>$e^{\theta B_t+(\mu-\theta^2/2)t}$: fortegnet på $\mu$, ikke på $\theta$, afgør sub/super.</li>
+    <li>Sidste-besøgstider og argmax er aldrig stoptider.</li>
+    <li>I indikatorstoptider skal <em>begge</em> værdier være store nok.</li>
+    <li>$\mathrm{cov}(B_s,B_t)=s\wedge t$ — ikke $st$.</li>
+    <li>$E[B_t^4]=3t^2$ — ikke $t^2$ og ikke $3t^4$.</li>
+    <li>Ved skalering: $B_{ct}=\sqrt c\,B_t$ i fordeling, så $\sqrt{}$ ikke $c$.</li>
+    <li>Den integrerede BM er gaussisk, men ikke en martingal.</li>
+    <li>Ved korreleret BM: $\sqrt{1-\rho^2}$ hører til $B^{(1)}$, og kun $\rho$ overlever i kovariansen.</li>
+    <li>$\|B_t\|^2-dt$: husk dimensionen $d$, ikke $1$.</li>
+    <li>Ingen minuspoint: gæt altid, og gæt efter gradtjek — det efterlader typisk to muligheder.</li>
+  </ul>
+</section>
+
+<section class="wide">
+  <h2>Facitliste over småting det betaler sig at kunne udenad</h2>
+  <table>
+    <tr><td>$E[B_t^2]=t$</td><td>$E[B_t^4]=3t^2$</td><td>$E[B_t^6]=15t^3$</td></tr>
+    <tr><td>$E[e^{\theta B_t}]=e^{\theta^2t/2}$</td><td>$E[|B_t|]=\sqrt{2t/\pi}$</td><td>$E[\bar B_t]=\sqrt{2t/\pi}$</td></tr>
+    <tr><td>$\int_0^tB_s\mathrm{d}B_s=\tfrac{B_t^2-t}{2}$</td><td>$\mathrm{var}\big(\int_0^tB\mathrm{d}s\big)=\tfrac{t^3}{3}$</td><td>$\mathrm{cov}(I_t,B_t)=\tfrac{t^2}{2}$</td></tr>
+    <tr><td>$E[B_s^2B_t^2]=st+2s^2$</td><td>$E[B_sB_t^3]=3st$</td><td>$E[B_s^3B_t]=3s^2$</td></tr>
+    <tr><td>exit $(-a,b)$: $E[T]=ab$</td><td>$P(\text{ramme }b)=\tfrac{a}{a+b}$</td><td>$E[T_a]=\infty$</td></tr>
+    <tr><td>$\Phi(0)=0{,}5$</td><td>$\Phi(1)\approx0{,}841$</td><td>$\Phi(2)\approx0{,}977$</td></tr>
+  </table>
+</section>
+
+</div>
+
+<footer>
+  Sidste minut før du klikker: har svaret rigtig tidsgrad? Er der et $\tfrac12$ fra Itô eller et minus fra $-t$ der mangler? Er der to fortegn på $\theta$? Og er der overhovedet et felt uden markering — for der er ingen minuspoint.
+</footer>
+
+</div>
+
+<script>
+(function () {
+  function reveal(){ document.body.classList.add('ready'); }
+  function go(){
+    if (window.MathJax && MathJax.startup && MathJax.startup.promise) {
+      MathJax.startup.promise
+        .then(function(){ return MathJax.typesetPromise([document.body]); })
+        .then(reveal).catch(reveal);
+    } else { setTimeout(go, 120); }
+  }
+  go();
+  setTimeout(reveal, 6000);
+})();
+</script>
+</body>
+</html>
