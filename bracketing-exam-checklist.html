@@ -1,0 +1,507 @@
+<title>Bracketing Exam Checklist</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --paper:#F5F6F8; --sheet:#FFFFFF; --ink:#18212C; --muted:#586473; --rule:#D8DDE4;
+  --accent:#1D58A3; --accent-soft:#E6EEF8; --q:#EEF1F4;
+  --serif:"Source Serif 4", Georgia, "Times New Roman", serif;
+  --sans:"Archivo", "Helvetica Neue", Arial, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#11151B; --sheet:#171C24; --ink:#E3E8EF; --muted:#9AA6B5; --rule:#2B333E;
+    --accent:#86B4F2; --accent-soft:#1C2A3D; --q:#1C222B; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#11151B; --sheet:#171C24; --ink:#E3E8EF; --muted:#9AA6B5; --rule:#2B333E;
+  --accent:#86B4F2; --accent-soft:#1C2A3D; --q:#1C222B; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:17px;line-height:1.6;margin:0}
+.wrap{max-width:780px;margin:0 auto;padding-inline:20px;padding-block:40px 70px}
+h1,h2,h3{font-family:var(--sans);line-height:1.2;text-wrap:balance;margin:0}
+h1{font-size:2.1rem;font-weight:700}
+h2{font-size:1.35rem;font-weight:700;margin-top:2.6rem;padding-top:.9rem;border-top:2px solid var(--ink)}
+p{margin:.6rem 0}
+ul{padding-left:1.2rem;margin:.4rem 0}
+li{margin:.2rem 0}
+.eyebrow{font-family:var(--mono);font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.lede{color:var(--muted);margin-top:.6rem}
+mjx-container[display="true"]{overflow-x:auto;overflow-y:hidden;max-width:100%}
+ol.steps{list-style:none;padding:0;margin:1.2rem 0 0;display:grid;gap:12px}
+ol.steps>li{background:var(--sheet);border:1px solid var(--rule);padding:14px 18px;display:grid;grid-template-columns:2.4rem 1fr;gap:10px;margin:0}
+.num{font-family:var(--mono);font-size:1.3rem;font-weight:500;color:var(--accent);line-height:1.2}
+.step h3{font-size:1.08rem;font-weight:600;margin-bottom:.2rem}
+.step p:first-of-type{margin-top:.2rem}
+.ask{font-style:italic;color:var(--muted)}
+.tablewrap{overflow-x:auto;margin:.8rem 0;border:1px solid var(--rule);background:var(--sheet)}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:.93rem}
+th,td{text-align:left;vertical-align:top;padding:8px 12px;border-bottom:1px solid var(--rule)}
+th{font-family:var(--sans);font-weight:600;font-size:.8rem;color:var(--muted);background:var(--q)}
+tr:last-child td{border-bottom:0}
+td.t{font-family:var(--mono);font-weight:500;color:var(--accent)}
+.tip{background:var(--accent-soft);padding:12px 16px;margin:.8rem 0}
+.ex{background:var(--sheet);border:1px solid var(--rule);padding:16px 18px;margin-top:1rem}
+.ex ol{padding-left:1.3rem;margin:.4rem 0}
+.ex li{margin:.35rem 0}
+.tools{background:var(--accent-soft);padding:14px 18px;margin:1rem 0}
+.tools p{margin:.5rem 0}
+.sol p,.sol>div{margin:.55rem 0}
+.sol ul{margin:.3rem 0 .3rem}
+.lab{font-family:var(--sans);font-weight:600;font-size:.92rem;color:var(--accent)}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin:1rem 0 .4rem}
+.filters button{font-family:var(--sans);font-size:.85rem;border:1px solid var(--rule);background:var(--sheet);color:var(--ink);padding:5px 12px;border-radius:4px;cursor:pointer}
+.filters button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--sheet)}
+.filters button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.card{background:var(--sheet);border:1px solid var(--rule);padding:14px 18px;margin-top:14px}
+.card-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 10px}
+.card-head .n{font-family:var(--mono);color:var(--accent);font-weight:500}
+.card-head h3{font-size:1.05rem;font-weight:600}
+.badge{font-family:var(--mono);font-size:.7rem;letter-spacing:.04em;border:1px solid var(--muted);color:var(--muted);padding:0 6px;border-radius:3px}
+.badge.a,.badge.b,.badge.c{border-color:var(--accent);color:var(--accent)}
+.badge.x{border-color:#B4541F;color:#B4541F}
+.setup{font-style:italic;color:var(--muted);margin:.4rem 0 .6rem}
+.setup mjx-container{font-style:normal}
+dl.six{display:grid;grid-template-columns:5.6rem 1fr;gap:4px 12px;margin:0}
+dl.six dt{font-family:var(--mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding-top:.3rem}
+dl.six dd{margin:0;min-width:0}
+@media (max-width:560px){ dl.six{grid-template-columns:1fr;gap:0} dl.six dt{padding-top:.5rem} }
+@media (max-width:560px){ body{font-size:16px} h1{font-size:1.7rem} ol.steps>li{grid-template-columns:1.8rem 1fr;padding:12px 14px} }
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']],
+    macros: { E: "\\mathbb{E}", ind: "\\mathbf{1}", R: "\\mathbb{R}", Pn: "\\mathbb{P}^{(n)}",
+      Var: "\\operatorname{Var}", Cov: "\\operatorname{Cov}",
+      Nb: "N_{[\\,]}", Jb: "J_{[\\,]}", Gn: "\\mathbb{G}^{(n)}" } },
+  svg: { fontCache: 'global' }, options: { enableMenu: false }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.min.js"></script>
+
+<div class="wrap">
+<p class="eyebrow">Statistics for Insurance · Bracketing CLT</p>
+<h1>Bracketing Exam Checklist</h1>
+<p class="lede">Six steps for any “show this process converges” question. Answer the question in each step, write the line, move on.</p>
+
+<ol class="steps">
+  <li><div class="num">1</div><div class="step">
+    <h3>Find $f_t$</h3>
+    <p class="ask">What is inside the sum?</p>
+    <p>Write the estimator as $\frac1n\sum_i(\dots)$. The thing inside, as a function of one observation $z$, is $f_t(z)$. The index $t$ is whatever the statement must hold uniformly over.</p>
+    <ul>
+      <li><b>Ratio, log, inverse…?</b> Find the average(s) inside, do steps 2–5 for each, and use the map in step 6.</li>
+      <li><b>Rate not $\sqrt n$</b> (e.g. $\sqrt{nh}$)? Put the extra factor into $f$. Then $f$ depends on $n$ → Theorem 1.20.</li>
+    </ul>
+  </div></li>
+
+  <li><div class="num">2</div><div class="step">
+    <h3>Envelope</h3>
+    <p class="ask">For fixed $z$, how big can $|f_t(z)|$ get over all $t$?</p>
+    <p>Call it $F(z)$ and check $\E F(Z)^2\lt\infty$.</p>
+  </div></li>
+
+  <li><div class="num">3</div><div class="step">
+    <h3>Draw it</h3>
+    <p class="ask">Fix $z$. What does $t\mapsto f_t(z)$ look like?</p>
+    <ul>
+      <li>It <b>jumps</b> (indicators) → <b>type A</b></li>
+      <li>It is a <b>monotone ramp</b> with bounded slope → <b>type B</b></li>
+      <li>It <b>wiggles</b> (not monotone) but has bounded slope → <b>type C</b></li>
+    </ul>
+  </div></li>
+
+  <li><div class="num">4</div><div class="step">
+    <h3>One cell $[a,b)$: bracket, width, grid</h3>
+    <p class="ask">What are the smallest and largest values of $f_t$ on the cell, and what is $\E[(u-l)^2]$?</p>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Type</th><th>Bracket</th><th>Width²</th><th>Grid</th><th>Count $N$</th></tr></thead>
+      <tbody>
+        <tr><td class="t">A</td><td>$l,u=f$ at the two ends</td><td>$P(a\lt Z\lt b)$ <br>(or $\E[g(Z)^2;\,a\lt Z\lt b]$)</td><td>each cell mass $\varepsilon^2$ (quantiles)</td><td>$\approx1/\varepsilon^2$</td></tr>
+        <tr><td class="t">B</td><td>$l,u=f$ at the two ends</td><td>$\le\text{slope}^2\,(b-a)^2$</td><td>equal spacing $\delta=\varepsilon/\text{slope}$</td><td>$\approx$ length$/\delta$</td></tr>
+        <tr><td class="t">C</td><td>$f_{t_j}\pm\delta M(z)$, $M\ge|\partial_tf|$</td><td>$(2\delta\|M\|)^2$</td><td>$\delta=\varepsilon/(2\|M\|)$</td><td>$\approx$ length$\cdot\|M\|/\varepsilon$</td></tr>
+      </tbody>
+    </table></div>
+    <div class="tip">Index goes to $\infty$ (type B or C)? Add one tail bracket $[0,\ \text{envelope beyond }D]$ and choose $D$ so its width is $\le\varepsilon$.</div>
+  </div></li>
+
+  <li><div class="num">5</div><div class="step">
+    <h3>Conclude Donsker</h3>
+    <p>Write $N\le C\varepsilon^{-V}$. Then</p>
+    $$\int_0^1\sqrt{\log N}\,d\varepsilon\le\sqrt{\log C}+\tfrac{\sqrt{\pi V}}{2}\lt\infty,$$
+    <p>so the class is Donsker by Theorem 1.19.</p>
+  </div></li>
+
+  <li><div class="num">6</div><div class="step">
+    <h3>Limit</h3>
+    <p>Covariance $=\E[f_sf_t]-\E f_s\,\E f_t$. If there was a map in step 1: differentiate the map and apply the derivative to the limit process (functional δ-method, Theorem 1.17).</p>
+  </div></li>
+</ol>
+
+<h2>Mini-example</h2>
+<div class="ex">
+  <p><b>Question.</b> Show that the empirical Laplace transform $\frac1n\sum_ie^{-\theta Z_i}$, $\theta\in[1,2]$, $Z\ge0$, satisfies a functional CLT.</p>
+  <ol>
+    <li>$f_\theta(z)=e^{-\theta z}$, index $\theta\in[1,2]$.</li>
+    <li>Envelope $F\equiv1$ (since $z,\theta\ge0$).</li>
+    <li>$\theta\mapsto e^{-\theta z}$ is decreasing, slope $ze^{-\theta z}\le ze^{-z}\le1/e$ → <b>type B</b>.</li>
+    <li>On $[a,b]$: bracket $[e^{-bz},e^{-az}]$, width $\le(b-a)/e$. Spacing $\delta=e\varepsilon$ → $N\le1/(e\varepsilon)+1\le2/\varepsilon$.</li>
+    <li>$C=2$, $V=1$ → Donsker.</li>
+    <li>Covariance $\E e^{-(s+t)Z}-\E e^{-sZ}\,\E e^{-tZ}$.</li>
+  </ol>
+</div>
+
+<h2 id="practice">20 exam-style solutions</h2>
+<p>Each example is written as you would hand it in. Two facts are used throughout, so prove them once and cite them as <b>(Q)</b> and <b>(E)</b>. Notation: $\|\cdot\|=\|\cdot\|_{L_2(P)}$, $m_2=\E Z^2$, $\mathcal F$ the class, $F$ the envelope.</p>
+
+<div class="tools">
+  <p><b class="lab">(Q) Quantile grid.</b> Let $\mu$ be a finite measure on $\R$ with total mass $m$, and let $\eta>0$. Put $k=\lfloor m/\eta\rfloor+1$, $t_0=-\infty$, $t_k=\infty$ and $t_j=\inf\{t:\mu(-\infty,t]\ge j\eta\}$ for $0\lt j\lt k$. Then $\mu\big((t_{j-1},t_j)\big)\le\eta$ for all $j$, using $k\le m/\eta+1$ cells.</p>
+  <p><i>Proof.</i> For $t\lt t_j$, $\mu(-\infty,t]\lt j\eta$; letting $t\uparrow t_j$ gives $\mu(-\infty,t_j)\le j\eta$. Right-continuity gives $\mu(-\infty,t_{j-1}]\ge(j-1)\eta$. Subtract: $\mu((t_{j-1},t_j))\le\eta$. For the last cell, $m-\mu(-\infty,t_{k-1}]\le m-(k-1)\eta\lt\eta$ since $(k-1)\eta>m-\eta$. ∎</p>
+  <p><b class="lab">(E) Entropy bound.</b> If $\Nb(\varepsilon)\le C\varepsilon^{-V}$ on $(0,1)$ with $C\ge1$, then
+  $$\int_0^1\sqrt{\log\Nb(\varepsilon)}\,d\varepsilon\le\sqrt{\log C}+\sqrt V\int_0^1\sqrt{\log(1/\varepsilon)}\,d\varepsilon=\sqrt{\log C}+\sqrt V\,\Gamma(\tfrac32)=\sqrt{\log C}+\tfrac{\sqrt{\pi V}}2\lt\infty,$$
+  using $\sqrt{a+b}\le\sqrt a+\sqrt b$ and the substitution $\varepsilon=e^{-x}$. The integrand is integrable, so also $\int_0^{\delta_n}\sqrt{\log\Nb}\,d\varepsilon\to0$ for $\delta_n\to0$. ∎</p>
+  <p>Only $\varepsilon\in(0,1)$ matters; there, bounds like $\varepsilon^{-2}+1\le2\varepsilon^{-2}$ turn counts into the form $C\varepsilon^{-V}$.</p>
+</div>
+
+<div class="filters" role="group" aria-label="Filter examples">
+  <button type="button" id="f-all" data-f="all" aria-pressed="true">All</button>
+  <button type="button" id="f-a" data-f="a" aria-pressed="false">Type A</button>
+  <button type="button" id="f-b" data-f="b" aria-pressed="false">Type B</button>
+  <button type="button" id="f-c" data-f="c" aria-pressed="false">Type C</button>
+  <button type="button" id="f-map" data-f="map" aria-pressed="false">With a map</button>
+  <button type="button" id="f-n" data-f="n" aria-pressed="false">Changing class</button>
+  <button type="button" id="f-x" data-f="x" aria-pressed="false">Where it fails</button>
+</div>
+
+<div id="cards">
+
+<!-- 01 -->
+<article class="card" data-k="a">
+  <div class="card-head"><span class="n">01</span><h3>Empirical cdf</h3><span class="badge a">A</span></div>
+  <p class="setup">Let $Z_1,Z_2,\dots$ be iid with arbitrary cdf $F$. Show that $\sqrt n(F^{(n)}-F)\overset d\to\mathbb B\circ F$ in $\ell^\infty(\R)$.</p>
+  <div class="sol">
+    <p><b class="lab">Class.</b> $F^{(n)}(t)=\Pn f_t$ with $f_t(z)=\ind(z\le t)$, so $\sqrt n(F^{(n)}(t)-F(t))=\Gn f_t$, $\mathcal F=\{f_t:t\in\R\}$. Envelope $F\equiv1$, $\E F^2=1\lt\infty$.</p>
+    <p><b class="lab">Brackets.</b> Fix $\varepsilon\in(0,1)$ and take the grid of (Q) with $\mu=P_Z$, $\eta=\varepsilon^2$: $k\le\varepsilon^{-2}+1$ cells with $F(t_j-)-F(t_{j-1})\le\varepsilon^2$. For $t\in[t_{j-1},t_j)$, since $t\mapsto\ind(z\le t)$ is non-decreasing,
+    $$l_j=\ind(z\le t_{j-1})\le f_t(z)\le\ind(z\lt t_j)=u_j .$$
+    Now $u_j-l_j=\ind(t_{j-1}\lt z\lt t_j)\in\{0,1\}$, so $(u_j-l_j)^2=u_j-l_j$ and
+    $$\|u_j-l_j\|^2=P(t_{j-1}\lt Z\lt t_j)=F(t_j-)-F(t_{j-1})\le\varepsilon^2 .$$</p>
+    <p><b class="lab">Count.</b> $\Nb(\varepsilon,\mathcal F,L_2(P))\le k\le\varepsilon^{-2}+1\le2\varepsilon^{-2}$. By (E) with $C=2$, $V=2$: $\Jb\le\sqrt{\log2}+\sqrt{\pi/2}\lt\infty$. So $\mathcal F$ is $P$-Donsker (Thm 1.19).</p>
+    <p><b class="lab">Limit.</b> $\Cov(\mathbb Gf_s,\mathbb Gf_t)=\E[\ind(Z\le s)\ind(Z\le t)]-F(s)F(t)=F(s\wedge t)-F(s)F(t)$. Since $F$ is non-decreasing, $F(s\wedge t)=F(s)\wedge F(t)$, which is the covariance of $\mathbb B(F(s)),\mathbb B(F(t))$ (as $\Cov(\mathbb B(u),\mathbb B(v))=u\wedge v-uv$). Centred Gaussian processes with equal covariances have equal laws, so the limit is $\mathbb B\circ F$. ∎</p>
+  </div>
+</article>
+
+<!-- 02 -->
+<article class="card" data-k="a map">
+  <div class="card-head"><span class="n">02</span><h3>Cumulative hazard</h3><span class="badge a">A</span><span class="badge">map</span></div>
+  <p class="setup">Let $\tau$ satisfy $F(\tau)\lt1$ and $\Lambda^{(n)}=-\log(1-F^{(n)})$. Show that $\sqrt n(\Lambda^{(n)}-\Lambda)$ converges in $\ell^\infty([0,\tau])$ and find the covariance.</p>
+  <div class="sol">
+    <p><b class="lab">Class.</b> $\Lambda^{(n)}=\phi(F^{(n)})$ with $\phi(h)(t)=-\log(1-h(t))$. The only average is $F^{(n)}$, so the class is that of 01. By 01 and Lemma 1.6, $\sqrt n(F^{(n)}-F)\overset d\to\mathbb B\circ F$ in $\ell^\infty([0,\tau])$.</p>
+    <p><b class="lab">Map.</b> Let $c=\tfrac{1+F(\tau)}2\lt1$ and $D_\phi=\{h:-1\lt h\lt c\text{ on }[0,\tau]\}$. On $(-1,c)$, $\varphi(x)=-\log(1-x)$ has $\varphi'(x)=\frac1{1-x}\le\frac1{1-c}$ and $\varphi''(x)=\frac1{(1-x)^2}\le\frac1{(1-c)^2}$. So $\varphi'$ is bounded and uniformly continuous, and Lemma 1.10(2) gives Hadamard differentiability at $F\in D_\phi$ with
+    $$\phi'_F(h)(t)=\frac{h(t)}{1-F(t)} .$$
+    Also $F^{(n)}(\tau)\to F(\tau)\lt c$ a.s., so $P(F^{(n)}\in D_\phi)\to1$.</p>
+    <p><b class="lab">Limit.</b> By Thm 1.17, $\sqrt n(\Lambda^{(n)}-\Lambda)\overset d\to\dfrac{\mathbb B(F(t))}{1-F(t)}$ in $\ell^\infty([0,\tau])$. For $s\le t$:
+    $$\Cov=\frac{F(s)-F(s)F(t)}{(1-F(s))(1-F(t))}=\frac{F(s)(1-F(t))}{(1-F(s))(1-F(t))}=\frac{F(s\wedge t)}{1-F(s\wedge t)} .$$
+    At $s=t$ this is $F(t)/(1-F(t))$, agreeing with Thm 1.12. ∎</p>
+  </div>
+</article>
+
+<!-- 03 -->
+<article class="card" data-k="a map">
+  <div class="card-head"><span class="n">03</span><h3>Quantile process (VaR)</h3><span class="badge a">A</span><span class="badge">map</span></div>
+  <p class="setup">Let $0\lt p\lt q\lt1$ and let $F$ be $C^1$ with $f=F'>0$ on $[a,b]=[F^{-1}(p)-\eta,F^{-1}(q)+\eta]$. Show that $\sqrt n\big((F^{(n)})^{-1}-F^{-1}\big)$ converges in $\ell^\infty([p,q])$, and give the limit for $\widehat{\mathrm{VaR}}_\alpha$.</p>
+  <div class="sol">
+    <p><b class="lab">Class.</b> $(F^{(n)})^{-1}=\phi(F^{(n)})$ with $\phi$ the inverse map; the average is $F^{(n)}$, class of 01. By 01 and Lemma 1.6, $\sqrt n(F^{(n)}-F)\overset d\to\mathbb B\circ F$ in $\ell^\infty([a,b])$. The limit has continuous paths ($\mathbb B$ and $F$ continuous on $[a,b]$), so it lies in $C[a,b]$.</p>
+    <p><b class="lab">Map.</b> By Lemma 1.10(1)(i), $\phi$ is Hadamard differentiable at $F$ tangentially to $C[a,b]$, with $\phi'_F(h)=-(h/f)\circ F^{-1}$.</p>
+    <p><b class="lab">Limit.</b> By Thm 1.17, and $F(F^{-1}(u))=u$ for continuous $F$:
+    $$\sqrt n\big((F^{(n)})^{-1}-F^{-1}\big)(u)\overset d\to-\frac{\mathbb B(u)}{f(q_u)},\qquad q_u=F^{-1}(u),$$
+    $$\Cov=\frac{u\wedge v-uv}{f(q_u)f(q_v)} .$$
+    In particular, for $\alpha\in[p,q]$: $\sqrt n(\widehat{\mathrm{VaR}}_\alpha-\mathrm{VaR}_\alpha)\overset d\to N\big(0,\alpha(1-\alpha)/f(q_\alpha)^2\big)$. ∎</p>
+  </div>
+</article>
+
+<!-- 04 -->
+<article class="card" data-k="a map">
+  <div class="card-head"><span class="n">04</span><h3>Mean excess function</h3><span class="badge a">A</span><span class="badge">map</span></div>
+  <p class="setup">Let $Z\ge0$ with $m_2\lt\infty$ and $F(U)\lt1$. Prove a functional CLT for $e_n(u)$ on $[0,U]$.</p>
+  <div class="sol">
+    <p><b class="lab">Class.</b> $e_n(u)=\Pn f_u/\Pn g_u-u$ with $f_u=z\ind(z>u)$, $g_u=\ind(z>u)$, $u\in[0,U]$. Class $\mathcal F\cup\mathcal G$, envelope $z+1$, $\E(Z+1)^2\le2m_2+2\lt\infty$.</p>
+    <p><b class="lab">Brackets for $\mathcal F$.</b> Let $\mu(A)=\E[Z^2\ind(Z\in A)]$ (mass $m_2$). Use (Q) with $\eta=\varepsilon^2$, cut at $U$: $0=a_0\lt\dots\lt a_k=U$, $k\le m_2/\varepsilon^2+1$, $\mu((a_{j-1},a_j))\le\varepsilon^2$. For $u\in[a_{j-1},a_j)$: if $z\ge a_j$ then $z>u$; if $z>u$ then $z>a_{j-1}$. Hence
+    $$l_j=z\ind(z\ge a_j)\le f_u\le z\ind(z>a_{j-1})=u_j,\qquad \|u_j-l_j\|^2=\E[Z^2\ind(a_{j-1}\lt Z\lt a_j)]\le\varepsilon^2 .$$
+    Add the singleton $[f_U,f_U]$: $\Nb(\mathcal F)\le m_2/\varepsilon^2+2$.</p>
+    <p><b class="lab">Brackets for $\mathcal G$.</b> $g_u=1-\ind(z\le u)$; the brackets of 01 give $\Nb(\mathcal G)\le\varepsilon^{-2}+2$.</p>
+    <p><b class="lab">Count.</b> Union: $\Nb\le(m_2+1)\varepsilon^{-2}+4\le(m_2+5)\varepsilon^{-2}$. By (E), $\Jb\le\sqrt{\log(m_2+5)}+\sqrt\pi$, so $\mathcal F\cup\mathcal G$ is Donsker. Hence $\sqrt n(\Pn f_\cdot-A,\Pn g_\cdot-B)\overset d\to(\mathbb Gf_\cdot,\mathbb Gg_\cdot)$ jointly, with $A(u)=Pf_u$, $B(u)=1-F(u)\ge c:=1-F(U)>0$.</p>
+    <p><b class="lab">Map.</b> $\phi(A,B)=A/B-\mathrm{id}$ on $\{B\ge c/2\}$. For $t_n\to0$, $h_{in}\to h_i$ uniformly:
+    $$\frac1{t_n}\Big(\frac{A+t_nh_{1n}}{B+t_nh_{2n}}-\frac AB\Big)=\frac{h_{1n}B-Ah_{2n}}{B(B+t_nh_{2n})}\to\frac{h_1}B-\frac{Ah_2}{B^2}$$
+    uniformly, since $B(B+t_nh_{2n})\ge c^2/2$ eventually and $A\le\E Z$.</p>
+    <p><b class="lab">Limit.</b> Thm 1.17 and linearity of $\mathbb G$, with $m(u)=A/B=e_F(u)+u$:
+    $$\sqrt n(e_n-e_F)\overset d\to\frac{\mathbb G(h_u)}{1-F(u)},\qquad h_u=(z-m(u))\ind(z>u),\quad Ph_u=A-mB=0 ,$$
+    $$\Cov(s,t)=\frac{\E[(Z-m(s))(Z-m(t))\ind(Z>s\vee t)]}{(1-F(s))(1-F(t))} .$$
+    At $s=t=u$: $\E[(Z-m)^2;Z>u]=(1-F(u))\Var(Z\mid Z>u)=(1-F(u))(e^{(2)}_F-e_F^2)$, giving variance $\dfrac{e^{(2)}_F-e_F^2}{1-F(u)}$, as in Thm 1.11. ∎</p>
+  </div>
+</article>
+
+<!-- 05 -->
+<article class="card" data-k="a">
+  <div class="card-head"><span class="n">05</span><h3>Truncated first moment</h3><span class="badge a">A</span></div>
+  <p class="setup">Let $Z\ge0$, $m_2\lt\infty$, $M(t)=\E[Z\ind(Z\le t)]$. Show $\sqrt n(M_n-M)$ converges in $\ell^\infty(\R)$, where $M_n(t)=\Pn[z\ind(z\le t)]$.</p>
+  <div class="sol">
+    <p><b class="lab">Class.</b> $f_t=z\ind(z\le t)$, $t\in\R$. Envelope $z$, $\E Z^2=m_2\lt\infty$.</p>
+    <p><b class="lab">Brackets.</b> $z\ge0$, so $t\mapsto f_t(z)$ is non-decreasing (jump of height $z$ at $t=z$). Let $\mu(A)=\E[Z^2\ind(Z\in A)]$ and take the (Q) grid with $\eta=\varepsilon^2$. For $t\in[t_{j-1},t_j)$:
+    $$l_j=z\ind(z\le t_{j-1})\le f_t\le z\ind(z\lt t_j)=u_j,\qquad\|u_j-l_j\|^2=\E[Z^2\ind(t_{j-1}\lt Z\lt t_j)]\le\varepsilon^2 .$$</p>
+    <p><b class="lab">Count.</b> $\Nb\le m_2/\varepsilon^2+1\le(m_2+1)\varepsilon^{-2}$. By (E), $\Jb\le\sqrt{\log(m_2+1)}+\sqrt\pi$: Donsker.</p>
+    <p><b class="lab">Limit.</b> $f_sf_t=z^2\ind(z\le s\wedge t)$, so $\Cov(\mathbb G(s),\mathbb G(t))=\E[Z^2\ind(Z\le s\wedge t)]-M(s)M(t)$. ∎</p>
+  </div>
+</article>
+
+<!-- 06 -->
+<article class="card" data-k="a">
+  <div class="card-head"><span class="n">06</span><h3>Signed weight, not monotone</h3><span class="badge a">A</span></div>
+  <p class="setup">Let $Z$ be real-valued with $m_2\lt\infty$. Show $\{z\ind(z\le t):t\in\R\}$ is Donsker.</p>
+  <div class="sol">
+    <p><b class="lab">Class.</b> $f_t=z\ind(z\le t)$, envelope $|z|$, $\E Z^2\lt\infty$.</p>
+    <p><b class="lab">Shape.</b> The jump at $t=z$ has height $z$, which may be negative, so $f_t$ is not monotone in $t$. Use a bracket centred at the left endpoint.</p>
+    <p><b class="lab">Brackets.</b> $\mu(A)=\E[Z^2\ind(Z\in A)]$; (Q) with $\eta=\varepsilon^2/4$: $k\le4m_2/\varepsilon^2+1$. For $t\in[t_{j-1},t_j)$, $f_t-f_{t_{j-1}}=z\ind(t_{j-1}\lt z\le t)$, so
+    $$|f_t-f_{t_{j-1}}|\le|z|\ind(t_{j-1}\lt z\lt t_j)=:r_j,\qquad f_t\in[f_{t_{j-1}}-r_j,\ f_{t_{j-1}}+r_j] ,$$
+    $$\|2r_j\|^2=4\,\E[Z^2\ind(t_{j-1}\lt Z\lt t_j)]\le4\cdot\varepsilon^2/4=\varepsilon^2 .$$</p>
+    <p><b class="lab">Count.</b> $\Nb\le(4m_2+1)\varepsilon^{-2}$; (E) gives $\Jb\le\sqrt{\log(4m_2+1)}+\sqrt\pi$: Donsker.</p>
+    <p><b class="lab">Limit.</b> $\Cov=\E[Z^2\ind(Z\le s\wedge t)]-M(s)M(t)$, $M(t)=\E[Z\ind(Z\le t)]$. (Alternative: write $z=z^+-z^-$, apply 05 to each part, and use the sum rule.) ∎</p>
+  </div>
+</article>
+
+<!-- 07 -->
+<article class="card" data-k="b">
+  <div class="card-head"><span class="n">07</span><h3>Stop-loss premium</h3><span class="badge b">B</span></div>
+  <p class="setup">Let $Z\ge0$ with $m_p=\E Z^p\lt\infty$ for some $p>2$, and $\pi_n(d)=\Pn(z-d)_+$. Show $\sqrt n(\pi_n-\pi)$ converges in $\ell^\infty([0,\infty))$.</p>
+  <div class="sol">
+    <p><b class="lab">Class.</b> $f_d=(z-d)_+$, $d\ge0$. Envelope $\sup_d(z-d)_+=z$; $\E Z^2\le(\E Z^p)^{2/p}\lt\infty$ (Lyapunov).</p>
+    <p><b class="lab">Shape.</b> $d\mapsto(z-d)_+$ is non-increasing, and for $d\le d'$: $0\le(z-d)_+-(z-d')_+\le d'-d$, because $x\mapsto x_+$ is 1-Lipschitz.</p>
+    <p><b class="lab">Brackets on $[0,D]$.</b> $d_j=j\varepsilon$, $j=0,\dots,J=\lceil D/\varepsilon\rceil$. For $d\in[d_{j-1},d_j]$: $(z-d_j)_+\le f_d\le(z-d_{j-1})_+$, and $0\le u_j-l_j\le\varepsilon$ pointwise, so $\|u_j-l_j\|\le\varepsilon$.</p>
+    <p><b class="lab">Tail bracket.</b> For $d\ge D$: $0\le f_d\le(z-D)_+$. On $\{z>D\}$, $z^2=z^pz^{2-p}\le z^pD^{2-p}$, so
+    $$\|(Z-D)_+\|^2\le\E[Z^2\ind(Z>D)]\le m_pD^{2-p}\le\varepsilon^2\iff D=\Big(\frac{m_p}{\varepsilon^2}\Big)^{1/(p-2)} .$$</p>
+    <p><b class="lab">Count.</b> $\Nb\le J+1\le\frac D\varepsilon+2=m_p^{1/(p-2)}\varepsilon^{-1-\frac2{p-2}}+2\le\big(m_p^{1/(p-2)}+2\big)\varepsilon^{-p/(p-2)}$. By (E) with $V=p/(p-2)$: Donsker.</p>
+    <p><b class="lab">Limit.</b> $\Cov(\mathbb G(s),\mathbb G(t))=\E[(Z-s)_+(Z-t)_+]-\pi(s)\pi(t)$. ∎</p>
+  </div>
+</article>
+
+<!-- 08 -->
+<article class="card" data-k="b">
+  <div class="card-head"><span class="n">08</span><h3>Excess-of-loss layer</h3><span class="badge b">B</span></div>
+  <p class="setup">Let $Z\ge0$ with $\E Z\lt\infty$ and a limit $L>0$. Show $\{f_d=\min((z-d)_+,L):d\ge0\}$ is Donsker.</p>
+  <div class="sol">
+    <p><b class="lab">Class.</b> $f_d=\min((z-d)_+,L)$. Envelope $L$, so $\E F^2=L^2\lt\infty$ — no second moment of $Z$ needed.</p>
+    <p><b class="lab">Shape.</b> $f_d$ is a composition of the 1-Lipschitz, non-decreasing maps $x\mapsto x_+$ and $x\mapsto\min(x,L)$ applied to $z-d$. So it is non-increasing in $d$ with $0\le f_d-f_{d'}\le d'-d$ for $d\le d'$.</p>
+    <p><b class="lab">Brackets.</b> On $[0,D]$ with $d_j=j\varepsilon$: $[f_{d_j},f_{d_{j-1}}]$, width $\le\varepsilon$. Tail $d\ge D$: $f_d=0$ unless $z>d\ge D$, so $0\le f_d\le L\ind(z>D)$, and by Markov
+    $$\|L\ind(Z>D)\|^2=L^2P(Z>D)\le\frac{L^2\E Z}{D}\le\varepsilon^2\iff D=\frac{L^2\E Z}{\varepsilon^2} .$$</p>
+    <p><b class="lab">Count.</b> $\Nb\le D/\varepsilon+2=L^2\E Z\,\varepsilon^{-3}+2\le(L^2\E Z+2)\varepsilon^{-3}$. (E) with $V=3$: Donsker.</p>
+    <p><b class="lab">Limit.</b> $\Cov=\E[f_s(Z)f_t(Z)]-\E f_s(Z)\,\E f_t(Z)$. Compared with 07, capping the payout replaces the moment condition $p>2$ by $\E Z\lt\infty$. ∎</p>
+  </div>
+</article>
+
+<!-- 09 -->
+<article class="card" data-k="b">
+  <div class="card-head"><span class="n">09</span><h3>Limited expected value</h3><span class="badge b">B</span></div>
+  <p class="setup">Let $Z\ge0$ (no moment assumption) and $L_n(t)=\Pn\min(z,t)$. Show $\sqrt n(L_n-L)$ converges in $\ell^\infty([0,\tau])$.</p>
+  <div class="sol">
+    <p><b class="lab">Class.</b> $f_t=\min(z,t)$, $t\in[0,\tau]$. Envelope $\sup_t\min(z,t)=\min(z,\tau)\le\tau$.</p>
+    <p><b class="lab">Shape.</b> Non-decreasing in $t$, and $0\le\min(z,t')-\min(z,t)\le t'-t$ for $t\le t'$.</p>
+    <p><b class="lab">Brackets.</b> $t_j=j\varepsilon$, $j=0,\dots,J=\lceil\tau/\varepsilon\rceil$ (last point capped at $\tau$). For $t\in[t_{j-1},t_j]$: $[\min(z,t_{j-1}),\min(z,t_j)]$, width $\le\varepsilon$.</p>
+    <p><b class="lab">Count.</b> $\Nb\le\tau/\varepsilon+1\le(\tau+1)\varepsilon^{-1}$. (E) with $V=1$: Donsker.</p>
+    <p><b class="lab">Limit.</b> $\Cov=\E[\min(Z,s)\min(Z,t)]-L(s)L(t)$. ∎</p>
+  </div>
+</article>
+
+<!-- 10 -->
+<article class="card" data-k="b">
+  <div class="card-head"><span class="n">10</span><h3>Laplace transform</h3><span class="badge b">B</span></div>
+  <p class="setup">Let $Z\ge0$ and $0\lt a\lt b$. Show $\sqrt n(\mathcal L_n-\mathcal L)$ converges in $\ell^\infty([a,b])$, where $\mathcal L_n(\theta)=\Pn e^{-\theta z}$.</p>
+  <div class="sol">
+    <p><b class="lab">Class.</b> $f_\theta=e^{-\theta z}$, $\theta\in[a,b]$. Envelope 1.</p>
+    <p><b class="lab">Shape.</b> Non-increasing in $\theta$. For $\theta\lt\theta'$:
+    $$0\le e^{-\theta z}-e^{-\theta'z}=\int_\theta^{\theta'}ze^{-sz}\,ds\le(\theta'-\theta)\,ze^{-az}\le\frac{\theta'-\theta}{ae},$$
+    since $z\mapsto ze^{-az}$ is maximised at $z=1/a$ with value $1/(ae)$.</p>
+    <p><b class="lab">Brackets.</b> $\theta_j=a+j\delta$ with $\delta=ae\,\varepsilon$; on $[\theta_{j-1},\theta_j]$: $[e^{-\theta_jz},e^{-\theta_{j-1}z}]$, width $\le\delta/(ae)=\varepsilon$.</p>
+    <p><b class="lab">Count.</b> $\Nb\le\lceil(b-a)/(ae\varepsilon)\rceil\le\big(\tfrac{b-a}{ae}+1\big)\varepsilon^{-1}$. (E), $V=1$: Donsker.</p>
+    <p><b class="lab">Limit.</b> $\Cov=\mathcal L(s+t)-\mathcal L(s)\mathcal L(t)$. ∎</p>
+  </div>
+</article>
+
+<!-- 11 -->
+<article class="card" data-k="b">
+  <div class="card-head"><span class="n">11</span><h3>Power moments</h3><span class="badge b">B</span></div>
+  <p class="setup">Let $Z\ge1$ with $\E(Z\log Z)^2\lt\infty$. Show $\{z^\theta:\theta\in[0,1]\}$ is Donsker.</p>
+  <div class="sol">
+    <p><b class="lab">Class.</b> $f_\theta=z^\theta$. For $z\ge1$, $z^\theta\le z$, so envelope $z$. $\E Z^2\lt\infty$: on $\{Z\ge e\}$, $Z\le Z\log Z$; on $\{Z\lt e\}$, $Z\le e$.</p>
+    <p><b class="lab">Shape.</b> Non-decreasing in $\theta$ (as $z\ge1$), and for $\theta\lt\theta'$:
+    $$0\le z^{\theta'}-z^\theta=\int_\theta^{\theta'}z^s\log z\,ds\le(\theta'-\theta)\,z\log z=:(\theta'-\theta)M(z).$$
+    The slope bound $M$ is random, so the width is $\delta\|M\|$.</p>
+    <p><b class="lab">Brackets.</b> $\theta_j=j\delta$ with $\delta=\varepsilon/\|Z\log Z\|$; $[z^{\theta_{j-1}},z^{\theta_j}]$ has width $\le\delta\|M\|=\varepsilon$.</p>
+    <p><b class="lab">Count.</b> $\Nb\le\lceil1/\delta\rceil\le(\|Z\log Z\|+1)\varepsilon^{-1}$. (E), $V=1$: Donsker.</p>
+    <p><b class="lab">Limit.</b> $\Cov(\mathbb G(s),\mathbb G(t))=\E Z^{s+t}-\E Z^s\,\E Z^t$. ∎</p>
+  </div>
+</article>
+
+<!-- 12 -->
+<article class="card" data-k="b">
+  <div class="card-head"><span class="n">12</span><h3>Huber score</h3><span class="badge b">B</span></div>
+  <p class="setup">Let $\psi_c(x)=\max(-c,\min(c,x))$ and $K>0$. Show $\{\psi_c(z-\theta):\theta\in[-K,K]\}$ is Donsker, with no moment assumption on $Z$.</p>
+  <div class="sol">
+    <p><b class="lab">Class.</b> $f_\theta=\psi_c(z-\theta)$, envelope $c$.</p>
+    <p><b class="lab">Shape.</b> $\psi_c$ is non-decreasing and 1-Lipschitz, so $\theta\mapsto f_\theta$ is non-increasing and $0\le f_\theta-f_{\theta'}\le\theta'-\theta$ for $\theta\le\theta'$.</p>
+    <p><b class="lab">Brackets.</b> $\theta_j=-K+j\varepsilon$; on $[\theta_{j-1},\theta_j]$: $[\psi_c(z-\theta_j),\psi_c(z-\theta_{j-1})]$, width $\le\varepsilon$.</p>
+    <p><b class="lab">Count.</b> $\Nb\le\lceil2K/\varepsilon\rceil\le(2K+1)\varepsilon^{-1}$. (E), $V=1$: Donsker.</p>
+    <p><b class="lab">Limit.</b> $\Cov=\E[\psi_c(Z-s)\psi_c(Z-t)]-\E\psi_c(Z-s)\,\E\psi_c(Z-t)$. This is the uniformity behind consistency and normality of the Huber M-estimator. ∎</p>
+  </div>
+</article>
+
+<!-- 13 -->
+<article class="card" data-k="c">
+  <div class="card-head"><span class="n">13</span><h3>Characteristic function</h3><span class="badge c">C</span></div>
+  <p class="setup">Let $m_2\lt\infty$ and $\varphi_n(t)=\Pn e^{itz}$. Show $\sqrt n(\varphi_n-\varphi)\overset d\to\mathbb G$ in $\ell^\infty([-T,T])$ and find the covariance.</p>
+  <div class="sol">
+    <p><b class="lab">Class.</b> $e^{itz}$ is complex, so use the real classes $\mathcal C=\{\cos(tz)\}$, $\mathcal S=\{\sin(tz)\}$, $t\in[-T,T]$; $\Gn e^{it\cdot}=\Gn\cos_t+i\,\Gn\sin_t$. Envelope 1.</p>
+    <p><b class="lab">Shape.</b> Not monotone in $t$. Mean value theorem: $|\cos(tz)-\cos(sz)|=|z\sin(\xi z)|\,|t-s|\le|z|\,|t-s|$, and likewise for $\sin$. So $M(z)=|z|$.</p>
+    <p><b class="lab">Brackets.</b> $\delta=\varepsilon/(2\|Z\|)$, centres $t_j=-T+(2j-1)\delta$, $j=1,\dots,J=\lceil T/\delta\rceil$, so the intervals $[t_j-\delta,t_j+\delta]$ cover $[-T,T]$. For $|t-t_j|\le\delta$:
+    $$\cos(tz)\in\big[\cos(t_jz)-\delta|z|,\ \cos(t_jz)+\delta|z|\big],\qquad\text{width}=2\delta\|Z\|=\varepsilon .$$</p>
+    <p><b class="lab">Count.</b> $\Nb(\mathcal C)\le J\le2T\|Z\|/\varepsilon+1$; same for $\mathcal S$. Union: $\le2(2T\|Z\|+1)\varepsilon^{-1}$. (E), $V=1$: Donsker, so both parts converge jointly.</p>
+    <p><b class="lab">Limit.</b> $\mathbb G(t)=\mathbb G\cos_t+i\,\mathbb G\sin_t$ with
+    $$\E\big[\mathbb G(s)\overline{\mathbb G(t)}\big]=\E e^{i(s-t)Z}-\varphi(s)\overline{\varphi(t)}=\varphi(s-t)-\varphi(s)\varphi(-t).\ ∎$$</p>
+  </div>
+</article>
+
+<!-- 14 -->
+<article class="card" data-k="c">
+  <div class="card-head"><span class="n">14</span><h3>Mean absolute deviation</h3><span class="badge c">C</span></div>
+  <p class="setup">Let $m_2\lt\infty$. Show $\sqrt n(\Pn-P)|z-\theta|$ converges in $\ell^\infty([-1,1])$.</p>
+  <div class="sol">
+    <p><b class="lab">Class.</b> $f_\theta=|z-\theta|$. Envelope $|z|+1$, $\E(|Z|+1)^2\le2m_2+2$.</p>
+    <p><b class="lab">Shape.</b> V-shape in $\theta$ with the kink at $\theta=z$: not monotone. Reverse triangle inequality: $\big||z-\theta|-|z-\theta'|\big|\le|\theta-\theta'|$, so $M\equiv1$.</p>
+    <p><b class="lab">Brackets.</b> $\delta=\varepsilon/2$, centres $\theta_j=-1+(2j-1)\delta$, $j\le J=\lceil1/\delta\rceil=\lceil2/\varepsilon\rceil$. For $|\theta-\theta_j|\le\delta$: $f_\theta\in[|z-\theta_j|-\delta,|z-\theta_j|+\delta]$, width $2\delta=\varepsilon$.</p>
+    <p><b class="lab">Count.</b> $\Nb\le2/\varepsilon+1\le3\varepsilon^{-1}$. (E): $\Jb\le\sqrt{\log3}+\sqrt\pi/2$. Donsker.</p>
+    <p><b class="lab">Limit.</b> $\Cov=\E|Z-s||Z-t|-\E|Z-s|\,\E|Z-t|$. ∎</p>
+  </div>
+</article>
+
+<!-- 15 -->
+<article class="card" data-k="c">
+  <div class="card-head"><span class="n">15</span><h3>Affine class, two parameters</h3><span class="badge c">C</span></div>
+  <p class="setup">Let $m_2\lt\infty$. Show $\{a+bz:(a,b)\in[-1,1]^2\}$ is Donsker (Example 1.9).</p>
+  <div class="sol">
+    <p><b class="lab">Class.</b> $f_{a,b}=a+bz$. Envelope $M(z):=1+|z|$, $\|M\|\le1+\|Z\|\lt\infty$.</p>
+    <p><b class="lab">Shape.</b> $|f_{a,b}-f_{a',b'}|\le|a-a'|+|b-b'||z|\le\max(|a-a'|,|b-b'|)\,M(z)$: Lipschitz in the parameter with the sup-norm.</p>
+    <p><b class="lab">Brackets.</b> $\delta=\varepsilon/(2\|M\|)$. In each coordinate take centres spaced $2\delta$ covering $[-1,1]$ ($\lceil1/\delta\rceil$ of them); cells are squares of side $2\delta$. For $(a,b)$ in the square with centre $c$: $f_{a,b}\in[f_c-\delta M,f_c+\delta M]$, width $2\delta\|M\|=\varepsilon$.</p>
+    <p><b class="lab">Count.</b> $\Nb\le\lceil1/\delta\rceil^2\le(2\|M\|+1)^2\varepsilon^{-2}$. (E), $V=2$: Donsker.</p>
+    <p><b class="lab">Limit.</b> $\Cov(a+bZ,a'+b'Z)=bb'\Var Z$. ∎</p>
+  </div>
+</article>
+
+<!-- 16 -->
+<article class="card" data-k="a">
+  <div class="card-head"><span class="n">16</span><h3>Bivariate empirical cdf</h3><span class="badge a">A</span></div>
+  <p class="setup">Let $(Z_i,W_i)$ be iid with joint cdf $H$ and marginals $F_1,F_2$. Show $\sqrt n(H^{(n)}-H)\overset d\to\mathbb G_H$ in $\ell^\infty(\R^2)$.</p>
+  <div class="sol">
+    <p><b class="lab">Class.</b> $f_{s,t}(z,w)=\ind(z\le s)\ind(w\le t)$, $(s,t)\in\R^2$. Envelope 1.</p>
+    <p><b class="lab">Grid.</b> (Q) for $\mu=P_Z$ with $\eta=\varepsilon^2/2$: $s_0\lt\dots\lt s_{k_1}$, $F_1(s_i-)-F_1(s_{i-1})\le\varepsilon^2/2$, $k_1\le2/\varepsilon^2+1\le3/\varepsilon^2$. Likewise $(t_k)$ for $F_2$ with $k_2\le3/\varepsilon^2$.</p>
+    <p><b class="lab">Brackets.</b> On the cell $[s_{i-1},s_i)\times[t_{k-1},t_k)$, $f_{s,t}$ is non-decreasing in each index, so
+    $$l=\ind(z\le s_{i-1},w\le t_{k-1})\le f_{s,t}\le\ind(z\lt s_i,w\lt t_k)=u .$$
+    If $u-l=1$ then $z\lt s_i$, $w\lt t_k$, and ($z>s_{i-1}$ or $w>t_{k-1}$). Hence $u-l\le\ind(s_{i-1}\lt z\lt s_i)+\ind(t_{k-1}\lt w\lt t_k)$, and since $u-l\in\{0,1\}$,
+    $$\|u-l\|^2=\E(u-l)\le\tfrac{\varepsilon^2}2+\tfrac{\varepsilon^2}2=\varepsilon^2 .$$</p>
+    <p><b class="lab">Count.</b> $\Nb\le k_1k_2\le9\varepsilon^{-4}$. (E), $V=4$: $\Jb\le\sqrt{\log9}+\sqrt\pi$. Donsker.</p>
+    <p><b class="lab">Limit.</b> $f_{s,t}f_{u,v}=\ind(z\le s\wedge u,w\le t\wedge v)$, so $\Cov=H(s\wedge u,t\wedge v)-H(s,t)H(u,v)$. ∎</p>
+  </div>
+</article>
+
+<!-- 17 -->
+<article class="card" data-k="a">
+  <div class="card-head"><span class="n">17</span><h3>Interval probabilities</h3><span class="badge a">A</span></div>
+  <p class="setup">Show $\{\ind(s\lt z\le t):s\lt t\}$ is Donsker for any distribution of $Z$.</p>
+  <div class="sol">
+    <p><b class="lab">Class.</b> $f_{s,t}=g_t-g_s$ with $g_t=\ind(z\le t)$. Envelope 1.</p>
+    <p><b class="lab">Brackets.</b> By 01 with $\eta=\varepsilon^2/4$ there is a grid with $k\le4/\varepsilon^2+1\le5/\varepsilon^2$ cells and brackets $[l_j,u_j]\ni g_t$ of width $\le\varepsilon/2$. For $t$ in cell $j$ and $s$ in cell $i$:
+    $$l_j-u_i\le g_t-g_s\le u_j-l_i,\qquad\|(u_j-l_i)-(l_j-u_i)\|\le\|u_j-l_j\|+\|u_i-l_i\|\le\varepsilon .$$</p>
+    <p><b class="lab">Count.</b> One bracket per pair of cells: $\Nb\le k^2\le25\varepsilon^{-4}$. (E), $V=4$: Donsker.</p>
+    <p><b class="lab">Limit.</b> With $I=(s,t]$, $J=(s',t']$: $\Cov=P(Z\in I\cap J)-P(Z\in I)P(Z\in J)$. ∎</p>
+  </div>
+</article>
+
+<!-- 18 -->
+<article class="card" data-k="a n">
+  <div class="card-head"><span class="n">18</span><h3>Kernel conditional cdf</h3><span class="badge a">A</span><span class="badge">Thm 1.20</span></div>
+  <p class="setup">Let $K$ be bounded and symmetric with compact support, $R(K)=\int K^2$, $h\to0$, $nh\to\infty$, $nh^5\to0$, $f_X(x)>0$. Assume $Y\mid X=z$ has density $\le c$ for $z$ near $x$, and that $z\mapsto F(t\mid z)f_X(z)$ and $f_X$ are $C^2$ near $x$ with second derivatives bounded uniformly in $t$. Prove $\sqrt{nh}\,(F^{(n)}(\cdot\mid x)-F(\cdot\mid x))\overset d\to\big(R(K)/f_X(x)\big)^{1/2}\mathbb B\circ F(\cdot\mid x)$.</p>
+  <div class="sol">
+    <p><b class="lab">Class.</b> $F^{(n)}(t\mid x)=A_n(t)/A_n(\infty)$ with $A_n(t)=\frac1{nh}\sum_i\ind(Y_i\le t)K_i$, $K_i=K(\frac{X_i-x}h)$. Absorbing the rate:
+    $$\sqrt{nh}\,(A_n(t)-\E A_n(t))=\Gn f_{n,t},\qquad f_{n,t}(y,z)=h^{-1/2}\ind(y\le t)K\big(\tfrac{z-x}h\big),\ t\in[-\infty,\infty].$$
+    The class depends on $n$ ⇒ Thm 1.20. Envelope $F_n=h^{-1/2}K(\frac{z-x}h)$.</p>
+    <p><b class="lab">(1.6)</b> $\E F_n^2=\frac1h\int K^2(\frac{z-x}h)f_X(z)\,dz=\int K^2(v)f_X(x+hv)\,dv\to f_X(x)R(K)$.</p>
+    <p><b class="lab">(1.7)</b> $F_n\le h^{-1/2}\|K\|_\infty\lt\eta\sqrt n$ as soon as $\eta\sqrt{nh}>\|K\|_\infty$, so $\E[F_n^2;F_n>\eta\sqrt n]=0$ eventually.</p>
+    <p><b class="lab">Partition.</b> $Q_n(A)=\E[F_n^2\ind(Y\in A)]/\E F_n^2$ is a probability measure; (Q) with $\eta=\varepsilon^2$ gives $k\le2/\varepsilon^2$ cells. For $s,t\in[t_{j-1},t_j)$, $|f_{n,t}-f_{n,s}|=F_n\ind(s\wedge t\lt Y\le s\vee t)\le F_n\ind(t_{j-1}\lt Y\lt t_j)$, so
+    $$\E\sup_{s,t}|f_{n,t}-f_{n,s}|^2\le\|F_n\|^2Q_n((t_{j-1},t_j))\le\varepsilon^2\|F_n\|^2 .$$</p>
+    <p><b class="lab">(1.9)</b> $\int_0^{\delta_n}\sqrt{\log(2\varepsilon^{-2})}\,d\varepsilon\to0$ by (E).</p>
+    <p><b class="lab">(1.8)</b> The partition depends on $n$, so check: for $s\lt t$,
+    $$\E(f_{n,t}-f_{n,s})^2=\int K^2(v)P(s\lt Y\le t\mid X=x+hv)f_X(x+hv)\,dv\le c\,(t-s)\,\E F_n^2\to0$$
+    uniformly over $t-s\le\delta_n\to0$.</p>
+    <p><b class="lab">Covariance.</b> $\E f_{n,s}f_{n,t}=\int K^2(v)F(s\wedge t\mid x+hv)f_X(x+hv)dv\to f_X(x)R(K)F(s\wedge t\mid x)$, and $\E f_{n,s}=h^{1/2}\int K(v)F(s\mid x+hv)f_X(x+hv)dv=O(h^{1/2})$. So $\sigma(s,t)=f_X(x)R(K)F(s\wedge t\mid x)$, and Thm 1.20 gives $\tilde X_n:=\Gn f_{n,\cdot}\overset d\to\mathbb G$ in $\ell^\infty([-\infty,\infty])$.</p>
+    <p><b class="lab">Ratio and bias.</b> Write $F_t=F(t\mid x)$. Then
+    $$\sqrt{nh}\,(F^{(n)}(t\mid x)-F_t)=\frac{\tilde X_n(t)-F_t\tilde X_n(\infty)+\sqrt{nh}\,b_n(t)}{A_n(\infty)},$$
+    with $b_n(t)=\E A_n(t)-F_t\E A_n(\infty)=\int K(v)[F(t\mid x+hv)-F_t]f_X(x+hv)\,dv=O(h^2)$ uniformly in $t$. This uses a Taylor expansion to second order, where the first-order term vanishes because $K$ is symmetric. So $\sqrt{nh}\,b_n=O(\sqrt{nh^5})\to0$. Also $A_n(\infty)=f^{(n)}(x)\overset P\to f_X(x)$ (Thm 2.1). Slutsky and the continuous mapping theorem give the limit $(\mathbb G(t)-F_t\mathbb G(\infty))/f_X(x)$ with covariance
+    $$\frac{f_XR(K)\big[F_{s\wedge t}-F_tF_s-F_sF_t+F_sF_t\big]}{f_X^2}=\frac{R(K)}{f_X(x)}\big(F_{s\wedge t}-F_sF_t\big),$$
+    i.e. $(R(K)/f_X(x))^{1/2}\,\mathbb B\circ F(\cdot\mid x)$. ∎</p>
+  </div>
+</article>
+
+<!-- 19 -->
+<article class="card" data-k="a n">
+  <div class="card-head"><span class="n">19</span><h3>k-NN conditional cdf</h3><span class="badge a">A</span><span class="badge">Thm 1.21</span></div>
+  <p class="setup">Let $d=1$, $f_X(x)>0$ continuous at $x$, (i) $z\mapsto F(t\mid z)$ continuous at $x$ for all $t$, (ii) $\sup_t|F(t\mid z)-F(t\mid x)|\le L|z-x|$ near $x$, $\kappa\to\infty$, $\kappa^{3/2}/n\to0$. Prove $\sqrt\kappa\,(F^{(n)}_\kappa(\cdot\mid x)-F(\cdot\mid x))\overset d\to\mathbb B\circ F(\cdot\mid x)$.</p>
+  <div class="sol">
+    <p><b class="lab">Class.</b> $F^{(n)}_\kappa(t\mid x)=\hat\mu_{n,\kappa,x}(f_t)$ with $f_t=\ind(y\le t)$. Envelope $F\equiv1$. Verify Thm 1.21 and Cor. 1.2.</p>
+    <p><b class="lab">(1.10)</b> For any probability measure $Q$, (Q) gives $\Nb(\varepsilon\|F\|_{L_2(Q)},\mathcal F,L_2(Q))\le\varepsilon^{-2}+1\le2\varepsilon^{-2}$. The bound does not depend on $Q$, so $\sup_{|u|\le\delta}\int_0^{\delta_n}\sqrt{\log N}\,d\varepsilon\le\int_0^{\delta_n}\sqrt{\log(2\varepsilon^{-2})}\,d\varepsilon\to0$ by (E).</p>
+    <p><b class="lab">(1.11)</b> $F^2\ind(F>M)=0$ for $M>1$.</p>
+    <div><b class="lab">(1.12)</b> Here $\rho_\delta(f_s,f_t)^2=\sup_{|u|\le\delta}\mu_{x,u}((s,t])$. Fix $\eta>0$.
+    <ul>
+      <li>For each $u\in[0,\delta]$, (Q) gives a finite partition with $\mu_{x,u}$-masses $\le\eta^2/4$.</li>
+      <li>For a fixed interval $I$, $v\mapsto\mu_{x,v}(I)$ is continuous (ratio of two continuous functions of $v$, with continuity at $v=0$ by (i)). So these masses stay $\le\eta^2/2$ for all $v$ in a neighbourhood $U_u$ of $u$.</li>
+      <li>By compactness, finitely many $U_{u_1},\dots,U_{u_M}$ cover $[0,\delta]$. Merge all their endpoints into one grid $s_0\lt\dots\lt s_K$.</li>
+      <li>Each merged interval lies inside an interval of every partition, so $\mu_{x,v}((s_{r-1},s_r])\le\eta^2/2$ for all $v$.</li>
+    </ul>
+    Hence $\rho_\delta(f_t,f_{s_{r-1}})\le\eta$ for $t\in(s_{r-1},s_r]$.</div>
+    <p><b class="lab">(1.13)</b> $z\mapsto(\mu_z(f_sf_t),\mu_z(f_t),\mu_z(F^2))=(F(s\wedge t\mid z),F(t\mid z),1)$ is continuous at $x$ by (i).</p>
+    <p><b class="lab">(1.14)–(1.15)</b> $\sup_t|(\mu_z-\mu_x)f_t|=\sup_t|F(t\mid z)-F(t\mid x)|\le L|z-x|$ by (ii); and $\kappa^{(d+2)/2}/n=\kappa^{3/2}/n\to0$.</p>
+    <p><b class="lab">Limit.</b> Cor. 1.2 gives $\sqrt\kappa(F^{(n)}_\kappa-F)(\cdot\mid x)\overset d\to U_x$ with $\Cov=\mu_x(f_sf_t)-\mu_x(f_s)\mu_x(f_t)=F(s\wedge t\mid x)-F(s\mid x)F(t\mid x)$, i.e. $\mathbb B\circ F(\cdot\mid x)$. ∎</p>
+  </div>
+</article>
+
+<!-- 20 -->
+<article class="card" data-k="x">
+  <div class="card-head"><span class="n">20</span><h3>Heavy-tailed mean excess</h3><span class="badge x">fails</span></div>
+  <p class="setup">Let $Z$ be Pareto with $P(Z>z)=z^{-\alpha}$, $z\ge1$, $\alpha\in(1,2)$, and $F(U)\lt1$. Show $\sup_{u\in[0,U]}|e_n(u)-e_F(u)|\to0$ a.s., but $\{z\ind(z>u):u\in[0,U]\}$ is not Donsker.</p>
+  <div class="sol">
+    <p><b class="lab">Moments.</b> $\E Z=\frac\alpha{\alpha-1}\lt\infty$ and $\E Z^2=\int_1^\infty\alpha z^{1-\alpha}\,dz=\infty$ since $1-\alpha>-1$. The envelope $z$ is in $L_1$ but not in $L_2$.</p>
+    <p><b class="lab">GC ($L_1$ brackets).</b> Use the brackets of 04, but measure widths in $L_1$: $\|u_j-l_j\|_{L_1}=\E[Z\ind(a_{j-1}\lt Z\lt a_j)]=\nu((a_{j-1},a_j))$ with $\nu(A)=\E[Z\ind(Z\in A)]$, mass $\E Z$. (Q) with $\eta=\varepsilon$ gives $\Nb(\varepsilon,\mathcal F,L_1)\le\E Z/\varepsilon+2\lt\infty$. For $\mathcal G$: $L_1$ width $=P(a_{j-1}\lt Z\lt a_j)$, finite count likewise. Thm 1.18 ⇒ $\sup_u|\Pn f_u-A|\to0$ and $\sup_u|\Pn g_u-B|\to0$ a.s. Since $B\ge1-F(U)>0$, $\sup_u\big|\frac{\Pn f_u}{\Pn g_u}-\frac AB\big|\to0$ a.s.</p>
+    <p><b class="lab">Not Donsker.</b> Suppose it were. Then the marginal $\Gn f_0=\sqrt n(\bar Z_n-\E Z)$ (note $f_0(z)=z$ as $Z\ge1$) would converge to a normal law. But $\E Z^2=\infty$, and as in Exercise 3, $n^{-1/2}\sum_i(Z_i-\E Z)$ has no non-degenerate normal limit — the correct scaling is $n^{1-1/\alpha}$ with a stable limit. Contradiction. Consistently, the would-be variance $(e^{(2)}_F-e_F^2)/(1-F(u))$ is infinite for every $u$. ∎</p>
+  </div>
+</article>
+
+</div>
+</div>
+
+<script>
+(function(){
+  var btns=document.querySelectorAll('.filters button');
+  var cards=document.querySelectorAll('#cards .card');
+  btns.forEach(function(b){
+    b.addEventListener('click',function(){
+      var f=b.getAttribute('data-f');
+      btns.forEach(function(o){o.setAttribute('aria-pressed',o===b?'true':'false');});
+      cards.forEach(function(c){
+        var k=(c.getAttribute('data-k')||'').split(' ');
+        c.hidden=!(f==='all'||k.indexOf(f)>-1);
+      });
+    });
+  });
+})();
+</script>
