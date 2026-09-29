@@ -1,0 +1,509 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Envelope Factor Workbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@500;600;700&family=JetBrains+Mono:wght@400;600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;0,7..72,700;1,7..72,400&display=swap">
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.js" async></script>
+<style>
+:root{
+  --paper:#F2F4F6; --panel:#FFFFFF; --ink:#172131; --muted:#5B6778; --rule:#D4DBE3;
+  --red:#B3261E; --red-soft:#F7E3E1; --hl:#F5E27A; --hl-ink:#3A3000; --blue:#2A5B89; --blue-soft:#E3ECF5;
+  --ok:#2E7D4F; --ok-soft:#DFF1E6;
+  --serif:"Literata", Georgia, "Times New Roman", serif;
+  --narrow:"Archivo Narrow", "Arial Narrow", Arial, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --paper:#0F141B; --panel:#161D27; --ink:#E3E8EF; --muted:#94A1B3; --rule:#2A3441;
+    --red:#F07A6E; --red-soft:#3A1D1B; --hl:#5E5016; --hl-ink:#FFF3B8; --blue:#82B3E0; --blue-soft:#1A2837;
+    --ok:#6FD19A; --ok-soft:#15301F;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --paper:#0F141B; --panel:#161D27; --ink:#E3E8EF; --muted:#94A1B3; --rule:#2A3441;
+  --red:#F07A6E; --red-soft:#3A1D1B; --hl:#5E5016; --hl-ink:#FFF3B8; --blue:#82B3E0; --blue-soft:#1A2837;
+  --ok:#6FD19A; --ok-soft:#15301F;
+}
+*{box-sizing:border-box}
+body{background:var(--paper); color:var(--ink); font-family:var(--serif); font-size:17px; line-height:1.62; padding-inline:16px; padding-block:0 64px}
+.wrap{max-width:860px; margin:0 auto}
+header.top{padding-block:48px 28px; border-bottom:2px solid var(--ink); margin-bottom:28px}
+.eyebrow{font-family:var(--narrow); text-transform:uppercase; letter-spacing:.09em; font-size:13px; font-weight:600; color:var(--red)}
+h1{font-size:clamp(34px,6vw,52px); line-height:1.05; margin:.25em 0 .3em; font-weight:700; text-wrap:balance; letter-spacing:-.01em}
+h2{font-family:var(--narrow); font-size:28px; line-height:1.15; margin:52px 0 10px; text-wrap:balance; font-weight:700}
+h2 .n{color:var(--red); margin-right:.35em}
+h3{font-family:var(--narrow); font-size:20px; margin:24px 0 6px; font-weight:600}
+p{margin:0 0 14px; max-width:68ch}
+.lede{font-size:19px; color:var(--muted); max-width:62ch}
+.small{font-size:14.5px}
+.muted{color:var(--muted)}
+mjx-container{color:var(--ink)}
+mjx-container[display="true"]{overflow-x:auto; overflow-y:hidden; padding-block:4px; margin:10px 0 !important}
+.toc{display:flex; flex-wrap:wrap; gap:8px 18px; font-family:var(--narrow); font-size:15px; margin-top:18px}
+.toc a{text-decoration:none; color:var(--ink); border-bottom:1px solid var(--rule)}
+.toc a:hover{border-color:var(--red)}
+.insight{background:var(--panel); border:1px solid var(--rule); border-left:4px solid var(--red); padding:18px 22px; margin:22px 0}
+.insight p:last-child{margin-bottom:0}
+.tag{font-family:var(--narrow); font-weight:700; text-transform:uppercase; letter-spacing:.08em; font-size:12.5px; color:var(--red); display:block; margin-bottom:4px}
+
+/* four boxes A B R solve */
+.four{display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:10px; margin:16px 0}
+.box{background:var(--panel); border:1px solid var(--rule); border-top:3px solid var(--ink); padding:12px 14px}
+.box .k{font-family:var(--narrow); font-weight:700; font-size:14px; text-transform:uppercase; letter-spacing:.06em}
+.box .k b{color:var(--red); font-family:var(--mono); margin-right:6px}
+.box p{font-size:15px; margin:6px 0 0}
+
+/* side by side */
+.sbs{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:14px 0}
+.sbs > div{background:var(--panel); border:1px solid var(--rule); padding:14px 16px; min-width:0}
+@media (max-width:640px){ .sbs{grid-template-columns:1fr} }
+
+/* exam sheet */
+.sheet{background:var(--panel); border:1px solid var(--ink); padding:16px 20px; margin:14px 0; position:relative}
+.sheet::before{content:"What you write"; position:absolute; top:-11px; left:14px; background:var(--paper); padding:0 8px; font-family:var(--narrow); font-weight:700; font-size:12.5px; text-transform:uppercase; letter-spacing:.08em; color:var(--red)}
+.sheet p{max-width:none}
+
+/* examples */
+.ex{background:var(--panel); border:1px solid var(--rule); padding:18px 20px; margin:18px 0}
+.ex > h3{margin-top:0}
+.src{font-family:var(--narrow); font-size:14px; color:var(--muted); margin-bottom:8px}
+.script{list-style:none; margin:12px 0 0; padding:0; display:flex; flex-direction:column; gap:10px}
+.script li{border:1px solid var(--rule); padding:10px 14px; background:var(--paper)}
+.script .h{font-family:var(--narrow); font-weight:700; font-size:14.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--red); margin-bottom:2px}
+.script .why{font-size:15px; color:var(--muted); border-top:1px dashed var(--rule); margin-top:8px; padding-top:6px}
+.bar{display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; align-items:center}
+.btn{font-family:var(--narrow); font-size:15px; font-weight:600; padding:7px 14px; border:1px solid var(--ink); background:var(--ink); color:var(--paper); cursor:pointer}
+.btn.ghost{background:transparent; color:var(--ink)}
+.btn:disabled{opacity:.4; cursor:default}
+.btn:focus-visible, input:focus-visible, select:focus-visible{outline:2px solid var(--red); outline-offset:2px}
+.progress{font-family:var(--mono); font-size:13px; color:var(--muted); margin-left:auto}
+.unk{background:var(--hl); color:var(--hl-ink); padding:0 4px; font-family:var(--mono); font-size:.92em}
+
+/* solver */
+.lab{background:var(--panel); border:1px solid var(--rule); padding:18px; margin:16px 0}
+.controls{display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:12px 20px}
+.controls label{font-family:var(--narrow); font-size:14px; font-weight:600; display:flex; flex-direction:column; gap:4px}
+.controls .row{display:flex; justify-content:space-between}
+.controls .v{font-family:var(--mono); font-weight:400; color:var(--red)}
+input[type=range]{width:100%; accent-color:var(--red)}
+select{font:inherit; font-size:15px; padding:5px 8px; border:1px solid var(--rule); background:var(--paper); color:var(--ink)}
+.out{margin-top:14px; display:grid; gap:0}
+.line{display:grid; grid-template-columns:minmax(110px,190px) 1fr; gap:12px; padding:8px 0; border-bottom:1px solid var(--rule); font-size:15.5px}
+.line .lk{font-family:var(--narrow); font-weight:600; text-transform:uppercase; letter-spacing:.05em; font-size:13px; color:var(--muted); padding-top:2px}
+.line .lv{font-family:var(--mono); font-size:14.5px; font-variant-numeric:tabular-nums; overflow-wrap:anywhere}
+.line.final .lv{color:var(--ok); font-weight:600}
+.pits{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:12px; margin-top:12px}
+.pit{background:var(--panel); border:1px solid var(--rule); padding:12px 14px; font-size:15.5px}
+.pit .x{font-family:var(--narrow); font-weight:700; color:var(--red); display:block; margin-bottom:2px}
+.setting{background:var(--blue-soft); border:1px solid var(--rule); padding:12px 16px; margin:8px 0 4px}
+.setting dl{margin:4px 0 0; display:grid; grid-template-columns:minmax(90px,150px) 1fr; gap:6px 14px; font-size:15.5px}
+.setting dt{font-family:var(--narrow); font-weight:700; font-size:14px; padding-top:2px}
+.setting dd{margin:0; min-width:0}
+@media (max-width:560px){ .setting dl{grid-template-columns:1fr} .setting dd{margin-bottom:6px} }
+.try{margin-top:14px; padding:12px 16px; background:var(--hl); color:var(--hl-ink)}
+.try mjx-container{color:var(--hl-ink)}
+footer{margin-top:56px; padding-top:14px; border-top:1px solid var(--rule); font-size:14px; color:var(--muted)}
+@media (prefers-reduced-motion: reduce){ *{transition:none!important} }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<header class="top">
+  <div class="eyebrow">Statistics for Insurance · Theorem 1.20 · Exam prep</div>
+  <h1>Envelope Factor Workbook</h1>
+  <p class="lede">What the \(\|F_n\|\) in the bracketing condition is doing, and a fixed routine for solving it at the exam: keep the fineness \(\delta\) as an unknown, compute two numbers, divide, and solve for \(\delta\) on the last line.</p>
+  <nav class="toc">
+    <a href="#what">1 · What the factor is</a>
+    <a href="#routine">2 · The routine</a>
+    <a href="#book">3 · Reading the book's one-liner</a>
+    <a href="#solver">4 · Solver</a>
+    <a href="#examples">5 · Worked examples</a>
+    <a href="#pits">6 · Pitfalls</a>
+  </nav>
+</header>
+
+<section id="what">
+<h2><span class="n">1</span>What the factor actually is</h2>
+<p>In Theorem 1.20 (bracketing CLT for changing classes) the brackets are not required to have width \(\le\varepsilon\). They are required to have width \(\le\varepsilon\,\|F_n\|_{L^2}\):</p>
+\[
+\mathbb E\Big[\sup_{s,t\in\text{cell}_j}|f_{n,t}-f_{n,s}|^2\Big]\;\le\;\varepsilon^2\,\|F_n\|_{L^2}^2 .
+\]
+<p>That is a <b>relative</b> width. Divide both sides by \(\|F_n\|^2\) and the condition becomes</p>
+\[
+\boxed{\;\frac{\|u_j-l_j\|_{L^2}^2}{\|F_n\|_{L^2}^2}\;\le\;\varepsilon^2\;}
+\]
+<p>So the whole "insert the factor" business is just this: <b>compute the ratio of two numbers and make it smaller than \(\varepsilon^2\)</b>. Nothing else. The book writes it as a chain of equalities where \(\|F_n\|\) is "inserted" at some point, but that chain is only a way of presenting this ratio.</p>
+<div class="insight">
+  <span class="tag">Why relative?</span>
+  <p>The functions in these classes carry normalisers that change with \(n\): \(h_n^{-1/2}\), \(\bar F(u_n)^{-1/2}\), \((h_n\bar F^x(u_n^x))^{-1/2}\). Measuring widths relative to the envelope makes the statement independent of those normalisers. In all the book's examples \(\|F_n\|^2\) converges to a positive constant \(c\), so "relative" just means "divide by \(c\)".</p>
+</div>
+</section>
+
+<section id="routine">
+<h2><span class="n">2</span>The routine: four quantities, then solve</h2>
+<p>Keep the fineness as an unknown <span class="unk">δ</span> from the start. There are two natural kinds of unknown:</p>
+<ul>
+  <li><b>Mass version:</b> "choose \(t_0\lt\dots\lt t_m\) so that each cell has limit mass \(\le\delta\)". Works on any index set, including \([0,\infty)\).</li>
+  <li><b>Mesh version:</b> "equidistant grid with \(t_j-t_{j-1}=\delta\)". Only for a compact index set \([a,b]\) where the limit function has a bounded derivative. Easier to picture, slightly worse constants.</li>
+</ul>
+<div class="four">
+  <div class="box"><div class="k"><b>A</b>Width²</div><p>Compute \(\|u_j-l_j\|^2\) and its limit. Bound it by something in <span class="unk">δ</span>: \(A_n\le A(\delta)+o(1)\).</p></div>
+  <div class="box"><div class="k"><b>B</b>Envelope²</div><p>Compute \(\|F_n\|^2\to c\gt0\). No <span class="unk">δ</span> here.</p></div>
+  <div class="box"><div class="k"><b>R</b>Ratio</div><p>\(R_n=A_n/B_n\to A(\delta)/c\). The normalising constants usually cancel.</p></div>
+  <div class="box"><div class="k"><b>S</b>Solve</div><p>Set \(A(\delta)/c=\varepsilon^2/2\) and solve for <span class="unk">δ</span>. Then \(R_n\le\varepsilon^2\) for \(n\ge n_0\).</p></div>
+</div>
+<p>Then one more line: <b>count</b>. With \(\delta\) now a known function of \(\varepsilon\), the number of cells is \(m\le(\text{total mass})/\delta+1\) (mass version) or \(m=\lceil(b-a)/\delta\rceil\) (mesh version). You need \(m\le C\varepsilon^{-p}\) for some \(p\), and then the entropy integral is finite.</p>
+<h3>Why solve for \(\varepsilon^2/2\) and not \(\varepsilon^2\)</h3>
+<p>\(R_n\) only converges to \(A(\delta)/c\). If you set the limit equal to \(\varepsilon^2\) exactly, \(R_n\) may sit slightly above \(\varepsilon^2\) for every \(n\). Setting the limit to \(\varepsilon^2/2\) leaves a gap, and since \(R_n\to\) limit, \(R_n\le\varepsilon^2\) for \(n\) large. Any number below 1 works instead of \(\tfrac12\).</p>
+<h3>Why the \(o(1)\) is uniform over cells</h3>
+<p>For fixed \(\varepsilon\), \(\delta\) is fixed, so the grid is a fixed finite set of points not depending on \(n\). Convergence at each of those finitely many points is automatically uniform over them. That is also why (1.8) can be skipped.</p>
+</section>
+
+<section id="book">
+<h2><span class="n">3</span>Reading the book's one-liner</h2>
+<p>Here is Theorem 3.10 (tail empirical process). Left: the book's chain. Right: the same thing done with the ratio. They are the same computation.</p>
+<div class="sbs">
+  <div>
+    <div class="tag">Book</div>
+    \[\begin{aligned}
+    \|u_j-l_j\|&=\big(T(t_{j-1})-T(t_j)\big)^{1/2}(1+o(1))\\
+    &=\big(T(t_{j-1})-T(t_j)\big)^{1/2}\,a^{\frac1{2\gamma}}\,\|F_n\|\,(1+o(1))\\
+    &\le\varepsilon\|F_n\|.
+    \end{aligned}\]
+    <p class="small">Line 2 "inserts the factor": multiply by \(1=a^{\frac1{2\gamma}}\cdot a^{-\frac1{2\gamma}}\) and replace \(a^{-\frac1{2\gamma}}\) by \(\|F_n\|(1+o(1))\), because \(\|F_n\|^2\to a^{-1/\gamma}\).</p>
+  </div>
+  <div>
+    <div class="tag">Ratio method</div>
+    <p class="small">Notation: \(T_n(s)=\bar F(u_ns)/\bar F(u_n)\), \(T(s)=s^{-1/\gamma}\), envelope \(F_n=\bar F(u_n)^{-1/2}1\{Z\gt u_na\}\) so \(\|F_n\|^2=T_n(a)\).</p>
+    \[\begin{aligned}
+    A_n&=T_n(t_{j-1})-T_n(t_j)\to T(t_{j-1})-T(t_j)\le\delta\\
+    B_n&=T_n(a)\to a^{-1/\gamma}\\
+    R_n&\to \delta\,a^{1/\gamma}\overset{!}{=}\varepsilon^2/2\\
+    \Rightarrow\ \delta&=\tfrac{\varepsilon^2}{2}a^{-1/\gamma}.
+    \end{aligned}\]
+    <p class="small">No "inserting". The factor \(a^{-1/\gamma}\) appears by itself when you solve.</p>
+  </div>
+</div>
+<div class="insight">
+  <span class="tag">Takeaway</span>
+  <p>"Inserting \(\|F_n\|\)" = writing \(A_n = R_n\cdot B_n\). If you compute \(R_n\) directly, you never have to guess which factor to insert. At the exam, do the ratio on scrap paper, then write it in whichever form you like.</p>
+</div>
+</section>
+
+<section id="solver">
+<h2><span class="n">4</span>Solver: tail process on \([a,b]\)</h2>
+<p>Class \(f_{n,t}(z)=\bar F(u_n)^{-1/2}1\{z\gt u_nt\}\), \(t\in[a,b]\), with \(T_n(s)=\bar F(u_ns)/\bar F(u_n)\to T(s)=s^{-1/\gamma}\) and \(\|F_n\|^2=T_n(a)\to a^{-1/\gamma}\) (full derivation in Example 1). Pick the numbers and see each line of the routine filled in, for both kinds of unknown. The conditional tail (Theorem 3.23) gives the same answers with \(\gamma(x)\) in place of \(\gamma\), because \(g(x)\!\int\!K^2\) cancels in the ratio.</p>
+<div class="lab">
+  <div class="controls">
+    <label for="ver">Unknown
+      <select id="ver">
+        <option value="mass">δ = limit mass per cell</option>
+        <option value="mesh">δ = mesh of equidistant grid</option>
+      </select>
+    </label>
+    <label for="eps"><span class="row">ε <span class="v" id="epsV"></span></span><input type="range" id="eps" min="0.05" max="0.9" step="0.01" value="0.3"></label>
+    <label for="gam"><span class="row">γ <span class="v" id="gamV"></span></span><input type="range" id="gam" min="0.2" max="2" step="0.05" value="0.5"></label>
+    <label for="aa"><span class="row">a <span class="v" id="aV"></span></span><input type="range" id="aa" min="0.3" max="3" step="0.05" value="1"></label>
+    <label for="bb"><span class="row">b <span class="v" id="bV"></span></span><input type="range" id="bb" min="3.5" max="20" step="0.5" value="8"></label>
+  </div>
+  <div class="out" id="out"></div>
+</div>
+</section>
+
+<section id="examples">
+<h2><span class="n">5</span>Worked examples with δ unknown until the end</h2>
+<p>Every example is self-contained. It opens with a <b>setting</b> card that states the model, the notation (\(u_n\), \(T_n\), \(T\), \(R(K)\), …) and the facts you are allowed to quote. Then it walks through the routine one line at a time, with \(\|F_n\|^2\) and the width computed explicitly. The last line is the paragraph you would hand in.</p>
+<p class="small muted">Two facts used in every computation: an indicator squared is itself, \(1_A^2=1_A\), so \(\mathbb E\big[(c\,1_A)^2\big]=c^2P(A)\); and for sets \(A\subseteq B\), \(1_B-1_A=1_{B\setminus A}\).</p>
+
+<!-- ============ EXAMPLE 1 ============ -->
+<div class="ex" id="e1">
+  <h3>Example 1 · Tail empirical process, mass version</h3>
+  <div class="src">Theorem 3.10</div>
+  <div class="setting">
+    <div class="tag">Setting &amp; definitions</div>
+    <dl>
+      <dt>Data</dt><dd>\(Z_1,\dots,Z_n\) iid, positive, continuous cdf \(F\), survival function \(\bar F=1-F\).</dd>
+      <dt>Tail assumption</dt><dd>\(\bar F\) is regularly varying with index \(1/\gamma\gt0\): \(\bar F(z)=z^{-1/\gamma}\ell(z)\), \(\ell\) slowly varying. Equivalently \(\bar F(zs)/\bar F(z)\to s^{-1/\gamma}\) as \(z\to\infty\), for every \(s\gt0\).</dd>
+      <dt>Threshold</dt><dd>Intermediate sequence \(k=k_n\to\infty\), \(k/n\to0\), and \(u_n=F^{\leftarrow}(1-k/n)\to\infty\). By continuity \(n\bar F(u_n)=k\).</dd>
+      <dt>\(T_n\) and \(T\)</dt><dd>\[T_n(s)=\frac{\bar F(u_ns)}{\bar F(u_n)}=\frac{P(Z\gt u_ns)}{P(Z\gt u_n)},\qquad T(s)=s^{-1/\gamma}.\] \(T_n(s)\) is the conditional probability \(P(Z\gt u_ns\mid Z\gt u_n)\) and the mean of the tail empirical function \(\tilde T_n(s)=\frac1k\sum_i1\{Z_i\gt u_ns\}\). Regular variation (with \(u_n\to\infty\)) gives \(T_n(s)\to T(s)\) for each \(s\gt0\).</dd>
+      <dt>Index set</dt><dd>\(t\in[a,b]\) with \(0\lt a\lt b\lt\infty\).</dd>
+    </dl>
+  </div>
+  <ol class="script">
+    <li><div class="h">The class, and why it is this one</div>
+      \[f_{n,t}(z)=\bar F(u_n)^{-1/2}\,1\{z\gt u_nt\},\qquad \mathcal F_n=\{f_{n,t}:t\in[a,b]\}.\]
+      Then \(\mathbb G^{(n)}f_{n,t}=\sqrt n\big(\tfrac1n\sum_if_{n,t}(Z_i)-\mathbb Ef_{n,t}\big)=\dfrac{\sum_i1\{Z_i\gt u_nt\}-n\bar F(u_nt)}{\sqrt{n\bar F(u_n)}}=\sqrt k\big(\tilde T_n(t)-T_n(t)\big)\), using \(n\bar F(u_n)=k\). So this empirical process is exactly the tail empirical process.</li>
+    <li><div class="h">Envelope</div>For fixed \(z\), \(t\mapsto1\{z\gt u_nt\}\) is decreasing, so the sup over \(t\in[a,b]\) is at \(t=a\):
+      \[F_n(z)=\sup_{t}|f_{n,t}(z)|=\bar F(u_n)^{-1/2}1\{z\gt u_na\}.\]</li>
+    <li><div class="h">B: compute ‖F_n‖²</div>
+      \[\|F_n\|_{L^2}^2=\mathbb E\big[F_n(Z)^2\big]=\bar F(u_n)^{-1}\,\mathbb E\big[1\{Z\gt u_na\}^2\big]=\frac{P(Z\gt u_na)}{\bar F(u_n)}=\frac{\bar F(u_na)}{\bar F(u_n)}=T_n(a)\ \longrightarrow\ a^{-1/\gamma}.\]
+      <div class="why">Squaring removes the \(-1/2\) power: \((\bar F(u_n)^{-1/2})^2=\bar F(u_n)^{-1}\). Squaring the indicator does nothing.</div></li>
+    <li><div class="h">Unknown δ and grid</div>Let <span class="unk">δ</span> \(\gt0\), to be chosen. Take \(a=t_0\lt t_1\lt\dots\lt t_m=b\) with \(T(t_{j-1})-T(t_j)\le\delta\) for all \(j\). Since \(T\) is continuous and decreasing, walking from \(a\) and stepping down \(\delta\) in \(T\)-value each time works, with \(m\le\dfrac{T(a)-T(b)}{\delta}+1\).<div class="why">The grid is built from the limit \(T\), not from \(T_n\). It depends on \(\delta\) (so on \(\varepsilon\)) only.</div></li>
+    <li><div class="h">Brackets</div>Decreasing class, so for \(t\in[t_{j-1},t_j]\):
+      \[l_j(z)=\bar F(u_n)^{-1/2}1\{z\gt u_nt_j\}\ \le\ f_{n,t}(z)\ \le\ \bar F(u_n)^{-1/2}1\{z\gt u_nt_{j-1}\}=u_j(z).\]</li>
+    <li><div class="h">A: compute the width²</div>\(\{z\gt u_nt_j\}\subseteq\{z\gt u_nt_{j-1}\}\), so \(u_j-l_j=\bar F(u_n)^{-1/2}1\{u_nt_{j-1}\lt z\le u_nt_j\}\) and
+      \[\|u_j-l_j\|_{L^2}^2=\frac{P(u_nt_{j-1}\lt Z\le u_nt_j)}{\bar F(u_n)}=\frac{\bar F(u_nt_{j-1})-\bar F(u_nt_j)}{\bar F(u_n)}=T_n(t_{j-1})-T_n(t_j).\]
+      At each of the finitely many grid points \(T_n\to T\), so
+      \[\|u_j-l_j\|^2\ \longrightarrow\ T(t_{j-1})-T(t_j)\ \le\ \delta.\]</li>
+    <li><div class="h">R: ratio</div>
+      \[\frac{\|u_j-l_j\|^2}{\|F_n\|^2}=\frac{T_n(t_{j-1})-T_n(t_j)}{T_n(a)}\ \longrightarrow\ \frac{T(t_{j-1})-T(t_j)}{a^{-1/\gamma}}\ \le\ \delta\,a^{1/\gamma}.\]</li>
+    <li><div class="h">S: solve for δ</div>Set the limit bound to \(\varepsilon^2/2\): \(\delta a^{1/\gamma}=\varepsilon^2/2\Rightarrow\) <span class="unk">δ = ε² a^(−1/γ) / 2</span>. Then for all \(j\) and \(n\ge n_0(\varepsilon)\): \(\|u_j-l_j\|^2\le\varepsilon^2\|F_n\|^2\).</li>
+    <li><div class="h">Count and entropy</div>\(m\le\dfrac{T(a)-T(b)}{\delta}+1\le\dfrac{a^{-1/\gamma}}{\varepsilon^2a^{-1/\gamma}/2}+1=\dfrac2{\varepsilon^2}+1\). So \(N_{[\,]}(\varepsilon\|F_n\|,\mathcal F_n,L^2)\le2/\varepsilon^2+1\) and \(\int_0^{\delta_n}\sqrt{\log(2/\varepsilon^2+1)}\,d\varepsilon\to0\): (1.9). Grid free of \(n\): skip (1.8).</li>
+    <li><div class="h">Hand-in version</div><div class="sheet">
+      <p>Let \(T_n(s)=\bar F(u_ns)/\bar F(u_n)\) and \(T(s)=s^{-1/\gamma}\); by regular variation \(T_n(s)\to T(s)\) for every \(s\gt0\). The envelope of \(\mathcal F_n\) is \(F_n=\bar F(u_n)^{-1/2}1\{Z\gt u_na\}\) with \(\|F_n\|^2=\bar F(u_na)/\bar F(u_n)=T_n(a)\to a^{-1/\gamma}\). Let \(\delta\gt0\) and choose \(a=t_0\lt\dots\lt t_m=b\) with \(T(t_{j-1})-T(t_j)\le\delta\); this is possible with \(m\le a^{-1/\gamma}/\delta+1\). With \(l_j=f_{n,t_j}\le f_{n,t}\le f_{n,t_{j-1}}=u_j\) for \(t\in[t_{j-1},t_j]\),</p>
+      \[\frac{\|u_j-l_j\|^2}{\|F_n\|^2}=\frac{T_n(t_{j-1})-T_n(t_j)}{T_n(a)}\longrightarrow\frac{T(t_{j-1})-T(t_j)}{a^{-1/\gamma}}\le\delta a^{1/\gamma},\]
+      <p>uniformly in \(j\) since there are finitely many grid points. With \(\delta=\varepsilon^2a^{-1/\gamma}/2\) the limit is at most \(\varepsilon^2/2\), so \(\|u_j-l_j\|\le\varepsilon\|F_n\|\) for all \(j\) and \(n\) large. Hence \(N_{[\,]}(\varepsilon\|F_n\|,\mathcal F_n,L^2)\le2/\varepsilon^2+1\), and (1.9) holds since \(\sqrt{\log(2/\varepsilon^2+1)}\) is integrable at 0. The partition does not depend on \(n\), so (1.8) is not needed.</p>
+    </div></li>
+  </ol>
+  <div class="bar"><button class="btn nx" type="button">Reveal next line</button><button class="btn ghost al" type="button">Show all</button><button class="btn ghost rs" type="button">Hide</button><span class="progress"></span></div>
+</div>
+
+<!-- ============ EXAMPLE 2 ============ -->
+<div class="ex" id="e2">
+  <h3>Example 2 · Tail empirical process, mesh version</h3>
+  <div class="src">Theorem 3.10 with an equidistant grid</div>
+  <div class="setting">
+    <div class="tag">Setting &amp; definitions</div>
+    <dl>
+      <dt>Data</dt><dd>\(Z_1,\dots,Z_n\) iid, positive, continuous cdf \(F\), \(\bar F=1-F\) regularly varying with index \(1/\gamma\gt0\).</dd>
+      <dt>Threshold</dt><dd>\(k\to\infty\), \(k/n\to0\), \(u_n=F^{\leftarrow}(1-k/n)\), so \(n\bar F(u_n)=k\).</dd>
+      <dt>\(T_n\) and \(T\)</dt><dd>\(T_n(s)=\bar F(u_ns)/\bar F(u_n)\to T(s)=s^{-1/\gamma}\) for each \(s\gt0\).</dd>
+      <dt>Derivative of \(T\)</dt><dd>\(T'(s)=-\tfrac1\gamma s^{-1/\gamma-1}\), so \(|T'|\) is decreasing and \(\sup_{s\ge a}|T'(s)|=\tfrac1\gamma a^{-1/\gamma-1}\).</dd>
+      <dt>Class</dt><dd>\(f_{n,t}(z)=\bar F(u_n)^{-1/2}1\{z\gt u_nt\}\), \(t\in[a,b]\), \(0\lt a\lt b\lt\infty\).</dd>
+    </dl>
+  </div>
+  <ol class="script">
+    <li><div class="h">Envelope and ‖F_n‖²</div>Decreasing in \(t\), sup at \(t=a\): \(F_n(z)=\bar F(u_n)^{-1/2}1\{z\gt u_na\}\), and
+      \[\|F_n\|^2=\frac{\mathbb E[1\{Z\gt u_na\}]}{\bar F(u_n)}=\frac{\bar F(u_na)}{\bar F(u_n)}=T_n(a)\to a^{-1/\gamma}.\]</li>
+    <li><div class="h">Unknown δ and grid</div>Let <span class="unk">δ</span> \(\gt0\), \(t_j=a+j\delta\) for \(j=0,\dots,m-1\), \(t_m=b\), where \(m=\lceil(b-a)/\delta\rceil\).</li>
+    <li><div class="h">Brackets and width²</div>Same as Example 1: \(l_j=f_{n,t_j}\), \(u_j=f_{n,t_{j-1}}\), and
+      \[\|u_j-l_j\|^2=\frac{\bar F(u_nt_{j-1})-\bar F(u_nt_j)}{\bar F(u_n)}=T_n(t_{j-1})-T_n(t_j)\to T(t_{j-1})-T(t_j).\]</li>
+    <li><div class="h">A in terms of the mesh</div>Mean value theorem / integral of the derivative:
+      \[T(t_{j-1})-T(t_j)=\int_{t_{j-1}}^{t_j}\tfrac1\gamma s^{-1/\gamma-1}\,ds\le(t_j-t_{j-1})\sup_{s\ge a}\tfrac1\gamma s^{-1/\gamma-1}\le\tfrac1\gamma a^{-1/\gamma-1}\,\delta.\]<div class="why">This is the extra step of the mesh version: a length \(\delta\) is turned into a mass bound with the largest slope of \(T\) on \([a,b]\).</div></li>
+    <li><div class="h">R: ratio</div>
+      \[\frac{\|u_j-l_j\|^2}{\|F_n\|^2}\to\frac{T(t_{j-1})-T(t_j)}{a^{-1/\gamma}}\le\frac{\tfrac1\gamma a^{-1/\gamma-1}\delta}{a^{-1/\gamma}}=\frac{\delta}{\gamma a}.\]</li>
+    <li><div class="h">S: solve for δ</div>\(\dfrac{\delta}{\gamma a}=\dfrac{\varepsilon^2}{2}\Rightarrow\) <span class="unk">δ = γ a ε² / 2</span>.</li>
+    <li><div class="h">Count</div>\(m=\Big\lceil\dfrac{b-a}{\delta}\Big\rceil=\Big\lceil\dfrac{2(b-a)}{\gamma a\,\varepsilon^2}\Big\rceil\le C\varepsilon^{-2}\) with \(C=2(b-a)/(\gamma a)+1\). Entropy integral as in Example 1.</li>
+  </ol>
+  <div class="try"><b>Why the mesh version fails on \([a,\infty)\):</b> \(m=\lceil(b-a)/\delta\rceil\) is infinite when \(b=\infty\). Use the mass version on unbounded index sets.</div>
+  <div class="bar"><button class="btn nx" type="button">Reveal next line</button><button class="btn ghost al" type="button">Show all</button><button class="btn ghost rs" type="button">Hide</button><span class="progress"></span></div>
+</div>
+
+<!-- ============ EXAMPLE 3 ============ -->
+<div class="ex" id="e3">
+  <h3>Example 3 · Kernel conditional cdf</h3>
+  <div class="src">Theorem 2.8 · mass version</div>
+  <div class="setting">
+    <div class="tag">Setting &amp; definitions</div>
+    <dl>
+      <dt>Data</dt><dd>\((Y_i,X_i)\) iid in \([0,\infty)\times\mathbb R\). \(X\) has density \(f\), continuous at the fixed point \(x\), with \(f(x)\gt0\).</dd>
+      <dt>Conditional cdf</dt><dd>\(F(t\mid z)=P(Y\le t\mid X=z)\), with left limits \(F(t-\mid z)=P(Y\lt t\mid X=z)\). Assume continuity in the covariate uniformly in \(t\): \(\sup_t|F(t\mid z)-F(t\mid x)|\to0\) as \(z\to x\) (same for \(F(t-|\cdot)\)).</dd>
+      <dt>Kernel</dt><dd>\(K\ge0\) bounded, symmetric, support \([-1,1]\), \(\int K=1\). Write \(R(K)=\int K^2(u)\,du\).</dd>
+      <dt>Bandwidth</dt><dd>\(h=h_n\to0\), \(nh\to\infty\).</dd>
+      <dt>What we study</dt><dd>The numerator of the cedf, \(\tilde X_n(t)=\frac1{nh}\sum_i1\{Y_i\le t\}K\big(\tfrac{X_i-x}{h}\big)\), and its process \(\sqrt{nh}\big(\tilde X_n(t)-\mathbb E\tilde X_n(t)\big)\), \(t\in[0,\infty]\).</dd>
+    </dl>
+  </div>
+  <ol class="script">
+    <li><div class="h">The class, and why it is this one</div>
+      \[f_{n,t}(y,z)=h^{-1/2}\,1\{y\le t\}\,K\big(\tfrac{z-x}{h}\big).\]
+      Then \(\mathbb G^{(n)}f_{n,t}=\dfrac{1}{\sqrt{nh}}\sum_i\big(1\{Y_i\le t\}K(\cdot)-\mathbb E[\cdot]\big)=\sqrt{nh}\,\big(\tilde X_n(t)-\mathbb E\tilde X_n(t)\big)\).</li>
+    <li><div class="h">Envelope</div>The indicator is at most 1 (attained at \(t=\infty\)): \(F_n(y,z)=h^{-1/2}K\big(\tfrac{z-x}{h}\big)\).</li>
+    <li><div class="h">B: compute ‖F_n‖²</div>
+      \[\|F_n\|^2=\frac1h\mathbb E\Big[K^2\big(\tfrac{X-x}{h}\big)\Big]=\frac1h\int K^2\big(\tfrac{z-x}{h}\big)f(z)\,dz\overset{z=x+hu}{=}\int K^2(u)\,f(x+hu)\,du\ \longrightarrow\ f(x)R(K).\]
+      <div class="why">\(dz=h\,du\) cancels the \(1/h\). The limit uses continuity of \(f\) at \(x\) and dominated convergence (\(K^2\) bounded with compact support).</div></li>
+    <li><div class="h">Unknown δ and grid</div>Let <span class="unk">δ</span> \(\gt0\). Choose \(0=t_0\lt\dots\lt t_k=\infty\) with \(\Delta_j:=F(t_j-\mid x)-F(t_{j-1}\mid x)\le\delta\). Greedy choice: each closed cell \((t_{j-1},t_j]\) has mass \(\ge\delta\), total mass 1, so \(k\le1/\delta+1\).</li>
+    <li><div class="h">Brackets</div>Increasing in \(t\): for \(t\in[t_{j-1},t_j)\), \(l_j=h^{-1/2}1\{y\le t_{j-1}\}K\ \le f_{n,t}\le\ h^{-1/2}1\{y\lt t_j\}K=u_j\).</li>
+    <li><div class="h">A: compute the width²</div>\(u_j-l_j=h^{-1/2}1\{t_{j-1}\lt y\lt t_j\}K\big(\tfrac{z-x}h\big)\). Square, take expectation, condition on \(X\):
+      \[\|u_j-l_j\|^2=\frac1h\mathbb E\Big[K^2\big(\tfrac{X-x}h\big)P(t_{j-1}\lt Y\lt t_j\mid X)\Big]=\int K^2(u)\big[F(t_j-|x+hu)-F(t_{j-1}|x+hu)\big]f(x+hu)\,du.\]
+      As \(h\to0\) the bracket tends to \(\Delta_j\) uniformly in \(j\) (by the uniform continuity assumption), so
+      \[\|u_j-l_j\|^2\ \longrightarrow\ \Delta_j\,f(x)R(K)\ \le\ \delta\,f(x)R(K).\]</li>
+    <li><div class="h">R: ratio</div>
+      \[\frac{\|u_j-l_j\|^2}{\|F_n\|^2}\to\frac{\Delta_j\,f(x)R(K)}{f(x)R(K)}=\Delta_j\le\delta.\]
+      <div class="why">\(f(x)R(K)\) cancels completely. That is why the book's chain looks like no factor was inserted: the factor is 1.</div></li>
+    <li><div class="h">S: solve and count</div><span class="unk">δ = ε² / 2</span>. Count \(k\le2/\varepsilon^2+1\). Entropy integral as before; grid depends only on \(F(\cdot|x)\) and \(\varepsilon\), so (1.8) is skipped.</li>
+    <li><div class="h">Hand-in version</div><div class="sheet">
+      <p>The envelope is \(F_n=h^{-1/2}K((X-x)/h)\) with \(\|F_n\|^2=\int K^2(u)f(x+hu)\,du\to f(x)R(K)\). For \(\delta\gt0\) choose \(0=t_0\lt\dots\lt t_k=\infty\) with \(\Delta_j=F(t_j-|x)-F(t_{j-1}|x)\le\delta\), \(k\le1/\delta+1\). With \(l_j=f_{n,t_{j-1}}\), \(u_j=h^{-1/2}1\{y\lt t_j\}K\), conditioning on \(X\) gives</p>
+      \[\frac{\|u_j-l_j\|^2}{\|F_n\|^2}=\frac{\int K^2(u)\,[F(t_j-|x+hu)-F(t_{j-1}|x+hu)]\,f(x+hu)\,du}{\int K^2(u)f(x+hu)\,du}\to\Delta_j\le\delta.\]
+      <p>Taking \(\delta=\varepsilon^2/2\), \(\|u_j-l_j\|\le\varepsilon\|F_n\|\) for \(n\) large, so \(N_{[\,]}\le2/\varepsilon^2+1\) and (1.9) holds; the partition is free of \(n\).</p>
+    </div></li>
+  </ol>
+  <div class="bar"><button class="btn nx" type="button">Reveal next line</button><button class="btn ghost al" type="button">Show all</button><button class="btn ghost rs" type="button">Hide</button><span class="progress"></span></div>
+</div>
+
+<!-- ============ EXAMPLE 4 ============ -->
+<div class="ex" id="e4">
+  <h3>Example 4 · Conditional tail process</h3>
+  <div class="src">Theorem 3.23 · mass version</div>
+  <div class="setting">
+    <div class="tag">Setting &amp; definitions</div>
+    <dl>
+      <dt>Data</dt><dd>\((Y_i,X_i)\) iid, \(Y\gt0\); \(X\) has density \(g\) (twice continuously differentiable), \(g(x)\gt0\) at the fixed \(x\).</dd>
+      <dt>Conditional tail</dt><dd>\(\bar F^z(y)=P(Y\gt y\mid X=z)=L^z(y)\,y^{-1/\gamma(z)}\) for \(z\) near \(x\) (3.14), with Condition 3.1 (Lipschitz \(1/\gamma\), Lipschitz \(\log L^z/\log y\), \(h_n\log u_n^x\to0\)).</dd>
+      <dt>Threshold</dt><dd>\(k=k_n\to\infty\), \(k/n\to0\), \(u=u_n^x=F^{\leftarrow,x}(1-k/n)\), so \(\bar F^x(u_n^x)=k/n\). Effective sample size \(nh_n\bar F^x(u_n^x)=kh_n\to\infty\).</dd>
+      <dt>Kernel</dt><dd>\(K\) bounded, support \([-1,1]\), \(\int K=1\), \(R(K)=\int K^2\). Bandwidth \(h=h_n\to0\).</dd>
+      <dt>\(T^x\) and \(T_n^x\)</dt><dd>Limit tail \(T^x(s)=s^{-1/\gamma(x)}\). Define the kernel-weighted tail ratio
+        \[T_n^x(s)=\frac{\mathbb E\big[1\{Y\gt us\}\,K^2\big(\tfrac{x-X}{h}\big)\big]}{h\,\bar F^x(u)}.\]</dd>
+      <dt>Lemma 3.2 (quoted)</dt><dd>For \(s,q\gt0\): \(\dfrac{\mathbb E[1\{Y\gt us\}K^q(\frac{x-X}h)]}{h\bar F^x(u)}\to s^{-1/\gamma(x)}g(x)\int K^q\). With \(q=2\): \(T_n^x(s)\to T^x(s)\,g(x)R(K)\).</dd>
+    </dl>
+  </div>
+  <ol class="script">
+    <li><div class="h">The class, and why it is this one</div>
+      \[f_{n,t}(y,z)=\big(h\bar F^x(u)\big)^{-1/2}1\{y\gt ut\}K\big(\tfrac{x-z}h\big),\quad t\in[a,b],\ 0\lt a\lt b.\]
+      \(\mathbb G^{(n)}f_{n,t}=\dfrac{\sum_i(\cdots)-n\mathbb E(\cdots)}{\sqrt{nh\bar F^x(u)}}=\sqrt{kh}\,\big(\tilde V_n^x(t)-\mathbb E\tilde V_n^x(t)\big)\), the process \(\mathbb V_n^x\) of Theorem 3.23.</li>
+    <li><div class="h">Envelope</div>Decreasing in \(t\), sup at \(t=a\): \(F_n(y,z)=(h\bar F^x(u))^{-1/2}1\{y\gt ua\}K\big(\tfrac{x-z}h\big)\).</li>
+    <li><div class="h">B: compute ‖F_n‖²</div>
+      \[\|F_n\|^2=\frac{\mathbb E\big[1\{Y\gt ua\}K^2(\frac{x-X}h)\big]}{h\bar F^x(u)}=T_n^x(a)\ \xrightarrow{\text{Lemma 3.2},\,q=2}\ a^{-1/\gamma(x)}\,g(x)R(K).\]</li>
+    <li><div class="h">Unknown δ and grid</div>Let <span class="unk">δ</span> \(\gt0\); choose \(a=t_0\lt\dots\lt t_m=b\) with \(T^x(t_{j-1})-T^x(t_j)\le\delta\), \(m\le a^{-1/\gamma(x)}/\delta+1\).</li>
+    <li><div class="h">Brackets</div>\(l_j=f_{n,t_j}\le f_{n,t}\le f_{n,t_{j-1}}=u_j\) for \(t\in[t_{j-1},t_j]\), and \(u_j-l_j=(h\bar F^x(u))^{-1/2}1\{ut_{j-1}\lt y\le ut_j\}K\).</li>
+    <li><div class="h">A: compute the width²</div>
+      \[\|u_j-l_j\|^2=\frac{\mathbb E\big[1\{ut_{j-1}\lt Y\le ut_j\}K^2\big]}{h\bar F^x(u)}=T_n^x(t_{j-1})-T_n^x(t_j)\ \longrightarrow\ \big[T^x(t_{j-1})-T^x(t_j)\big]g(x)R(K)\le\delta\,g(x)R(K).\]
+      <div class="why">\(1\{ut_{j-1}\lt Y\le ut_j\}=1\{Y\gt ut_{j-1}\}-1\{Y\gt ut_j\}\), then use Lemma 3.2 at the two grid points.</div></li>
+    <li><div class="h">R: ratio</div>
+      \[\frac{\|u_j-l_j\|^2}{\|F_n\|^2}=\frac{T_n^x(t_{j-1})-T_n^x(t_j)}{T_n^x(a)}\to\frac{[T^x(t_{j-1})-T^x(t_j)]\,g(x)R(K)}{a^{-1/\gamma(x)}g(x)R(K)}\le\delta\,a^{1/\gamma(x)}.\]
+      \(g(x)R(K)\) cancels, \(a^{-1/\gamma(x)}\) remains, exactly like Example 1.</li>
+    <li><div class="h">S: solve and count</div><span class="unk">δ = ε² a^(−1/γ(x)) / 2</span>; \(m\le2/\varepsilon^2+1\).<div class="why">The notes write \(\varepsilon^2a^{-1/\gamma(x)}/(2g(x))\). With the ratio you see \(g(x)\) cancels; both give \(O(\varepsilon^{-2})\) cells, but the ratio version is the one you can justify line by line.</div></li>
+  </ol>
+  <div class="bar"><button class="btn nx" type="button">Reveal next line</button><button class="btn ghost al" type="button">Show all</button><button class="btn ghost rs" type="button">Hide</button><span class="progress"></span></div>
+</div>
+
+<!-- ============ EXAMPLE 5 ============ -->
+<div class="ex" id="e5">
+  <h3>Example 5 · Your turn: a truncated tail class</h3>
+  <div class="src">Not in the notes · exceedances of \(u_na\) that stay below \(u_nt\)</div>
+  <div class="setting">
+    <div class="tag">Setting &amp; definitions</div>
+    <dl>
+      <dt>Data &amp; tail</dt><dd>\(Z_i\) iid, positive, continuous, \(\bar F\) regularly varying with index \(1/\gamma\gt0\).</dd>
+      <dt>Threshold</dt><dd>\(k\to\infty\), \(k/n\to0\), \(u_n=F^{\leftarrow}(1-k/n)\), \(n\bar F(u_n)=k\).</dd>
+      <dt>\(T_n\) and \(T\)</dt><dd>\(T_n(s)=\bar F(u_ns)/\bar F(u_n)\to T(s)=s^{-1/\gamma}\).</dd>
+      <dt>Class</dt><dd>\(f_{n,t}(z)=\bar F(u_n)^{-1/2}1\{u_na\lt z\le u_nt\}\), \(t\in[a,b]\), \(0\lt a\lt b\).</dd>
+    </dl>
+  </div>
+  <p>Do the routine yourself first, then reveal.</p>
+  <ol class="script">
+    <li><div class="h">Direction</div>Now <b>increasing</b> in \(t\) (the interval \((u_na,u_nt]\) grows). Brackets \(l_j=f_{n,t_{j-1}}\), \(u_j=f_{n,t_j}\).</li>
+    <li><div class="h">Envelope and ‖F_n‖²</div>Sup at \(t=b\): \(F_n(z)=\bar F(u_n)^{-1/2}1\{u_na\lt z\le u_nb\}\), and
+      \[\|F_n\|^2=\frac{P(u_na\lt Z\le u_nb)}{\bar F(u_n)}=\frac{\bar F(u_na)-\bar F(u_nb)}{\bar F(u_n)}=T_n(a)-T_n(b)\to a^{-1/\gamma}-b^{-1/\gamma}.\]</li>
+    <li><div class="h">A: width²</div>\((u_na,u_nt_{j-1}]\subseteq(u_na,u_nt_j]\), so \(u_j-l_j=\bar F(u_n)^{-1/2}1\{u_nt_{j-1}\lt z\le u_nt_j\}\) and
+      \[\|u_j-l_j\|^2=T_n(t_{j-1})-T_n(t_j)\to T(t_{j-1})-T(t_j)\le\delta.\]</li>
+    <li><div class="h">R</div>\(\dfrac{\|u_j-l_j\|^2}{\|F_n\|^2}\to\dfrac{T(t_{j-1})-T(t_j)}{a^{-1/\gamma}-b^{-1/\gamma}}\le\dfrac{\delta}{a^{-1/\gamma}-b^{-1/\gamma}}\).</li>
+    <li><div class="h">S</div><span class="unk">δ = ε²(a^(−1/γ) − b^(−1/γ)) / 2</span>.</li>
+    <li><div class="h">Count</div>Total \(T\)-mass is \(T(a)-T(b)\), so \(m\le(T(a)-T(b))/\delta+1=2/\varepsilon^2+1\). For indicator classes the envelope's \(L^2\)-mass equals the total mass, so the count is always \(2/\varepsilon^2+1\).</li>
+  </ol>
+  <div class="bar"><button class="btn nx" type="button">Reveal next line</button><button class="btn ghost al" type="button">Show all</button><button class="btn ghost rs" type="button">Hide</button><span class="progress"></span></div>
+</div>
+
+<!-- ============ EXAMPLE 6 ============ -->
+<div class="ex" id="e6">
+  <h3>Example 6 · Your turn: conditional tail, mesh version</h3>
+  <div class="src">Class of Theorem 3.23 with an equidistant grid on \([a,b]\)</div>
+  <div class="setting">
+    <div class="tag">Setting &amp; definitions</div>
+    <dl>
+      <dt>Model</dt><dd>As in Example 4: \((Y_i,X_i)\) iid, \(\bar F^z(y)=L^z(y)y^{-1/\gamma(z)}\), density \(g\) of \(X\) with \(g(x)\gt0\), Condition 3.1; \(u=u_n^x=F^{\leftarrow,x}(1-k/n)\); kernel \(K\) on \([-1,1]\), \(R(K)=\int K^2\), \(h=h_n\to0\).</dd>
+      <dt>\(T^x\), \(T_n^x\)</dt><dd>\(T^x(s)=s^{-1/\gamma(x)}\), \(T_n^x(s)=\mathbb E[1\{Y\gt us\}K^2(\tfrac{x-X}h)]/(h\bar F^x(u))\to T^x(s)g(x)R(K)\) (Lemma 3.2, \(q=2\)).</dd>
+      <dt>Derivative</dt><dd>\(\sup_{s\ge a}|{T^x}'(s)|=\tfrac1{\gamma(x)}a^{-1/\gamma(x)-1}\).</dd>
+      <dt>Class</dt><dd>\(f_{n,t}(y,z)=(h\bar F^x(u))^{-1/2}1\{y\gt ut\}K(\tfrac{x-z}h)\), \(t\in[a,b]\).</dd>
+    </dl>
+  </div>
+  <ol class="script">
+    <li><div class="h">B: envelope²</div>Sup at \(t=a\): \(\|F_n\|^2=T_n^x(a)\to a^{-1/\gamma(x)}g(x)R(K)\).</li>
+    <li><div class="h">Grid</div>\(t_j=a+j\delta\), \(m=\lceil(b-a)/\delta\rceil\), with <span class="unk">δ</span> unknown.</li>
+    <li><div class="h">A in terms of the mesh</div>\(\|u_j-l_j\|^2=T_n^x(t_{j-1})-T_n^x(t_j)\to[T^x(t_{j-1})-T^x(t_j)]g(x)R(K)\le\tfrac1{\gamma(x)}a^{-1/\gamma(x)-1}\delta\,g(x)R(K)\).</li>
+    <li><div class="h">R</div>\(\dfrac{A}{B}\le\dfrac{\tfrac1{\gamma(x)}a^{-1/\gamma(x)-1}\delta\,g(x)R(K)}{a^{-1/\gamma(x)}g(x)R(K)}=\dfrac{\delta}{\gamma(x)\,a}\).</li>
+    <li><div class="h">S &amp; count</div><span class="unk">δ = γ(x) a ε² / 2</span>, \(m=\lceil2(b-a)/(\gamma(x)a\varepsilon^2)\rceil\). Same as Example 2 with \(\gamma\to\gamma(x)\).</li>
+  </ol>
+  <div class="bar"><button class="btn nx" type="button">Reveal next line</button><button class="btn ghost al" type="button">Show all</button><button class="btn ghost rs" type="button">Hide</button><span class="progress"></span></div>
+</div>
+</section>
+<section id="pits">
+<h2><span class="n">6</span>Pitfalls</h2>
+<div class="pits">
+  <div class="pit"><span class="x">Comparing A with ε²</span>Under Theorem 1.20 you compare \(A\) with \(\varepsilon^2B\), not with \(\varepsilon^2\). Forgetting \(B\) is exactly the "missing factor".</div>
+  <div class="pit"><span class="x">Wrong end for the envelope</span>Decreasing class → envelope at the left end \(t=a\). Increasing class → envelope at the right end. B changes accordingly (compare Examples 1 and 5).</div>
+  <div class="pit"><span class="x">ε vs ε²</span>A and B are squared norms, so the ratio is compared with \(\varepsilon^2\). If you work with unsquared norms, compare \(\sqrt{A/B}\) with \(\varepsilon\). Pick one and stick to it.</div>
+  <div class="pit"><span class="x">Solving at exactly ε²</span>The limit ratio must be strictly below \(\varepsilon^2\) to absorb the \(o(1)\). Solve for \(\varepsilon^2/2\).</div>
+  <div class="pit"><span class="x">Grid chosen by T_n</span>Choose cells with the limit \(T\) (or \(F(\cdot|x)\)), never with \(T_n\). Then the grid is free of \(n\) and (1.8) is skipped.</div>
+  <div class="pit"><span class="x">Mesh on an infinite set</span>An equidistant grid on \([0,\infty)\) needs infinitely many cells. Use the mass version there.</div>
+</div>
+</section>
+
+<footer>Companion to the Bracketing Proof Workbook. Theorem and equation numbers refer to the Week 4 notes (Bladt, <i>Statistics for Insurance</i>). Examples 5 and 6 are practice variations, not from the notes.</footer>
+</div>
+
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  // reveal logic per example
+  document.querySelectorAll('.ex').forEach(ex => {
+    const steps = Array.from(ex.querySelectorAll('.script > li'));
+    const tr = ex.querySelector('.try');
+    const nx = ex.querySelector('.nx'), al = ex.querySelector('.al'), rs = ex.querySelector('.rs'), pg = ex.querySelector('.progress');
+    let shown = 1;
+    function r(){
+      steps.forEach((li,k) => { li.hidden = k >= shown; });
+      if(tr) tr.hidden = shown < steps.length;
+      nx.disabled = shown >= steps.length;
+      pg.textContent = `line ${shown} of ${steps.length}`;
+    }
+    nx.addEventListener('click', () => { shown = Math.min(steps.length, shown+1); r(); });
+    al.addEventListener('click', () => { shown = steps.length; r(); });
+    rs.addEventListener('click', () => { shown = 1; r(); });
+    r();
+  });
+
+  // solver
+  const f = (x,d) => Number(x).toPrecision(d||4);
+  function solve(){
+    const ver = $('ver').value, eps = +$('eps').value, g = +$('gam').value, a = +$('aa').value, b = +$('bb').value;
+    $('epsV').textContent = eps.toFixed(2); $('gamV').textContent = g.toFixed(2); $('aV').textContent = a.toFixed(2); $('bV').textContent = b.toFixed(1);
+    const c = Math.pow(a,-1/g), Tb = Math.pow(b,-1/g), total = c - Tb;
+    let rows;
+    if(ver === 'mass'){
+      const delta = eps*eps*c/2;
+      const m = Math.ceil(total/delta);
+      rows = [
+        ['Unknown', 'cells with T(t_{j−1}) − T(t_j) ≤ δ'],
+        ['A (width²)', `→ T(t_{j−1}) − T(t_j) ≤ δ`],
+        ['B (envelope²)', `→ a^(−1/γ) = ${f(c)}`],
+        ['R = A/B', `≤ δ · a^(1/γ) = δ · ${f(1/c)}`],
+        ['Solve R = ε²/2', `δ = ε² a^(−1/γ)/2 = ${f(eps*eps)} × ${f(c)} / 2 = ${f(delta)}`],
+        ['Count', `m = ⌈(T(a) − T(b))/δ⌉ = ⌈${f(total)} / ${f(delta)}⌉ = ${m}   (bound 2/ε²+1 = ${f(2/(eps*eps)+1)})`],
+        ['Check', `max width/‖F‖ ≈ √(δ/a^(−1/γ)) = ${f(Math.sqrt(delta/c))} ≤ ε = ${eps.toFixed(2)} ✓`, true]
+      ];
+    } else {
+      const delta = g*a*eps*eps/2;
+      const m = Math.ceil((b-a)/delta);
+      const worst = Math.pow(a,-1/g) - Math.pow(a+delta,-1/g);
+      rows = [
+        ['Unknown', 'equidistant grid t_j = a + jδ'],
+        ['A (width²)', `≤ (1/γ) a^(−1/γ−1) δ = ${f(Math.pow(a,-1/g-1)/g)} · δ`],
+        ['B (envelope²)', `→ a^(−1/γ) = ${f(c)}`],
+        ['R = A/B', `≤ δ/(γ a) = δ / ${f(g*a)}`],
+        ['Solve R = ε²/2', `δ = γ a ε²/2 = ${f(delta)}`],
+        ['Count', `m = ⌈(b − a)/δ⌉ = ⌈${f(b-a)} / ${f(delta)}⌉ = ${m}   (C/ε² with C = 2(b−a)/(γa) = ${f(2*(b-a)/(g*a))})`],
+        ['Check', `worst cell (the first) has width/‖F‖ = ${f(Math.sqrt(worst/c))} ≤ ε = ${eps.toFixed(2)} ✓`, true]
+      ];
+    }
+    $('out').innerHTML = rows.map(r => `<div class="line${r[2]?' final':''}"><div class="lk">${r[0]}</div><div class="lv">${r[1]}</div></div>`).join('');
+  }
+  ['ver','eps','gam','aa','bb'].forEach(id => $(id).addEventListener('input', solve));
+  solve();
+})();
+</script>
+
+</body>
+</html>
